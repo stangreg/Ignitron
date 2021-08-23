@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"36838875-5F9E-4C9B-9D43-B65406EF3B3D",
+"Name":"Stairway To Heaven solo" , "Version":"0.7", "Description":"Stairway to Heaven solo", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5726,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+{ "Name":"Bassman",   "IsOn": true,   "Parameters":[0.8125,0.6000,0.8000,0.6000,0.4972] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1495,0.6000,0.6000,0.3000,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000] } ],
+"Filler":"63"
+}

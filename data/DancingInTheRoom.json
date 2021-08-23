@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"F577F7F3-E8E0-4D35-8975-0427C2054DCE",
+"Name":"Dancing in the room" , "Version":"0.7", "Description":"Description for Blues Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": false,  "Parameters":[0.2830,0.3042] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.3255,0.7891] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.6667] },
+  { "Name":"Twin",  "IsOn": true,   "Parameters":[0.6134,0.3717,0.4532,0.6767,0.8058] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.1854,0.0864,0.4850,0.5678] },
+  { "Name":"DelayEchoFilt",   "IsOn": false,  "Parameters":[0.5339,0.2756,0.4554,0.4577,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5089,0.3179,0.4620,0.3497,0.3393,0.4818,0.7000] } ],
+"Filler":"48"
+}

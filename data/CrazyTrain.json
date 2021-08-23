@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"B109EACE-198D-4194-BA7D-4A0B4487D79A",
+"Name":"Crazy Train" , "Version":"0.7", "Description":"Randy Rhoads Crazy Train", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.0563,0.4895,1.0000] },
+  { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+  { "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.7355,0.7000,0.6972,0.6901,0.8458] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000,1.0000] }  ],
+"Filler":"58"
+}

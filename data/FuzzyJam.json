@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"E237C4CF-172B-4D68-AA5B-659F57715658",
+"Name":"Fuzzy Jam" , "Version":"0.7", "Description":"Description for Alternative Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5000,1.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.4350,0.6476] },
+  { "Name":"Fuzz",  "IsOn": true,   "Parameters":[0.4365,1.0000] },
+  { "Name":"ADClean",   "IsOn": true,   "Parameters":[0.6771,0.3645,0.3539,0.3412,0.6800] },
+  { "Name":"UniVibe",   "IsOn": false,  "Parameters":[0.5000,1.0000,0.7000] },
+  { "Name":"VintageDelay",  "IsOn": false,  "Parameters":[0.2931,0.6467,0.2841,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.4933,0.2933,0.5208,0.3981,0.4695,0.4555,0.6000] } ],
+"Filler":"13"
+}

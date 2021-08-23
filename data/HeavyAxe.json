@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"5F27120E-5119-4923-ADA9-42CCB5B01A95",
+"Name":"Heavy Axe" , "Version":"0.7", "Description":"Description for Metal Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1081,0.0518] },
+  { "Name":"BBEOpticalComp",  "IsOn": false,  "Parameters":[0.7127,0.4415,0.0000] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.0807,0.2980,0.5545] },
+  { "Name":"EVH",   "IsOn": true,   "Parameters":[0.5995,0.4676,0.4075,0.3577,0.8205] },
+  { "Name":"Phaser",  "IsOn": false,  "Parameters":[0.3313,0.6200] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.2284,0.1805,0.4633,0.4000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.2857,0.7100,0.5830,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"E4"
+}

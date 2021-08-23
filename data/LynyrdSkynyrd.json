@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"2545740A-ED86-4A81-9886-CEDA185CD739",
+"Name":"Nitro's Lynyrd Skynrd" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1279,0.3132,0.0000] },
+  { "Name":"LA2AComp",  "IsOn": true,   "Parameters":[0.0000,0.8325,0.3041] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.5705,0.5497,0.7064] },
+  { "Name":"Twin",  "IsOn": true,   "Parameters":[0.7105,0.7938,0.9212,0.8152,0.4792] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.7986,0.1018,0.8107,0.9812] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1737,0.2392,0.5212,0.6068,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.4184,0.5017,0.7637,0.2827,0.7326,0.6569,0.3000] } ],
+"Filler":"67"
+}

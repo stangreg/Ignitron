@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"34F91FD6-7BAC-4951-827D-033A13133F8B",
+"Name":"Rage Now in the Fire" , "Version":"0.7", "Description":"real heavy dark sabbathy tone / btw all my presets I play thru headphones.", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1401,0.1282,1.0000] },
+{ "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.4863,0.5253,0.4931,0.6441] },
+{ "Name":"ProCoRat",  "IsOn": true,   "Parameters":[0.2656,0.5000,0.6600] },
+{ "Name":"AmericanHighGain",  "IsOn": true,   "Parameters":[0.6163,0.4311,0.5562,0.4951,0.7804] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"VintageDelay",  "IsOn": true,   "Parameters":[0.2180,0.0058,0.2926,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000,1.0000] }  ],
+"Filler":"D0"
+}

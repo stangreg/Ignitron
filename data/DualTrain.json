@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"961F7F40-77C3-4E98-A694-DF9CA4069955",
+"Name":"Dual Train" , "Version":"0.7", "Description":"Description for Rock Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1488,0.0000] },
+  { "Name":"BBEOpticalComp",  "IsOn": true,   "Parameters":[0.7075,0.5266,0.0000] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.0169,0.3706,0.7192] },
+  { "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.7066,0.4251,0.4505,0.4982,0.7953] },
+  { "Name":"Cloner",  "IsOn": false,  "Parameters":[0.3310,0.0000] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.2266,0.1406,0.5508,0.5559,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.3669,0.6722,0.3146,0.2845,0.3025,0.4334,0.3000] } ],
+"Filler":"C6"
+}

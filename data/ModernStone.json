@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"BB40E550-77D0-40B1-B0D3-D15D3D0C19EE",
+"Name":"Modern Stone" , "Version":"0.7", "Description":"Description for Rock Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2712,0.3703] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.3898,0.6653,0.3051,0.6441] },
+  { "Name":"Overdrive",   "IsOn": false,  "Parameters":[0.5862,0.5003,0.5302] },
+  { "Name":"AmericanHighGain",  "IsOn": true,   "Parameters":[0.6163,0.4311,0.4198,0.4951,0.8506] },
+  { "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.1206,0.2797,0.1858,0.4853] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.2710,0.1906,0.3560,0.5559,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.1757,0.6804,0.7618,0.1776,0.3025,0.4089,0.3000] } ],
+"Filler":"E6"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"96E26248-0AA3-4D45-B767-8BB9337346C9",
+"Name":"Iron Hammer" , "Version":"0.7", "Description":"Description for Metal Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2175,0.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.5470,0.6476] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.1479,0.4007,0.6401] },
+  { "Name":"SwitchAxeLead",   "IsOn": true,   "Parameters":[0.5726,0.3529,0.3740,0.4608,0.7054] },
+  { "Name":"UniVibe",   "IsOn": false,  "Parameters":[0.5000,1.0000,0.7000] },
+  { "Name":"DelayRe201",  "IsOn": false,  "Parameters":[0.2070,0.2815,0.4116,0.4620,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.1036,0.7209,0.5313,0.1899,0.6311,0.3810,0.2000] } ],
+"Filler":"49"
+}

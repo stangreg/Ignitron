@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"271B7EA2-33E0-4000-B8FE-7B5B3E1333DE",
+"Name":"Black Album" , "Version":"0.7", "Description":"Metallica", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.4394,0.7369,1.0000] },
+  { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+  { "Name":"ProCoRat",  "IsOn": true,   "Parameters":[0.4342,0.1016,0.3971] },
+  { "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.7804,0.6206,0.1962,0.4412,0.9078] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.1921,0.4084,0.2895,0.2445,0.7694,0.2907,0.2000,1.0000] }  ],
+"Filler":"6C"
+}

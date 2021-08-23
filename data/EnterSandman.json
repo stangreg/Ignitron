@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"1585050A-4D1A-49C4-9593-7A354A0BE4D4",
+"Name":"enter sandman2" , "Version":"0.7", "Description":"treadplate with punch", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{ "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5455,0.5695,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.7276,0.6601,1.0000,0.0000] },
+{ "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.8787,0.5165,0.3958,0.6738,0.9481] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1271,0.4727,0.1717,0.6000,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.3593,0.5067,0.4179,0.3008,0.6023,0.5941,0.0000,0.0000] }  ],
+"Filler":"DD"
+}

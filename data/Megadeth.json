@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"A571F9AF-5C6C-47D0-B787-35F637ACC8B5",
+"Name":"Megadeth" , "Version":"0.7", "Description":"Symphony of Destruction", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5059,0.4869] },
+  { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.2321,0.5599,0.2525] },
+  { "Name":"EVH",   "IsOn": true,   "Parameters":[0.6442,0.8095,0.7502,0.5027,0.7000] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"83"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"B08F2421-0686-484E-B6EC-8F660A9344FC",
+"Name":"Stone Breaker" , "Version":"0.7", "Description":"Description for Blues Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1059,0.2313] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.3411,0.6658] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.1179,0.3904,0.5836] },
+  { "Name":"TwoStoneSP50",  "IsOn": true,   "Parameters":[0.6346,0.5077,0.6647,0.5196,0.7140] },
+  { "Name":"Tremolator",  "IsOn": false,  "Parameters":[0.3300,0.5000,1.0000] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.3248,0.2048,0.4606,0.3042,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5550,0.8424,0.7839,0.3851,0.6597,0.2941,0.0000] } ],
+"Filler":"59"
+}

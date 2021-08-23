@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"1FA2A47A-6AB5-443E-AF80-EDE873708FA4",
+"Name":"Tremonti Clean" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1201,0.3314,0.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.3335,0.9991] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.5591] },
+  { "Name":"Twin",  "IsOn": true,   "Parameters":[0.6134,0.4403,0.3788,0.4904,0.6288] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.3771,0.2874,0.2161,0.2500] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1560,0.2331,0.4905,0.6068,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3383,0.3293,0.4387,0.6937,0.4882,0.4664,0.3000] } ],
+"Filler":"31"
+}

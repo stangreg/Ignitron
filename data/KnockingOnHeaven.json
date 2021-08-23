@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"DBEE6337-291A-4711-9083-434D4696A7AA",
+"Name":"Knocking On Heaven" , "Version":"0.7", "Description":"", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2984,0.0000,1.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.4863,0.3973,0.4931,0.6441] },
+  { "Name":"Booster",   "IsOn": true,   "Parameters":[0.3235] },
+  { "Name":"SwitchAxeLead",   "IsOn": true,   "Parameters":[0.9055,0.2654,0.2405,0.1657,0.9530] },
+  { "Name":"Flanger",   "IsOn": false,  "Parameters":[0.4939,0.4967,0.5442] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.0337,0.3183,0.2275,0.4353,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5664,0.4769,0.2745,0.2288,0.4697,0.1087,0.7000,1.0000] }  ],
+"Filler":"D4"
+}

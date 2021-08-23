@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"3422C1F1-166E-445A-84DF-2D562DA83F22",
+"Name":"Foo Fighters No way back Dist" , "Version":"0.7", "Description":"", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{ "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1383,0.2246,1.0000] },
+{ "Name":"BlueComp",  "IsOn": false,  "Parameters":[0.2063,0.5867,0.4931,0.6441] },
+{ "Name":"Booster",   "IsOn": false,  "Parameters":[0.3222] },
+{ "Name":"BE101",   "IsOn": true,   "Parameters":[0.1239,0.6675,0.6322,0.2933,0.8182] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,1.0000,0.5962] },
+{ "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2426,0.3929,0.4611,0.3659,0.4882,0.4664,0.3000,1.0000] }  ],
+"Filler":"3E"
+}

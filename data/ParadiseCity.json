@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"A7DD5A94-02AF-4751-84EA-31B8D063FCCC",
+"Name":"paradise city intro slash" , "Version":"0.7", "Description":"paradise city GNFB ", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.6067,0.4236] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.6133,0.5440] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+  { "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.4412,0.5700,0.4573,0.6000,1.0000] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.5000,0.2000,0.7000,0.8000] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"32"
+}
