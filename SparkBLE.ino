@@ -1,5 +1,5 @@
 //#include <splash.h>
-//#include <Arduino.h>
+#include <Arduino.h>
 
 #include <SPI.h>
 #include <Wire.h>
@@ -17,27 +17,14 @@
 const std::string DEVICE_NAME = "SparkBLE";
 const std::string VERSION = "0.5";
 
-
-
+// Control classes
 SparkDataControl *spark_dc;
 SparkButtonHandler *spark_bh;
 SparkLEDControl *spark_led;
 SparkDisplayControl *spark_display;
 
-// CONNECTION / CONTROL variables
-//bool isBTConnected;
+// Check for initial boot
 bool isInitBoot;
-
-
-
-/////////////////////////////////////////////////////////
-//
-// DISPLAY
-//
-/////////////////////////////////////////////////////////
-
-
-
 
 /////////////////////////////////////////////////////////
 //
@@ -51,29 +38,27 @@ void setup() {
 	// Start serial debug console monitoring
 	Serial.begin(115200);
 	while (!Serial);
-	Serial.println("Starting");
 
-	//isBTConnected = false;
-
-	Serial.println("Initializing Data Control");
+	Serial.println("Initializing:");
+	Serial.println(" - Data Control");
 	spark_dc = new SparkDataControl();
 	spark_dc->init();
-	Serial.println("Initializing Button Handler");
+	Serial.println(" - Button Handler");
 	spark_bh = new SparkButtonHandler(spark_dc);
-	Serial.println("Initializing LED Control");
+	Serial.println(" - LED Control");
 	spark_led = new SparkLEDControl(spark_dc);
-	Serial.println("Initializing display");
+	Serial.println(" - Display Control");
 	spark_display = new SparkDisplayControl(spark_dc);
+	Serial.println("Done.");
 
 }
-
 
 
 void loop() {
 
 	while (!spark_dc->checkBLEConnection()){ ;}
-	//After connection is established, continue as planned.
 
+	//After connection is established, continue.
 	if (isInitBoot == true) {
 		Serial.println("Initial boot, setting preset to HW 1");
 		spark_dc->switchPreset(1);
