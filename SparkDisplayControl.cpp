@@ -2,7 +2,7 @@
  * SparkDisplayControl.cpp
  *
  *  Created on: 23.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #include "SparkDisplayControl.h"

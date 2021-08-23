@@ -2,11 +2,10 @@
  * SparkBLEControl.cpp
  *
  *  Created on: 19.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #include "SparkBLEControl.h"
-
 
 ClientCallbacks SparkBLEControl::clientCB;
 
@@ -21,9 +20,10 @@ SparkBLEControl::~SparkBLEControl() {
 	if(advDevice) delete advDevice;
 }
 
+// Initializing BLE connection with NimBLE
 void SparkBLEControl::initBLE() {
 	NimBLEDevice::init("");
-	//NimBLEDevice::setMTU(175);
+
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
 
@@ -137,30 +137,31 @@ bool SparkBLEControl::connectToServer() {
 
 	Serial.print("Connected to: ");
 	Serial.println(pClient->getPeerAddress().toString().c_str());
-	//Serial.print("RSSI: ");
-	//Serial.println(pClient->getRssi());
 	isClientConnected = true;
 	return true;
 }
 
 bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
-	/** Now we can read/write/subscribe the charateristics of the services we are interested in */
+
+	// Subscribe to notifications from Spark
 	NimBLERemoteService *pSvc = nullptr;
 	NimBLERemoteCharacteristic *pChr = nullptr;
 	NimBLERemoteDescriptor *pDsc = nullptr;
 
 	if (pClient) {
 		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
-		if (pSvc) { /** make sure it's not null */
+		if (pSvc) { // make sure it's not null
 			pChr = pSvc->getCharacteristic(SPARK_BLE_NOTIF_CHAR_UUID);
 
-			if (pChr) { /** make sure it's not null */
+			if (pChr) { // make sure it's not null
 				if (pChr->canNotify()) {
 					Serial.printf(
 							"Subscribing to service notifications of %s\n", SPARK_BLE_NOTIF_CHAR_UUID);
 					Serial.println("Notifications turned on");
+					// Descriptor 2902 needs to be activated in order to receive notifications
 					pChr->getDescriptor(BLEUUID((uint16_t) 0x2902))->writeValue(
 							(uint8_t*) notificationOn, 2, true);
+					// Subscribing to Spark characteristic
 					if (!pChr->subscribe(true, notifyCallback)) {
 						Serial.println("Subscribe failed, disconnecting");
 						// Disconnect if subscribe failed
@@ -189,76 +190,66 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 	}
 }
 
-/** Handles the provisioning of clients and connects / interfaces with the server */
+// To send messages to Spark via Bluetooth LE
 bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
-	NimBLERemoteService *pSvc = nullptr;
-	NimBLERemoteCharacteristic *pChr = nullptr;
-	NimBLERemoteDescriptor *pDsc = nullptr;
 
-	//Serial.printf("cmd size: %d\n", cmd.size());
-	//Serial.printf("MTU: %d\n", NimBLEDevice::getMTU());
 	if (pClient && pClient->isConnected()) {
 
-		/** Now we can read/write/subscribe the charateristics of the services we are interested in */
 		NimBLERemoteService *pSvc = nullptr;
 		NimBLERemoteCharacteristic *pChr = nullptr;
 		NimBLERemoteDescriptor *pDsc = nullptr;
 
 		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
-		if (pSvc) { /** make sure it's not null */
+		if (pSvc) {
 			pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
 
-			if (pChr) { /** make sure it's not null */
+			if (pChr) {
 
 				if (pChr->canWrite()) {
 
-					//Serial.printf("Sending request(size %d)\n", cmd.size());
-					//SparkHelper::printDataAsHexString(cmd);
-					//Serial.println();
 					std::vector<ByteVector> packets;
+					// Spark messages are sent in chunks of 173 (0xAD) bytes, so we do the same.
 					int max_send_size = 173;
 					int curr_pos;
 
 					for (auto block : cmd) {
 
-						//Serial.printf("Processing block into sending packets...\n"); // %s\n", SparkHelper::hexStr(block.data(), block.size()).c_str());
+						// This it to split messages into sizes of max. max_send_size.
+						// As we have chosen 173, usually no further splitting is requried.
+						// SparkMessage already creates messages split into 173 byte chunks
 						curr_pos = 0;
 
 						int packetsToSend = (int) ceil(
 								(double) block.size() / max_send_size);
-						//Serial.printf("Packets to send: %d\n", packetsToSend);
 						ByteVector packet;
 						packet.clear();
 
 						auto start = block.begin();
 						auto end = block.end();
 
+						// Splitting the message
 						while (start != end) {
 							auto next =
 									std::distance(start, end) >= max_send_size ?
 											start + max_send_size : end;
 
 							packet.assign(start, next);
-							//Serial.printf("Packet size: %d\n", packet.size());
-
 							packets.push_back(packet);
 							start = next;
 						} // While not at
 					}
 
-					//Serial.println("Packets to be sent:");
-					//SparkHelper::printDataAsHexString(packets);
-					//Serial.println();
-
+					// Send each packet to Spark
 					for (auto packet : packets) {
 						if (pChr->writeValue(packet.data(), packet.size(),
 								response)) {
-							//Serial.println("Packet sent to Spark");
+							// Delay seems to be required in order to not lose any packages.
+							// Seems to be more stable with a short delay
 							delay(10);
-							//Serial.println(pChr->getUUID().toString().c_str());
-						} else {
+						}
+						else {
 							Serial.println("There was an error with writing!");
-							/** Disconnect if write failed */
+							// Disconnect if write failed
 							pClient->disconnect();
 							isClientConnected = false;
 							return false;

@@ -2,7 +2,7 @@
  * SparkDisplayControl.h
  *
  *  Created on: 23.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #ifndef SPARKDISPLAYCONTROL_H_

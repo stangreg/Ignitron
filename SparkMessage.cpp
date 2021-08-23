@@ -1,4 +1,4 @@
-#include "SparkMessage.hh"
+#include "SparkMessage.h"
 
 
 SparkMessage::SparkMessage(){

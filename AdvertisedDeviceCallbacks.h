@@ -2,7 +2,7 @@
  * AdvertisedDeviceCallbacks.h
  *
  *  Created on: 19.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #ifndef ADVERTISEDDEVICECALLBACKS_H_

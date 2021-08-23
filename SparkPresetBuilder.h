@@ -13,11 +13,9 @@
 
 
 #include "SparkTypes.h"
-#include "SparkHelper.hh"
-//#include "SparkPresets.hh"
-
 #include <FS.h>
 #include <Effortless_SPIFFS.h>
+#include "SparkHelper.h"
 
 #define PRESETS_PER_BANK 4
 

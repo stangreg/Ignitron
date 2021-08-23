@@ -2,7 +2,7 @@
  * SparkDataControl.h
  *
  *  Created on: 19.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #ifndef SPARKDATACONTROL_H_
@@ -11,11 +11,11 @@
 #include <vector>
 #include <Arduino.h>
 
-#include "SparkStreamReader.hh"
 #include "SparkBLEControl.h"
-#include "SparkMessage.hh"
+#include "SparkMessage.h"
+#include "SparkPresetBuilder.h"
+#include "SparkStreamReader.h"
 #include "SparkTypes.h"
-#include "SparkPresetBuilder.hh"
 
 #define SWITCH_MODE_FX 1
 #define SWITCH_MODE_CHANNEL 2
@@ -38,7 +38,7 @@ public:
 	bool isActivePresetUpdated();
 	bool isPresetNumberUpdated();
 	void getCurrentPresetFromSpark();
-	void readPendingPreset(int bnk);
+	void updatePendingPreset(int bnk);
 	void readPendingBank();
 	void switchPreset(int pre);
 	void switchEffectOnOff(std::string fx_name, bool enable);

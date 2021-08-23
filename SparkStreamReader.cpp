@@ -1,4 +1,4 @@
-#include "SparkStreamReader.hh"
+#include "SparkStreamReader.h"
 
 
 SparkStreamReader::SparkStreamReader(){

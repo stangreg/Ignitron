@@ -2,7 +2,7 @@
  * SparkDataControl.cpp
  *
  *  Created on: 19.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #include "SparkDataControl.h"
@@ -28,10 +28,10 @@ SparkDataControl::~SparkDataControl() {
 }
 
 void SparkDataControl::init(){
-	Serial.println("Initializing DataControl");
+	//Serial.println("Initializing DataControl");
 	//presetBuilder->initializePresetBanks();
 	presetBuilder.initializePresetListFromFS();
-	Serial.println("Done initializing preset banks");
+	//Serial.println("Done initializing preset banks");
 	bleControl.initBLE();
 	//presetBanks = presetBuilder->getPresetBanks();
 	//Serial.printf("DataControl preset banks size is %d\n", presetBanks->size());
@@ -39,13 +39,13 @@ void SparkDataControl::init(){
 
 void SparkDataControl::checkForUpdates(){
 	if(isActivePresetUpdated()){
-		Serial.println("Preset updated!");
+		//Serial.println("Preset updated!");
 		pendingPreset_ = activePreset_;
 		//Serial.println("Active preset:"),
 		//Serial.println(activePreset.getJson().c_str());
 	}
 	if(isPresetNumberUpdated()){
-		Serial.println("Preset number updated!");
+		//Serial.println("Preset number updated!");
 		activeBank_ = 0;
 		pendingBank_ = 0;
 		pendingPreset_ = activePreset_;
@@ -127,7 +127,7 @@ void SparkDataControl::getCurrentPresetFromSpark() {
 	bleControl.writeBLE(current_msg);
 }
 
-void SparkDataControl::readPendingPreset(int bnk){
+void SparkDataControl::updatePendingPreset(int bnk){
 	pendingPreset_ = getPreset(bnk, activePresetNum_);
 }
 

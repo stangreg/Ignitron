@@ -6,8 +6,8 @@
 #include <iomanip>
 #include <sstream>
 #include <Arduino.h>
+#include "SparkHelper.h"
 
-#include "SparkHelper.hh"
 #include "SparkTypes.h"
 
 using ByteVector = std::vector<byte>;

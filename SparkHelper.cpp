@@ -1,4 +1,4 @@
-#include "SparkHelper.hh"
+#include "SparkHelper.h"
 
 using ByteVector = std::vector<byte>;
 

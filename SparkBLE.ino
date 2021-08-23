@@ -1,6 +1,4 @@
-//#include <splash.h>
 #include <Arduino.h>
-
 #include <SPI.h>
 #include <Wire.h>
 #include <Regexp.h>
@@ -35,10 +33,10 @@ bool isInitBoot;
 void setup() {
 	isInitBoot = true;
 
-	// Start serial debug console monitoring
 	Serial.begin(115200);
 	while (!Serial);
 
+	// Initializing control classes
 	Serial.println("Initializing:");
 	Serial.println(" - Data Control");
 	spark_dc = new SparkDataControl();
@@ -59,15 +57,20 @@ void loop() {
 	while (!spark_dc->checkBLEConnection()){ ;}
 
 	//After connection is established, continue.
+	// On first boot, set the preset to Hardware setting 1.
 	if (isInitBoot == true) {
-		Serial.println("Initial boot, setting preset to HW 1");
+		//Serial.println("Initial boot, setting preset to HW 1");
 		spark_dc->switchPreset(1);
 		isInitBoot = false;
 	}
 
+	// Reading button input
 	spark_bh->readButtons();
+	// Check if presets have been updated
 	spark_dc->checkForUpdates();
+	// Update LED status
 	spark_led->updateLEDs();
+	// Update display
 	spark_display->update();
 
 }

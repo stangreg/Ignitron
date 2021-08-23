@@ -7,11 +7,9 @@
 #include <sstream>
 #include <tuple>
 
-#include "SparkHelper.hh"
+#include "SparkHelper.h"
 #include "SparkTypes.h"
 
-#//include <SPI.h>
-#//include <Arduino.h>
 
 using ByteVector = std::vector<byte>;
 

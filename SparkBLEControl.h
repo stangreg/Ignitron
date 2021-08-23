@@ -2,15 +2,11 @@
  * SparkBLEControl.h
  *
  *  Created on: 19.08.2021
- *      Author: steffen
+ *      Author: stangreg
  */
 
 #ifndef SPARKBLECONTROL_H_
 #define SPARKBLECONTROL_H_
-
-#define SPARK_BLE_SERVICE_UUID "FFC0"
-#define SPARK_BLE_WRITE_CHAR_UUID "FFC1"
-#define SPARK_BLE_NOTIF_CHAR_UUID "FFC2"
 
 #include <NimBLEDevice.h>
 #include <Arduino.h>
@@ -18,8 +14,14 @@
 
 #include "AdvertisedDeviceCallbacks.h"
 
+// Service and characteristics UUIDs of Spark Amp
+#define SPARK_BLE_SERVICE_UUID "FFC0"
+#define SPARK_BLE_WRITE_CHAR_UUID "FFC1"
+#define SPARK_BLE_NOTIF_CHAR_UUID "FFC2"
+
 using ByteVector = std::vector<byte>;
 
+// Forward declaration of Callbacks classes
 class ClientCallbacks: public NimBLEClientCallbacks {};
 class AdvertisedDeviceCallbacks;
 
