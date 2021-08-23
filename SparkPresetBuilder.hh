@@ -25,24 +25,24 @@ using ByteVector = std::vector<byte>;
 
 class SparkPresetBuilder{
 
-  private:
-    //SparkPresets presets;
+private:
+	//SparkPresets presets;
 	//std::vector<std::vector<preset>> presetBanks;
-    std::vector<std::vector<std::string>> presetBanksNames;
+	std::vector<std::vector<std::string>> presetBanksNames;
 	std::vector<char*> allPresetsJSON;
 
 	//preset getPresetFromJson(std::string json);
 	preset getPresetFromJson(char* json);
 
 
-  public:
-    SparkPresetBuilder();
-    //std::string getJsonFromPreset(preset pset);
-    //void initializePresetBanks();
-    void initializePresetListFromFS();
-    //std::vector<std::vector<preset>>* getPresetBanks();
-    preset getPreset(int preset, int bank);
-    int getNumberOfBanks();
+public:
+	SparkPresetBuilder();
+	//std::string getJsonFromPreset(preset pset);
+	//void initializePresetBanks();
+	void initializePresetListFromFS();
+	//std::vector<std::vector<preset>>* getPresetBanks();
+	preset getPreset(int preset, int bank);
+	int getNumberOfBanks();
 };
 
 #endif

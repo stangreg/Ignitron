@@ -17,6 +17,8 @@
 #include "SparkTypes.h"
 #include "SparkPresetBuilder.hh"
 
+#define SWITCH_MODE_FX 1
+#define SWITCH_MODE_CHANNEL 2
 
 using ByteVector = std::vector<byte>;
 
@@ -26,23 +28,38 @@ public:
 	SparkDataControl();
 	virtual ~SparkDataControl();
 
+	void init();
 	bool checkBLEConnection();
 
 	static void notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
 			size_t length, bool isNotify);
 
-	void init();
-	preset getActivePreset();
-	int getActiveBank();
+	void checkForUpdates();
 	bool isActivePresetUpdated();
 	bool isPresetNumberUpdated();
 	void getCurrentPresetFromSpark();
-	void switchPreset(int bnk, int pre);
+	void readPendingPreset(int bnk);
+	void readPendingBank();
+	void switchPreset(int pre);
 	void switchEffectOnOff(std::string fx_name, bool enable);
 	bool isBLEConnected();
 	//std::vector<std::vector<preset>>* getPresetBanks();
 	preset getPreset(int bank, int pre);
 	int getNumberOfBanks();
+
+	preset* activePreset() const {return &activePreset_;}
+	preset* pendingPreset() const	{return &pendingPreset_;}
+	const int& activePresetNum() const {return activePresetNum_;}
+	int& activePresetNum() {return activePresetNum_;}
+
+	const int& activeBank() const {return activeBank_;}
+	const int& pendingBank() const {return pendingBank_;}
+	int& pendingBank() {return pendingBank_;}
+	const int numberOfBanks() const {return presetBuilder.getNumberOfBanks();}
+
+
+	const int& buttonMode() const {return buttonMode_;}
+	int& buttonMode() {return buttonMode_;}
 
 private:
 	static SparkBLEControl bleControl;
@@ -53,11 +70,16 @@ private:
 	bool startup = true;
 	static bool isActivePresetUpdatedByAck;
 
+	//Button data
+	int buttonMode_ = SWITCH_MODE_CHANNEL;
+
 	//PRESET variables
-	static preset activePreset;
-	static preset pendingPreset;
+	static preset activePreset_;
+	static preset pendingPreset_;
 	//std::vector<std::vector<preset>> *presetBanks;
-	static int activeBank;
+	static int activeBank_;
+	static int pendingBank_;
+	int activePresetNum_ = 1;
 	int selectedPresetNum = 1;
 
 	//ByteVector current_msg;

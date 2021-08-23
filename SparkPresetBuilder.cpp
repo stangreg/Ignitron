@@ -6,108 +6,108 @@ SparkPresetBuilder::SparkPresetBuilder() {
 
 
 preset SparkPresetBuilder::getPresetFromJson(char* json) {
-  
-  preset resultPreset;
-  JSONVar jsonPreset = JSON.parse(json);
 
-  // JSON.typeof(jsonVar) can be used to get the type of the variable
-  if (JSON.typeof(jsonPreset) == "undefined") {
-    Serial.println("Parsing input failed!");
-    return resultPreset;
-  }
+	preset resultPreset;
+	JSONVar jsonPreset = JSON.parse(json);
 
-  /*Serial.print("JSON.typeof(myObject) = ");
+	// JSON.typeof(jsonVar) can be used to get the type of the variable
+	if (JSON.typeof(jsonPreset) == "undefined") {
+		Serial.println("Parsing input failed!");
+		return resultPreset;
+	}
+
+	/*Serial.print("JSON.typeof(myObject) = ");
     Serial.println(JSON.typeof(jsonObject)); // prints: object
-  */
+	 */
 
-  // TODO: Think if we need the number to display.
-  resultPreset.presetNumber = 0;
-  // myObject.hasOwnProperty(key) checks if the object contains an entry for key
-  // preset UUID
-  if (jsonPreset.hasOwnProperty("UUID")) {
-    std::string presetUUID = (std::string) jsonPreset["UUID"];
-    resultPreset.uuid = presetUUID;
-    //Serial.print("jsonPreset[\"UUID\"] = ");
-    //Serial.println(presetUUID.c_str());
-  }
+	// TODO: Think if we need the number to display.
+	resultPreset.presetNumber = 0;
+	// myObject.hasOwnProperty(key) checks if the object contains an entry for key
+	// preset UUID
+	if (jsonPreset.hasOwnProperty("UUID")) {
+		std::string presetUUID = (std::string) jsonPreset["UUID"];
+		resultPreset.uuid = presetUUID;
+		//Serial.print("jsonPreset[\"UUID\"] = ");
+		//Serial.println(presetUUID.c_str());
+	}
 
-  // preset NAME
-  if (jsonPreset.hasOwnProperty("Name")) {
-    std::string presetName = (std::string) jsonPreset["Name"];
-    resultPreset.name = presetName;
-    //Serial.print("jsonPreset[\"Name\"] = ");
-    //Serial.println(presetName.c_str());
-  }
+	// preset NAME
+	if (jsonPreset.hasOwnProperty("Name")) {
+		std::string presetName = (std::string) jsonPreset["Name"];
+		resultPreset.name = presetName;
+		//Serial.print("jsonPreset[\"Name\"] = ");
+		//Serial.println(presetName.c_str());
+	}
 
-  // preset VERSION
-  if (jsonPreset.hasOwnProperty("Version")) {
-    std::string presetVersion = (std::string) jsonPreset["Version"];
-    resultPreset.version = presetVersion;
-    //Serial.print("jsonPreset[\"Version\"] = ");
-    //Serial.println(presetVersion.c_str());
-  }
+	// preset VERSION
+	if (jsonPreset.hasOwnProperty("Version")) {
+		std::string presetVersion = (std::string) jsonPreset["Version"];
+		resultPreset.version = presetVersion;
+		//Serial.print("jsonPreset[\"Version\"] = ");
+		//Serial.println(presetVersion.c_str());
+	}
 
-  // preset Description
-  if (jsonPreset.hasOwnProperty("Description")) {
-    std::string presetDescription = (std::string) jsonPreset["Description"];
-    resultPreset.description = presetDescription;
-    //Serial.print("jsonPreset[\"Description\"] = ");
-    //Serial.println(presetDescription.c_str());
-  }
+	// preset Description
+	if (jsonPreset.hasOwnProperty("Description")) {
+		std::string presetDescription = (std::string) jsonPreset["Description"];
+		resultPreset.description = presetDescription;
+		//Serial.print("jsonPreset[\"Description\"] = ");
+		//Serial.println(presetDescription.c_str());
+	}
 
-  // preset Icon
-  if (jsonPreset.hasOwnProperty("Icon")) {
-    std::string presetIcon = (std::string) jsonPreset["Icon"];
-    resultPreset.icon = presetIcon;
-    //Serial.print("jsonPreset[\"Icon\"] = ");
-    //Serial.println(presetIcon.c_str());
-  }
+	// preset Icon
+	if (jsonPreset.hasOwnProperty("Icon")) {
+		std::string presetIcon = (std::string) jsonPreset["Icon"];
+		resultPreset.icon = presetIcon;
+		//Serial.print("jsonPreset[\"Icon\"] = ");
+		//Serial.println(presetIcon.c_str());
+	}
 
-  // preset BPM
-  if (jsonPreset.hasOwnProperty("BPM")) {
-    float presetBpm = (float)((double) jsonPreset["BPM"]);
-    resultPreset.bpm = presetBpm;
-    //Serial.print("jsonPreset[\"BPM\"] = ");
-    //Serial.println(presetBpm);
-  }
+	// preset BPM
+	if (jsonPreset.hasOwnProperty("BPM")) {
+		float presetBpm = (float)((double) jsonPreset["BPM"]);
+		resultPreset.bpm = presetBpm;
+		//Serial.print("jsonPreset[\"BPM\"] = ");
+		//Serial.println(presetBpm);
+	}
 
-  if (jsonPreset.hasOwnProperty("Pedals")) {
-    JSONVar pedalArray = jsonPreset["Pedals"];
-    for ( int i = 0; i < pedalArray.length(); i++) {
-      pedal currentPedal;
-      currentPedal.name = (std::string) pedalArray[i]["Name"];
-      currentPedal.isOn = (boolean) pedalArray[i]["IsOn"];
-      if (pedalArray[i].hasOwnProperty("Parameters")) {
-        JSONVar currentPedalParams = pedalArray[i]["Parameters"];
-        for (int j = 0; j < currentPedalParams.length(); j++) {
-          parameter currentParam;
-          currentParam.number = j;
-          currentParam.special = 0x91;
-          currentParam.value = (float)((double)currentPedalParams[j]);
-          currentPedal.parameters.push_back(currentParam);
-        }
-        resultPreset.pedals.push_back(currentPedal);
-      }
-      else{
-        Serial.println("ERROR: Pedal has no paramters!");
-      }
-    }
-  }
-  else{
-    Serial.println("ERROR: No pedals found in file");
-  }
+	if (jsonPreset.hasOwnProperty("Pedals")) {
+		JSONVar pedalArray = jsonPreset["Pedals"];
+		for ( int i = 0; i < pedalArray.length(); i++) {
+			pedal currentPedal;
+			currentPedal.name = (std::string) pedalArray[i]["Name"];
+			currentPedal.isOn = (boolean) pedalArray[i]["IsOn"];
+			if (pedalArray[i].hasOwnProperty("Parameters")) {
+				JSONVar currentPedalParams = pedalArray[i]["Parameters"];
+				for (int j = 0; j < currentPedalParams.length(); j++) {
+					parameter currentParam;
+					currentParam.number = j;
+					currentParam.special = 0x91;
+					currentParam.value = (float)((double)currentPedalParams[j]);
+					currentPedal.parameters.push_back(currentParam);
+				}
+				resultPreset.pedals.push_back(currentPedal);
+			}
+			else{
+				Serial.println("ERROR: Pedal has no paramters!");
+			}
+		}
+	}
+	else{
+		Serial.println("ERROR: No pedals found in file");
+	}
 
-  // preset Filler
-  if (jsonPreset.hasOwnProperty("Filler")) {
-    std::string presetFillerString = (std::string) jsonPreset["Filler"];
-    byte presetFiller = SparkHelper::HexToByte(presetFillerString);
-    resultPreset.filler = presetFiller;
-    //Serial.print("jsonPreset[\"Filler\"] = ");
-    //Serial.println(presetFiller);
-  }
-  resultPreset.isEmpty=false;
-  //Serial.println(resultPreset.getPython().c_str());
-  return resultPreset;
+	// preset Filler
+	if (jsonPreset.hasOwnProperty("Filler")) {
+		std::string presetFillerString = (std::string) jsonPreset["Filler"];
+		byte presetFiller = SparkHelper::HexToByte(presetFillerString);
+		resultPreset.filler = presetFiller;
+		//Serial.print("jsonPreset[\"Filler\"] = ");
+		//Serial.println(presetFiller);
+	}
+	resultPreset.isEmpty=false;
+	//Serial.println(resultPreset.getPython().c_str());
+	return resultPreset;
 
 }
 //std::string SparkPresetBuilder::getJsonFromPreset(preset pset){};
@@ -116,7 +116,7 @@ std::vector<std::vector<preset>>* SparkPresetBuilder::getPresetBanks(){
 	Serial.printf("Returning presetBanks of size %d\n", presetBanks.size());
 	return &presetBanks;
 }
-*/
+ */
 void SparkPresetBuilder::initializePresetListFromFS(){
 	eSPIFFS fileSystem;
 	presetBanksNames.clear();

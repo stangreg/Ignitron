@@ -150,14 +150,14 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 	NimBLERemoteDescriptor *pDsc = nullptr;
 
 	if (pClient) {
-		pSvc = pClient->getService("ffc0");
+		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) { /** make sure it's not null */
-			pChr = pSvc->getCharacteristic("ffc2");
+			pChr = pSvc->getCharacteristic(SPARK_BLE_NOTIF_CHAR_UUID);
 
 			if (pChr) { /** make sure it's not null */
 				if (pChr->canNotify()) {
-					Serial.println(
-							"Subscribing to service notifications of ffc2");
+					Serial.printf(
+							"Subscribing to service notifications of %s\n", SPARK_BLE_NOTIF_CHAR_UUID);
 					Serial.println("Notifications turned on");
 					pChr->getDescriptor(BLEUUID((uint16_t) 0x2902))->writeValue(
 							(uint8_t*) notificationOn, 2, true);
@@ -170,15 +170,15 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 				}
 
 			} else {
-				Serial.println("ffc2 characteristic not found.");
+				Serial.printf("%s characteristic not found.\n", SPARK_BLE_NOTIF_CHAR_UUID);
 				return false;
 			}
 
-			Serial.println("Done with this device!");
+			Serial.println("Done with this device.");
 			return true;
 		} // pSrv
 		else {
-			Serial.println("Service not found");
+			Serial.printf("Service %s not found.\n", SPARK_BLE_SERVICE_UUID);
 			return false;
 		}
 	} // pClient
@@ -204,9 +204,9 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 		NimBLERemoteCharacteristic *pChr = nullptr;
 		NimBLERemoteDescriptor *pDsc = nullptr;
 
-		pSvc = pClient->getService("ffc0");
+		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) { /** make sure it's not null */
-			pChr = pSvc->getCharacteristic("ffc1");
+			pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
 
 			if (pChr) { /** make sure it's not null */
 
@@ -268,11 +268,11 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 				}  // if can write
 			} // if pChr
 			else {
-				Serial.println("Characteristic ffc1 not found");
+				Serial.printf("Characteristic %s not found.\n", SPARK_BLE_WRITE_CHAR_UUID);
 			}
 		} // if pSvc
 		else {
-			Serial.println("ffc0 service not found.");
+			Serial.printf("%s service not found.\n", SPARK_BLE_SERVICE_UUID);
 		}
 		//Serial.println("Done with this command!");
 		return true;
