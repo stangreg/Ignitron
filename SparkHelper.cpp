@@ -2,6 +2,7 @@
 
 using ByteVector = std::vector<byte>;
 
+/*
 ByteVector SparkHelper::HexToBytes(const std::string& hex) {
 	ByteVector bytes;
 
@@ -12,8 +13,9 @@ ByteVector SparkHelper::HexToBytes(const std::string& hex) {
 	}
 
 	return bytes;
-}
+}*/
 
+/*
 std::string SparkHelper::hexStr(byte *data, int len){
 	std::stringstream ss;
 	ss << std::hex;
@@ -23,6 +25,7 @@ std::string SparkHelper::hexStr(byte *data, int len){
 
 	return ss.str();
 }
+*/
 
 byte SparkHelper::HexToByte(const std::string& hex) {
 	byte ret_byte;
@@ -62,7 +65,7 @@ void SparkHelper::printByteVector(ByteVector vec){
 		Serial.print(SparkHelper::intToHex(by).c_str());
 	}
 }
-
+/*
 ByteVector SparkHelper::bytes(int value){
 
 	ByteVector value_bytes;
@@ -76,13 +79,11 @@ ByteVector SparkHelper::bytes(int value){
 	}
 
 	return value_bytes;
-	/*
     Serial.print("Converted ");
     Serial.print(value);
     Serial.print(" to ");
     printByteVector(value_bytes);
     Serial.println();
     return value_bytes;
-	 */
-}
+}*/
 

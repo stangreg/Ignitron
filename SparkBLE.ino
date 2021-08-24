@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Regexp.h>
 #include <string>
 #include <NimBLEDevice.h> // github NimBLE
 

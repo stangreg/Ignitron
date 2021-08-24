@@ -54,7 +54,7 @@ preset SparkPresetBuilder::getPresetFromJson(char* json) {
 		float presetBpm = (float)((double) jsonPreset["BPM"]);
 		resultPreset.bpm = presetBpm;
 	}
-
+	// all pedals
 	if (jsonPreset.hasOwnProperty("Pedals")) {
 		JSONVar pedalArray = jsonPreset["Pedals"];
 		for ( int i = 0; i < pedalArray.length(); i++) {

@@ -23,10 +23,10 @@ SparkLEDControl::~SparkLEDControl() {
 }
 
 void SparkLEDControl::init(){
-	pinMode(LED_CHANNEL1_GPIO, OUTPUT);
-	pinMode(LED_CHANNEL2_GPIO, OUTPUT);
-	pinMode(LED_CHANNEL3_GPIO, OUTPUT);
-	pinMode(LED_CHANNEL4_GPIO, OUTPUT);
+	pinMode(LED_PRESET1_GPIO, OUTPUT);
+	pinMode(LED_PRESET2_GPIO, OUTPUT);
+	pinMode(LED_PRESET3_GPIO, OUTPUT);
+	pinMode(LED_PRESET4_GPIO, OUTPUT);
 	pinMode(LED_BANK_DOWN_GPIO, OUTPUT);
 	pinMode(LED_BANK_UP_GPIO, OUTPUT);
 
@@ -38,41 +38,44 @@ void SparkLEDControl::updateLEDs() {
 	int activePresetNum = spark_dc->activePresetNum();
 	int buttonMode = spark_dc->buttonMode();
 
-	if (buttonMode == SWITCH_MODE_CHANNEL) {
+	// Show only active preset LED
+	if (buttonMode == SWITCH_MODE_PRESET) {
 		switch (activePresetNum) {
 		case 1:
-			digitalWrite(LED_CHANNEL1_GPIO, HIGH);
-			digitalWrite(LED_CHANNEL2_GPIO, LOW);
-			digitalWrite(LED_CHANNEL3_GPIO, LOW);
-			digitalWrite(LED_CHANNEL4_GPIO, LOW);
+			digitalWrite(LED_PRESET1_GPIO, HIGH);
+			digitalWrite(LED_PRESET2_GPIO, LOW);
+			digitalWrite(LED_PRESET3_GPIO, LOW);
+			digitalWrite(LED_PRESET4_GPIO, LOW);
 			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 			digitalWrite(LED_BANK_UP_GPIO, LOW);
 			break;
 		case 2:
-			digitalWrite(LED_CHANNEL1_GPIO, LOW);
-			digitalWrite(LED_CHANNEL2_GPIO, HIGH);
-			digitalWrite(LED_CHANNEL3_GPIO, LOW);
-			digitalWrite(LED_CHANNEL4_GPIO, LOW);
+			digitalWrite(LED_PRESET1_GPIO, LOW);
+			digitalWrite(LED_PRESET2_GPIO, HIGH);
+			digitalWrite(LED_PRESET3_GPIO, LOW);
+			digitalWrite(LED_PRESET4_GPIO, LOW);
 			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 			digitalWrite(LED_BANK_UP_GPIO, LOW);
 			break;
 		case 3:
-			digitalWrite(LED_CHANNEL1_GPIO, LOW);
-			digitalWrite(LED_CHANNEL2_GPIO, LOW);
-			digitalWrite(LED_CHANNEL3_GPIO, HIGH);
-			digitalWrite(LED_CHANNEL4_GPIO, LOW);
+			digitalWrite(LED_PRESET1_GPIO, LOW);
+			digitalWrite(LED_PRESET2_GPIO, LOW);
+			digitalWrite(LED_PRESET3_GPIO, HIGH);
+			digitalWrite(LED_PRESET4_GPIO, LOW);
 			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 			digitalWrite(LED_BANK_UP_GPIO, LOW);
 			break;
 		case 4:
-			digitalWrite(LED_CHANNEL1_GPIO, LOW);
-			digitalWrite(LED_CHANNEL2_GPIO, LOW);
-			digitalWrite(LED_CHANNEL3_GPIO, LOW);
-			digitalWrite(LED_CHANNEL4_GPIO, HIGH);
+			digitalWrite(LED_PRESET1_GPIO, LOW);
+			digitalWrite(LED_PRESET2_GPIO, LOW);
+			digitalWrite(LED_PRESET3_GPIO, LOW);
+			digitalWrite(LED_PRESET4_GPIO, HIGH);
 			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 			digitalWrite(LED_BANK_UP_GPIO, LOW);
 			break;
 		}
+
+		// For each effect, show which effect is active
 	} else if (buttonMode == SWITCH_MODE_FX) {
 		if (!activePreset->isEmpty) {
 

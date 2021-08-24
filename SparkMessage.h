@@ -33,16 +33,15 @@ private:
 
 	void add_string(std::string pack_str);
 	void add_long_string(std::string pack_str);
+	void add_prefixed_string(std::string pack_str);
+	void add_float (float flt);
 	void add_onoff (boolean onoff);
 
 public:
-	// ONLY TEMPORARY FOR TESTING
-	void add_prefixed_string(std::string pack_str);
-	void add_float (float flt);
-
 
 	SparkMessage();
 
+	// Command messages to send to Spark
 	std::vector<ByteVector> change_effect_parameter (std::string pedal, int param, float val);
 	std::vector<ByteVector> change_effect (std::string pedal1, std::string pedal2);
 	std::vector<ByteVector> change_hardware_preset (int preset_num);
@@ -51,7 +50,6 @@ public:
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
-
 
 };
 

@@ -10,13 +10,13 @@
 ClientCallbacks SparkBLEControl::clientCB;
 
 SparkBLEControl::SparkBLEControl() {
-	advDevCB = new AdvertisedDeviceCallbacks();
+	//advDevCB = new AdvertisedDeviceCallbacks();
 	advDevice = new NimBLEAdvertisedDevice();
 
 }
 
 SparkBLEControl::~SparkBLEControl() {
-	if(advDevCB) delete advDevCB;
+	//if(advDevCB) delete advDevCB;
 	if(advDevice) delete advDevice;
 }
 
@@ -31,8 +31,8 @@ void SparkBLEControl::initBLE() {
 	NimBLEScan *pScan = NimBLEDevice::getScan();
 
 	/** create a callback that gets called when advertisers are found */
-	advDevCB->setBLEControl(this);
-	pScan->setAdvertisedDeviceCallbacks(advDevCB,false);
+	//advDevCB->setBLEControl(this);
+	pScan->setAdvertisedDeviceCallbacks(this,false);
 
 	/** Set scan interval (how often) and window (how long) in milliseconds */
 	pScan->setInterval(45);
@@ -57,18 +57,10 @@ void SparkBLEControl::scanEndedCB(NimBLEScanResults results){
 	Serial.println("Scan ended.");
 }
 
-void SparkBLEControl::setConnectionFound(bool _connect){
-	connection_found = _connect;
-}
-
 void SparkBLEControl::initScan(){
 	NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
 	Serial.println("Scan initiated");
 }
-
-bool SparkBLEControl::connectionFound(){ return connection_found; }
-
-bool SparkBLEControl::isConnected(){ return isClientConnected;}
 
 bool SparkBLEControl::connectToServer() {
 
@@ -82,7 +74,7 @@ bool SparkBLEControl::connectToServer() {
 		if (pClient) {
 			if (!pClient->connect(advDevice, false)) {
 				Serial.println("Reconnect failed");
-				isClientConnected = false;
+				isConnected_ = false;
 				return false;
 			}
 			Serial.println("Reconnected client");
@@ -100,7 +92,7 @@ bool SparkBLEControl::connectToServer() {
 		if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
 			Serial.println(
 					"Max clients reached - no more connections available");
-			isClientConnected = false;
+			isConnected_ = false;
 			return false;
 		}
 
@@ -122,7 +114,7 @@ bool SparkBLEControl::connectToServer() {
 			/** Created a client but failed to connect, don't need to keep it as it has no data */
 			NimBLEDevice::deleteClient(pClient);
 			Serial.println("Failed to connect, deleted client");
-			isClientConnected = false;
+			isConnected_ = false;
 			return false;
 		}
 	}
@@ -130,14 +122,14 @@ bool SparkBLEControl::connectToServer() {
 	if (!pClient->isConnected()) {
 		if (!pClient->connect(advDevice)) {
 			Serial.println("Failed to connect");
-			isClientConnected = false;
+			isConnected_ = false;
 			return false;
 		}
 	}
 
 	Serial.print("Connected to: ");
 	Serial.println(pClient->getPeerAddress().toString().c_str());
-	isClientConnected = true;
+	isConnected_ = true;
 	return true;
 }
 
@@ -185,7 +177,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 	} // pClient
 	else {
 		Serial.print("Client not found! Need reconnection");
-		isClientConnected = false;
+		isConnected_ = false;
 		return false;
 	}
 }
@@ -251,7 +243,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed
 							pClient->disconnect();
-							isClientConnected = false;
+							isConnected_ = false;
 							return false;
 						}
 					} //For each packet
@@ -269,7 +261,20 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 		return true;
 	} else {
 		Serial.println("Client seems to be disconnected");
-		isClientConnected = false;
+		isConnected_ = false;
 		return false;
+	}
+}
+
+void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
+
+	if (advertisedDevice->isAdvertisingService(NimBLEUUID(SPARK_BLE_SERVICE_UUID))) {
+		Serial.println("Found Spark, connecting.");
+		/** stop scan before connecting */
+		NimBLEDevice::getScan()->stop();
+		/** Save the device reference in a global for the client to use*/
+		setAdvertisedDevice(advertisedDevice);
+		/** Ready to connect now */
+		isConnectionFound_ = true;
 	}
 }

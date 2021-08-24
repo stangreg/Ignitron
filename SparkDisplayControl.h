@@ -14,16 +14,14 @@
 #include "SparkDataControl.h"
 
 // OLED Screen config
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH 128 // Display width
+#define SCREEN_HEIGHT 64 // Display height
+#define OLED_RESET    -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define DISPLAY_MIN_X_FACTOR -12 // for text size 2, scales linearly with text size
 
+// Splash logo measurements
 #define imageWidth 128
 #define imageHeight 47
-
-
 
 
 class SparkDisplayControl {
@@ -40,11 +38,12 @@ private:
 	//DISPLAY variables
 	int display_x = 0;
 	int display_minX = DISPLAY_MIN_X_FACTOR * 10;
-	int display_scroll_num = -1; // scroll speed, make more positive to speed up the scroll
+	int display_scroll_num = -1; // scroll speed, make more negative to speed up the scroll
 
 	SparkDataControl* dataControl() {return spark_dc;}
 	void init();
 
+	// TODO This is the Sweaty X logo, should be exchanged to something different before publishing
 	const unsigned char sweaty_logo_bmp [752] PROGMEM=
 	{
 			 0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff

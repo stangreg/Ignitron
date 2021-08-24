@@ -16,15 +16,21 @@ private:
 
 
 public:
-	static ByteVector HexToBytes(const std::string& hex);
+	// Convert a string to a ByteVector
+	//static ByteVector HexToBytes(const std::string& hex);
+	// Convert a string hex item to a byte
 	static byte HexToByte(const std::string& hex);
 
-	//static ByteVector HexToBytes(const ByteVector hex);
-	static std::string hexStr(byte *data, int len);
+	// Convert a byte array to a string
+	//static std::string hexStr(byte *data, int len);
+	// convert a byte to a string hex representation
 	static std::string intToHex(byte by);
+	// print a vector of byte vectors;
 	static void printDataAsHexString(std::vector<ByteVector>data);
+	// Print a byte vector
 	static void printByteVector(ByteVector vec);
-	static ByteVector bytes(int value);
+	// get a byteVector from int value
+	//static ByteVector bytes(int value);
 };
 
 #endif

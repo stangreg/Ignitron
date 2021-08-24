@@ -13,28 +13,13 @@ void SparkStreamReader::setMessage(std::vector<ByteVector> msg){
 	message.clear();
 }
 
-preset SparkStreamReader::getCurrentSetting(){
-	return currentSetting;
-}
-
-int SparkStreamReader::getCurrentPresetNumber(){
-	return currentPresetNumber;
-}
-
-boolean SparkStreamReader::isPresetUpdated(){
-	return presetUpdated;
-}
-
-boolean SparkStreamReader::isPresetNumberUpdated(){
-	return presetNumberUpdated;
-}
 
 void SparkStreamReader::resetPresetNumberUpdateFlag(){
-	presetNumberUpdated = false;
+	isPresetNumberUpdated_ = false;
 }
 
 void SparkStreamReader::resetPresetUpdateFlag(){
-	presetUpdated = false;
+	isPresetUpdated_ = false;
 }
 
 
@@ -219,8 +204,8 @@ void SparkStreamReader::read_hardware_preset() {
 	end_str();
 	Serial.print("Preset number received: ");
 	Serial.println(preset_num);
-	currentPresetNumber = preset_num;
-	presetNumberUpdated = true;
+	currentPresetNumber_ = preset_num;
+	isPresetNumberUpdated_ = true;
 
 }
 
@@ -246,38 +231,38 @@ void SparkStreamReader::read_preset() {
 	read_byte();
 
 	byte preset = read_byte();
-	currentSetting.presetNumber = preset;
+	currentSetting_.presetNumber = preset;
 	add_int ("PresetNumber", preset);
 
 	std::string uuid = read_string();
-	currentSetting.uuid = uuid;
+	currentSetting_.uuid = uuid;
 	add_str("UUID", uuid);
 
 	std::string name = read_string();
 	//Serial.printf("Read name: %s\n", name.c_str());
-	currentSetting.name = name;
+	currentSetting_.name = name;
 	add_str("Name", name);
 
 	std::string version = read_string();
-	currentSetting.version = version;
+	currentSetting_.version = version;
 	add_str("Version", version);
 
 	std::string descr = read_string();
-	currentSetting.description = descr;
+	currentSetting_.description = descr;
 	add_str("Description", descr);
 
 	std::string icon = read_string();
-	currentSetting.icon = icon;
+	currentSetting_.icon = icon;
 	add_str("Icon", icon);
 
 	float bpm = read_float();
-	currentSetting.bpm = bpm;
+	currentSetting_.bpm = bpm;
 	add_float("BPM", bpm);
 
 	int num_effects = read_byte() - 0x90;
 	add_python("\"Pedals\": [");
 	add_indent();
-	currentSetting.pedals = {};
+	currentSetting_.pedals = {};
 	for (int i = 0; i < 7; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 		pedal currentPedal = {};
 		std::string e_str = read_string();
@@ -310,19 +295,19 @@ void SparkStreamReader::read_preset() {
 		add_python("],");
 		del_indent();
 		add_python("},");
-		currentSetting.pedals.push_back(currentPedal);
+		currentSetting_.pedals.push_back(currentPedal);
 	}
 	add_python("],");
 	del_indent();
 	byte filler = read_byte();
-	currentSetting.filler = filler;
+	currentSetting_.filler = filler;
 	add_str("Filler", SparkHelper::intToHex(filler));
 	end_str();
-	currentSetting.text = text;
-	currentSetting.raw = raw;
-	currentSetting.python = python;
-	currentSetting.isEmpty = false;
-	presetUpdated = true;
+	currentSetting_.text = text;
+	currentSetting_.raw = raw;
+	currentSetting_.python = python;
+	currentSetting_.isEmpty = false;
+	isPresetUpdated_ = true;
 }
 
 boolean SparkStreamReader::structure_data() {

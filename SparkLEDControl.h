@@ -10,16 +10,17 @@
 
 #include "SparkDataControl.h"
 
-#define LED_CHANNEL1_GPIO 13
+// GPIOs
+#define LED_PRESET1_GPIO 13
 #define LED_DRIVE_GPIO 13
 
-#define LED_CHANNEL2_GPIO 12
+#define LED_PRESET2_GPIO 12
 #define LED_MOD_GPIO 12
 
-#define LED_CHANNEL3_GPIO 27
+#define LED_PRESET3_GPIO 27
 #define LED_DELAY_GPIO 27
 
-#define LED_CHANNEL4_GPIO 16
+#define LED_PRESET4_GPIO 16
 #define LED_REVERB_GPIO 16
 
 #define LED_BANK_DOWN_GPIO 17
