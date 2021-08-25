@@ -1,0 +1,117 @@
+\hypertarget{_spark_data_control_8h_source}{}\doxysection{Spark\+Data\+Control.\+h}
+\mbox{\hyperlink{_spark_data_control_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARKDATACONTROL\_H\_}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARKDATACONTROL\_H\_}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_b_l_e_control_8h}{SparkBLEControl.h}}"{}}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_message_8h}{SparkMessage.h}}"{}}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_preset_builder_8h}{SparkPresetBuilder.h}}"{}}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_stream_reader_8h}{SparkStreamReader.h}}"{}}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_types_8h}{SparkTypes.h}}"{}}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define SWITCH\_MODE\_FX 1}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define SWITCH\_MODE\_PRESET 2}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define SPARK\_MODE\_APP 1}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define SPARK\_MODE\_AMP 2}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_b_l_e_control}{SparkBLEControl}};}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}} \{}
+\DoxyCodeLine{31 \textcolor{keyword}{public}:}
+\DoxyCodeLine{32     \textcolor{keyword}{static} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_data_control_aaba2eb5fa84815bd7df40463bfeb3b9a}{operationMode}};}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34     \mbox{\hyperlink{class_spark_data_control_a24f2f43bb1664dc36513841cb87bb312}{SparkDataControl}}();}
+\DoxyCodeLine{35     \textcolor{keyword}{virtual} \mbox{\hyperlink{class_spark_data_control_a608c157f6527031232669fe66ec8e529}{\string~SparkDataControl}}();}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a50a82fc5dfd80f4177935b3f95442533}{init}}(\textcolor{keywordtype}{int} op\_mode);}
+\DoxyCodeLine{38     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_data_control_aae9953b16ed2ba6b7c5dfffe3a9c8e22}{checkBLEConnection}}();}
+\DoxyCodeLine{39     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_data_control_a1b591a96eef664b2666f15e93db6764c}{isBLEConnected}}();}
+\DoxyCodeLine{40     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a52fb04aaf81976376b16ac5138e4da45}{startBLEServer}}();}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42     \textcolor{comment}{// Callback function when Spark notifies about a changed characteristic}}
+\DoxyCodeLine{43     \textcolor{keyword}{static} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a3b8dac4dac7f3f98b84ce3df1cf2687f}{notifyCB}}(NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8\_t *pData,}
+\DoxyCodeLine{44             \textcolor{keywordtype}{size\_t} length, \textcolor{keywordtype}{bool} isNotify);}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     \textcolor{comment}{// Check if a preset has been updated (via ack or from Spark)}}
+\DoxyCodeLine{47     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a5020a0af72984049fbab7406898477ba}{checkForUpdates}}();}
+\DoxyCodeLine{48     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_data_control_a99b5a906f694b404d2cc8a5ad752f9af}{isActivePresetUpdated}}();}
+\DoxyCodeLine{49     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_data_control_a832e722cb48d0e5f4f197659e7b43c8e}{isPresetNumberUpdated}}();}
+\DoxyCodeLine{50     \textcolor{comment}{// Retrieves the current preset from Spark (required for HW presets)}}
+\DoxyCodeLine{51     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_af91b103dd4f5e1d00126c49d686a3e40}{getCurrentPresetFromSpark}}();}
+\DoxyCodeLine{52     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a0d79289c48cebf0f8831cada16c284a8}{updatePendingPreset}}(\textcolor{keywordtype}{int} bnk);}
+\DoxyCodeLine{53     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_aac0c38919bd2fc9eb8b3247c728075f0}{updatePendingWithActiveBank}}();}
+\DoxyCodeLine{54     \textcolor{comment}{// Switch to a selected preset of the current bank}}
+\DoxyCodeLine{55     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_ab9217a50edd641f039dae56b6d090125}{switchPreset}}(\textcolor{keywordtype}{int} pre);}
+\DoxyCodeLine{56     \textcolor{comment}{// Switch effect on/off}}
+\DoxyCodeLine{57     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a1514f4231fb4e4760c21a0d95127c544}{switchEffectOnOff}}(std::string fx\_name, \textcolor{keywordtype}{bool} enable);}
+\DoxyCodeLine{58     \textcolor{comment}{// get a preset from saved presets}}
+\DoxyCodeLine{59     \mbox{\hyperlink{structpreset}{preset}} \mbox{\hyperlink{class_spark_data_control_a526387f783b9adfe063b9bb20747f237}{getPreset}}(\textcolor{keywordtype}{int} bank, \textcolor{keywordtype}{int} pre);}
+\DoxyCodeLine{60     \textcolor{comment}{// return the number of banks in the preset list}}
+\DoxyCodeLine{61     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_data_control_ab2d6a54093fca5cfa9de0fc6040a785e}{getNumberOfBanks}}();}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63     \textcolor{comment}{// Return active or pending preset/bank, set/get active preset number}}
+\DoxyCodeLine{64     \mbox{\hyperlink{structpreset}{preset}}* \mbox{\hyperlink{class_spark_data_control_a0ddff080037839c0fab8681229abb5b9}{activePreset}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} \&activePreset\_;\}}
+\DoxyCodeLine{65     \mbox{\hyperlink{structpreset}{preset}}* \mbox{\hyperlink{class_spark_data_control_aec929183f6440c470be509aa1a425858}{pendingPreset}}()\textcolor{keyword}{ const    }\{\textcolor{keywordflow}{return} \&pendingPreset\_;\}}
+\DoxyCodeLine{66     \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_a83e76ebf78238bb6aa59094ca966e42a}{activePresetNum}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} activePresetNum\_;\}}
+\DoxyCodeLine{67     \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_a6efc2c796bb17cbcdddf6f0fe09f048c}{activePresetNum}}() \{\textcolor{keywordflow}{return} activePresetNum\_;\}}
+\DoxyCodeLine{68     \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_a1670ae4a928e0fae96ac2f09b02cadff}{activeBank}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} activeBank\_;\}}
+\DoxyCodeLine{69     \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_a6b6731d4245226426f33567d07e9c4f1}{pendingBank}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} pendingBank\_;\}}
+\DoxyCodeLine{70     \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_ac373c93580e757a5d1de9d0970586519}{pendingBank}}() \{\textcolor{keywordflow}{return} pendingBank\_;\}}
+\DoxyCodeLine{71     \textcolor{keyword}{const} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_data_control_a5e9c1bab1885fa4d0aa655a2f269c5cb}{numberOfBanks}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} presetBuilder.\mbox{\hyperlink{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}{getNumberOfBanks}}();\}}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{73     \textcolor{comment}{// Set/get button mode}}
+\DoxyCodeLine{74     \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_aa422404e4a25a21f58c0c920e27b87f2}{buttonMode}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} buttonMode\_;\}}
+\DoxyCodeLine{75     \textcolor{keywordtype}{int}\& \mbox{\hyperlink{class_spark_data_control_acbb844f539d9ef1fd3bb96837cf9fe65}{buttonMode}}() \{\textcolor{keywordflow}{return} buttonMode\_;\}}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77     \textcolor{comment}{// Functions for Spark AMP (Server mode)}}
+\DoxyCodeLine{78     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_af226b4aca38491e959f2ec76416cd05d}{receiveSparkWrite}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} blk);}
+\DoxyCodeLine{79     \textcolor{comment}{// method to process any data from Spark (process with SparkStreamReader and send ack if required)}}
+\DoxyCodeLine{80     \textcolor{keyword}{static} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a4965005c7716f475c4772e89582e9a31}{processSparkData}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} blk);}
+\DoxyCodeLine{81     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_data_control_a101f9f723cf0b7aaa911788b16865ba3}{triggerInitialBLENotifications}}();}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83 \textcolor{keyword}{private}:}
+\DoxyCodeLine{84     \textcolor{keyword}{static} \mbox{\hyperlink{class_spark_b_l_e_control}{SparkBLEControl}} bleControl;}
+\DoxyCodeLine{85     \textcolor{keyword}{static} \mbox{\hyperlink{class_spark_stream_reader}{SparkStreamReader}} spark\_ssr;}
+\DoxyCodeLine{86     \textcolor{keyword}{static} \mbox{\hyperlink{class_spark_message}{SparkMessage}} spark\_msg;}
+\DoxyCodeLine{87     \textcolor{keyword}{static} \mbox{\hyperlink{class_spark_preset_builder}{SparkPresetBuilder}} presetBuilder;}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{89     \textcolor{keywordtype}{bool} startup = \textcolor{keyword}{true};}
+\DoxyCodeLine{90     \textcolor{keyword}{static} \textcolor{keywordtype}{bool} isActivePresetUpdatedByAck;}
+\DoxyCodeLine{91 }
+\DoxyCodeLine{92     \textcolor{comment}{//Button data}}
+\DoxyCodeLine{93     \textcolor{keywordtype}{int} buttonMode\_ = \mbox{\hyperlink{_spark_data_control_8h_ad30fa9e91c4e6beefb55f4bb172e7698}{SWITCH\_MODE\_PRESET}};}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96     \textcolor{comment}{//PRESET variables}}
+\DoxyCodeLine{97     \textcolor{keyword}{static} \mbox{\hyperlink{structpreset}{preset}} activePreset\_;}
+\DoxyCodeLine{98     \textcolor{keyword}{static} \mbox{\hyperlink{structpreset}{preset}} pendingPreset\_;}
+\DoxyCodeLine{99     \textcolor{keyword}{static} \textcolor{keywordtype}{int} activeBank\_;}
+\DoxyCodeLine{100     \textcolor{keyword}{static} \textcolor{keywordtype}{int} pendingBank\_;}
+\DoxyCodeLine{101     \textcolor{keywordtype}{int} activePresetNum\_ = 1;}
+\DoxyCodeLine{102     \textcolor{keywordtype}{int} selectedPresetNum = 1;}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104     \textcolor{comment}{// Messages to send to Spark}}
+\DoxyCodeLine{105     std::vector<ByteVector> current\_msg;}
+\DoxyCodeLine{106     \textcolor{keyword}{static} std::vector<ByteVector> ack\_msg;}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108 }
+\DoxyCodeLine{109 }
+\DoxyCodeLine{110 \};}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SPARKDATACONTROL\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

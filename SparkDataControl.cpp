@@ -31,7 +31,6 @@ void SparkDataControl::init(int op_mode){
 	// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
 	operationMode = op_mode;
-	Serial.printf("Operation mode (DC): %d\n", operationMode);
 	if(operationMode == SPARK_MODE_APP){
 		// initialize BLE
 		bleControl.initBLE();
@@ -119,7 +118,7 @@ void SparkDataControl::processSparkData(ByteVector blk){
 			bleControl.notifyClients(ack_msg[0]);
 		}
 	}
-	if(spark_ssr.processBlock(blk)){
+	if(spark_ssr.processBlock(blk) && operationMode == SPARK_MODE_AMP){
 		Serial.println("Message processed:");
 		Serial.println(spark_ssr.getJson().c_str());
 	}
@@ -160,7 +159,7 @@ void SparkDataControl::switchPreset(int pre) {
 	} else {
 		pendingPreset_ = presetBuilder.getPreset(pendingBank_, pre);
 		current_msg = spark_msg.create_preset(pendingPreset_);
-		Serial.printf("Switching preset to %d, %d\n", pendingBank_, pre);
+		Serial.printf("Changing to preset %2d-%d\n", pendingBank_, pre);
 		bleControl.writeBLE(current_msg);
 		// This is the final message with actually switches over to the
 		//previously sent preset
@@ -173,7 +172,7 @@ void SparkDataControl::switchPreset(int pre) {
 
 void SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable){
 
-	Serial.printf("Switching effect %s to status %s\n", fx_name.c_str(), enable ? "On" : "Off");
+	Serial.printf("Switching %s effect %s\n", enable ? "On" : "Off", fx_name.c_str());
 	for(int i=0; i< pendingPreset_.pedals.size(); i++){
 		pedal currentPedal = pendingPreset_.pedals[i];
 		if (currentPedal.name == fx_name){

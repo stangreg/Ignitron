@@ -1,0 +1,27 @@
+var structpreset =
+[
+    [ "add_bool", "structpreset.html#a27dbc3aa2cb4e003ccb2abd9c943343f", null ],
+    [ "add_float", "structpreset.html#a8eae262cf5a6f5d2b9aa5c37705c8af3", null ],
+    [ "add_indent", "structpreset.html#a1b49a0430e7fb95ad08d4b79cfb2e8c6", null ],
+    [ "add_int", "structpreset.html#aae92c9007ce1e327cfeccc35844b293d", null ],
+    [ "add_json", "structpreset.html#a57485c5cade77d1f23964a6ca98f7837", null ],
+    [ "add_str", "structpreset.html#a179d99d6118ef9646269660c40130082", null ],
+    [ "del_indent", "structpreset.html#acfc9461f8bf6beaf206e841d23545425", null ],
+    [ "end_str", "structpreset.html#a63501d54ee887c1f0fe26b564c7fb975", null ],
+    [ "getJson", "structpreset.html#a49b0143f9d3d780f32826f4561ea4086", null ],
+    [ "start_str", "structpreset.html#a376f0a99d3aa944d5c463fa9e98d2fd3", null ],
+    [ "bpm", "structpreset.html#a1148273d2ec09fec3b76e93c1d377b4e", null ],
+    [ "description", "structpreset.html#a09f8a9a3ebbd77b5596cb1985db2196f", null ],
+    [ "filler", "structpreset.html#af9dcb00ec7ce779fb7213bf55e109ed8", null ],
+    [ "icon", "structpreset.html#ad2140177ece580e9ca31686751377803", null ],
+    [ "indent", "structpreset.html#a24e79451ec22e5ede1ed6ab5cece0ec5", null ],
+    [ "isEmpty", "structpreset.html#a2c93dbeab991f907c94f97554e991099", null ],
+    [ "json", "structpreset.html#a84987101748cba2ef115487b04ba043e", null ],
+    [ "name", "structpreset.html#a044c1137ae514926bd680565d3fee755", null ],
+    [ "pedals", "structpreset.html#a39e12b4a5d365c29d81120b6fa131d47", null ],
+    [ "presetNumber", "structpreset.html#aa985cfc50f661e6cb2274033e37f512f", null ],
+    [ "raw", "structpreset.html#ad05d6722e96dc074814310ebbfce7686", null ],
+    [ "text", "structpreset.html#ae7993eeec15c75d1c8f34f080eadb560", null ],
+    [ "uuid", "structpreset.html#a8d540780f1e98a4a7be5c68252684929", null ],
+    [ "version", "structpreset.html#aa0b9d6adfb9db84a2f82a06858957f82", null ]
+];

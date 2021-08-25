@@ -238,7 +238,6 @@ std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, bool
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal);
 	add_onoff(enable);
-	Serial.printf("Switching pedal %s to %s\n", pedal.c_str(), enable ? "On" : "Off");
 	return end_message();
 }
 

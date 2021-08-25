@@ -1,0 +1,45 @@
+\hypertarget{_spark_preset_builder_8h_source}{}\doxysection{Spark\+Preset\+Builder.\+h}
+\mbox{\hyperlink{_spark_preset_builder_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef SPARK\_PRESET\_BUILDER\_H }\textcolor{comment}{// include guard}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define SPARK\_PRESET\_BUILDER\_H}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{comment}{//\#include <array>}}
+\DoxyCodeLine{5 \textcolor{comment}{//\#include <vector>}}
+\DoxyCodeLine{6 \textcolor{comment}{//\#include <iomanip>}}
+\DoxyCodeLine{7 \textcolor{comment}{//\#include <sstream>}}
+\DoxyCodeLine{8 \textcolor{comment}{//\#include <stdio.h>}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <Arduino\_JSON.h>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <FS.h>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <Effortless\_SPIFFS.h>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_helper_8h}{SparkHelper.h}}"{}}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_types_8h}{SparkTypes.h}}"{}}}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define PRESETS\_PER\_BANK 4}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_preset_builder}{SparkPresetBuilder}}\{}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{keyword}{private}:}
+\DoxyCodeLine{26     std::vector<std::vector<std::string>> presetBanksNames;}
+\DoxyCodeLine{27     std::vector<char*> allPresetsJSON;}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29     \mbox{\hyperlink{structpreset}{preset}} getPresetFromJson(\textcolor{keywordtype}{char}* json);}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{keyword}{public}:}
+\DoxyCodeLine{33     \mbox{\hyperlink{class_spark_preset_builder_a5fdb43aa34592822701ff11acfc41324}{SparkPresetBuilder}}();}
+\DoxyCodeLine{34     \textcolor{comment}{//std::string getJsonFromPreset(preset pset);}}
+\DoxyCodeLine{35     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_preset_builder_ae7392c0aa6d5c5771ff1d355419650b3}{initializePresetListFromFS}}();}
+\DoxyCodeLine{36     \mbox{\hyperlink{structpreset}{preset}} \mbox{\hyperlink{class_spark_preset_builder_a6ef4f1b3ea6e51532c1c4960c8bbd56f}{getPreset}}(\textcolor{keywordtype}{int} \mbox{\hyperlink{structpreset}{preset}}, \textcolor{keywordtype}{int} bank);}
+\DoxyCodeLine{37     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}{getNumberOfBanks}}();}
+\DoxyCodeLine{38 \};}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

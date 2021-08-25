@@ -9,24 +9,19 @@
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-SparkDisplayControl::SparkDisplayControl() {
-	spark_dc = null;
-	init();
+SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 
 }
 
 SparkDisplayControl::SparkDisplayControl(SparkDataControl* dc) {
 	Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 	spark_dc = dc;
-	init();
-
 }
 SparkDisplayControl::~SparkDisplayControl() {
 	// TODO Auto-generated destructor stub
 }
 
-void SparkDisplayControl::init() {
-	Serial.println("Init display");
+void SparkDisplayControl::init(int mode) {
 	// SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
 	if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // 0x3C required for this display
 		Serial.println(F("SSD1306 initialization failed"));
@@ -36,17 +31,31 @@ void SparkDisplayControl::init() {
 	// Clear the buffer
 	display.clearDisplay(); //No Adafruit splash
 	display.display();
-
 	display.setTextColor(SSD1306_WHITE);
-	display.setTextWrap(false);
-	display_x = 0;
-	display_minX = DISPLAY_MIN_X_FACTOR * 10; //initialize, will be updated with new preset
-	// Display the splash logo
-	display.drawBitmap(0, 0, sweaty_logo_bmp, 128, 47, SSD1306_WHITE);
-	display.setTextSize(2);
-	display.setCursor(6, 48);
-	display.print("Connecting");
-	display.display();
+
+	if(mode == SPARK_MODE_APP){
+		display.setTextWrap(false);
+		display_x = 0;
+		display_minX = DISPLAY_MIN_X_FACTOR * 10; //initialize, will be updated with new preset
+		// Display the splash logo
+		display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47, SSD1306_WHITE);
+		display.setTextSize(2);
+		display.setCursor(6, 48);
+		display.print("Connecting");
+	}
+	else{
+		display.setTextSize(2);
+		display.setCursor(18,0);
+		display.print("SparkBLE");
+		display.setCursor(18,24);
+		display.print("AMP mode");
+		display.setTextSize(1);
+		display.setCursor(24,44);
+		display.print("Please connect");
+		display.setCursor(36,56);
+		display.print("Spark App");
+	}
+		display.display();
 }
 
 

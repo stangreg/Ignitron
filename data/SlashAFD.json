@@ -1,5 +1,5 @@
 {"PresetNumber": 127, "UUID":"E476C555-23B8-437F-B870-727E3B3F4E6B",
-"Name":"Slash AFD" , "Version":"0.7", "Description":"Welcome to the jungle intro delay", "Icon":"icon.png", "BPM": 120.0000,
+"Name":"Slash AFD" , "Version":"0.7", "Description":"Welcome to the jungle intro delay", "Icon":"icon.png", "BPM": 123.0000,
 "Pedals": [
 {  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3083,0.4663] },
 { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },

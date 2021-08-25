@@ -99,22 +99,19 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 	presetBanksNames.clear();
 	std::string allPresetsAsText;
 	std::vector<std::string> tmpVector;
-	Serial.println("Trying to read file list");
-	if(fileSystem.openFromFile("/PresetList.txt", allPresetsAsText)){
-		Serial.println("Successfully opened presets list file");
-	}
-	else{
+	//Serial.println("Trying to read file list");
+	if(!fileSystem.openFromFile("/PresetList.txt", allPresetsAsText)){
 		Serial.println("ERROR while trying to open presets list file");
+		return;
 	}
 
 	std::stringstream stream(allPresetsAsText);
 	std::string line;
 	while (std::getline(stream, line)) {
 		std::string presetFilename = line;
-		// Lines starting with '-' are ignored and can be used for descriptions in the file
+		// Lines starting with '-' and empty lines
+		// are ignored and can be used for comments in the file
 		if (line.rfind("-", 0) != 0 && !line.empty()) {
-			Serial.println("Adding line:");
-			Serial.printf("'%s'\n",line.c_str());
 			tmpVector.push_back(presetFilename);
 			if(tmpVector.size() == PRESETS_PER_BANK){
 				presetBanksNames.push_back(tmpVector);

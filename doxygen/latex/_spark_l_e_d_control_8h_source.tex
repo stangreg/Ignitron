@@ -1,0 +1,52 @@
+\hypertarget{_spark_l_e_d_control_8h_source}{}\doxysection{Spark\+LEDControl.\+h}
+\mbox{\hyperlink{_spark_l_e_d_control_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkLEDControl.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 23.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARKLEDCONTROL\_H\_}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARKLEDCONTROL\_H\_}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_data_control_8h}{SparkDataControl.h}}"{}}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{comment}{// GPIOs}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#define LED\_PRESET1\_GPIO 13}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#define LED\_DRIVE\_GPIO 13}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#define LED\_PRESET2\_GPIO 12}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define LED\_MOD\_GPIO 12}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define LED\_PRESET3\_GPIO 27}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define LED\_DELAY\_GPIO 27}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define LED\_PRESET4\_GPIO 16}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define LED\_REVERB\_GPIO 16}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define LED\_BANK\_DOWN\_GPIO 17}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define LED\_NOISEGATE\_GPIO 17}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#define LED\_BANK\_UP\_GPIO 14}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define LED\_COMP\_GPIO 14}}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_l_e_d_control}{SparkLEDControl}} \{}
+\DoxyCodeLine{33 \textcolor{keyword}{public}:}
+\DoxyCodeLine{34     \mbox{\hyperlink{class_spark_l_e_d_control_aab0e9c18aef52309a5d597c8f01dc7d3}{SparkLEDControl}}();}
+\DoxyCodeLine{35     \mbox{\hyperlink{class_spark_l_e_d_control_aab0e9c18aef52309a5d597c8f01dc7d3}{SparkLEDControl}}(\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* dc);}
+\DoxyCodeLine{36     \textcolor{keyword}{virtual} \mbox{\hyperlink{class_spark_l_e_d_control_a5c5f1963ddd6c32afc09e752b3b30f36}{\string~SparkLEDControl}}();}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_l_e_d_control_ac0f07b1b5cb031c0e8e7bb7aa9ffa412}{updateLEDs}}();}
+\DoxyCodeLine{39     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* \mbox{\hyperlink{class_spark_l_e_d_control_a67d70570307c319210c6b852178b4e07}{dataControl}}() \{\textcolor{keywordflow}{return} spark\_dc;\}}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \textcolor{keyword}{private}:}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43     \textcolor{keywordtype}{void} init();}
+\DoxyCodeLine{44     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* spark\_dc;}
+\DoxyCodeLine{45 \};}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SPARKLEDCONTROL\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

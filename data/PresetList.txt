@@ -1,5 +1,4 @@
 --Custom Presets
-----Rock
 ------Bank 1
 SweetChildOfMine.json
 SlashV2.json
@@ -54,7 +53,6 @@ Wizo.json
 JethroTull.json
 BrownSoundLarson.json
 
-----Metal
 ------Bank 10
 MasterOfPuppets.json
 Megadeth.json
@@ -63,22 +61,19 @@ GtrHeroLarson.json
 
 ------Bank 11
 CrazyTrain.json
-----Pop
+IronMaiden.json
 BangBang.json
 CleanForBallads.json
-OrangeAD30Arpeggio.json
 
 ------Bank 12
+OrangeAD30Arpeggio.json
 ModernVintageClean.json
 PerfectCleanLarson.json
 Oasis.json
-----Blues
-ThroatyLarson.json
 
 ------Bank 13
+ThroatyLarson.json
 LynyrdSkynyrd.json
-BendTheFend.json
-----Acoustic
 CozySerenade.json
 StudioSession.json
 

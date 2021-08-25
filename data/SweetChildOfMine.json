@@ -1,5 +1,5 @@
 {"PresetNumber": 127, "UUID":"C6CC85D6-A6F5-4302-AFF6-0060D996A3B1",
-"Name":"Sweet Child Of Mine" , "Version":"0.7", "Description":"Slash", "Icon":"icon.png", "BPM": 120.0000,
+"Name":"Sweet Child Of Mine" , "Version":"0.7", "Description":"Slash", "Icon":"icon.png", "BPM": 180.0000,
 "Pedals": [
 { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3083,0.4663] },
 { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },

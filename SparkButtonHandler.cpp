@@ -164,7 +164,6 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 				// the preset button is pushed afterwards
 				spark_dc->pendingBank() = pendingBank;
 				if(pendingBank != 0){
-					Serial.println("Trying to readPendingPreset at DC");
 					spark_dc->updatePendingPreset(pendingBank);
 				}
 			} // SWITCH_MODE_PREFIX
@@ -186,10 +185,10 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 			//Serial.println(pressed_btn_gpio);
 			//Up preset
 			if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
-				Serial.print("Switching mode to ");
+				Serial.print("Switching to ");
 				switch (buttonMode) {
 				case SWITCH_MODE_FX:
-					Serial.println("preset mode");
+					Serial.println("PRESET mode");
 					spark_dc->buttonMode() = SWITCH_MODE_PRESET;
 					break;
 				case SWITCH_MODE_PRESET:
@@ -198,7 +197,7 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 					spark_dc->updatePendingWithActiveBank();
 					break;
 				default:
-					Serial.println("Unexpected mode. Defaulting to preset mode");
+					Serial.println("Unexpected mode. Defaulting to PRESET mode");
 					spark_dc->buttonMode() = SWITCH_MODE_PRESET;
 					break;
 				} // SWITCH
@@ -208,10 +207,6 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 	else {
 		Serial.println("SparkDataControl not setup yet, ignoring button press.");
 	}
-}
-
-void SparkButtonHandler::btnStartupModeHandler(BfButton *btn, BfButton::press_pattern_t pattern){
-	Serial.println("I could now start in a different mode!");
 }
 
 int SparkButtonHandler::init() {

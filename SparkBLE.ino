@@ -37,26 +37,28 @@ void setup() {
 	while (!Serial);
 
 
-	Serial.println("Initializing:");
-	Serial.println(" - Data Control");
+	Serial.println("Initializing");
 	spark_dc = new SparkDataControl();
 
-	Serial.println(" - Button Handler");
 	spark_bh = new SparkButtonHandler(spark_dc);
 	operationMode = spark_bh->init();
+	if(operationMode == SPARK_MODE_APP){
+		Serial.println("======= Entering APP mode =======");
+	}
+	else {
+		Serial.println("======= Entering AMP mode =======");
+	}
 	// Setting operation mode before initializing
-	Serial.printf("Operation mode = %d\n", operationMode);
 	spark_dc->init(operationMode);
 
 	// Assigning data control to buttons;
 	spark_bh->dataControl(spark_dc);
 
 	// Initializing control classes
-	Serial.println(" - LED Control");
 	spark_led = new SparkLEDControl(spark_dc);
-	Serial.println(" - Display Control");
 	spark_display = new SparkDisplayControl(spark_dc);
-	Serial.println("Done.");
+	spark_display->init(operationMode);
+	Serial.println("Initialization done.");
 
 
 }

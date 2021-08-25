@@ -1,0 +1,278 @@
+\hypertarget{class_spark_data_control}{}\doxysection{Spark\+Data\+Control Class Reference}
+\label{class_spark_data_control}\index{SparkDataControl@{SparkDataControl}}
+
+
+{\ttfamily \#include $<$Spark\+Data\+Control.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spark_data_control_a24f2f43bb1664dc36513841cb87bb312}{Spark\+Data\+Control}} ()
+\item 
+virtual \mbox{\hyperlink{class_spark_data_control_a608c157f6527031232669fe66ec8e529}{$\sim$\+Spark\+Data\+Control}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a50a82fc5dfd80f4177935b3f95442533}{init}} (int op\+\_\+mode)
+\item 
+bool \mbox{\hyperlink{class_spark_data_control_aae9953b16ed2ba6b7c5dfffe3a9c8e22}{check\+BLEConnection}} ()
+\item 
+bool \mbox{\hyperlink{class_spark_data_control_a1b591a96eef664b2666f15e93db6764c}{is\+BLEConnected}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a52fb04aaf81976376b16ac5138e4da45}{start\+BLEServer}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a5020a0af72984049fbab7406898477ba}{check\+For\+Updates}} ()
+\item 
+bool \mbox{\hyperlink{class_spark_data_control_a99b5a906f694b404d2cc8a5ad752f9af}{is\+Active\+Preset\+Updated}} ()
+\item 
+bool \mbox{\hyperlink{class_spark_data_control_a832e722cb48d0e5f4f197659e7b43c8e}{is\+Preset\+Number\+Updated}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_af91b103dd4f5e1d00126c49d686a3e40}{get\+Current\+Preset\+From\+Spark}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a0d79289c48cebf0f8831cada16c284a8}{update\+Pending\+Preset}} (int bnk)
+\item 
+void \mbox{\hyperlink{class_spark_data_control_aac0c38919bd2fc9eb8b3247c728075f0}{update\+Pending\+With\+Active\+Bank}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_ab9217a50edd641f039dae56b6d090125}{switch\+Preset}} (int pre)
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a1514f4231fb4e4760c21a0d95127c544}{switch\+Effect\+On\+Off}} (std\+::string fx\+\_\+name, bool enable)
+\item 
+\mbox{\hyperlink{structpreset}{preset}} \mbox{\hyperlink{class_spark_data_control_a526387f783b9adfe063b9bb20747f237}{get\+Preset}} (int bank, int pre)
+\item 
+int \mbox{\hyperlink{class_spark_data_control_ab2d6a54093fca5cfa9de0fc6040a785e}{get\+Number\+Of\+Banks}} ()
+\item 
+\mbox{\hyperlink{structpreset}{preset}} $\ast$ \mbox{\hyperlink{class_spark_data_control_a0ddff080037839c0fab8681229abb5b9}{active\+Preset}} () const
+\item 
+\mbox{\hyperlink{structpreset}{preset}} $\ast$ \mbox{\hyperlink{class_spark_data_control_aec929183f6440c470be509aa1a425858}{pending\+Preset}} () const
+\item 
+const int \& \mbox{\hyperlink{class_spark_data_control_a83e76ebf78238bb6aa59094ca966e42a}{active\+Preset\+Num}} () const
+\item 
+int \& \mbox{\hyperlink{class_spark_data_control_a6efc2c796bb17cbcdddf6f0fe09f048c}{active\+Preset\+Num}} ()
+\item 
+const int \& \mbox{\hyperlink{class_spark_data_control_a1670ae4a928e0fae96ac2f09b02cadff}{active\+Bank}} () const
+\item 
+const int \& \mbox{\hyperlink{class_spark_data_control_a6b6731d4245226426f33567d07e9c4f1}{pending\+Bank}} () const
+\item 
+int \& \mbox{\hyperlink{class_spark_data_control_ac373c93580e757a5d1de9d0970586519}{pending\+Bank}} ()
+\item 
+const int \mbox{\hyperlink{class_spark_data_control_a5e9c1bab1885fa4d0aa655a2f269c5cb}{number\+Of\+Banks}} () const
+\item 
+const int \& \mbox{\hyperlink{class_spark_data_control_aa422404e4a25a21f58c0c920e27b87f2}{button\+Mode}} () const
+\item 
+int \& \mbox{\hyperlink{class_spark_data_control_acbb844f539d9ef1fd3bb96837cf9fe65}{button\+Mode}} ()
+\item 
+void \mbox{\hyperlink{class_spark_data_control_af226b4aca38491e959f2ec76416cd05d}{receive\+Spark\+Write}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} blk)
+\item 
+void \mbox{\hyperlink{class_spark_data_control_a101f9f723cf0b7aaa911788b16865ba3}{trigger\+Initial\+BLENotifications}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_spark_data_control_a3b8dac4dac7f3f98b84ce3df1cf2687f}{notify\+CB}} (Nim\+BLERemote\+Characteristic $\ast$p\+Remote\+Characteristic, uint8\+\_\+t $\ast$p\+Data, size\+\_\+t length, bool is\+Notify)
+\item 
+static void \mbox{\hyperlink{class_spark_data_control_a4965005c7716f475c4772e89582e9a31}{process\+Spark\+Data}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} blk)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{class_spark_data_control_aaba2eb5fa84815bd7df40463bfeb3b9a}{operation\+Mode}} = \mbox{\hyperlink{_spark_data_control_8h_af83dea5c6504bb9ed40e50456e10ecf6}{SPARK\+\_\+\+MODE\+\_\+\+AMP}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_spark_data_control_a24f2f43bb1664dc36513841cb87bb312}\label{class_spark_data_control_a24f2f43bb1664dc36513841cb87bb312}} 
+\index{SparkDataControl@{SparkDataControl}!SparkDataControl@{SparkDataControl}}
+\index{SparkDataControl@{SparkDataControl}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{SparkDataControl()}{SparkDataControl()}}
+{\footnotesize\ttfamily Spark\+Data\+Control\+::\+Spark\+Data\+Control (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a608c157f6527031232669fe66ec8e529}\label{class_spark_data_control_a608c157f6527031232669fe66ec8e529}} 
+\index{SparkDataControl@{SparkDataControl}!````~SparkDataControl@{$\sim$SparkDataControl}}
+\index{````~SparkDataControl@{$\sim$SparkDataControl}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{$\sim$SparkDataControl()}{~SparkDataControl()}}
+{\footnotesize\ttfamily Spark\+Data\+Control\+::$\sim$\+Spark\+Data\+Control (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_spark_data_control_a1670ae4a928e0fae96ac2f09b02cadff}\label{class_spark_data_control_a1670ae4a928e0fae96ac2f09b02cadff}} 
+\index{SparkDataControl@{SparkDataControl}!activeBank@{activeBank}}
+\index{activeBank@{activeBank}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{activeBank()}{activeBank()}}
+{\footnotesize\ttfamily const int \& Spark\+Data\+Control\+::active\+Bank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a0ddff080037839c0fab8681229abb5b9}\label{class_spark_data_control_a0ddff080037839c0fab8681229abb5b9}} 
+\index{SparkDataControl@{SparkDataControl}!activePreset@{activePreset}}
+\index{activePreset@{activePreset}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{activePreset()}{activePreset()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structpreset}{preset}} $\ast$ Spark\+Data\+Control\+::active\+Preset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a6efc2c796bb17cbcdddf6f0fe09f048c}\label{class_spark_data_control_a6efc2c796bb17cbcdddf6f0fe09f048c}} 
+\index{SparkDataControl@{SparkDataControl}!activePresetNum@{activePresetNum}}
+\index{activePresetNum@{activePresetNum}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{activePresetNum()}{activePresetNum()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int \& Spark\+Data\+Control\+::active\+Preset\+Num (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a83e76ebf78238bb6aa59094ca966e42a}\label{class_spark_data_control_a83e76ebf78238bb6aa59094ca966e42a}} 
+\index{SparkDataControl@{SparkDataControl}!activePresetNum@{activePresetNum}}
+\index{activePresetNum@{activePresetNum}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{activePresetNum()}{activePresetNum()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const int \& Spark\+Data\+Control\+::active\+Preset\+Num (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_acbb844f539d9ef1fd3bb96837cf9fe65}\label{class_spark_data_control_acbb844f539d9ef1fd3bb96837cf9fe65}} 
+\index{SparkDataControl@{SparkDataControl}!buttonMode@{buttonMode}}
+\index{buttonMode@{buttonMode}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{buttonMode()}{buttonMode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int \& Spark\+Data\+Control\+::button\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_aa422404e4a25a21f58c0c920e27b87f2}\label{class_spark_data_control_aa422404e4a25a21f58c0c920e27b87f2}} 
+\index{SparkDataControl@{SparkDataControl}!buttonMode@{buttonMode}}
+\index{buttonMode@{buttonMode}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{buttonMode()}{buttonMode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const int \& Spark\+Data\+Control\+::button\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_aae9953b16ed2ba6b7c5dfffe3a9c8e22}\label{class_spark_data_control_aae9953b16ed2ba6b7c5dfffe3a9c8e22}} 
+\index{SparkDataControl@{SparkDataControl}!checkBLEConnection@{checkBLEConnection}}
+\index{checkBLEConnection@{checkBLEConnection}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{checkBLEConnection()}{checkBLEConnection()}}
+{\footnotesize\ttfamily bool Spark\+Data\+Control\+::check\+BLEConnection (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a5020a0af72984049fbab7406898477ba}\label{class_spark_data_control_a5020a0af72984049fbab7406898477ba}} 
+\index{SparkDataControl@{SparkDataControl}!checkForUpdates@{checkForUpdates}}
+\index{checkForUpdates@{checkForUpdates}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{checkForUpdates()}{checkForUpdates()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::check\+For\+Updates (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_af91b103dd4f5e1d00126c49d686a3e40}\label{class_spark_data_control_af91b103dd4f5e1d00126c49d686a3e40}} 
+\index{SparkDataControl@{SparkDataControl}!getCurrentPresetFromSpark@{getCurrentPresetFromSpark}}
+\index{getCurrentPresetFromSpark@{getCurrentPresetFromSpark}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{getCurrentPresetFromSpark()}{getCurrentPresetFromSpark()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::get\+Current\+Preset\+From\+Spark (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_ab2d6a54093fca5cfa9de0fc6040a785e}\label{class_spark_data_control_ab2d6a54093fca5cfa9de0fc6040a785e}} 
+\index{SparkDataControl@{SparkDataControl}!getNumberOfBanks@{getNumberOfBanks}}
+\index{getNumberOfBanks@{getNumberOfBanks}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{getNumberOfBanks()}{getNumberOfBanks()}}
+{\footnotesize\ttfamily int Spark\+Data\+Control\+::get\+Number\+Of\+Banks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a526387f783b9adfe063b9bb20747f237}\label{class_spark_data_control_a526387f783b9adfe063b9bb20747f237}} 
+\index{SparkDataControl@{SparkDataControl}!getPreset@{getPreset}}
+\index{getPreset@{getPreset}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{getPreset()}{getPreset()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structpreset}{preset}} Spark\+Data\+Control\+::get\+Preset (\begin{DoxyParamCaption}\item[{int}]{bank,  }\item[{int}]{pre }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a50a82fc5dfd80f4177935b3f95442533}\label{class_spark_data_control_a50a82fc5dfd80f4177935b3f95442533}} 
+\index{SparkDataControl@{SparkDataControl}!init@{init}}
+\index{init@{init}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::init (\begin{DoxyParamCaption}\item[{int}]{op\+\_\+mode }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a99b5a906f694b404d2cc8a5ad752f9af}\label{class_spark_data_control_a99b5a906f694b404d2cc8a5ad752f9af}} 
+\index{SparkDataControl@{SparkDataControl}!isActivePresetUpdated@{isActivePresetUpdated}}
+\index{isActivePresetUpdated@{isActivePresetUpdated}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{isActivePresetUpdated()}{isActivePresetUpdated()}}
+{\footnotesize\ttfamily bool Spark\+Data\+Control\+::is\+Active\+Preset\+Updated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a1b591a96eef664b2666f15e93db6764c}\label{class_spark_data_control_a1b591a96eef664b2666f15e93db6764c}} 
+\index{SparkDataControl@{SparkDataControl}!isBLEConnected@{isBLEConnected}}
+\index{isBLEConnected@{isBLEConnected}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{isBLEConnected()}{isBLEConnected()}}
+{\footnotesize\ttfamily bool Spark\+Data\+Control\+::is\+BLEConnected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a832e722cb48d0e5f4f197659e7b43c8e}\label{class_spark_data_control_a832e722cb48d0e5f4f197659e7b43c8e}} 
+\index{SparkDataControl@{SparkDataControl}!isPresetNumberUpdated@{isPresetNumberUpdated}}
+\index{isPresetNumberUpdated@{isPresetNumberUpdated}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{isPresetNumberUpdated()}{isPresetNumberUpdated()}}
+{\footnotesize\ttfamily bool Spark\+Data\+Control\+::is\+Preset\+Number\+Updated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a3b8dac4dac7f3f98b84ce3df1cf2687f}\label{class_spark_data_control_a3b8dac4dac7f3f98b84ce3df1cf2687f}} 
+\index{SparkDataControl@{SparkDataControl}!notifyCB@{notifyCB}}
+\index{notifyCB@{notifyCB}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{notifyCB()}{notifyCB()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::notify\+CB (\begin{DoxyParamCaption}\item[{Nim\+BLERemote\+Characteristic $\ast$}]{p\+Remote\+Characteristic,  }\item[{uint8\+\_\+t $\ast$}]{p\+Data,  }\item[{size\+\_\+t}]{length,  }\item[{bool}]{is\+Notify }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a5e9c1bab1885fa4d0aa655a2f269c5cb}\label{class_spark_data_control_a5e9c1bab1885fa4d0aa655a2f269c5cb}} 
+\index{SparkDataControl@{SparkDataControl}!numberOfBanks@{numberOfBanks}}
+\index{numberOfBanks@{numberOfBanks}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{numberOfBanks()}{numberOfBanks()}}
+{\footnotesize\ttfamily const int Spark\+Data\+Control\+::number\+Of\+Banks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_ac373c93580e757a5d1de9d0970586519}\label{class_spark_data_control_ac373c93580e757a5d1de9d0970586519}} 
+\index{SparkDataControl@{SparkDataControl}!pendingBank@{pendingBank}}
+\index{pendingBank@{pendingBank}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{pendingBank()}{pendingBank()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int \& Spark\+Data\+Control\+::pending\+Bank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a6b6731d4245226426f33567d07e9c4f1}\label{class_spark_data_control_a6b6731d4245226426f33567d07e9c4f1}} 
+\index{SparkDataControl@{SparkDataControl}!pendingBank@{pendingBank}}
+\index{pendingBank@{pendingBank}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{pendingBank()}{pendingBank()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const int \& Spark\+Data\+Control\+::pending\+Bank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_aec929183f6440c470be509aa1a425858}\label{class_spark_data_control_aec929183f6440c470be509aa1a425858}} 
+\index{SparkDataControl@{SparkDataControl}!pendingPreset@{pendingPreset}}
+\index{pendingPreset@{pendingPreset}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{pendingPreset()}{pendingPreset()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structpreset}{preset}} $\ast$ Spark\+Data\+Control\+::pending\+Preset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_data_control_a4965005c7716f475c4772e89582e9a31}\label{class_spark_data_control_a4965005c7716f475c4772e89582e9a31}} 
+\index{SparkDataControl@{SparkDataControl}!processSparkData@{processSparkData}}
+\index{processSparkData@{processSparkData}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{processSparkData()}{processSparkData()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::process\+Spark\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{blk }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_spark_data_control_af226b4aca38491e959f2ec76416cd05d}\label{class_spark_data_control_af226b4aca38491e959f2ec76416cd05d}} 
+\index{SparkDataControl@{SparkDataControl}!receiveSparkWrite@{receiveSparkWrite}}
+\index{receiveSparkWrite@{receiveSparkWrite}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{receiveSparkWrite()}{receiveSparkWrite()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::receive\+Spark\+Write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{blk }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a52fb04aaf81976376b16ac5138e4da45}\label{class_spark_data_control_a52fb04aaf81976376b16ac5138e4da45}} 
+\index{SparkDataControl@{SparkDataControl}!startBLEServer@{startBLEServer}}
+\index{startBLEServer@{startBLEServer}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{startBLEServer()}{startBLEServer()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::start\+BLEServer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a1514f4231fb4e4760c21a0d95127c544}\label{class_spark_data_control_a1514f4231fb4e4760c21a0d95127c544}} 
+\index{SparkDataControl@{SparkDataControl}!switchEffectOnOff@{switchEffectOnOff}}
+\index{switchEffectOnOff@{switchEffectOnOff}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{switchEffectOnOff()}{switchEffectOnOff()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::switch\+Effect\+On\+Off (\begin{DoxyParamCaption}\item[{std\+::string}]{fx\+\_\+name,  }\item[{bool}]{enable }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_ab9217a50edd641f039dae56b6d090125}\label{class_spark_data_control_ab9217a50edd641f039dae56b6d090125}} 
+\index{SparkDataControl@{SparkDataControl}!switchPreset@{switchPreset}}
+\index{switchPreset@{switchPreset}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{switchPreset()}{switchPreset()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::switch\+Preset (\begin{DoxyParamCaption}\item[{int}]{pre }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a101f9f723cf0b7aaa911788b16865ba3}\label{class_spark_data_control_a101f9f723cf0b7aaa911788b16865ba3}} 
+\index{SparkDataControl@{SparkDataControl}!triggerInitialBLENotifications@{triggerInitialBLENotifications}}
+\index{triggerInitialBLENotifications@{triggerInitialBLENotifications}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{triggerInitialBLENotifications()}{triggerInitialBLENotifications()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::trigger\+Initial\+BLENotifications (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_a0d79289c48cebf0f8831cada16c284a8}\label{class_spark_data_control_a0d79289c48cebf0f8831cada16c284a8}} 
+\index{SparkDataControl@{SparkDataControl}!updatePendingPreset@{updatePendingPreset}}
+\index{updatePendingPreset@{updatePendingPreset}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{updatePendingPreset()}{updatePendingPreset()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::update\+Pending\+Preset (\begin{DoxyParamCaption}\item[{int}]{bnk }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_data_control_aac0c38919bd2fc9eb8b3247c728075f0}\label{class_spark_data_control_aac0c38919bd2fc9eb8b3247c728075f0}} 
+\index{SparkDataControl@{SparkDataControl}!updatePendingWithActiveBank@{updatePendingWithActiveBank}}
+\index{updatePendingWithActiveBank@{updatePendingWithActiveBank}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{updatePendingWithActiveBank()}{updatePendingWithActiveBank()}}
+{\footnotesize\ttfamily void Spark\+Data\+Control\+::update\+Pending\+With\+Active\+Bank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_spark_data_control_aaba2eb5fa84815bd7df40463bfeb3b9a}\label{class_spark_data_control_aaba2eb5fa84815bd7df40463bfeb3b9a}} 
+\index{SparkDataControl@{SparkDataControl}!operationMode@{operationMode}}
+\index{operationMode@{operationMode}!SparkDataControl@{SparkDataControl}}
+\doxysubsubsection{\texorpdfstring{operationMode}{operationMode}}
+{\footnotesize\ttfamily int Spark\+Data\+Control\+::operation\+Mode = \mbox{\hyperlink{_spark_data_control_8h_af83dea5c6504bb9ed40e50456e10ecf6}{SPARK\+\_\+\+MODE\+\_\+\+AMP}}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_spark_data_control_8h}{Spark\+Data\+Control.\+h}}\item 
+\mbox{\hyperlink{_spark_data_control_8cpp}{Spark\+Data\+Control.\+cpp}}\end{DoxyCompactItemize}

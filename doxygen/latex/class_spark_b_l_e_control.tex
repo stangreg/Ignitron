@@ -1,0 +1,167 @@
+\hypertarget{class_spark_b_l_e_control}{}\doxysection{Spark\+BLEControl Class Reference}
+\label{class_spark_b_l_e_control}\index{SparkBLEControl@{SparkBLEControl}}
+
+
+{\ttfamily \#include $<$Spark\+BLEControl.\+h$>$}
+
+
+
+Inheritance diagram for Spark\+BLEControl\+:
+% FIG 0
+
+
+Collaboration diagram for Spark\+BLEControl\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}{Spark\+BLEControl}} ()
+\item 
+\mbox{\hyperlink{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}{Spark\+BLEControl}} (\mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}} $\ast$dc)
+\item 
+virtual \mbox{\hyperlink{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}{$\sim$\+Spark\+BLEControl}} ()
+\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}{is\+Connection\+Found}} () const
+\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a09ab2d543cbd5864281ff9fc62b3fa79}{is\+Connected}} () const
+\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}{connect\+To\+Server}} ()
+\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}{subscribe\+To\+Notifications}} (notify\+\_\+callback notify\+Callback=nullptr)
+\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}{write\+BLE}} (std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$ cmd, bool response=false)
+\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_aba9084a82e8829c039cd7aca3348f7c2}{init\+BLE}} ()
+\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_ac69bc6917d49dc7ebe001a5d567e11e2}{init\+Scan}} ()
+\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}{start\+Server}} ()
+\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}{notify\+Clients}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} msg)
+\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}{send\+Initial\+Notification}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}\label{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}} 
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{SparkBLEControl()}{SparkBLEControl()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::\+Spark\+BLEControl (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}\label{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}} 
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{SparkBLEControl()}{SparkBLEControl()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::\+Spark\+BLEControl (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}} $\ast$}]{dc }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}\label{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}} 
+\index{SparkBLEControl@{SparkBLEControl}!````~SparkBLEControl@{$\sim$SparkBLEControl}}
+\index{````~SparkBLEControl@{$\sim$SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{$\sim$SparkBLEControl()}{~SparkBLEControl()}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::$\sim$\+Spark\+BLEControl (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}\label{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}} 
+\index{SparkBLEControl@{SparkBLEControl}!connectToServer@{connectToServer}}
+\index{connectToServer@{connectToServer}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{connectToServer()}{connectToServer()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::connect\+To\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Check if we have a client we should reuse first
+
+Special case when we already know this device, we send false as the second argument in connect() to prevent refreshing the service database. This saves considerable time and power.
+
+We don\textquotesingle{}t already have a client that knows this device, we will check for a client that is disconnected that we can use.
+
+No client to reuse? Create a new one.
+
+Set initial connection parameters\+: These settings are 15ms interval, 0 latency, 120ms timout. These settings are safe for 3 clients to connect reliably, can go faster if you have less connections. Timeout should be a multiple of the interval, minimum is 100ms. Min interval\+: 12 $\ast$ 1.\+25ms = 15, Max interval\+: 12 $\ast$ 1.\+25ms = 15, 0 latency, 51 $\ast$ 10ms = 510ms timeout
+
+Set how long we are willing to wait for the connection to complete (seconds), default is 30.
+
+Created a client but failed to connect, don\textquotesingle{}t need to keep it as it has no data\mbox{\Hypertarget{class_spark_b_l_e_control_aba9084a82e8829c039cd7aca3348f7c2}\label{class_spark_b_l_e_control_aba9084a82e8829c039cd7aca3348f7c2}} 
+\index{SparkBLEControl@{SparkBLEControl}!initBLE@{initBLE}}
+\index{initBLE@{initBLE}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{initBLE()}{initBLE()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::init\+BLE (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Optional\+: set the transmit power, default is 3db
+
++9db
+
+create new scan
+
+create a callback that gets called when advertisers are found
+
+Set scan interval (how often) and window (how long) in milliseconds
+
+Active scan will gather scan response data from advertisers but will use more energy from both devices
+
+Start scanning for advertisers for the scan time specified (in seconds) 0 = forever Optional callback for when scanning stops.\mbox{\Hypertarget{class_spark_b_l_e_control_ac69bc6917d49dc7ebe001a5d567e11e2}\label{class_spark_b_l_e_control_ac69bc6917d49dc7ebe001a5d567e11e2}} 
+\index{SparkBLEControl@{SparkBLEControl}!initScan@{initScan}}
+\index{initScan@{initScan}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{initScan()}{initScan()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::init\+Scan (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a09ab2d543cbd5864281ff9fc62b3fa79}\label{class_spark_b_l_e_control_a09ab2d543cbd5864281ff9fc62b3fa79}} 
+\index{SparkBLEControl@{SparkBLEControl}!isConnected@{isConnected}}
+\index{isConnected@{isConnected}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isConnected()}{isConnected()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+Connected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}\label{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}} 
+\index{SparkBLEControl@{SparkBLEControl}!isConnectionFound@{isConnectionFound}}
+\index{isConnectionFound@{isConnectionFound}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isConnectionFound()}{isConnectionFound()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+Connection\+Found (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}\label{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}} 
+\index{SparkBLEControl@{SparkBLEControl}!notifyClients@{notifyClients}}
+\index{notifyClients@{notifyClients}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{notifyClients()}{notifyClients()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::notify\+Clients (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{msg }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}\label{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}} 
+\index{SparkBLEControl@{SparkBLEControl}!sendInitialNotification@{sendInitialNotification}}
+\index{sendInitialNotification@{sendInitialNotification}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{sendInitialNotification()}{sendInitialNotification()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::send\+Initial\+Notification (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}\label{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}} 
+\index{SparkBLEControl@{SparkBLEControl}!startServer@{startServer}}
+\index{startServer@{startServer}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{startServer()}{startServer()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::start\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+sets device name
+
+Optional\+: set the transmit power, default is 3db
+
++9db
+
+Start the services when finished creating all Characteristics and Descriptors
+
+Add the services to the advertisment data
+
+If your device is battery powered you may consider setting scan response to false as it will extend battery life at the expense of less data sent.\mbox{\Hypertarget{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}\label{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}} 
+\index{SparkBLEControl@{SparkBLEControl}!subscribeToNotifications@{subscribeToNotifications}}
+\index{subscribeToNotifications@{subscribeToNotifications}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{subscribeToNotifications()}{subscribeToNotifications()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::subscribe\+To\+Notifications (\begin{DoxyParamCaption}\item[{notify\+\_\+callback}]{notify\+Callback = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}\label{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}} 
+\index{SparkBLEControl@{SparkBLEControl}!writeBLE@{writeBLE}}
+\index{writeBLE@{writeBLE}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{writeBLE()}{writeBLE()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::write\+BLE (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$}]{cmd,  }\item[{bool}]{response = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_spark_b_l_e_control_8h}{Spark\+BLEControl.\+h}}\item 
+\mbox{\hyperlink{_spark_b_l_e_control_8cpp}{Spark\+BLEControl.\+cpp}}\end{DoxyCompactItemize}

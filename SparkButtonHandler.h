@@ -56,7 +56,6 @@ private:
 	static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
-	static void btnStartupModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 };
 
 #endif /* SPARKBUTTONHANDLER_H_ */

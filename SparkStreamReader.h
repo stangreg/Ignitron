@@ -74,10 +74,13 @@ private:
 	void end_str();
 	void add_indent();
 	void del_indent();
+	void add_separator();
+	void add_newline();
 	void add_python(char* python_str);
 	void add_str(char* a_title, std::string a_str, char* nature = "all");
 	void add_int(char* a_title, int an_int, char* nature = "all");
 	void add_float(char* a_title, float a_float, char* nature = "all");
+	void add_float_pure(float a_float, char* nature = "all");
 	void add_bool(char* a_title, boolean a_bool, char* nature = "all");
 
 
