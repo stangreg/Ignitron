@@ -20,17 +20,24 @@
 #define SWITCH_MODE_FX 1
 #define SWITCH_MODE_PRESET 2
 
+#define SPARK_MODE_APP 1
+#define SPARK_MODE_AMP 2
+
 using ByteVector = std::vector<byte>;
+
+class SparkBLEControl;
 
 class SparkDataControl {
 public:
+	static int operationMode;
 
 	SparkDataControl();
 	virtual ~SparkDataControl();
 
-	void init();
+	void init(int op_mode);
 	bool checkBLEConnection();
 	bool isBLEConnected();
+	void startBLEServer();
 
 	// Callback function when Spark notifies about a changed characteristic
 	static void notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
@@ -67,6 +74,12 @@ public:
 	const int& buttonMode() const {return buttonMode_;}
 	int& buttonMode() {return buttonMode_;}
 
+	// Functions for Spark AMP (Server mode)
+	void receiveSparkWrite(ByteVector blk);
+	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
+	static void processSparkData(ByteVector blk);
+	void triggerInitialBLENotifications();
+
 private:
 	static SparkBLEControl bleControl;
 	static SparkStreamReader spark_ssr;
@@ -78,6 +91,7 @@ private:
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
+
 
 	//PRESET variables
 	static preset activePreset_;
@@ -91,8 +105,6 @@ private:
 	std::vector<ByteVector> current_msg;
 	static std::vector<ByteVector> ack_msg;
 
-	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
-	static void processSparkNotification(ByteVector blk);
 
 
 };

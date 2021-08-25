@@ -22,7 +22,7 @@ private:
 	std::string raw;
 	std::string text;
 	std::string indent;
-	std::string python;
+	std::string json;
 
 	// Vector containing struct of cmd, sub_cmd, and payload
 	std::vector<cmd_data> message = {};
@@ -89,6 +89,7 @@ public:
 	SparkStreamReader();
 	// setting the messag so it can be structured and interpreted
 	void setMessage(std::vector<ByteVector> msg);
+	std::string getJson();
 
 	// Preset related methods to make information public
 	const preset currentSetting() const {return currentSetting_;}
@@ -99,8 +100,10 @@ public:
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
-	void processBlock(ByteVector block);
+	bool processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
+
+	// Functions for Spark AMP (Server mode)
 
 
 };

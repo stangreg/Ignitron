@@ -36,7 +36,7 @@ struct preset {
 
 	boolean isEmpty = true;
 
-	std::string python;
+	std::string json;
 	std::string raw;
 	std::string text;
 	std::string indent;
@@ -53,13 +53,13 @@ struct preset {
 
 	void start_str() {
 		text = "";
-		python = "{";
+		json = "{";
 		raw = "";
 		indent = "";
 	}
 
 	void end_str() {
-		python += "}";
+		json += "}";
 	}
 
 	void add_indent() {
@@ -70,8 +70,8 @@ struct preset {
 		indent = indent.substr(1);
 	}
 
-	void add_python(char* python_str) {
-		python += indent + python_str + "\n";
+	void add_json(char* python_str) {
+		json += indent + python_str + "\n";
 	}
 
 	void add_str(char* a_title, std::string a_str, char* nature = "all") {
@@ -81,7 +81,7 @@ struct preset {
 		sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
 		text += string_add;
 		if (nature != "python") {
-			python += indent + "\"" + a_title + "\":\"" + a_str + "\",\n";
+			json += indent + "\"" + a_title + "\":\"" + a_str + "\",\n";
 		}
 	}
 
@@ -94,7 +94,7 @@ struct preset {
 		text += string_add;
 		if (nature != "python") {
 			sprintf(string_add, "%s\"%-20s\": %d,\n", indent.c_str(), a_title, an_int);
-			python += string_add;
+			json += string_add;
 		}
 	}
 
@@ -108,11 +108,11 @@ struct preset {
 		text += string_add;
 		if (nature == "python") {
 			sprintf(string_add, "%s%2.4f,\n", indent.c_str(), a_float);
-			python += string_add;
+			json += string_add;
 		}
 		else {
 			sprintf(string_add, "%s\"%s\": %2.4f,\n", indent.c_str(), a_title, a_float);
-			python += string_add;
+			json += string_add;
 		}
 	}
 
@@ -124,7 +124,7 @@ struct preset {
 		text += string_add;
 		if (nature != "python") {
 			sprintf(string_add, "%s\"%s\": %s,\n", indent.c_str(), a_title, a_bool ? "true" : "false");
-			python += string_add;
+			json += string_add;
 		}
 	}
 
@@ -138,14 +138,14 @@ struct preset {
 		add_str("Description", description);
 		add_str("Icon", icon);
 		add_float("BPM", bpm);
-		add_python("\"Pedals\": [");
+		add_json("\"Pedals\": [");
 		add_indent();
 		for (int i = 0; i < pedals.size(); i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 			pedal currentPedal = pedals[i];
-			add_python ("{");
+			add_json ("{");
 			add_str("Name", currentPedal.name);
 			add_bool("IsOn", currentPedal.isOn);
-			add_python("\"Parameters\":[");
+			add_json("\"Parameters\":[");
 			add_indent();
 			for (int p = 0; p < currentPedal.parameters.size(); p++) {
 				parameter currentParam = currentPedal.parameters[p];
@@ -154,16 +154,16 @@ struct preset {
 				add_float("Value", currentParam.value, "python");
 			}
 
-			add_python("],");
+			add_json("],");
 			del_indent();
-			add_python("},");
+			add_json("},");
 		}
-		add_python("],");
+		add_json("],");
 		del_indent();
 		add_str("Filler", SparkHelper::intToHex(filler));
 		end_str();
 
-		return python;
+		return json;
 	}
 
 };

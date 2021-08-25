@@ -8,6 +8,10 @@ SparkStreamReader::SparkStreamReader(){
 	msg_pos = 0;
 }
 
+std::string SparkStreamReader::getJson(){
+	return json;
+}
+
 void SparkStreamReader::setMessage(std::vector<ByteVector> msg){
 	unstructured_data = msg;
 	message.clear();
@@ -99,14 +103,14 @@ boolean SparkStreamReader::read_onoff() {
 
 void SparkStreamReader::start_str() {
 	text = "";
-	python = "{";
+	json = "{";
 	raw = "";
 	//dict={};
 	indent = "";
 }
 
 void SparkStreamReader::end_str() {
-	python += "}";
+	json += "}";
 }
 
 void SparkStreamReader::add_indent() {
@@ -118,7 +122,7 @@ void SparkStreamReader::del_indent() {
 }
 
 void SparkStreamReader::add_python(char* python_str) {
-	python += indent + python_str + "\n";
+	json += indent + python_str + "\n";
 }
 
 void SparkStreamReader::add_str(char* a_title, std::string a_str, char* nature) {
@@ -128,7 +132,7 @@ void SparkStreamReader::add_str(char* a_title, std::string a_str, char* nature) 
 	sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
 	text += string_add;
 	if (nature != "python") {
-		python += indent + "\"" + a_title + "\":\"" + a_str + "\",\n";
+		json += indent + "\"" + a_title + "\":\"" + a_str + "\",\n";
 	}
 }
 
@@ -141,7 +145,7 @@ void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 	text += string_add;
 	if (nature != "python") {
 		sprintf(string_add, "%s\"%-20s\": %d,\n", indent.c_str(), a_title, an_int);
-		python += string_add;
+		json += string_add;
 	}
 }
 
@@ -155,11 +159,11 @@ void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
 	text += string_add;
 	if (nature == "python") {
 		sprintf(string_add, "%s%2.4f,\n", indent.c_str(), a_float);
-		python += string_add;
+		json += string_add;
 	}
 	else {
 		sprintf(string_add, "%s\"%s\": %2.4f,\n", indent.c_str(), a_title, a_float);
-		python += string_add;
+		json += string_add;
 	}
 }
 
@@ -171,7 +175,7 @@ void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
 	text += string_add;
 	if (nature != "python") {
 		sprintf(string_add, "%s\"%s\": %s,\n", indent.c_str(), a_title, a_bool ? "true" : "false");
-		python += string_add;
+		json += string_add;
 	}
 }
 
@@ -305,7 +309,7 @@ void SparkStreamReader::read_preset() {
 	end_str();
 	currentSetting_.text = text;
 	currentSetting_.raw = raw;
-	currentSetting_.python = python;
+	currentSetting_.json = json;
 	currentSetting_.isEmpty = false;
 	isPresetUpdated_ = true;
 }
@@ -449,19 +453,19 @@ void SparkStreamReader::set_interpreter (ByteVector _msg) {
 int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	if (_cmd == 0x01) {
 		if (_sub_cmd == 0x01) {
-			Serial.println("Reading preset");
+			//Serial.println("Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x04) {
-			Serial.println("Reading effect param");
+			//Serial.println("Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x06) {
-			Serial.println("Reading effect");
+			//Serial.println("Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x15) {
-			Serial.println("Reading effect on off");
+			//Serial.println("Reading effect on off");
 			read_effect_onoff();
 		}
 		else if (_sub_cmd == 0x38) {
@@ -475,23 +479,23 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
-			Serial.println("Reading preset");
+			//Serial.println("Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x06) {
-			Serial.println("Reading effect");
+			//Serial.println("Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x27) {
-			Serial.println("Storing HW preset");
+			//Serial.println("Storing HW preset");
 			read_store_hardware_preset();
 		}
 		else if (_sub_cmd == 0x37) {
-			Serial.println("Reading effect param");
+			//Serial.println("Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x38 || _sub_cmd == 0x10) {
-			Serial.println("Reading HW preset");
+			//Serial.println("Reading HW preset");
 			read_hardware_preset();
 		}
 		else {
@@ -507,8 +511,6 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	else {
 		Serial.println ("Unprocessed");
 	}
-	//Serial.println("Analyzed response");
-	//Serial.println(python.c_str());
 	return 1;
 }
 
@@ -521,7 +523,6 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	byte seq = blk[18];
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
-	//Check if this is needed at all!
 
 	byte msg_to_spark[2] = { '\x53', '\xfe' };
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
@@ -541,8 +542,19 @@ byte SparkStreamReader::getLastAckAndEmpty(){
 	return lastAck;
 }
 
-void SparkStreamReader::processBlock(ByteVector blk){
+bool SparkStreamReader::processBlock(ByteVector blk){
 
+	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
+	// This will reassemble the block by appending to the last one.
+	if (!(blk[0] == '\x01' && blk[1] == '\xFE')){ // check if block needs to be appended to earlier block
+		ByteVector lastChunk = response.back();
+		response.pop_back();
+		for (auto by: blk){
+			lastChunk.push_back(by);
+		}
+		blk = lastChunk;
+	}
+	// Standard behaviour from here!
 	// Process:
 	// Read a block
 	// Check length of 01FE message (found in byte pos 6)
@@ -563,77 +575,81 @@ void SparkStreamReader::processBlock(ByteVector blk){
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
-	//Check if this is needed at all!
+	//Check if announced size matches real size, otherwise skip (and wait for more data);
+	if(blk_len == blk.size()){
+		byte msg_to_spark[2] = { '\x53', '\xfe' };
+		int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 
-	byte msg_to_spark[2] = { '\x53', '\xfe' };
-	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
+		// now we need to see if this is the last block
 
-	// now we need to see if this is the last block
+		// if the block length is less than the max size then
+		// definitely last block
+		// could be a full block and still last one
+		// but to be full surely means it is a multi-block as
+		// other messages are always small
+		// so need to check the chunk counts - in different places
+		// depending on whether
 
-	// if the block length is less than the max size then
-	// definitely last block
-	// could be a full block and still last one
-	// but to be full surely means it is a multi-block as
-	// other messages are always small
-	// so need to check the chunk counts - in different places
-	// depending on whether
-
-	if (msg_to_spark_comp == 0) {
-		if (blk_len < 0xad) {
-			msg_last_block = true;
-		} else {
-			// this is sent to Spark so will have a chunk header at top
-			int num_chunks = blk[23];
-			int this_chunk = blk[24];
-			if ((this_chunk + 1) == num_chunks) {
+		if (msg_to_spark_comp == 0) {
+			if (blk_len < 0xad) {
 				msg_last_block = true;
-			}
-		}
-	}
-
-	byte msg_from_spark[2] = { '\x41', '\xff' };
-	int msg_from_spark_comp = memcmp(direction, msg_from_spark,
-			sizeof(direction));
-	if (msg_from_spark_comp == 0) {
-		if (blk_len < 0x6a) {
-			//Serial.println("Last message, shorter");
-			// if the message is smaller than the largest size possible for block, definitely the last block
-			msg_last_block = true;
-		}
-		// if message ends with F7 we can check if that was the last block. Otherwise there will be more.
-		else if (blk[blk.size() - 1] == '\xf7') {
-			// this is from Spark so chunk header could be anywhere
-			// so search from the end
-			int pos = -1;
-			//Serial.println("Searching backwards for chunk header");
-			for (int i = blk.size() - 2; i >= 0; i--) {
-				if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
-					Serial.println("Found F001");
-					pos = i;
-					break;
-				}
-			}
-			if (pos >= 0) {
-				int num_chunks = blk[pos + 7];
-				int this_chunk = blk[pos + 8];
+			} else {
+				// this is sent to Spark so will have a chunk header at top
+				int num_chunks = blk[23];
+				int this_chunk = blk[24];
 				if ((this_chunk + 1) == num_chunks) {
 					msg_last_block = true;
-				} // if this_chunk+1 == num_chunks
-			} //pos >= 0
-			else {
-				Serial.println("Chunk Header not found");
+				}
 			}
-		} //if message ends with F7
-	} // Message is from Spark
-	//Process data if the block just analyzed was the last
-	if (msg_last_block) {
-		setMessage(response);
-		//Serial.println("Reading message");
-		read_message();
-		msg_last_block = false;
-		response.clear();
-	} // msg_last_block
+		}
 
+		byte msg_from_spark[2] = { '\x41', '\xff' };
+		int msg_from_spark_comp = memcmp(direction, msg_from_spark,
+				sizeof(direction));
+		if (msg_from_spark_comp == 0) {
+			if (blk_len < 0x6a) {
+				//Serial.println("Last message, shorter");
+				// if the message is smaller than the largest size possible for block, definitely the last block
+				msg_last_block = true;
+			}
+			// if message ends with F7 we can check if that was the last block. Otherwise there will be more.
+			else if (blk[blk.size() - 1] == '\xf7') {
+				// this is from Spark so chunk header could be anywhere
+				// so search from the end
+				int pos = -1;
+				//Serial.println("Searching backwards for chunk header");
+				for (int i = blk.size() - 2; i >= 0; i--) {
+					if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
+						Serial.println("Found F001");
+						pos = i;
+						break;
+					}
+				}
+				if (pos >= 0) {
+					int num_chunks = blk[pos + 7];
+					int this_chunk = blk[pos + 8];
+					if ((this_chunk + 1) == num_chunks) {
+						msg_last_block = true;
+					} // if this_chunk+1 == num_chunks
+				} //pos >= 0
+				else {
+					Serial.println("Chunk Header not found");
+				}
+			} //if message ends with F7
+		} // Message is from Spark
+		//Process data if the block just analyzed was the last
+		if (msg_last_block) {
+			msg_last_block = false;
+			setMessage(response);
+			//Serial.println("Reading message");
+			read_message();
+			response.clear();
+			// Return true to indicate that a full message has been processed
+			return true;
+		} // msg_last_block
+	} // If length not equal to announced length
+	// Message is not complete, has not been processed yet
+	return false;
 }
 
 void SparkStreamReader::interpret_data() {
@@ -654,3 +670,4 @@ std::vector<cmd_data> SparkStreamReader::read_message() {
 	}
 	return message;
 }
+

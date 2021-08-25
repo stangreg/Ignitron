@@ -12,19 +12,23 @@
 #include <Arduino.h>
 #include <vector>
 
+#include "SparkDataControl.h"
+
 // Service and characteristics UUIDs of Spark Amp
 #define SPARK_BLE_SERVICE_UUID "FFC0"
 #define SPARK_BLE_WRITE_CHAR_UUID "FFC1"
 #define SPARK_BLE_NOTIF_CHAR_UUID "FFC2"
 
 using ByteVector = std::vector<byte>;
+class SparkDataControl;
 
 // Forward declaration of Callbacks classes, does nothing special, only default actions
 class ClientCallbacks: public NimBLEClientCallbacks {};
 
-class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks {
+class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks, NimBLECharacteristicCallbacks, NimBLEServerCallbacks{
 public:
 	SparkBLEControl();
+	SparkBLEControl(SparkDataControl* dc);
 	virtual ~SparkBLEControl();
 	const bool isConnectionFound() const { return isConnectionFound_;}
 	const bool isConnected() const { return isConnected_;}
@@ -34,6 +38,9 @@ public:
 	void initBLE();
 	void initScan();
 
+	void startServer();
+	void notifyClients(ByteVector msg);
+	void sendInitialNotification();
 
 private:
 
@@ -50,6 +57,13 @@ private:
 	static void scanEndedCB(NimBLEScanResults results);
 	void onResult(NimBLEAdvertisedDevice *advertisedDevice);
 	void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
+
+	// Server mode functions
+	NimBLEServer *pServer = nullptr;
+	SparkDataControl* spark_dc;
+	void onWrite(NimBLECharacteristic* pCharacteristic);
+	void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue);
+	void onConnect(NimBLEServer* pServer);
 
 
 };
