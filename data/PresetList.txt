@@ -1,75 +1,115 @@
-BangBang.json
-StairwayToHeavenSolo.json
-NovemberRainSolo.json
-ComfortablyNumbSolo.json
+--Custom Presets
+----Rock
+------Bank 1
 SweetChildOfMine.json
-CliffsOfDover.json
-BohemianRhapsody.json
-StairwaySolo.json
-RageNowInTheFire.json
-FooFighters.json
-RockDistortion.json
 SlashV2.json
+SlashAFD.json
 SlashDontCry.json
+
+------Bank 2
+NovemberRainSolo.json
+ParadiseCity.json
+KnockingOnHeaven.json
+GunsNRoses.json
+
+------Bank 3
+RockDistortion.json
+RageNowInTheFire.json
+ComfortablyNumbSolo.json
+StairwayToHeavenSolo.json
+
+------Bank 4
+BohemianRhapsody.json
+CliffsOfDover.json
 FinalCountdown.json
 AcDc.json
+
+------Bank 5
 TremontiAlternative.json
-SlashAFD.json
-HateToSay.json
-RedHotChiliPeppers.json
+TremontiClean.json
+FooFighters.json
 FooFightersEverlong.json
-CrazyTrain.json
-GhostDanceMacabreMart.json
-MasterOfPuppets.json
+
+------Bank 6
 EnterSandman.json
-AliceCooper.json
-AngryMonkey.json
-BendTheFend.json
-BluesArk.json
-BritishAccent.json
-BrownSoundLarson.json
-CleanForBallads.json
-CountryRoad.json
-CozySerenade.json
-CrazyCrue.json
-DancingInTheRoom.json
-DarkSoul.json
-DualTrain.json
-EddieVanHalen.json
-FuzzyJam.json
-GtrHeroLarson.json
-GunsNRoses.json
-HeavyAxe.json
-HideAndSeek.json
-IronHammer.json
-JethroTull.json
-KnockingOnHeaven.json
-LynyrdSkynyrd.json
-Megadeth.json
-MetallicaBlackAlbum.json
-MillenialLead.json
-ModernStone.json
-ModernVintageClean.json
 NothingElseMatters.json
 NothingElseMattersAcous.json
-Oasis.json
-OrangeAD30Arpeggio.json
-ParadiseCity.json
-PerfectCleanLarson.json
-RoyalCrown.json
+HateToSay.json
+
+------Bank 7
+RedHotChiliPeppers.json
+AliceCooper.json
+EddieVanHalen.json
 Rush.json
+
+------Bank 8
 SantanaBlackMagicWoman.json
-SatrianiSatchBoogie.json
-SilverShip.json
-SpookyMelody.json
-StoneBreaker.json
-StudioSession.json
 SunshineOfMyLove.json
-SweetMemory.json
-ThroatyLarson.json
+SatrianiSatchBoogie.json
 ToolClean.json
-TremontiClean.json
-TremontiTubeScreamer.json
+
+------Bank 9
 VintageCreamyLarson.json
 Wizo.json
+JethroTull.json
+BrownSoundLarson.json
+
+----Metal
+------Bank 10
+MasterOfPuppets.json
+Megadeth.json
+GhostDanceMacabreMart.json
+GtrHeroLarson.json
+
+------Bank 11
+CrazyTrain.json
+----Pop
+BangBang.json
+CleanForBallads.json
+OrangeAD30Arpeggio.json
+
+------Bank 12
+ModernVintageClean.json
+PerfectCleanLarson.json
+Oasis.json
+----Blues
+ThroatyLarson.json
+
+------Bank 13
+LynyrdSkynyrd.json
+BendTheFend.json
+----Acoustic
+CozySerenade.json
+StudioSession.json
+
+--Factory Presets
+----Pop (Bank 14)
+SilverShip.json
+SweetMemory.json
+DancingInTheRoom.json
+RoyalCrown.json
+
+----Blues (Bank 15)
 WoodenBridge.json
+StoneBreaker.json
+CountryRoad.json
+BluesArk.json
+
+----Rock (Bank 16)
+ModernStone.json
+CrazyCrue.json
+DarkSoul.json
+BritishAccent.json
+
+----Metal (Bank 17)
+IronHammer.json
+MillenialLead.json
+HeavyAxe.json
+DualTrain.json
+
+----Alternative (Bank 18)
+SpookyMelody.json
+FuzzyJam.json
+AngryMonkey.json
+HideAndSeek.json
+

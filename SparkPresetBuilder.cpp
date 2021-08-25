@@ -111,10 +111,15 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 	std::string line;
 	while (std::getline(stream, line)) {
 		std::string presetFilename = line;
-		tmpVector.push_back(presetFilename);
-		if(tmpVector.size() == PRESETS_PER_BANK){
-			presetBanksNames.push_back(tmpVector);
-			tmpVector.clear();
+		// Lines starting with '-' are ignored and can be used for descriptions in the file
+		if (line.rfind("-", 0) != 0 && !line.empty()) {
+			Serial.println("Adding line:");
+			Serial.printf("'%s'\n",line.c_str());
+			tmpVector.push_back(presetFilename);
+			if(tmpVector.size() == PRESETS_PER_BANK){
+				presetBanksNames.push_back(tmpVector);
+				tmpVector.clear();
+			}
 		}
 	}
 	if(tmpVector.size() > 0){
