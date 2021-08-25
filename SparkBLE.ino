@@ -41,6 +41,7 @@ void setup() {
 	spark_dc = new SparkDataControl();
 
 	spark_bh = new SparkButtonHandler(spark_dc);
+
 	operationMode = spark_bh->init();
 	if(operationMode == SPARK_MODE_APP){
 		Serial.println("======= Entering APP mode =======");
@@ -48,6 +49,9 @@ void setup() {
 	else {
 		Serial.println("======= Entering AMP mode =======");
 	}
+	spark_display = new SparkDisplayControl(spark_dc);
+		spark_display->init(operationMode);
+	spark_dc->setDisplayControl(spark_display);
 	// Setting operation mode before initializing
 	spark_dc->init(operationMode);
 
@@ -56,8 +60,6 @@ void setup() {
 
 	// Initializing control classes
 	spark_led = new SparkLEDControl(spark_dc);
-	spark_display = new SparkDisplayControl(spark_dc);
-	spark_display->init(operationMode);
 	Serial.println("Initialization done.");
 
 
@@ -88,7 +90,8 @@ void loop() {
 	}
 	else
 	{
-		spark_dc->triggerInitialBLENotifications();
-		delay(1000);
+		//spark_dc->triggerInitialBLENotifications();
+		spark_display->update();
+		//delay(1000);
 	}
 }

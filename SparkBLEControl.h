@@ -32,6 +32,7 @@ public:
 	virtual ~SparkBLEControl();
 	const bool isConnectionFound() const { return isConnectionFound_;}
 	const bool isConnected() const { return isConnected_;}
+	const bool isClientConnected() const { return isClientConnected_;}
 	bool connectToServer();
 	bool subscribeToNotifications(notify_callback notifyCallback=nullptr);
 	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
@@ -51,6 +52,8 @@ private:
 
 	bool isConnected_ = false;
 	bool isConnectionFound_ = false;
+	// isClientConnected will be set when a client is connected to ESP in AMP mode
+	bool isClientConnected_ = false;
 	uint32_t scanTime = 0; /** 0 = scan forever */
 	const uint8_t notificationOn[2] = { 0x1, 0x0 };
 
@@ -64,8 +67,9 @@ private:
 	void onWrite(NimBLECharacteristic* pCharacteristic);
 	void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue);
 	void onConnect(NimBLEServer* pServer);
+	void onDisconnect(NimBLEServer* pServer);
 
-
+	int notificationCount = 0;
 };
 
 #endif /* SPARKBLECONTROL_H_ */

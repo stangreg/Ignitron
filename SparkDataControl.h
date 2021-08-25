@@ -16,6 +16,7 @@
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
 #include "SparkTypes.h"
+#include "SparkDisplayControl.h"
 
 #define SWITCH_MODE_FX 1
 #define SWITCH_MODE_PRESET 2
@@ -26,17 +27,19 @@
 using ByteVector = std::vector<byte>;
 
 class SparkBLEControl;
+class SparkDisplayControl;
 
 class SparkDataControl {
 public:
-	static int operationMode;
 
 	SparkDataControl();
 	virtual ~SparkDataControl();
 
 	void init(int op_mode);
+	void setDisplayControl(SparkDisplayControl* display);
 	bool checkBLEConnection();
 	bool isBLEConnected();
+	bool isBLEClientConnected(); // true if ESP in AMP mode and client is connected
 	void startBLEServer();
 
 	// Callback function when Spark notifies about a changed characteristic
@@ -69,6 +72,8 @@ public:
 	const int& pendingBank() const {return pendingBank_;}
 	int& pendingBank() {return pendingBank_;}
 	const int numberOfBanks() const {return presetBuilder.getNumberOfBanks();}
+	const preset* appReceivedPreset() const { return &appReceivedPreset_;}
+	const int operationMode() const {return operationMode_;}
 
 	// Set/get button mode
 	const int& buttonMode() const {return buttonMode_;}
@@ -77,14 +82,18 @@ public:
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
-	static void processSparkData(ByteVector blk);
+	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
+	bool presetReceivedFromApp();
 
 private:
+	static int operationMode_;
+
 	static SparkBLEControl bleControl;
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
+	static SparkDisplayControl* spark_display;
 
 	bool startup = true;
 	static bool isActivePresetUpdatedByAck;
@@ -104,6 +113,11 @@ private:
 	// Messages to send to Spark
 	std::vector<ByteVector> current_msg;
 	static std::vector<ByteVector> ack_msg;
+
+	//Spark AMP mode
+	static bool presetReceivedFromApp_;
+	static preset appReceivedPreset_;
+
 
 
 

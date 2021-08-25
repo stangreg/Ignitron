@@ -12,6 +12,17 @@
 
 using ByteVector = std::vector<byte>;
 
+
+#define MSG_TYPE_PRESET 1
+#define MSG_TYPE_HWPRESET 2
+#define MSG_TYPE_FX_ONOFF 3
+#define MSG_TYPE_FX_CHANGE 4
+#define MSG_TYPE_FX_PARAM 5
+
+#define MSG_PROCESS_RES_COMPLETE 1
+#define MSG_PROCESS_RES_INCOMPLETE 2
+#define MSG_PROCESS_RES_INITIAL 3
+
 class SparkStreamReader{
 	// Parser for Spark messages (from App or Amp)
 	// -------------------------------------------
@@ -45,13 +56,14 @@ private:
 	boolean isPresetUpdated_ = false;
 	boolean isPresetNumberUpdated_ = false;
 	ByteVector acknowledgements;
+	int last_message_type_ = 0;
 
 	// Functions to process calls based on identified cmd/sub_cmd.
 	void read_effect_parameter();
 	void read_effect();
+	void read_effect_onoff();
 	void read_hardware_preset();
 	void read_store_hardware_preset();
-	void read_effect_onoff();
 	void read_preset();
 
 
@@ -99,12 +111,14 @@ public:
 	const int currentPresetNumber() const { return currentPresetNumber_;}
 	const boolean isPresetNumberUpdated() const { return isPresetNumberUpdated_;}
 	const boolean isPresetUpdated() const { return isPresetUpdated_;}
+	const int lastMessageType() const { return last_message_type_;}
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
-	bool processBlock(ByteVector block);
+	int processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
+
 
 	// Functions for Spark AMP (Server mode)
 

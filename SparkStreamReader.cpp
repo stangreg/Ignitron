@@ -230,6 +230,7 @@ void SparkStreamReader::read_hardware_preset() {
 	end_str();
 	currentPresetNumber_ = preset_num;
 	isPresetNumberUpdated_ = true;
+	last_message_type_ = MSG_TYPE_HWPRESET;
 
 }
 
@@ -239,6 +240,8 @@ void SparkStreamReader::read_store_hardware_preset() {
 	byte preset_num = read_byte () + 1;
 	add_int ("NewStoredPreset", preset_num);
 	end_str();
+	last_message_type_ = MSG_TYPE_HWPRESET;
+
 }
 
 void SparkStreamReader::read_effect_onoff() {
@@ -249,6 +252,8 @@ void SparkStreamReader::read_effect_onoff() {
 	add_separator();
 	add_bool ("IsOn", isOn);
 	end_str();
+	last_message_type_ = MSG_TYPE_FX_ONOFF;
+
 }
 
 void SparkStreamReader::read_preset() {
@@ -356,6 +361,8 @@ void SparkStreamReader::read_preset() {
 	currentSetting_.json = json;
 	currentSetting_.isEmpty = false;
 	isPresetUpdated_ = true;
+	last_message_type_ = MSG_TYPE_PRESET;
+
 }
 
 boolean SparkStreamReader::structure_data() {
@@ -553,7 +560,11 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 		//Serial.printf("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
 	}
 	else {
-		Serial.println ("Unprocessed");
+		std::string cmd_str = SparkHelper::intToHex(_cmd);
+		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
+		Serial.printf("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
+		SparkHelper::printByteVector(msg);
+		Serial.println();
 	}
 	return 1;
 }
@@ -586,7 +597,9 @@ byte SparkStreamReader::getLastAckAndEmpty(){
 	return lastAck;
 }
 
-bool SparkStreamReader::processBlock(ByteVector blk){
+int SparkStreamReader::processBlock(ByteVector blk){
+
+	int retValue = MSG_PROCESS_RES_INCOMPLETE;
 
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the last one.
@@ -688,12 +701,16 @@ bool SparkStreamReader::processBlock(ByteVector blk){
 			//Serial.println("Reading message");
 			read_message();
 			response.clear();
-			// Return true to indicate that a full message has been processed
-			return true;
+			retValue = MSG_PROCESS_RES_COMPLETE;
 		} // msg_last_block
 	} // If length not equal to announced length
 	// Message is not complete, has not been processed yet
-	return false;
+	// if request was an initiating one from app, return false,
+	// so notifications will be triggered
+	if(cmd == 0x02){
+		retValue = MSG_PROCESS_RES_INITIAL;
+	}
+	return retValue;
 }
 
 void SparkStreamReader::interpret_data() {

@@ -12,12 +12,15 @@ SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 std::vector<ByteVector> SparkDataControl::ack_msg;
+SparkDisplayControl* SparkDataControl::spark_display = nullptr;
 preset SparkDataControl::activePreset_;
 preset SparkDataControl::pendingPreset_ = activePreset_;
 bool SparkDataControl::isActivePresetUpdatedByAck = false;
 int SparkDataControl::activeBank_ = 0;
 int SparkDataControl::pendingBank_ = 0;
-int SparkDataControl::operationMode = SPARK_MODE_AMP;
+int SparkDataControl::operationMode_ = SPARK_MODE_AMP;
+preset SparkDataControl::appReceivedPreset_;
+bool SparkDataControl::presetReceivedFromApp_ = false;
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -30,14 +33,20 @@ SparkDataControl::~SparkDataControl() {
 void SparkDataControl::init(int op_mode){
 	// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
-	operationMode = op_mode;
-	if(operationMode == SPARK_MODE_APP){
+	operationMode_ = op_mode;
+	if(operationMode_ == SPARK_MODE_APP){
 		// initialize BLE
 		bleControl.initBLE();
 	}
-	else if (operationMode == SPARK_MODE_AMP){
+	else if (operationMode_ == SPARK_MODE_AMP){
 		bleControl.startServer();
+		spark_display->init(operationMode_);
+
 	}
+}
+
+void SparkDataControl::setDisplayControl(SparkDisplayControl* display){
+	spark_display = display;
 }
 
 void SparkDataControl::checkForUpdates(){
@@ -91,6 +100,11 @@ bool SparkDataControl::isBLEConnected(){
 	return bleControl.isConnected();
 }
 
+bool SparkDataControl::isBLEClientConnected(){
+	return bleControl.isClientConnected();
+}
+
+
 void SparkDataControl::notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
 		size_t length, bool isNotify) {
 
@@ -100,7 +114,7 @@ void SparkDataControl::notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristi
 
 }
 
-void SparkDataControl::processSparkData(ByteVector blk){
+int SparkDataControl::processSparkData(ByteVector blk){
 
 	bool ackNeeded;
 	byte seq, cmd;
@@ -110,17 +124,23 @@ void SparkDataControl::processSparkData(ByteVector blk){
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded){
 		ack_msg = spark_msg.send_ack(seq, cmd);
-		//Serial.println("Sending acknowledgement");
-		if(operationMode == SPARK_MODE_APP){
+		Serial.println("Sending acknowledgement");
+		if(operationMode_ == SPARK_MODE_APP){
 			bleControl.writeBLE(ack_msg);
 		}
-		else if (operationMode == SPARK_MODE_AMP){
+		else if (operationMode_ == SPARK_MODE_AMP){
 			bleControl.notifyClients(ack_msg[0]);
 		}
 	}
-	if(spark_ssr.processBlock(blk) && operationMode == SPARK_MODE_AMP){
+	int retCode = spark_ssr.processBlock(blk);
+	if( retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP){
 		Serial.println("Message processed:");
-		Serial.println(spark_ssr.getJson().c_str());
+		std::string msgStr = spark_ssr.getJson();
+		Serial.println(msgStr.c_str());
+		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET){
+			presetReceivedFromApp_ = true;
+			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
+		}
 	}
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
 	// confirm pending preset into active
@@ -129,6 +149,7 @@ void SparkDataControl::processSparkData(ByteVector blk){
 		activePreset_ = pendingPreset_;
 		isActivePresetUpdatedByAck = true;
 	}
+	return retCode;
 }
 
 
@@ -219,4 +240,8 @@ bool SparkDataControl::isPresetNumberUpdated(){
 
 void SparkDataControl::triggerInitialBLENotifications(){
 	bleControl.sendInitialNotification();
+}
+
+bool SparkDataControl::presetReceivedFromApp(){
+	return presetReceivedFromApp_;
 }
