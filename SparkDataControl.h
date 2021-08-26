@@ -67,6 +67,7 @@ public:
 	preset* activePreset() const {return &activePreset_;}
 	preset* pendingPreset() const	{return &pendingPreset_;}
 	const int& activePresetNum() const {return activePresetNum_;}
+	void setActivePresetNum(int num);
 	int& activePresetNum() {return activePresetNum_;}
 	const int& activeBank() const {return activeBank_;}
 	const int& pendingBank() const {return pendingBank_;}

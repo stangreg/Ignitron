@@ -49,6 +49,10 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl* display){
 	spark_display = display;
 }
 
+void SparkDataControl::setActivePresetNum(int num){
+	activePresetNum_ = num;
+}
+
 void SparkDataControl::checkForUpdates(){
 	if(isActivePresetUpdated()){
 		pendingPreset_ = activePreset_;
@@ -124,7 +128,7 @@ int SparkDataControl::processSparkData(ByteVector blk){
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded){
 		ack_msg = spark_msg.send_ack(seq, cmd);
-		Serial.println("Sending acknowledgement");
+		//Serial.println("Sending acknowledgement");
 		if(operationMode_ == SPARK_MODE_APP){
 			bleControl.writeBLE(ack_msg);
 		}
@@ -188,7 +192,7 @@ void SparkDataControl::switchPreset(int pre) {
 		bleControl.writeBLE(current_msg);
 	}
 	activeBank_ = pendingBank_;
-	activePresetNum_ = pre;
+	setActivePresetNum(pre);
 }
 
 void SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable){

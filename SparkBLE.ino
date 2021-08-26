@@ -79,19 +79,14 @@ void loop() {
 			isInitBoot = false;
 		}
 
-		// Reading button input
-		spark_bh->readButtons();
 		// Check if presets have been updated
 		spark_dc->checkForUpdates();
 		// Update LED status
 		spark_led->updateLEDs();
-		// Update display
-		spark_display->update();
+
 	}
-	else
-	{
-		//spark_dc->triggerInitialBLENotifications();
-		spark_display->update();
-		//delay(1000);
-	}
+	// Reading button input
+	spark_bh->readButtons();
+	// Update display
+	spark_display->update();
 }

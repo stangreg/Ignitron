@@ -560,11 +560,13 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 		//Serial.printf("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
 	}
 	else {
-		std::string cmd_str = SparkHelper::intToHex(_cmd);
-		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
-		Serial.printf("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
-		SparkHelper::printByteVector(msg);
-		Serial.println();
+		// unprocessed command (likely the initial ones sent from the app
+
+		//std::string cmd_str = SparkHelper::intToHex(_cmd);
+		//std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
+		//Serial.printf("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
+		//SparkHelper::printByteVector(msg);
+		//Serial.println();
 	}
 	return 1;
 }

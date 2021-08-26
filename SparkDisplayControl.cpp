@@ -52,18 +52,28 @@ void SparkDisplayControl::init(int mode) {
 void SparkDisplayControl::showInitialMessage(){
 	// Clear the buffer
 	display.clearDisplay(); //No Adafruit splash
-	display.display();
+	//display.display();
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextSize(2);
 	display.setCursor(18,0);
 	display.print("SparkBLE");
 	display.setCursor(18,24);
 	display.print("AMP mode");
-	display.setTextSize(1);
-	display.setCursor(24,44);
-	display.print("Please connect");
-	display.setCursor(36,56);
-	display.print("Spark App");
+	if(spark_dc->isBLEClientConnected()){
+		display.setTextSize(1);
+		display.setCursor(26,43);
+		display.print("App connected");
+		display.setCursor(1,55);
+		display.print("Please select preset");
+	}
+	else {
+		display.setTextSize(1);
+		display.setCursor(24,43);
+		display.print("Please connect");
+		display.setCursor(36,55);
+		display.print("Spark App");
+	}
+
 }
 
 void SparkDisplayControl::showMessage(std::string* msg, int numLines, int size, int x, int y ){
@@ -84,7 +94,16 @@ void SparkDisplayControl::showMessage(std::string* msg, int numLines, int size, 
 }
 
 void SparkDisplayControl::update() {
-	if ( spark_dc->operationMode() == SPARK_MODE_APP){
+
+	int opMode = spark_dc->operationMode();
+	// in case mode is AMP and no preset received yet, show initial message
+	if ( opMode == SPARK_MODE_AMP
+			&& !(spark_dc->presetReceivedFromApp())){
+				showInitialMessage();
+				return;
+	}
+	// otherwise show dynamic display
+	else {
 		int activeBank = spark_dc->activeBank();
 		int pendingBank = spark_dc->pendingBank();
 		preset* activePreset = spark_dc->activePreset();
@@ -93,7 +112,7 @@ void SparkDisplayControl::update() {
 		int activePresetNum = spark_dc->activePresetNum();
 
 		std::string displayPresetName;
-		preset* displayPreset;
+		const preset* displayPreset;
 
 		// Display the bank and preset number
 		display.setTextColor(SSD1306_WHITE);
@@ -114,6 +133,9 @@ void SparkDisplayControl::update() {
 			// If in FX mode, show an "M" for manual mode
 			presetText = "M";
 
+		}
+		if (opMode == SPARK_MODE_AMP){
+			presetText = "*";
 		}
 		presetText += selPresetStr.str();
 		display.print(presetText.c_str());
@@ -150,22 +172,27 @@ void SparkDisplayControl::update() {
 		display.setTextSize(2);
 		display.setCursor(display_x, 32);
 
-		// If bank is not HW preset bank and the currently selected bank
-		// is not the active one, show the pending preset name
-		if (pendingBank != 0 && activeBank != pendingBank) {
-			displayPreset = pendingPreset;
-			displayPresetName = displayPreset->name;
-			// if the bank is the HW one and is not the active one
-			// show only a generic name as we don't know the HW preset name upfront
-		} else if (pendingBank == 0 && activeBank != pendingBank) {
-			displayPreset = activePreset;
-			displayPresetName = "Hardware Preset " + selPresetStr.str();
-			// Otherwise just show the active preset name
-		} else {
-			displayPreset = activePreset;
+		if (opMode == SPARK_MODE_AMP){
+			displayPreset = spark_dc->appReceivedPreset();
 			displayPresetName = displayPreset->name;
 		}
-
+		else {//  APP mode
+			// If bank is not HW preset bank and the currently selected bank
+			// is not the active one, show the pending preset name
+			if (pendingBank != 0 && activeBank != pendingBank) {
+				displayPreset = pendingPreset;
+				displayPresetName = displayPreset->name;
+				// if the bank is the HW one and is not the active one
+				// show only a generic name as we don't know the HW preset name upfront
+			} else if (pendingBank == 0 && activeBank != pendingBank) {
+				displayPreset = activePreset;
+				displayPresetName = "Hardware Preset " + selPresetStr.str();
+				// Otherwise just show the active preset name
+			} else {
+				displayPreset = activePreset;
+				displayPresetName = displayPreset->name;
+			}
+		}
 		// Calculate how far the name can scroll left before bouncing
 		display_minX = DISPLAY_MIN_X_FACTOR * displayPresetName.length()
 											+ display.width();
@@ -230,24 +257,7 @@ void SparkDisplayControl::update() {
 				display_x += display_scroll_num;
 			}
 		}
-		display.display();
 	} // IF MODE = APP
-	else {
-		if(!(spark_dc->isBLEClientConnected() && spark_dc->presetReceivedFromApp())){
-			showInitialMessage();
-		}
-		else {
-			const preset* currentPreset = spark_dc->appReceivedPreset();
-			display.setTextColor(SSD1306_WHITE);
-			display.setTextWrap(false);
-			display.clearDisplay();
-			display.setCursor(1,0);
-			display.setTextSize(1);
-			display.print("Received preset:");
-			display.setCursor(1,24);
-			display.print(currentPreset->name.c_str());
-			display.display();
 
-		}
-	}
+	display.display();
 }

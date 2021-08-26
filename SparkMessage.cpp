@@ -283,6 +283,7 @@ std::vector<ByteVector> SparkMessage::create_preset (preset preset_data){
 // This prepares a message to send an acknowledgement to Spark App
 std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte cmd) {
 	std::vector<ByteVector> ack_cmd;
+	ack_cmd.clear();
 	ByteVector ack = { 0x01, 0xfe, 0x00, 0x00, 0x41, 0xff, 0x17, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x01 };
 	ack.push_back(seq);
