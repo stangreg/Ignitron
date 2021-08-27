@@ -331,14 +331,12 @@ void SparkBLEControl::startServer() {
 	//pSparkNotificationService->start();
 	NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
 
-	/*
-	    uint8_t Adv_DATA[] = {0xee, 0x03, 0x08, 0xEB, 0xED, 0x78, 0x0A, 0x6E};
-	    BLEAdvertisementData oAdvertisementCustom = BLEAdvertisementData();
-	    oAdvertisementCustom.setManufacturerData(std::string((char *)&Adv_DATA[0], 8)); // 8 is length of Adv_DATA
-	    //oAdvertisementCustom.setPartialServices(NimBLEUUID(SPARK_SERVICE_UUID));
-	    //oAdvertisementCustom.setFlags(0x06);
-	    pAdvertising->setAdvertisementData(oAdvertisementCustom);
-	 */
+	//uint8_t Adv_DATA[] = {0xee, 0x03, 0x08, 0xEB, 0xED, 0x78, 0x0A, 0x6E};
+	//BLEAdvertisementData oAdvertisementCustom = BLEAdvertisementData();
+	//oAdvertisementCustom.setManufacturerData(std::string((char *)&Adv_DATA[0], 8)); // 8 is length of Adv_DATA
+	//oAdvertisementCustom.setPartialServices(NimBLEUUID(SPARK_BLE_SERVICE_UUID));
+	//oAdvertisementCustom.setFlags(0x06);
+	//pAdvertising->setAdvertisementData(oAdvertisementCustom);
 	pAdvertising->addServiceUUID(pSparkService->getUUID());
 
 	/** Add the services to the advertisment data **/
@@ -406,7 +404,7 @@ void SparkBLEControl::sendInitialNotification(){
 	//This is the serial number of the Spark. Sending fake one.
 		ByteVector preface1 = {0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0xF0, 0x01, 0x05, 0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39,
-				0x39, 0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7};
+				0x43, 0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7};
 
 	// When connecting app, we need to send a set of notifications for a successful connection
 	ByteVector preface2 ={0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -452,5 +450,6 @@ void SparkBLEControl::onDisconnect(NimBLEServer* pServer) {
 	Serial.println("Client disconnected");
 	isClientConnected_ = false;
 	notificationCount = 0;
+	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
 };

@@ -39,13 +39,40 @@ public:
 private:
 	static Adafruit_SSD1306 display;
 	SparkDataControl* spark_dc;
-	//DISPLAY variables
-	int display_x = 0;
-	int display_minX = DISPLAY_MIN_X_FACTOR * 10;
-	int display_scroll_num = -1; // scroll speed, make more negative to speed up the scroll
+	int activeBank = 1;
+	int pendingBank = 1;
+	const preset* activePreset;
+	const preset* pendingPreset;
+	const preset* presetFromApp;
+	int buttonMode = 1;
+	int activePresetNum = 1;
+	int selectedPresetNum = 1;
+	int opMode = 1;
+
+	std::string primaryLineText;
+	const preset* primaryLinePreset;
+	std::string secondaryLineText;
+	const preset* secondaryLinePreset;
+
+	unsigned long previousMillis = 0;
+	int showMessageInterval = 2000;
+	bool showMsgFlag = false;
+
+	//DISPLAY variables x1 for the first line, x2 for the second line
+	int display_x1 = 0;
+	int display_minX1 = DISPLAY_MIN_X_FACTOR * 10;
+	int display_scroll_num1 = -1; // scroll speed, make more negative to speed up the scroll
+
+	int display_x2 = 0;
+	int display_minX2 = DISPLAY_MIN_X_FACTOR * 10;
+	int display_scroll_num2 = -1; // scroll speed, make more negative to speed up the scroll
 
 	SparkDataControl* dataControl() {return spark_dc;}
 	void showInitialMessage();
+	void showBankAndPresetNum();
+	void showPresetName();
+	void showFX_SecondaryName();
+	void updateTextPositions();
 
 	// 'Sparky_Logo', 128x47px
 	const unsigned char epd_bitmap_Sparky_Logo [768] PROGMEM = {

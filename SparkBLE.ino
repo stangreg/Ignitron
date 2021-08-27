@@ -50,7 +50,11 @@ void setup() {
 		Serial.println("======= Entering AMP mode =======");
 	}
 	spark_display = new SparkDisplayControl(spark_dc);
-		spark_display->init(operationMode);
+	spark_display->init(operationMode);
+	if (operationMode == SPARK_MODE_AMP){
+		// Allow for the button to be unpressed to not register button in normal operation
+		delay(3000);
+	}
 	spark_dc->setDisplayControl(spark_display);
 	// Setting operation mode before initializing
 	spark_dc->init(operationMode);
@@ -78,15 +82,13 @@ void loop() {
 			spark_dc->switchPreset(1);
 			isInitBoot = false;
 		}
-
-		// Check if presets have been updated
-		spark_dc->checkForUpdates();
-		// Update LED status
-		spark_led->updateLEDs();
-
 	}
+	// Check if presets have been updated
+	spark_dc->checkForUpdates();
 	// Reading button input
 	spark_bh->readButtons();
+	// Update LED status
+	spark_led->updateLEDs();
 	// Update display
 	spark_display->update();
 }

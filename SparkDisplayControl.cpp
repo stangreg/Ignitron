@@ -16,6 +16,11 @@ SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 SparkDisplayControl::SparkDisplayControl(SparkDataControl* dc) {
 	Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 	spark_dc = dc;
+	presetFromApp = nullptr;
+	secondaryLinePreset = nullptr;
+	primaryLinePreset = nullptr;
+	pendingPreset = nullptr;
+	activePreset = nullptr;
 }
 SparkDisplayControl::~SparkDisplayControl() {
 	// TODO Auto-generated destructor stub
@@ -35,8 +40,8 @@ void SparkDisplayControl::init(int mode) {
 
 	if(mode == SPARK_MODE_APP){
 		display.setTextWrap(false);
-		display_x = 0;
-		display_minX = DISPLAY_MIN_X_FACTOR * 10; //initialize, will be updated with new preset
+		display_x1 = 0;
+		display_minX1 = DISPLAY_MIN_X_FACTOR * 10; //initialize, will be updated with new preset
 		// Display the splash logo
 		display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47, SSD1306_WHITE);
 		display.setTextSize(2);
@@ -50,9 +55,6 @@ void SparkDisplayControl::init(int mode) {
 }
 
 void SparkDisplayControl::showInitialMessage(){
-	// Clear the buffer
-	display.clearDisplay(); //No Adafruit splash
-	//display.display();
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextSize(2);
 	display.setCursor(18,0);
@@ -73,14 +75,9 @@ void SparkDisplayControl::showInitialMessage(){
 		display.setCursor(36,55);
 		display.print("Spark App");
 	}
-
 }
 
 void SparkDisplayControl::showMessage(std::string* msg, int numLines, int size, int x, int y ){
-
-	display.clearDisplay();
-	display.display();
-	display.clearDisplay();
 
 	display.setTextWrap(false);
 	display.setTextSize(size);
@@ -90,144 +87,186 @@ void SparkDisplayControl::showMessage(std::string* msg, int numLines, int size, 
 		display.setCursor(0, i * distance);
 		display.print(msg[i].substr(0, 18).c_str());
 	}
-	display.display();
 }
 
-void SparkDisplayControl::update() {
+void SparkDisplayControl::showBankAndPresetNum(){
+	// Display the bank and preset number
+	display.setTextColor(SSD1306_WHITE);
+	//Configure numbers as strings
+	std::ostringstream selBankStr;
+	selBankStr << pendingBank;
 
-	int opMode = spark_dc->operationMode();
-	// in case mode is AMP and no preset received yet, show initial message
-	if ( opMode == SPARK_MODE_AMP
-			&& !(spark_dc->presetReceivedFromApp())){
-				showInitialMessage();
-				return;
+	std::ostringstream selPresetStr;
+	selPresetStr << activePresetNum;
+
+	display.setCursor(display.width() - 48, 1);
+
+	// Preset display
+	display.setTextSize(4);
+	std::string presetText = " ";
+	if (buttonMode == SWITCH_MODE_FX) {
+		// If in FX mode, show an "M" for manual mode
+		presetText = "M";
+
 	}
-	// otherwise show dynamic display
-	else {
-		int activeBank = spark_dc->activeBank();
-		int pendingBank = spark_dc->pendingBank();
-		preset* activePreset = spark_dc->activePreset();
-		preset* pendingPreset = spark_dc->pendingPreset();
-		int buttonMode = spark_dc->buttonMode();
-		int activePresetNum = spark_dc->activePresetNum();
+	if (opMode == SPARK_MODE_AMP){
+		presetText = "*";
+	}
+	presetText += selPresetStr.str();
+	display.print(presetText.c_str());
 
-		std::string displayPresetName;
-		const preset* displayPreset;
+	// Bank number display
+	std::string bankDisplay = "";
+	if (pendingBank < 10) {
+		bankDisplay = "0";
+	}
+	bankDisplay += selBankStr.str();
+	if (pendingBank == 0) {
+		bankDisplay = "HW";
+	}
 
-		// Display the bank and preset number
-		display.setTextColor(SSD1306_WHITE);
-		//Configure numbers as strings
-		std::ostringstream selBankStr;
-		selBankStr << pendingBank;
+	display.setCursor(1, 1);
+	display.print(bankDisplay.c_str());
 
-		std::ostringstream selPresetStr;
-		selPresetStr << activePresetNum;
+}
 
-		display.clearDisplay();
-		display.setCursor(display.width() - 48, 1);
+void SparkDisplayControl::showPresetName(){
 
-		// Preset display
-		display.setTextSize(4);
-		std::string presetText = " ";
-		if (buttonMode == SWITCH_MODE_FX) {
-			// If in FX mode, show an "M" for manual mode
-			presetText = "M";
+	const std::string msg = spark_dc->responseMsg();
+	std::ostringstream selPresetStr;
+		selPresetStr << selectedPresetNum;
 
+	//Rectangle color for preset name
+	int rectColor;
+	int textColor;
+	// Show preset name inverted if it is not the currently selected one
+	if (pendingBank == activeBank) {
+		rectColor = SSD1306_BLACK;
+		textColor = SSD1306_WHITE;
+	} else {
+		rectColor = SSD1306_WHITE;
+		textColor = SSD1306_BLACK;
+	}
+
+	display.setTextColor(textColor);
+	display.fillRect(0, 31, 128, 16, rectColor);
+
+	display.setTextSize(2);
+	unsigned long currentMillis = millis();
+
+	if(msg != ""){ // message to show for some time
+		previousMillis = millis();
+		primaryLineText = msg;
+		spark_dc->resetResponseMessage();
+		showMsgFlag = true;
+	}
+	if (showMsgFlag) {
+		display.setCursor(0, 32);
+		if (currentMillis - previousMillis >= showMessageInterval) {
+			// reset the show message flag to show preset data again
+			showMsgFlag = false;
+			spark_dc->resetReceivedPreset();
 		}
-		if (opMode == SPARK_MODE_AMP){
-			presetText = "*";
-		}
-		presetText += selPresetStr.str();
-		display.print(presetText.c_str());
-
-		// Bank number display
-		std::string bankDisplay = "";
-		if (pendingBank < 10) {
-			bankDisplay = "0";
-		}
-		bankDisplay += selBankStr.str();
-		if (pendingBank == 0) {
-			bankDisplay = "HW";
-		}
-
-		display.setCursor(1, 1);
-		display.print(bankDisplay.c_str());
-
-
-		//Rectangle color for preset name
-		int rectColor;
-		int textColor;
-		// Show preset name inverted if it is not the currently selected one
-		if (pendingBank == activeBank) {
-			rectColor = SSD1306_BLACK;
-			textColor = SSD1306_WHITE;
+	}
+	else { // no preset save message to display
+		display.setCursor(display_x1, 32);
+		// If bank is not HW preset bank and the currently selected bank
+		// is not the active one, show the pending preset name
+		if (pendingBank != 0 && activeBank != pendingBank) {
+			primaryLinePreset = pendingPreset;
+			primaryLineText = primaryLinePreset->name;
+			// if the bank is the HW one and is not the active one
+			// show only a generic name as we don't know the HW preset name upfront
+		} else if (pendingBank == 0 && activeBank != pendingBank) {
+			primaryLinePreset = activePreset;
+			primaryLineText = "Hardware Preset " + selPresetStr.str();
+			// Otherwise just show the active preset name
 		} else {
-			rectColor = SSD1306_WHITE;
-			textColor = SSD1306_BLACK;
+			primaryLinePreset = activePreset;
+			primaryLineText = primaryLinePreset->name;
 		}
+	}
+	display.print(primaryLineText.c_str());
 
-		display.setTextColor(textColor);
-		display.fillRect(0, 31, 128, 16, rectColor);
-
-		display.setTextSize(2);
-		display.setCursor(display_x, 32);
-
-		if (opMode == SPARK_MODE_AMP){
-			displayPreset = spark_dc->appReceivedPreset();
-			displayPresetName = displayPreset->name;
-		}
-		else {//  APP mode
-			// If bank is not HW preset bank and the currently selected bank
-			// is not the active one, show the pending preset name
-			if (pendingBank != 0 && activeBank != pendingBank) {
-				displayPreset = pendingPreset;
-				displayPresetName = displayPreset->name;
-				// if the bank is the HW one and is not the active one
-				// show only a generic name as we don't know the HW preset name upfront
-			} else if (pendingBank == 0 && activeBank != pendingBank) {
-				displayPreset = activePreset;
-				displayPresetName = "Hardware Preset " + selPresetStr.str();
-				// Otherwise just show the active preset name
-			} else {
-				displayPreset = activePreset;
-				displayPresetName = displayPreset->name;
-			}
-		}
-		// Calculate how far the name can scroll left before bouncing
-		display_minX = DISPLAY_MIN_X_FACTOR * displayPresetName.length()
-											+ display.width();
-		display.print(displayPresetName.c_str());
-
+}
+void SparkDisplayControl::showFX_SecondaryName(){
+	// The last line shows either the FX setup (in APP mode)
+	// or the new received preset from the app (in AMP mode)
+	secondaryLineText = " ";
+	if (opMode == SPARK_MODE_AMP){
+		//displayPreset = presetFromApp;
+		secondaryLineText = presetFromApp->name;
+	}
+	else if (opMode == SPARK_MODE_APP) {
 		// Build string to show active FX
-		std::string fx_display = " ";
+		secondaryLinePreset = primaryLinePreset;
 		std::string currPedalStatus;
 		std::string fx_indicators_on[] = { "N", "C ", "D ", "  ", "M ", "D ", "R" }; // blank placeholder for Amp
 		std::string fx_indicators_off[] = { " ", "  ", "  ", "  ", "  ", "  ", " " }; // blank placeholder for Amp
 
 		// When we switched to FX mode, we always show the current selected preset
 		if (buttonMode == SWITCH_MODE_FX) {
-			displayPreset = activePreset;
+			secondaryLinePreset = activePreset;
 		}
-		if (!displayPreset->isEmpty || pendingBank > 0) {
+		if (!secondaryLinePreset->isEmpty || pendingBank > 0) {
 			// Iterate through the corresponding preset's pedals and show indicators if switched on
 			for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored
 				if (i != 3) {// Amp is on position 3, ignore
-					pedal currPedal = displayPreset->pedals[i];
+					pedal currPedal = secondaryLinePreset->pedals[i];
 					currPedalStatus =
-							displayPreset->pedals[i].isOn ? fx_indicators_on[i] : fx_indicators_off[i];
-					fx_display += currPedalStatus;
+							secondaryLinePreset->pedals[i].isOn ? fx_indicators_on[i] : fx_indicators_off[i];
+					secondaryLineText += currPedalStatus;
 				}
 			}
 		} else {
-			fx_display = "";
+			secondaryLineText = "";
 		}
+	}
+	display.fillRect(0, 48, 128, 16, SSD1306_BLACK);
 
-		display.fillRect(0, 48, 128, 16, SSD1306_BLACK);
-
-		display.setTextColor(SSD1306_WHITE);
-		display.setTextSize(2);
+	display.setTextColor(SSD1306_WHITE);
+	display.setTextSize(2);
+	if(opMode == SPARK_MODE_APP){
 		display.setCursor(-6, 49);
-		display.print(fx_display.c_str());
+	}
+	else {
+		display.setCursor(display_x2,49);
+	}
+	display.print(secondaryLineText.c_str());
+
+}
+
+
+void SparkDisplayControl::update() {
+	display.clearDisplay();
+	display.setTextWrap(false);
+	opMode = spark_dc->operationMode();
+
+	// in case mode is AMP and no preset received yet, show initial message
+	if ( opMode == SPARK_MODE_AMP
+			&& !(spark_dc->presetReceivedFromApp())){
+		showInitialMessage();
+	}
+	// otherwise show dynamic display
+	else {
+		activeBank = spark_dc->activeBank();
+		pendingBank = spark_dc->pendingBank();
+		activePreset = spark_dc->activePreset();
+		pendingPreset = spark_dc->pendingPreset();
+		buttonMode = spark_dc->buttonMode();
+		activePresetNum = spark_dc->activePresetNum();
+		presetFromApp = spark_dc->appReceivedPreset();
+		/*if(spark_dc->presetReceivedFromApp()){
+			Serial.printf("activeBank: %d\, ", activeBank);
+			Serial.printf("pendingBank: %d, ", pendingBank);
+			Serial.printf("activePresetName: %s, ", activePreset->name.c_str());
+			Serial.printf("pendingPresetName: %s, ", pendingPreset->name.c_str());
+			Serial.printf("activePresetNum: %d, ", activePresetNum);
+			Serial.printf("appReceivedName: %s\n", presetFromApp->name.c_str());
+		}*/
+		showBankAndPresetNum();
+		showPresetName();
+		showFX_SecondaryName();
 
 		// in FX mode (manual mode) invert display
 		if (buttonMode == SWITCH_MODE_FX) {
@@ -235,29 +274,54 @@ void SparkDisplayControl::update() {
 		} else {
 			display.invertDisplay(false);
 		}
-
-		// If preset name is short, don't scroll
-		if(displayPresetName.length()<=12){
-			display_x = 0;
-		}
-		// long preset names are scrolled right to left and back
-		else{
-			display_x += display_scroll_num;
-			if (display_x < display_minX || display_x > 1) {
-				// the two ifs are required in case the preset name length is
-				// longer than the previous one and has scrolled already too far
-				if( display_x < display_minX){
-					display_x=display_minX;
-				}
-				if(display_x > 1){
-					display_x=1;
-				}
-				// Invert scrolling direction and scroll
-				display_scroll_num = -display_scroll_num;
-				display_x += display_scroll_num;
-			}
-		}
+		updateTextPositions();
 	} // IF MODE = APP
-
 	display.display();
+}
+
+void SparkDisplayControl::updateTextPositions(){
+	//This is for the primary preset name line
+	display_minX1 = DISPLAY_MIN_X_FACTOR * primaryLineText.length() + display.width();
+	if(primaryLineText.length()<=12){
+		display_x1 = 0;
+	}
+	// long preset names are scrolled right to left and back
+	else{
+		display_x1 += display_scroll_num1;
+		if (display_x1 < display_minX1 || display_x1 > 1) {
+			// the two ifs are required in case the preset name length is
+			// longer than the previous one and has scrolled already too far
+			if( display_x1 < display_minX1){
+				display_x1=display_minX1;
+			}
+			if(display_x1 > 1){
+				display_x1=1;
+			}
+			// Invert scrolling direction and scroll
+			display_scroll_num1 = -display_scroll_num1;
+			display_x1 += display_scroll_num1;
+		}
+	}
+
+	// This is for the secondary FX display line (show preset name in AMP mode)
+	display_minX2 = DISPLAY_MIN_X_FACTOR * secondaryLineText.length() + display.width();
+	if (secondaryLineText.length()<=12){
+		display_x2=0;
+	}
+	else {
+		display_x2 += display_scroll_num2;
+		if (display_x2 < display_minX2 || display_x2 > 1) {
+			// the two ifs are required in case the preset name length is
+			// longer than the previous one and has scrolled already too far
+			if( display_x2 < display_minX2){
+				display_x2=display_minX2;
+			}
+			if(display_x2 > 1){
+				display_x2=1;
+			}
+			// Invert scrolling direction and scroll
+			display_scroll_num2 = -display_scroll_num2;
+			display_x2 += display_scroll_num2;
+		}
+	}
 }

@@ -48,8 +48,6 @@ public:
 
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
-	bool isActivePresetUpdated();
-	bool isPresetNumberUpdated();
 	// Retrieves the current preset from Spark (required for HW presets)
 	void getCurrentPresetFromSpark();
 	void updatePendingPreset(int bnk);
@@ -67,14 +65,15 @@ public:
 	preset* activePreset() const {return &activePreset_;}
 	preset* pendingPreset() const	{return &pendingPreset_;}
 	const int& activePresetNum() const {return activePresetNum_;}
-	void setActivePresetNum(int num);
-	int& activePresetNum() {return activePresetNum_;}
+	//int& activePresetNum() {return activePresetNum_;}
 	const int& activeBank() const {return activeBank_;}
 	const int& pendingBank() const {return pendingBank_;}
 	int& pendingBank() {return pendingBank_;}
 	const int numberOfBanks() const {return presetBuilder.getNumberOfBanks();}
 	const preset* appReceivedPreset() const { return &appReceivedPreset_;}
 	const int operationMode() const {return operationMode_;}
+	const int writeConfirmPresetNum() const {return presetNumToStore_;}
+	const std::string responseMsg() const {return responseMsg_;}
 
 	// Set/get button mode
 	const int& buttonMode() const {return buttonMode_;}
@@ -86,6 +85,9 @@ public:
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
 	bool presetReceivedFromApp();
+	void processWriteRequest(int preset);
+	void resetResponseMessage();
+	void resetReceivedPreset();
 
 private:
 	static int operationMode_;
@@ -108,8 +110,7 @@ private:
 	static preset pendingPreset_;
 	static int activeBank_;
 	static int pendingBank_;
-	int activePresetNum_ = 1;
-	int selectedPresetNum = 1;
+	static int activePresetNum_;
 
 	// Messages to send to Spark
 	std::vector<ByteVector> current_msg;
@@ -118,7 +119,9 @@ private:
 	//Spark AMP mode
 	static bool presetReceivedFromApp_;
 	static preset appReceivedPreset_;
-
+	static int presetNumToStore_;
+	static int presetBankToStore_;
+	static std::string responseMsg_;
 
 
 

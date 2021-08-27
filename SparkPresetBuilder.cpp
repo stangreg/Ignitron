@@ -88,6 +88,7 @@ preset SparkPresetBuilder::getPresetFromJson(char* json) {
 		resultPreset.filler = presetFiller;
 	}
 	resultPreset.isEmpty=false;
+	resultPreset.json = json;
 	return resultPreset;
 
 }
@@ -95,12 +96,12 @@ preset SparkPresetBuilder::getPresetFromJson(char* json) {
 //std::string SparkPresetBuilder::getJsonFromPreset(preset pset){};
 
 void SparkPresetBuilder::initializePresetListFromFS(){
-	eSPIFFS fileSystem;
+
 	presetBanksNames.clear();
 	std::string allPresetsAsText;
 	std::vector<std::string> tmpVector;
 	//Serial.println("Trying to read file list");
-	if(!fileSystem.openFromFile("/PresetList.txt", allPresetsAsText)){
+	if(!fileSystem.openFromFile(presetListFileName, allPresetsAsText)){
 		Serial.println("ERROR while trying to open presets list file");
 		return;
 	}
@@ -130,7 +131,6 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 }
 
 preset SparkPresetBuilder::getPreset(int bank, int pre){
-	eSPIFFS fileSystem;
 	preset retPreset;
 	if(pre > PRESETS_PER_BANK){
 		Serial.println("Requested preset out of bounds.");
@@ -157,3 +157,64 @@ int SparkPresetBuilder::getNumberOfBanks(){
 	return presetBanksNames.size();
 }
 
+int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
+
+	std::string presetName = newPreset.name;
+	// remove any blanks from the name for a new filename
+	presetName.erase(std::remove(presetName.begin(), presetName.end(), ' '), presetName.end());
+	//cut down name to 26 characters (.json will then increase to 30);
+	const int nameLength = presetName.length();
+	presetName = presetName.substr(0,std::min(26, nameLength)) + ".json";
+
+	std::string presetFileName = "/" + presetName.substr(0,std::min(26, nameLength)) + ".json";
+	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
+	if(fileSystem.getFileSize(presetFileName.c_str()) != 0){
+		Serial.printf("ERROR: File '%s' already exists! Skipping.", presetFileName.c_str());
+		return STORE_PRESET_FILE_EXISTS;
+	}
+	// First store the json string to a new file
+	fileSystem.saveToFile(presetFileName.c_str(), newPreset.json.c_str());
+	// Then insert the preset into the right position
+	std::string filestr = "";
+	std::string oldListFile;
+	int lineCount = 1;
+	int insertPosition = 4 * (bnk-1) + pre;
+
+	if(!fileSystem.openFromFile(presetListFileName, oldListFile)){
+			Serial.println("ERROR while trying to open presets list file");
+			return STORE_PRESET_ERROR_OPEN;
+	}
+
+	std::stringstream stream(oldListFile);
+	std::string line;
+	while (std::getline(stream, line)) {
+		if (lineCount != insertPosition) {
+			// Lines starting with '-' and empty lines
+			// are ignored and can be used for comments in the file
+			if (line.rfind("-", 0) != 0 && !line.empty()) {
+				if (((lineCount-1) % 4) == 0){
+					// New bank separator addd to file for better readability
+					char bank_string[20] ="";
+					sprintf(bank_string, "%d ", ((lineCount-1)/4)+1);
+					filestr += "-- Bank ";
+					filestr += bank_string;
+					filestr += "\n";
+				}
+				lineCount++;
+				filestr += line + "\n";
+			}
+		}
+		else if( lineCount == insertPosition) {
+			filestr += presetName + "\n";
+			// Adding old line so it is not lost.
+			filestr += line + "\n";
+			lineCount++;
+		}
+	}
+	if(fileSystem.saveToFile(presetListFileName, filestr.c_str())){
+		Serial.printf("Successfully stored new preset to %d-%d", bnk, pre);
+		initializePresetListFromFS();
+		return STORE_PRESET_OK;
+	}
+	return STORE_PRESET_UNKNOWN_ERROR;
+}

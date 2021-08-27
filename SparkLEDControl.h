@@ -8,6 +8,7 @@
 #ifndef SPARKLEDCONTROL_H_
 #define SPARKLEDCONTROL_H_
 
+#include <Arduino.h>
 #include "SparkDataControl.h"
 
 // GPIOs
@@ -42,6 +43,17 @@ private:
 
 	void init();
 	SparkDataControl* spark_dc;
+
+	int delayTimeMs = 100;
+	// For blinking mode
+	int ledState = LOW;             // ledState used to set the LED
+	// Generally, you should use "unsigned long" for variables that hold time
+	// The value will quickly become too large for an int to store
+	unsigned long previousMillis = 0;        // will store last time LED was updated
+	// constants won't change:
+	const long interval = 100;           // interval at which to blink (milliseconds)
+
+
 };
 
 #endif /* SPARKLEDCONTROL_H_ */
