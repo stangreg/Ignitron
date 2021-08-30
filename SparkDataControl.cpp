@@ -167,7 +167,7 @@ int SparkDataControl::processSparkData(ByteVector blk){
 	// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
 	if((lastAck == 0x38 && activeBank_ != 0) || lastAck == 0x15){
-		Serial.println("Received ACK!");
+		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
 		isActivePresetUpdatedByAck = true;
 	}
@@ -175,10 +175,13 @@ int SparkDataControl::processSparkData(ByteVector blk){
 }
 
 
-void SparkDataControl::getCurrentPresetFromSpark() {
+bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
 	//Serial.println("Getting current preset from Spark");
-	bleControl.writeBLE(current_msg);
+	if(bleControl.writeBLE(current_msg)){
+		return true;
+	}
+	return false;
 }
 
 void SparkDataControl::updatePendingPreset(int bnk){
@@ -188,35 +191,52 @@ void SparkDataControl::updatePendingPreset(int bnk){
 void SparkDataControl::updatePendingWithActiveBank(){
 	pendingBank_ = activeBank_;
 }
-
-void SparkDataControl::switchPreset(int pre) {
+bool SparkDataControl::switchPreset(int pre) {
+	bool retValue = false;
 	int bnk = pendingBank_;
 	if (operationMode_ == SPARK_MODE_APP){
-		if (bnk == 0) { // for bank 0 switch hardware presets
-			current_msg = spark_msg.change_hardware_preset(pre);
-			Serial.printf("Changing to HW preset %d\n", pre);
-			bleControl.writeBLE(current_msg);
-			// For HW presets we always need to get the preset from Spark
-			// as we don't know the parameters
-			getCurrentPresetFromSpark();
-		} else {
-			pendingPreset_ = presetBuilder.getPreset(bnk, pre);
-			current_msg = spark_msg.create_preset(pendingPreset_);
-			Serial.printf("Changing to preset %2d-%d\n", bnk, pre);
-			bleControl.writeBLE(current_msg);
-			// This is the final message with actually switches over to the
-			//previously sent preset
-			current_msg = spark_msg.change_hardware_preset(128);
-			bleControl.writeBLE(current_msg);
+		if (pre == activePresetNum_ && !activePreset_.isEmpty){
+			pedal drivePedal = activePreset_.pedals[2];
+			std::string drivePedalName = drivePedal.name;
+			bool isDriveEnabled = drivePedal.isOn;
+			if(switchEffectOnOff(drivePedalName, !isDriveEnabled)){
+				retValue = true;
+			}
+		}
+		else {
+			if (bnk == 0) { // for bank 0 switch hardware presets
+				current_msg = spark_msg.change_hardware_preset(pre);
+				Serial.printf("Changing to HW preset %d\n", pre);
+				if(bleControl.writeBLE(current_msg) && getCurrentPresetFromSpark()){
+					// For HW presets we always need to get the preset from Spark
+					// as we don't know the parameters
+					retValue = true;
+				}
+			} else {
+				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
+				current_msg = spark_msg.create_preset(pendingPreset_);
+				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
+				if(bleControl.writeBLE(current_msg)){
+					// This is the final message with actually switches over to the
+					//previously sent preset
+					current_msg = spark_msg.change_hardware_preset(128);
+					if (bleControl.writeBLE(current_msg)){
+						retValue = true;
+					}
+				}
+			}
 		}
 	}
-	activeBank_ = bnk;
-	activePresetNum_ = pre;
+	if (retValue == true){
+		activeBank_ = bnk;
+		activePresetNum_ = pre;
+	}
+	return retValue;
 }
 
-void SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable){
+bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable){
 
-	Serial.printf("Switching %s effect %s\n", enable ? "On" : "Off", fx_name.c_str());
+	Serial.printf("Switching %s effect %s...", enable ? "On" : "Off", fx_name.c_str());
 	for(int i=0; i< pendingPreset_.pedals.size(); i++){
 		pedal currentPedal = pendingPreset_.pedals[i];
 		if (currentPedal.name == fx_name){
@@ -226,7 +246,10 @@ void SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable){
 	}
 	current_msg = spark_msg.turn_effect_onoff(fx_name,
 				enable);
-	bleControl.writeBLE(current_msg);
+	if (bleControl.writeBLE(current_msg)){
+		return true;
+	}
+	return false;
 }
 
 void SparkDataControl::triggerInitialBLENotifications(){

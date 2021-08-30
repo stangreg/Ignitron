@@ -79,8 +79,9 @@ void loop() {
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
 			//Serial.println("Initial boot, setting preset to HW 1");
-			spark_dc->switchPreset(1);
-			isInitBoot = false;
+			if(spark_dc->switchPreset(1)){
+				isInitBoot = false;
+			}
 		}
 	}
 	// Check if presets have been updated

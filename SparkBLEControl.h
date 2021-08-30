@@ -23,9 +23,9 @@ using ByteVector = std::vector<byte>;
 class SparkDataControl;
 
 // Forward declaration of Callbacks classes, does nothing special, only default actions
-class ClientCallbacks: public NimBLEClientCallbacks {};
+//class ClientCallbacks: public NimBLEClientCallbacks {};
 
-class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks, NimBLECharacteristicCallbacks, NimBLEServerCallbacks{
+class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks, NimBLECharacteristicCallbacks, NimBLEServerCallbacks, NimBLEClientCallbacks{
 public:
 	SparkBLEControl();
 	SparkBLEControl(SparkDataControl* dc);
@@ -46,7 +46,7 @@ public:
 private:
 
 	/** Create a single global instance of the callback class to be used by all clients */
-	static ClientCallbacks clientCB;
+	//static ClientCallbacks clientCB;
 	NimBLEAdvertisedDevice *advDevice;
 	NimBLEClient *pClient = nullptr;
 
@@ -60,6 +60,7 @@ private:
 	static void scanEndedCB(NimBLEScanResults results);
 	void onResult(NimBLEAdvertisedDevice *advertisedDevice);
 	void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
+	void onDisconnect(NimBLEClient* pClient);
 
 	// Server mode functions
 	NimBLEServer *pServer = nullptr;
@@ -68,6 +69,7 @@ private:
 	void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue);
 	void onConnect(NimBLEServer* pServer);
 	void onDisconnect(NimBLEServer* pServer);
+
 
 	int notificationCount = 0;
 };

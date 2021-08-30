@@ -48,14 +48,14 @@ public:
 
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
-	// Retrieves the current preset from Spark (required for HW presets)
-	void getCurrentPresetFromSpark();
 	void updatePendingPreset(int bnk);
 	void updatePendingWithActiveBank();
+	// Retrieves the current preset from Spark (required for HW presets)
+	bool getCurrentPresetFromSpark();
 	// Switch to a selected preset of the current bank
-	void switchPreset(int pre);
+	bool switchPreset(int pre);
 	// Switch effect on/off
-	void switchEffectOnOff(std::string fx_name, bool enable);
+	bool switchEffectOnOff(std::string fx_name, bool enable);
 	// get a preset from saved presets
 	preset getPreset(int bank, int pre);
 	// return the number of banks in the preset list

@@ -7,7 +7,7 @@
 
 #include "SparkBLEControl.h"
 
-ClientCallbacks SparkBLEControl::clientCB;
+//ClientCallbacks SparkBLEControl::clientCB;
 
 SparkBLEControl::SparkBLEControl() {
 	//advDevCB = new AdvertisedDeviceCallbacks();
@@ -107,7 +107,7 @@ bool SparkBLEControl::connectToServer() {
 
 		Serial.println("New client created");
 
-		pClient->setClientCallbacks(&clientCB, false);
+		pClient->setClientCallbacks(this, false);
 		/** Set initial connection parameters: These settings are 15ms interval, 0 latency, 120ms timout.
 		 These settings are safe for 3 clients to connect reliably, can go faster if you have less
 		 connections. Timeout should be a multiple of the interval, minimum is 100ms.
@@ -453,3 +453,9 @@ void SparkBLEControl::onDisconnect(NimBLEServer* pServer) {
 	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
 };
+
+void SparkBLEControl::onDisconnect(NimBLEClient* pClient){
+	isConnected_ = false;
+	isConnectionFound_ = false;
+	NimBLEClientCallbacks::onDisconnect(pClient);
+}
