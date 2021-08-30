@@ -7,7 +7,6 @@
 
 using ByteVector = std::vector<byte>;
 
-
 // Positions of FX types in preset struct
 const int FX_NOISEGATE = 0;
 const int FX_COMP = 1;
@@ -70,68 +69,69 @@ struct preset {
 		indent = indent.substr(1);
 	}
 
-	void add_json(char* python_str) {
+	void add_json(char *python_str) {
 		json += indent + python_str + "\n";
 	}
 
-	void add_str(char* a_title, std::string a_str, char* nature = "all") {
-		raw +=  a_str;
+	void add_str(char *a_title, std::string a_str, char *nature = "all") {
+		raw += a_str;
 		raw += " ";
 		char string_add[200] = "";
-		sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
+		sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title,
+				a_str.c_str());
 		text += string_add;
 		if (nature != "python") {
 			json += indent + "\"" + a_title + "\":\"" + a_str + "\",\n";
 		}
 	}
 
-
-	void add_int(char* a_title, int an_int, char* nature = "all") {
-		char string_add[200] ="";
+	void add_int(char *a_title, int an_int, char *nature = "all") {
+		char string_add[200] = "";
 		sprintf(string_add, "%d ", an_int);
 		raw += string_add;
 		sprintf(string_add, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
 		text += string_add;
 		if (nature != "python") {
-			sprintf(string_add, "%s\"%-20s\": %d,\n", indent.c_str(), a_title, an_int);
+			sprintf(string_add, "%s\"%-20s\": %d,\n", indent.c_str(), a_title,
+					an_int);
 			json += string_add;
 		}
 	}
 
-
-
-	void add_float(char* a_title, float a_float, char* nature = "all") {
+	void add_float(char *a_title, float a_float, char *nature = "all") {
 		char string_add[200] = "";
 		sprintf(string_add, "%2.4f ", a_float);
 		raw += string_add;
-		sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
+		sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title,
+				a_float);
 		text += string_add;
 		if (nature == "python") {
 			sprintf(string_add, "%s%2.4f,\n", indent.c_str(), a_float);
 			json += string_add;
-		}
-		else {
-			sprintf(string_add, "%s\"%s\": %2.4f,\n", indent.c_str(), a_title, a_float);
+		} else {
+			sprintf(string_add, "%s\"%s\": %2.4f,\n", indent.c_str(), a_title,
+					a_float);
 			json += string_add;
 		}
 	}
 
-	void add_bool(char* a_title, boolean a_bool, char* nature = "all") {
-		char string_add[200] ="";
+	void add_bool(char *a_title, boolean a_bool, char *nature = "all") {
+		char string_add[200] = "";
 		sprintf(string_add, "%s ", a_bool ? "true" : "false");
 		raw += string_add;
-		sprintf(string_add, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
+		sprintf(string_add, "%s%s: %-20s\n", indent.c_str(), a_title,
+				a_bool ? "true" : "false");
 		text += string_add;
 		if (nature != "python") {
-			sprintf(string_add, "%s\"%s\": %s,\n", indent.c_str(), a_title, a_bool ? "true" : "false");
+			sprintf(string_add, "%s\"%s\": %s,\n", indent.c_str(), a_title,
+					a_bool ? "true" : "false");
 			json += string_add;
 		}
 	}
 
-
-	std::string getJson(){
+	std::string getJson() {
 		start_str();
-		add_int ("PresetNumber", presetNumber);
+		add_int("PresetNumber", presetNumber);
 		add_str("UUID", uuid);
 		add_str("Name", name);
 		add_str("Version", version);
@@ -142,7 +142,7 @@ struct preset {
 		add_indent();
 		for (int i = 0; i < pedals.size(); i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 			pedal currentPedal = pedals[i];
-			add_json ("{");
+			add_json("{");
 			add_str("Name", currentPedal.name);
 			add_bool("IsOn", currentPedal.isOn);
 			add_json("\"Parameters\":[");
@@ -186,6 +186,5 @@ struct cmd_data {
 		Serial.print("]");
 	}
 };
-
 
 #endif

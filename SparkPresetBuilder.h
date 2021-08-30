@@ -7,7 +7,6 @@
 #include <Effortless_SPIFFS.h>
 #include <algorithm>
 
-
 #include "SparkHelper.h"
 #include "SparkTypes.h"
 
@@ -20,13 +19,13 @@
 
 using ByteVector = std::vector<byte>;
 
-class SparkPresetBuilder{
+class SparkPresetBuilder {
 
 private:
 	std::vector<std::vector<std::string>> presetBanksNames;
 	std::vector<char*> allPresetsJSON;
 	eSPIFFS fileSystem;
-	const char* presetListFileName = "/PresetList.txt";
+	const char *presetListFileName = "/PresetList.txt";
 
 public:
 	SparkPresetBuilder();
@@ -34,7 +33,7 @@ public:
 	void initializePresetListFromFS();
 	preset getPreset(int preset, int bank);
 	int getNumberOfBanks();
-	preset getPresetFromJson(char* json);
+	preset getPresetFromJson(char *json);
 	int storePreset(preset newPreset, int bnk, int pre);
 
 };

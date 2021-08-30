@@ -36,15 +36,15 @@ public:
 	virtual ~SparkDataControl();
 
 	void init(int op_mode);
-	void setDisplayControl(SparkDisplayControl* display);
+	void setDisplayControl(SparkDisplayControl *display);
 	bool checkBLEConnection();
 	bool isBLEConnected();
 	bool isBLEClientConnected(); // true if ESP in AMP mode and client is connected
 	void startBLEServer();
 
 	// Callback function when Spark notifies about a changed characteristic
-	static void notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
-			size_t length, bool isNotify);
+	static void notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic,
+			uint8_t *pData, size_t length, bool isNotify);
 
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
@@ -62,22 +62,48 @@ public:
 	int getNumberOfBanks();
 
 	// Return active or pending preset/bank, set/get active preset number
-	preset* activePreset() const {return &activePreset_;}
-	preset* pendingPreset() const	{return &pendingPreset_;}
-	const int& activePresetNum() const {return activePresetNum_;}
+	preset* activePreset() const {
+		return &activePreset_;
+	}
+	preset* pendingPreset() const {
+		return &pendingPreset_;
+	}
+	const int& activePresetNum() const {
+		return activePresetNum_;
+	}
 	//int& activePresetNum() {return activePresetNum_;}
-	const int& activeBank() const {return activeBank_;}
-	const int& pendingBank() const {return pendingBank_;}
-	int& pendingBank() {return pendingBank_;}
-	const int numberOfBanks() const {return presetBuilder.getNumberOfBanks();}
-	const preset* appReceivedPreset() const { return &appReceivedPreset_;}
-	const int operationMode() const {return operationMode_;}
-	const int writeConfirmPresetNum() const {return presetNumToStore_;}
-	const std::string responseMsg() const {return responseMsg_;}
+	const int& activeBank() const {
+		return activeBank_;
+	}
+	const int& pendingBank() const {
+		return pendingBank_;
+	}
+	int& pendingBank() {
+		return pendingBank_;
+	}
+	const int numberOfBanks() const {
+		return presetBuilder.getNumberOfBanks();
+	}
+	const preset* appReceivedPreset() const {
+		return &appReceivedPreset_;
+	}
+	const int operationMode() const {
+		return operationMode_;
+	}
+	const int writeConfirmPresetNum() const {
+		return presetNumToStore_;
+	}
+	const std::string responseMsg() const {
+		return responseMsg_;
+	}
 
 	// Set/get button mode
-	const int& buttonMode() const {return buttonMode_;}
-	int& buttonMode() {return buttonMode_;}
+	const int& buttonMode() const {
+		return buttonMode_;
+	}
+	int& buttonMode() {
+		return buttonMode_;
+	}
 
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
@@ -96,14 +122,13 @@ private:
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
-	static SparkDisplayControl* spark_display;
+	static SparkDisplayControl *spark_display;
 
 	bool startup = true;
 	static bool isActivePresetUpdatedByAck;
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
-
 
 	//PRESET variables
 	static preset activePreset_;
@@ -122,8 +147,6 @@ private:
 	static int presetNumToStore_;
 	static int presetBankToStore_;
 	static std::string responseMsg_;
-
-
 
 };
 

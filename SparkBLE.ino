@@ -9,7 +9,6 @@
 #include "SparkLEDControl.h"
 #include "SparkDisplayControl.h"
 
-
 // Device Info Definitions
 const std::string DEVICE_NAME = "SparkBLE";
 const std::string VERSION = "0.5";
@@ -24,7 +23,6 @@ SparkDisplayControl *spark_display;
 bool isInitBoot;
 int operationMode = SPARK_MODE_APP;
 
-
 /////////////////////////////////////////////////////////
 //
 // INIT AND RUN
@@ -34,8 +32,8 @@ int operationMode = SPARK_MODE_APP;
 void setup() {
 	isInitBoot = true;
 	Serial.begin(115200);
-	while (!Serial);
-
+	while (!Serial)
+		;
 
 	Serial.println("Initializing");
 	spark_dc = new SparkDataControl();
@@ -43,15 +41,14 @@ void setup() {
 	spark_bh = new SparkButtonHandler(spark_dc);
 
 	operationMode = spark_bh->init();
-	if(operationMode == SPARK_MODE_APP){
+	if (operationMode == SPARK_MODE_APP) {
 		Serial.println("======= Entering APP mode =======");
-	}
-	else {
+	} else {
 		Serial.println("======= Entering AMP mode =======");
 	}
 	spark_display = new SparkDisplayControl(spark_dc);
 	spark_display->init(operationMode);
-	if (operationMode == SPARK_MODE_AMP){
+	if (operationMode == SPARK_MODE_AMP) {
 		// Allow for the button to be unpressed to not register button in normal operation
 		delay(3000);
 	}
@@ -66,20 +63,20 @@ void setup() {
 	spark_led = new SparkLEDControl(spark_dc);
 	Serial.println("Initialization done.");
 
-
 }
-
 
 void loop() {
 
-	if (operationMode == SPARK_MODE_APP){
-		while (!spark_dc->checkBLEConnection()){ ;}
+	if (operationMode == SPARK_MODE_APP) {
+		while (!spark_dc->checkBLEConnection()) {
+			;
+		}
 
 		//After connection is established, continue.
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
 			//Serial.println("Initial boot, setting preset to HW 1");
-			if(spark_dc->switchPreset(1)){
+			if (spark_dc->switchPreset(1)) {
 				isInitBoot = false;
 			}
 		}

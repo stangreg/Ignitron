@@ -25,16 +25,25 @@ class SparkDataControl;
 // Forward declaration of Callbacks classes, does nothing special, only default actions
 //class ClientCallbacks: public NimBLEClientCallbacks {};
 
-class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks, NimBLECharacteristicCallbacks, NimBLEServerCallbacks, NimBLEClientCallbacks{
+class SparkBLEControl: public NimBLEAdvertisedDeviceCallbacks,
+		NimBLECharacteristicCallbacks,
+		NimBLEServerCallbacks,
+		NimBLEClientCallbacks {
 public:
 	SparkBLEControl();
-	SparkBLEControl(SparkDataControl* dc);
+	SparkBLEControl(SparkDataControl *dc);
 	virtual ~SparkBLEControl();
-	const bool isConnectionFound() const { return isConnectionFound_;}
-	const bool isConnected() const { return isConnected_;}
-	const bool isClientConnected() const { return isClientConnected_;}
+	const bool isConnectionFound() const {
+		return isConnectionFound_;
+	}
+	const bool isConnected() const {
+		return isConnected_;
+	}
+	const bool isClientConnected() const {
+		return isClientConnected_;
+	}
 	bool connectToServer();
-	bool subscribeToNotifications(notify_callback notifyCallback=nullptr);
+	bool subscribeToNotifications(notify_callback notifyCallback = nullptr);
 	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
 	void initBLE();
 	void initScan();
@@ -60,16 +69,16 @@ private:
 	static void scanEndedCB(NimBLEScanResults results);
 	void onResult(NimBLEAdvertisedDevice *advertisedDevice);
 	void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
-	void onDisconnect(NimBLEClient* pClient);
+	void onDisconnect(NimBLEClient *pClient);
 
 	// Server mode functions
 	NimBLEServer *pServer = nullptr;
-	SparkDataControl* spark_dc;
-	void onWrite(NimBLECharacteristic* pCharacteristic);
-	void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue);
-	void onConnect(NimBLEServer* pServer);
-	void onDisconnect(NimBLEServer* pServer);
-
+	SparkDataControl *spark_dc;
+	void onWrite(NimBLECharacteristic *pCharacteristic);
+	void onSubscribe(NimBLECharacteristic *pCharacteristic,
+			ble_gap_conn_desc *desc, uint16_t subValue);
+	void onConnect(NimBLEServer *pServer);
+	void onDisconnect(NimBLEServer *pServer);
 
 	int notificationCount = 0;
 };

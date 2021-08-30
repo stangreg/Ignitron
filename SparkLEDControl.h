@@ -33,26 +33,27 @@
 class SparkLEDControl {
 public:
 	SparkLEDControl();
-	SparkLEDControl(SparkDataControl* dc);
+	SparkLEDControl(SparkDataControl *dc);
 	virtual ~SparkLEDControl();
 
 	void updateLEDs();
-	SparkDataControl* dataControl() {return spark_dc;}
+	SparkDataControl* dataControl() {
+		return spark_dc;
+	}
 
 private:
 
 	void init();
-	SparkDataControl* spark_dc;
+	SparkDataControl *spark_dc;
 
 	int delayTimeMs = 100;
 	// For blinking mode
 	int ledState = LOW;             // ledState used to set the LED
 	// Generally, you should use "unsigned long" for variables that hold time
 	// The value will quickly become too large for an int to store
-	unsigned long previousMillis = 0;        // will store last time LED was updated
+	unsigned long previousMillis = 0;    // will store last time LED was updated
 	// constants won't change:
-	const long interval = 100;           // interval at which to blink (milliseconds)
-
+	const long interval = 100;      // interval at which to blink (milliseconds)
 
 };
 

@@ -8,35 +8,41 @@
 #include "SparkButtonHandler.h"
 
 // Intialize buttons
-BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false,
+BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL,
+		BUTTON_PRESET1_GPIO, false,
 		HIGH);
-BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET2_GPIO, false,
+BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL,
+		BUTTON_PRESET2_GPIO, false,
 		HIGH);
-BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET3_GPIO, false,
+BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL,
+		BUTTON_PRESET3_GPIO, false,
 		HIGH);
-BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET4_GPIO, false,
+BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL,
+		BUTTON_PRESET4_GPIO, false,
 		HIGH);
-BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_DOWN_GPIO,
-		false, HIGH);
-BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false,
+BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL,
+		BUTTON_BANK_DOWN_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL,
+		BUTTON_BANK_UP_GPIO, false,
 		HIGH);
 
 // Initialize SparkDataControl;
-SparkDataControl* SparkButtonHandler::spark_dc = nullptr;
+SparkDataControl *SparkButtonHandler::spark_dc = nullptr;
 
 SparkButtonHandler::SparkButtonHandler() {
 	init();
 
 }
 
-SparkButtonHandler::SparkButtonHandler(SparkDataControl* dc) {
+SparkButtonHandler::SparkButtonHandler(SparkDataControl *dc) {
 	spark_dc = dc;
 	init();
 }
 
-SparkButtonHandler::~SparkButtonHandler() {}
+SparkButtonHandler::~SparkButtonHandler() {
+}
 
-void SparkButtonHandler::readButtons(){
+void SparkButtonHandler::readButtons() {
 	btn_preset1.read();
 	btn_preset2.read();
 	btn_preset3.read();
@@ -46,12 +52,13 @@ void SparkButtonHandler::readButtons(){
 }
 
 // Buttons to change Preset (in preset mode) and control FX in FX mode
-void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc){
+void SparkButtonHandler::btnPresetHandler(BfButton *btn,
+		BfButton::press_pattern_t pattern) {
+	if (spark_dc) {
 
 		const int buttonMode = spark_dc->buttonMode();
 		const int operationMode = spark_dc->operationMode();
-		preset* activePreset = spark_dc->activePreset();
+		preset *activePreset = spark_dc->activePreset();
 		int selectedPresetNum;
 
 		if (pattern == BfButton::SINGLE_PRESS) {
@@ -99,31 +106,30 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				} else if (pressed_btn_gpio == BUTTON_PRESET4_GPIO) {
 					selectedPresetNum = 4;
 				}
-				if(operationMode == SPARK_MODE_APP){
+				if (operationMode == SPARK_MODE_APP) {
 					spark_dc->switchPreset(selectedPresetNum);
-				}
-				else { // AMP mode
+				} else { // AMP mode
 					spark_dc->processWriteRequest(selectedPresetNum);
 				}
 
 			}
 		}
-	}
-	else {
-		Serial.println("SparkDataControl not setup yet, ignoring button press.");
+	} else {
+		Serial.println(
+				"SparkDataControl not setup yet, ignoring button press.");
 	}
 }
 
 // Buttons to change the preset banks in preset mode and some other FX in FX mode
-void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc){
+void SparkButtonHandler::btnBankHandler(BfButton *btn,
+		BfButton::press_pattern_t pattern) {
+	if (spark_dc) {
 		int buttonMode = spark_dc->buttonMode();
-		preset* activePreset = spark_dc->activePreset();
+		preset *activePreset = spark_dc->activePreset();
 		int activePresetNum = spark_dc->activePresetNum();
 		int pendingBank = spark_dc->pendingBank();
 		int numberOfBanks = spark_dc->numberOfBanks();
 		int opMode = spark_dc->operationMode();
-
 
 		if (pattern == BfButton::SINGLE_PRESS) {
 			int pressed_btn_gpio = btn->getID();
@@ -157,8 +163,8 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 					} else {
 						pendingBank--;
 					} // else
-					// Don't go to bank 0 in AMP mode
-					if (opMode == SPARK_MODE_AMP && pendingBank == 0){
+					  // Don't go to bank 0 in AMP mode
+					if (opMode == SPARK_MODE_AMP && pendingBank == 0) {
 						pendingBank = numberOfBanks;
 					}
 				} //if BUTTON_BANK_UP/DOWN
@@ -169,8 +175,8 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 					} else {
 						pendingBank++;
 					}
-					if (opMode == SPARK_MODE_AMP && pendingBank == 0){
-						pendingBank = std::min(1,numberOfBanks);
+					if (opMode == SPARK_MODE_AMP && pendingBank == 0) {
+						pendingBank = std::min(1, numberOfBanks);
 					}
 				}
 				// Mark selected bank as the pending Bank to mark in display.
@@ -178,22 +184,23 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 				// switch presets when a bank is changed, it does so only when
 				// the preset button is pushed afterwards
 				spark_dc->pendingBank() = pendingBank;
-				if(pendingBank != 0){
+				if (pendingBank != 0) {
 					spark_dc->updatePendingPreset(pendingBank);
 				}
-				if (opMode == SPARK_MODE_AMP){
+				if (opMode == SPARK_MODE_AMP) {
 
 				}
 			} // SWITCH_MODE_PREFIX
 		} // SINGLE PRESS
-	}
-	else {
-		Serial.println("SparkDataControl not setup yet, ignoring button press.");
+	} else {
+		Serial.println(
+				"SparkDataControl not setup yet, ignoring button press.");
 	}
 }
 
-void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_APP){
+void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn,
+		BfButton::press_pattern_t pattern) {
+	if (spark_dc && spark_dc->operationMode() == SPARK_MODE_APP) {
 		// Long press to switch between preset mode FX mode where FX can be separately switched
 		const int buttonMode = spark_dc->buttonMode();
 		if (pattern == BfButton::LONG_PRESS) {
@@ -215,7 +222,8 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 					spark_dc->updatePendingWithActiveBank();
 					break;
 				default:
-					Serial.println("Unexpected mode. Defaulting to PRESET mode");
+					Serial.println(
+							"Unexpected mode. Defaulting to PRESET mode");
 					spark_dc->buttonMode() = SWITCH_MODE_PRESET;
 					break;
 				} // SWITCH
@@ -223,7 +231,8 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 		} // LONG PRESS
 	} // IF spark_dc and in APP mode
 	else {
-		Serial.println("SparkDataControl not setup yet or in AMP mode, ignoring button press.");
+		Serial.println(
+				"SparkDataControl not setup yet or in AMP mode, ignoring button press.");
 	}
 }
 
@@ -236,10 +245,9 @@ int SparkButtonHandler::init() {
 	btn_bank_down.onPress(btnBankHandler);
 	btn_bank_up.onPress(btnBankHandler);
 	btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
-	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH){
+	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
 		return SPARK_MODE_AMP;
-	}
-	else{
+	} else {
 		return SPARK_MODE_APP;
 	}
 }

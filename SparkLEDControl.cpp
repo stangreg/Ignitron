@@ -12,7 +12,7 @@ SparkLEDControl::SparkLEDControl() {
 
 }
 
-SparkLEDControl::SparkLEDControl(SparkDataControl* dc) {
+SparkLEDControl::SparkLEDControl(SparkDataControl *dc) {
 	spark_dc = dc;
 	init();
 
@@ -22,7 +22,7 @@ SparkLEDControl::~SparkLEDControl() {
 	// TODO Auto-generated destructor stub
 }
 
-void SparkLEDControl::init(){
+void SparkLEDControl::init() {
 	pinMode(LED_PRESET1_GPIO, OUTPUT);
 	pinMode(LED_PRESET2_GPIO, OUTPUT);
 	pinMode(LED_PRESET3_GPIO, OUTPUT);
@@ -35,8 +35,8 @@ void SparkLEDControl::init(){
 void SparkLEDControl::updateLEDs() {
 
 	int operationMode = spark_dc->operationMode();
-	if(operationMode == SPARK_MODE_APP) {
-		preset* activePreset = spark_dc->activePreset();
+	if (operationMode == SPARK_MODE_APP) {
+		preset *activePreset = spark_dc->activePreset();
 		int activePresetNum = spark_dc->activePresetNum();
 		int buttonMode = spark_dc->buttonMode();
 
@@ -129,34 +129,32 @@ void SparkLEDControl::updateLEDs() {
 		unsigned long currentMillis = millis();
 		int led_gpio = 0;
 
-
-
 		int selectedPresetNum = spark_dc->writeConfirmPresetNum();
 		bool isPresetSelected = spark_dc->presetReceivedFromApp();
 
 		if (isPresetSelected) {
-			switch(selectedPresetNum) {
+			switch (selectedPresetNum) {
 			case 1:
-				led_gpio=LED_PRESET1_GPIO;
+				led_gpio = LED_PRESET1_GPIO;
 				digitalWrite(LED_PRESET2_GPIO, LOW);
 				digitalWrite(LED_PRESET3_GPIO, LOW);
 				digitalWrite(LED_PRESET4_GPIO, LOW);
 
 				break;
 			case 2:
-				led_gpio=LED_PRESET2_GPIO;
+				led_gpio = LED_PRESET2_GPIO;
 				digitalWrite(LED_PRESET1_GPIO, LOW);
 				digitalWrite(LED_PRESET3_GPIO, LOW);
 				digitalWrite(LED_PRESET4_GPIO, LOW);
 				break;
 			case 3:
-				led_gpio=LED_PRESET3_GPIO;
+				led_gpio = LED_PRESET3_GPIO;
 				digitalWrite(LED_PRESET1_GPIO, LOW);
 				digitalWrite(LED_PRESET2_GPIO, LOW);
 				digitalWrite(LED_PRESET4_GPIO, LOW);
 				break;
 			case 4:
-				led_gpio=LED_PRESET4_GPIO;
+				led_gpio = LED_PRESET4_GPIO;
 				digitalWrite(LED_PRESET1_GPIO, LOW);
 				digitalWrite(LED_PRESET2_GPIO, LOW);
 				digitalWrite(LED_PRESET3_GPIO, LOW);
@@ -182,8 +180,7 @@ void SparkLEDControl::updateLEDs() {
 				digitalWrite(led_gpio, ledState);
 			}
 
-		}
-		else {
+		} else {
 			digitalWrite(LED_PRESET1_GPIO, LOW);
 			digitalWrite(LED_PRESET2_GPIO, LOW);
 			digitalWrite(LED_PRESET3_GPIO, LOW);

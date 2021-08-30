@@ -30,18 +30,20 @@
 #define BUTTON_BANK_UP_GPIO 33
 #define BUTTON_COMP_GPIO 33
 
-
-
 class SparkButtonHandler {
 public:
 	SparkButtonHandler();
-	SparkButtonHandler(SparkDataControl* dc);
+	SparkButtonHandler(SparkDataControl *dc);
 	virtual ~SparkButtonHandler();
 
 	void readButtons();
 	int init();
-	SparkDataControl* dataControl() {return spark_dc;}
-	void dataControl(SparkDataControl* dc) { spark_dc = dc;}
+	SparkDataControl* dataControl() {
+		return spark_dc;
+	}
+	void dataControl(SparkDataControl *dc) {
+		spark_dc = dc;
+	}
 
 private:
 
@@ -51,11 +53,14 @@ private:
 	static BfButton btn_preset4;
 	static BfButton btn_bank_up;
 	static BfButton btn_bank_down;
-	static SparkDataControl* spark_dc;
+	static SparkDataControl *spark_dc;
 	// BUTTON Handlers
-	static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
-	static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
-	static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
+	static void btnPresetHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
+	static void btnBankHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
+	static void btnSwitchModeHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
 };
 
 #endif /* SPARKBUTTONHANDLER_H_ */
