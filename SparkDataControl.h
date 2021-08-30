@@ -50,6 +50,7 @@ public:
 	void checkForUpdates();
 	void updatePendingPreset(int bnk);
 	void updatePendingWithActiveBank();
+	void updateActiveWithPendingPreset();
 	// Retrieves the current preset from Spark (required for HW presets)
 	bool getCurrentPresetFromSpark();
 	// Switch to a selected preset of the current bank
@@ -67,13 +68,16 @@ public:
 	const int& activePresetNum() const {return activePresetNum_;}
 	//int& activePresetNum() {return activePresetNum_;}
 	const int& activeBank() const {return activeBank_;}
+	int& activeBank() {return activeBank_;}
 	const int& pendingBank() const {return pendingBank_;}
 	int& pendingBank() {return pendingBank_;}
 	const int numberOfBanks() const {return presetBuilder.getNumberOfBanks();}
 	const preset* appReceivedPreset() const { return &appReceivedPreset_;}
 	const int operationMode() const {return operationMode_;}
-	const int writeConfirmPresetNum() const {return presetNumToStore_;}
+	const int presetNumToEdit() const {return presetNumToEdit_;}
 	const std::string responseMsg() const {return responseMsg_;}
+	const bool isPresetMarkedForDeletion() const { return presetMarkedForDeletion_;}
+
 
 	// Set/get button mode
 	const int& buttonMode() const {return buttonMode_;}
@@ -85,9 +89,10 @@ public:
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
 	bool presetReceivedFromApp();
-	void processWriteRequest(int preset);
+	void processPresetEdit(int presetNum = 0);
 	void resetResponseMessage();
 	void resetReceivedPreset();
+	void resetPresetDeletionFlag();
 
 private:
 	static int operationMode_;
@@ -118,12 +123,17 @@ private:
 
 	//Spark AMP mode
 	static bool presetReceivedFromApp_;
+	static bool presetMarkedForDeletion_;
 	static preset appReceivedPreset_;
-	static int presetNumToStore_;
-	static int presetBankToStore_;
+	static int presetNumToEdit_;
+	static int presetBankToEdit_;
+	//static int presetNumToDelete_;
+
 	static std::string responseMsg_;
 
-
+	void processStorePresetRequest(int presetNum);
+	void processDeletePresetRequest();
+	void setPresetDeletionFlag();
 
 };
 

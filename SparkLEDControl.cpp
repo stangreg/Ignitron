@@ -130,12 +130,12 @@ void SparkLEDControl::updateLEDs() {
 		int led_gpio = 0;
 
 
-
-		int selectedPresetNum = spark_dc->writeConfirmPresetNum();
 		bool isPresetSelected = spark_dc->presetReceivedFromApp();
+		int presetNumToEdit = spark_dc->presetNumToEdit();
+		bool isPresetMarkedForDeletion = spark_dc->isPresetMarkedForDeletion();
 
-		if (isPresetSelected) {
-			switch(selectedPresetNum) {
+		if (isPresetSelected || isPresetMarkedForDeletion) {
+			switch(presetNumToEdit) {
 			case 1:
 				led_gpio=LED_PRESET1_GPIO;
 				digitalWrite(LED_PRESET2_GPIO, LOW);

@@ -44,6 +44,7 @@ private:
 	const preset* activePreset;
 	const preset* pendingPreset;
 	const preset* presetFromApp;
+	bool presetMarkedForDeletion;
 	int buttonMode = 1;
 	int activePresetNum = 1;
 	int selectedPresetNum = 1;

@@ -21,6 +21,7 @@ SparkDisplayControl::SparkDisplayControl(SparkDataControl* dc) {
 	primaryLinePreset = nullptr;
 	pendingPreset = nullptr;
 	activePreset = nullptr;
+	presetMarkedForDeletion = false;
 }
 SparkDisplayControl::~SparkDisplayControl() {
 	// TODO Auto-generated destructor stub
@@ -37,11 +38,9 @@ void SparkDisplayControl::init(int mode) {
 	display.clearDisplay(); //No Adafruit splash
 	display.display();
 	display.setTextColor(SSD1306_WHITE);
+	display.setTextWrap(false);
 
 	if(mode == SPARK_MODE_APP){
-		display.setTextWrap(false);
-		display_x1 = 0;
-		display_minX1 = DISPLAY_MIN_X_FACTOR * 10; //initialize, will be updated with new preset
 		// Display the splash logo
 		display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47, SSD1306_WHITE);
 		display.setTextSize(2);
@@ -50,6 +49,7 @@ void SparkDisplayControl::init(int mode) {
 	}
 	else{
 		showInitialMessage();
+		delay(3000);
 	}
 	display.display();
 }
@@ -61,20 +61,13 @@ void SparkDisplayControl::showInitialMessage(){
 	display.print("SparkBLE");
 	display.setCursor(18,24);
 	display.print("AMP mode");
-	if(spark_dc->isBLEClientConnected()){
-		display.setTextSize(1);
-		display.setCursor(26,43);
-		display.print("App connected");
-		display.setCursor(1,55);
-		display.print("Please select preset");
-	}
-	else {
-		display.setTextSize(1);
-		display.setCursor(24,43);
-		display.print("Please connect");
-		display.setCursor(36,55);
-		display.print("Spark App");
-	}
+	display.setTextSize(1);
+	display.setCursor(24,43);
+	display.print("Please connect");
+	display.setCursor(36,55);
+	display.print("Spark App");
+	display.display();
+
 }
 
 void SparkDisplayControl::showMessage(std::string* msg, int numLines, int size, int x, int y ){
@@ -134,13 +127,13 @@ void SparkDisplayControl::showPresetName(){
 
 	const std::string msg = spark_dc->responseMsg();
 	std::ostringstream selPresetStr;
-		selPresetStr << selectedPresetNum;
+		selPresetStr << activePresetNum;
 
 	//Rectangle color for preset name
 	int rectColor;
 	int textColor;
 	// Show preset name inverted if it is not the currently selected one
-	if (pendingBank == activeBank) {
+	if (pendingBank == activeBank && !presetMarkedForDeletion) {
 		rectColor = SSD1306_BLACK;
 		textColor = SSD1306_WHITE;
 	} else {
@@ -195,7 +188,14 @@ void SparkDisplayControl::showFX_SecondaryName(){
 	secondaryLineText = " ";
 	if (opMode == SPARK_MODE_AMP){
 		//displayPreset = presetFromApp;
-		secondaryLineText = presetFromApp->name;
+		if (!(presetFromApp->isEmpty)) {
+			secondaryLineText = presetFromApp->name;
+		} else if (presetMarkedForDeletion) {
+			secondaryLineText = "DELETE ?";
+		}
+		else {
+			secondaryLineText = "Select preset";
+		}
 	}
 	else if (opMode == SPARK_MODE_APP) {
 		// Build string to show active FX
@@ -242,40 +242,26 @@ void SparkDisplayControl::update() {
 	display.setTextWrap(false);
 	opMode = spark_dc->operationMode();
 
-	// in case mode is AMP and no preset received yet, show initial message
-	if ( opMode == SPARK_MODE_AMP
-			&& !(spark_dc->presetReceivedFromApp())){
-		showInitialMessage();
-	}
-	// otherwise show dynamic display
-	else {
-		activeBank = spark_dc->activeBank();
-		pendingBank = spark_dc->pendingBank();
-		activePreset = spark_dc->activePreset();
-		pendingPreset = spark_dc->pendingPreset();
-		buttonMode = spark_dc->buttonMode();
-		activePresetNum = spark_dc->activePresetNum();
-		presetFromApp = spark_dc->appReceivedPreset();
-		/*if(spark_dc->presetReceivedFromApp()){
-			Serial.printf("activeBank: %d\, ", activeBank);
-			Serial.printf("pendingBank: %d, ", pendingBank);
-			Serial.printf("activePresetName: %s, ", activePreset->name.c_str());
-			Serial.printf("pendingPresetName: %s, ", pendingPreset->name.c_str());
-			Serial.printf("activePresetNum: %d, ", activePresetNum);
-			Serial.printf("appReceivedName: %s\n", presetFromApp->name.c_str());
-		}*/
-		showBankAndPresetNum();
-		showPresetName();
-		showFX_SecondaryName();
+	activeBank = spark_dc->activeBank();
+	pendingBank = spark_dc->pendingBank();
+	activePreset = spark_dc->activePreset();
+	pendingPreset = spark_dc->pendingPreset();
+	buttonMode = spark_dc->buttonMode();
+	activePresetNum = spark_dc->activePresetNum();
+	presetFromApp = spark_dc->appReceivedPreset();
+	presetMarkedForDeletion = spark_dc->isPresetMarkedForDeletion();
 
-		// in FX mode (manual mode) invert display
-		if (buttonMode == SWITCH_MODE_FX) {
-			display.invertDisplay(true);
-		} else {
-			display.invertDisplay(false);
-		}
-		updateTextPositions();
-	} // IF MODE = APP
+	showBankAndPresetNum();
+	showPresetName();
+	showFX_SecondaryName();
+
+	// in FX mode (manual mode) invert display
+	if (buttonMode == SWITCH_MODE_FX) {
+		display.invertDisplay(true);
+	} else {
+		display.invertDisplay(false);
+	}
+	updateTextPositions();
 	display.display();
 }
 

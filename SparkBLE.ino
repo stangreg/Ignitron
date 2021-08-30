@@ -51,10 +51,7 @@ void setup() {
 	}
 	spark_display = new SparkDisplayControl(spark_dc);
 	spark_display->init(operationMode);
-	if (operationMode == SPARK_MODE_AMP){
-		// Allow for the button to be unpressed to not register button in normal operation
-		delay(3000);
-	}
+
 	spark_dc->setDisplayControl(spark_display);
 	// Setting operation mode before initializing
 	spark_dc->init(operationMode);

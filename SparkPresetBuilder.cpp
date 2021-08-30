@@ -161,7 +161,17 @@ int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 
 	std::string presetName = newPreset.name;
 	// remove any blanks from the name for a new filename
-	presetName.erase(std::remove(presetName.begin(), presetName.end(), ' '), presetName.end());
+	presetName.erase(std::remove_if(presetName.begin(),
+									presetName.end(),
+									[](char chr){
+										return chr == ' '
+											|| chr == '\''
+											|| chr == '´'
+											|| chr == '`'
+											|| chr == '-';
+										}
+									),
+									presetName.end());
 	//cut down name to 26 characters (.json will then increase to 30);
 	const int nameLength = presetName.length();
 	presetName = presetName.substr(0,std::min(26, nameLength)) + ".json";
@@ -181,8 +191,8 @@ int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 	int insertPosition = 4 * (bnk-1) + pre;
 
 	if(!fileSystem.openFromFile(presetListFileName, oldListFile)){
-			Serial.println("ERROR while trying to open presets list file");
-			return STORE_PRESET_ERROR_OPEN;
+		Serial.println("ERROR while trying to open presets list file");
+		return STORE_PRESET_ERROR_OPEN;
 	}
 
 	std::stringstream stream(oldListFile);
@@ -218,3 +228,62 @@ int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 	}
 	return STORE_PRESET_UNKNOWN_ERROR;
 }
+
+int SparkPresetBuilder::deletePreset(int bnk, int pre){
+
+	// Then insert the preset into the right position
+	std::string filestr = "";
+	std::string oldListFile;
+	std::string presetFileToDelete = "";
+	int lineCount = 1;
+	int presetCount = 1;
+	int deletePosition = 4 * (bnk-1) + pre;
+
+	if(!fileSystem.openFromFile(presetListFileName, oldListFile)){
+		Serial.println("ERROR while trying to open presets list file");
+		return STORE_PRESET_ERROR_OPEN;
+	}
+
+	std::stringstream stream(oldListFile);
+	std::string line;
+	while (std::getline(stream, line)) {
+		if (lineCount != deletePosition) {
+			// Lines starting with '-' and empty lines
+			// are ignored and can be used for comments in the file
+			if (line.rfind("-", 0) != 0 && !line.empty()) {
+				if (((lineCount-1) % 4) == 0){
+					// New bank separator added to file for better readability
+					char bank_string[20] ="";
+					sprintf(bank_string, "%d ", ((lineCount-1)/4)+1);
+					filestr += "-- Bank ";
+					filestr += bank_string;
+					filestr += "\n";
+				}
+				filestr += line + "\n";
+				lineCount++;
+				presetCount++;
+			}
+		}
+		else if( lineCount == deletePosition) {
+			// Just increase the line counter, so deleted line
+			// does not get into new content.
+			// presetCounter not increased to count presets properly
+			presetFileToDelete = "/" + line;
+			lineCount++;
+		}
+	}
+	if(fileSystem.saveToFile(presetListFileName, filestr.c_str())){
+		SPIFFS.begin();
+		Serial.printf("Successfully removed preset %d-%d", bnk, pre);
+		initializePresetListFromFS();
+		if(SPIFFS.remove(presetFileToDelete.c_str())){
+			return DELETE_PRESET_OK;
+		}
+		else {
+			return DELETE_PRESET_FILE_NOT_EXIST;
+		}
+	}
+	return DELETE_PRESET_UNKNOWN_ERROR;
+}
+
+

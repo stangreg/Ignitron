@@ -103,7 +103,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 					spark_dc->switchPreset(selectedPresetNum);
 				}
 				else { // AMP mode
-					spark_dc->processWriteRequest(selectedPresetNum);
+					spark_dc->processPresetEdit(selectedPresetNum);
 				}
 
 			}
@@ -181,8 +181,10 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 				if(pendingBank != 0){
 					spark_dc->updatePendingPreset(pendingBank);
 				}
-				if (opMode == SPARK_MODE_AMP){
-
+				if (opMode == SPARK_MODE_AMP) {
+					spark_dc->activeBank() = pendingBank;
+					spark_dc->updateActiveWithPendingPreset();
+					spark_dc->resetPresetDeletionFlag();
 				}
 			} // SWITCH_MODE_PREFIX
 		} // SINGLE PRESS
@@ -227,6 +229,37 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 	}
 }
 
+void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern){
+	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_AMP){
+		Serial.println("Entering Delete preset handler");
+		const int buttonMode = spark_dc->buttonMode();
+		const bool isPresetMarkedForDeletion = spark_dc->isPresetMarkedForDeletion();
+		const bool hasAppReceivedPreset = spark_dc->presetReceivedFromApp();
+		const int presetNum = spark_dc->activePresetNum();
+
+		if (pattern == BfButton::LONG_PRESS) {
+			int pressed_btn_gpio = btn->getID();
+			// Debug
+			//Serial.print("Button long pressed: ");
+			//Serial.println(pressed_btn_gpio);
+			//Up preset
+			if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
+				Serial.println("Bank down pressed");
+				if (hasAppReceivedPreset) {
+					spark_dc->resetReceivedPreset();
+				}
+				else {
+					spark_dc->processPresetEdit();
+				}
+			} // IF BANK UP BUTTON
+		} // LONG PRESS
+	} // IF spark_dc and in APP mode
+	else {
+		Serial.println("SparkDataControl not setup yet or in APP mode, ignoring button press.");
+	}
+
+}
+
 int SparkButtonHandler::init() {
 	// Setup the button event handler
 	btn_preset1.onPress(btnPresetHandler);
@@ -236,6 +269,7 @@ int SparkButtonHandler::init() {
 	btn_bank_down.onPress(btnBankHandler);
 	btn_bank_up.onPress(btnBankHandler);
 	btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
+	btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
 	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH){
 		return SPARK_MODE_AMP;
 	}
