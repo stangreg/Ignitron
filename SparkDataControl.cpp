@@ -19,8 +19,8 @@ bool SparkDataControl::isActivePresetUpdatedByAck = false;
 int SparkDataControl::activeBank_ = 0;
 int SparkDataControl::pendingBank_ = 0;
 preset SparkDataControl::appReceivedPreset_;
-bool SparkDataControl::presetReceivedFromApp_ = false;
-bool SparkDataControl::presetMarkedForDeletion_ = false;
+int SparkDataControl::presetEditMode_ = PRESET_EDIT_NONE;
+
 int SparkDataControl::presetNumToEdit_ = 0;
 int SparkDataControl::presetBankToEdit_ = 0;
 
@@ -157,7 +157,7 @@ int SparkDataControl::processSparkData(ByteVector blk){
 		std::string msgStr = spark_ssr.getJson();
 		Serial.println(msgStr.c_str());
 		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET){
-			presetReceivedFromApp_ = true;
+			presetEditMode_ = PRESET_EDIT_STORE;
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
 			Serial.printf("activeNum = %d, activeBank = %d", activePresetNum_, activeBank_);
 			spark_ssr.resetPresetUpdateFlag();
@@ -258,17 +258,14 @@ void SparkDataControl::triggerInitialBLENotifications(){
 	bleControl.sendInitialNotification();
 }
 
-bool SparkDataControl::presetReceivedFromApp(){
-	return presetReceivedFromApp_;
-}
 
 void SparkDataControl::processPresetEdit(int presetNum){
 	if (presetNum == 0) {
 		processDeletePresetRequest();
-	} else if (presetReceivedFromApp_) {
+	} else if (presetEditMode_ == PRESET_EDIT_STORE) {
 		processStorePresetRequest(presetNum);
 	} else {
-		resetPresetDeletionFlag();
+		resetPresetEditMode();
 		activePresetNum_ = presetNum;
 		activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
 		pendingPreset_ = activePreset_;
@@ -279,7 +276,7 @@ void SparkDataControl::processPresetEdit(int presetNum){
 void SparkDataControl::processStorePresetRequest(int presetNum) {
 	int responseCode;
 		responseMsg_ = "";
-		if (presetReceivedFromApp_) {
+		if (presetEditMode_ == PRESET_EDIT_STORE) {
 			if(presetNumToEdit_ == presetNum && presetBankToEdit_ == pendingBank_) {
 				responseCode = presetBuilder.storePreset(appReceivedPreset_, pendingBank_, presetNum);
 				if (responseCode == STORE_PRESET_OK){
@@ -311,7 +308,7 @@ void SparkDataControl::processStorePresetRequest(int presetNum) {
 void SparkDataControl::processDeletePresetRequest(){
 	int responseCode;
 	responseMsg_ = "";
-	if(presetMarkedForDeletion_ && activeBank_ > 0) {
+	if(presetEditMode_ == PRESET_EDIT_DELETE && activeBank_ > 0) {
 		responseCode = presetBuilder.deletePreset(activeBank_, activePresetNum_);
 		if (responseCode == DELETE_PRESET_OK
 				|| responseCode == DELETE_PRESET_FILE_NOT_EXIST){
@@ -331,7 +328,7 @@ void SparkDataControl::processDeletePresetRequest(){
 				|| responseCode == STORE_PRESET_UNKNOWN_ERROR) {
 			responseMsg_ = "DELETE ERROR";
 		}
-		resetPresetDeletionFlag();
+		resetPresetEditMode();
 	}
 	else {
 		setPresetDeletionFlag();
@@ -341,21 +338,15 @@ void SparkDataControl::processDeletePresetRequest(){
 
 }
 
-void SparkDataControl::resetResponseMessage(){
+
+void SparkDataControl::resetPresetEditMode() {
+	presetEditMode_ = PRESET_EDIT_NONE;
+	appReceivedPreset_ = {};
 	responseMsg_ = "";
 }
 
-void SparkDataControl::resetReceivedPreset(){
-	presetReceivedFromApp_ = false;
-	appReceivedPreset_ = {};
-}
-
-void SparkDataControl::resetPresetDeletionFlag() {
-	presetMarkedForDeletion_ = false;
-}
-
 void SparkDataControl::setPresetDeletionFlag() {
-	presetMarkedForDeletion_ = true;
+	presetEditMode_ = PRESET_EDIT_DELETE;
 }
 
 void SparkDataControl::updateActiveWithPendingPreset(){

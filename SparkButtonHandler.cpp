@@ -184,7 +184,7 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 				if (opMode == SPARK_MODE_AMP) {
 					spark_dc->activeBank() = pendingBank;
 					spark_dc->updateActiveWithPendingPreset();
-					spark_dc->resetPresetDeletionFlag();
+					spark_dc->resetPresetEditMode();
 				}
 			} // SWITCH_MODE_PREFIX
 		} // SINGLE PRESS
@@ -233,8 +233,7 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_AMP){
 		Serial.println("Entering Delete preset handler");
 		const int buttonMode = spark_dc->buttonMode();
-		const bool isPresetMarkedForDeletion = spark_dc->isPresetMarkedForDeletion();
-		const bool hasAppReceivedPreset = spark_dc->presetReceivedFromApp();
+		const int presetEditMode = spark_dc->presetEditMode();
 		const int presetNum = spark_dc->activePresetNum();
 
 		if (pattern == BfButton::LONG_PRESS) {
@@ -245,8 +244,8 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 			//Up preset
 			if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
 				Serial.println("Bank down pressed");
-				if (hasAppReceivedPreset) {
-					spark_dc->resetReceivedPreset();
+				if (presetEditMode == PRESET_EDIT_STORE) {
+					spark_dc->resetPresetEditMode();
 				}
 				else {
 					spark_dc->processPresetEdit();

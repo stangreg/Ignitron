@@ -21,7 +21,7 @@ SparkDisplayControl::SparkDisplayControl(SparkDataControl* dc) {
 	primaryLinePreset = nullptr;
 	pendingPreset = nullptr;
 	activePreset = nullptr;
-	presetMarkedForDeletion = false;
+	presetEditMode = PRESET_EDIT_NONE;
 }
 SparkDisplayControl::~SparkDisplayControl() {
 	// TODO Auto-generated destructor stub
@@ -133,7 +133,7 @@ void SparkDisplayControl::showPresetName(){
 	int rectColor;
 	int textColor;
 	// Show preset name inverted if it is not the currently selected one
-	if (pendingBank == activeBank && !presetMarkedForDeletion) {
+	if (pendingBank == activeBank && presetEditMode != PRESET_EDIT_DELETE) {
 		rectColor = SSD1306_BLACK;
 		textColor = SSD1306_WHITE;
 	} else {
@@ -150,7 +150,7 @@ void SparkDisplayControl::showPresetName(){
 	if(msg != ""){ // message to show for some time
 		previousMillis = millis();
 		primaryLineText = msg;
-		spark_dc->resetResponseMessage();
+		spark_dc->resetPresetEditMode();
 		showMsgFlag = true;
 	}
 	if (showMsgFlag) {
@@ -158,7 +158,7 @@ void SparkDisplayControl::showPresetName(){
 		if (currentMillis - previousMillis >= showMessageInterval) {
 			// reset the show message flag to show preset data again
 			showMsgFlag = false;
-			spark_dc->resetReceivedPreset();
+
 		}
 	}
 	else { // no preset save message to display
@@ -190,7 +190,7 @@ void SparkDisplayControl::showFX_SecondaryName(){
 		//displayPreset = presetFromApp;
 		if (!(presetFromApp->isEmpty)) {
 			secondaryLineText = presetFromApp->name;
-		} else if (presetMarkedForDeletion) {
+		} else if (presetEditMode == PRESET_EDIT_DELETE) {
 			secondaryLineText = "DELETE ?";
 		}
 		else {
@@ -249,7 +249,7 @@ void SparkDisplayControl::update() {
 	buttonMode = spark_dc->buttonMode();
 	activePresetNum = spark_dc->activePresetNum();
 	presetFromApp = spark_dc->appReceivedPreset();
-	presetMarkedForDeletion = spark_dc->isPresetMarkedForDeletion();
+	presetEditMode = spark_dc->presetEditMode();
 
 	showBankAndPresetNum();
 	showPresetName();

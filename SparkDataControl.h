@@ -24,6 +24,10 @@
 #define SPARK_MODE_APP 1
 #define SPARK_MODE_AMP 2
 
+#define PRESET_EDIT_NONE 0
+#define PRESET_EDIT_STORE 1
+#define PRESET_EDIT_DELETE 2
+
 using ByteVector = std::vector<byte>;
 
 class SparkBLEControl;
@@ -76,7 +80,7 @@ public:
 	const int operationMode() const {return operationMode_;}
 	const int presetNumToEdit() const {return presetNumToEdit_;}
 	const std::string responseMsg() const {return responseMsg_;}
-	const bool isPresetMarkedForDeletion() const { return presetMarkedForDeletion_;}
+	const int presetEditMode() const { return presetEditMode_;}
 
 
 	// Set/get button mode
@@ -88,11 +92,8 @@ public:
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
-	bool presetReceivedFromApp();
 	void processPresetEdit(int presetNum = 0);
-	void resetResponseMessage();
-	void resetReceivedPreset();
-	void resetPresetDeletionFlag();
+	void resetPresetEditMode();
 
 private:
 	static int operationMode_;
@@ -122,12 +123,10 @@ private:
 	static std::vector<ByteVector> ack_msg;
 
 	//Spark AMP mode
-	static bool presetReceivedFromApp_;
-	static bool presetMarkedForDeletion_;
 	static preset appReceivedPreset_;
 	static int presetNumToEdit_;
 	static int presetBankToEdit_;
-	//static int presetNumToDelete_;
+	static int presetEditMode_;
 
 	static std::string responseMsg_;
 
