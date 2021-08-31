@@ -6,6 +6,7 @@
 #include <FS.h>
 #include <Effortless_SPIFFS.h>
 #include <algorithm>
+#include <regex>
 
 
 #include "SparkHelper.h"

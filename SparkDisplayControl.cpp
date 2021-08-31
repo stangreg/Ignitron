@@ -46,12 +46,13 @@ void SparkDisplayControl::init(int mode) {
 		display.setTextSize(2);
 		display.setCursor(6, 48);
 		display.print("Connecting");
+		display.display();
 	}
 	else{
 		showInitialMessage();
+		display.display();
 		delay(3000);
 	}
-	display.display();
 }
 
 void SparkDisplayControl::showInitialMessage(){
@@ -66,7 +67,6 @@ void SparkDisplayControl::showInitialMessage(){
 	display.print("Please connect");
 	display.setCursor(36,55);
 	display.print("Spark App");
-	display.display();
 
 }
 

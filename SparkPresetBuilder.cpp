@@ -158,29 +158,29 @@ int SparkPresetBuilder::getNumberOfBanks(){
 }
 
 int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
-
-	std::string presetName = newPreset.name;
+	std::string presetNamePrefix = newPreset.name;
 	// remove any blanks from the name for a new filename
-	presetName.erase(std::remove_if(presetName.begin(),
-									presetName.end(),
+	presetNamePrefix.erase(std::remove_if(presetNamePrefix.begin(),
+									presetNamePrefix.end(),
 									[](char chr){
-										return chr == ' '
-											|| chr == '\''
-											|| chr == '´'
-											|| chr == '`'
-											|| chr == '-';
+										return not(std::regex_match(std::string(1,chr), std::regex("[A-z0-9]")));
 										}
 									),
-									presetName.end());
+									presetNamePrefix.end());
 	//cut down name to 26 characters (.json will then increase to 30);
-	const int nameLength = presetName.length();
-	presetName = presetName.substr(0,std::min(26, nameLength)) + ".json";
+	const int nameLength = presetNamePrefix.length();
+	presetNamePrefix = presetNamePrefix.substr(0,std::min(24, nameLength));
 
-	std::string presetFileName = "/" + presetName.substr(0,std::min(26, nameLength)) + ".json";
+	std::string presetFileName = "/" + presetNamePrefix + ".json";
 	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
-	if(fileSystem.getFileSize(presetFileName.c_str()) != 0){
-		Serial.printf("ERROR: File '%s' already exists! Skipping.", presetFileName.c_str());
-		return STORE_PRESET_FILE_EXISTS;
+	int counter = 0;
+
+	while(fileSystem.getFileSize(presetFileName.c_str()) != 0){
+		counter++;
+		Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
+		char counterStr[2];
+		sprintf(counterStr, "%d", counter);
+		presetFileName = "/" + presetNamePrefix + counterStr + ".json";
 	}
 	// First store the json string to a new file
 	fileSystem.saveToFile(presetFileName.c_str(), newPreset.json.c_str());
@@ -215,7 +215,7 @@ int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 			}
 		}
 		else if( lineCount == insertPosition) {
-			filestr += presetName + "\n";
+			filestr += presetFileName + "\n";
 			// Adding old line so it is not lost.
 			filestr += line + "\n";
 			lineCount++;
