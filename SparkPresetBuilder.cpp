@@ -273,9 +273,8 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 		}
 	}
 	if(fileSystem.saveToFile(presetListFileName, filestr.c_str())){
-		SPIFFS.begin();
-		Serial.printf("Successfully removed preset %d-%d", bnk, pre);
 		initializePresetListFromFS();
+		SPIFFS.begin();
 		if(SPIFFS.remove(presetFileToDelete.c_str())){
 			return DELETE_PRESET_OK;
 		}

@@ -231,7 +231,6 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 
 void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern){
 	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_AMP){
-		Serial.println("Entering Delete preset handler");
 		const int buttonMode = spark_dc->buttonMode();
 		const int presetEditMode = spark_dc->presetEditMode();
 		const int presetNum = spark_dc->activePresetNum();
@@ -243,7 +242,6 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 			//Serial.println(pressed_btn_gpio);
 			//Up preset
 			if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
-				Serial.println("Bank down pressed");
 				if (presetEditMode == PRESET_EDIT_STORE) {
 					spark_dc->resetPresetEditMode();
 				}
