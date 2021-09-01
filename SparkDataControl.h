@@ -84,9 +84,11 @@ public:
 	int& activeBank() {
 		return activeBank_;
 	}
+
 	const int& pendingBank() const {
 		return pendingBank_;
 	}
+
 	int& pendingBank() {
 		return pendingBank_;
 	}
@@ -135,7 +137,6 @@ private:
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
 
-	static bool startup;
 	static bool isActivePresetUpdatedByAck;
 
 	//Button data
