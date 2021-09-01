@@ -49,6 +49,7 @@ private:
 	int activePresetNum = 1;
 	int selectedPresetNum = 1;
 	int opMode = 1;
+	bool isConnected = false;
 
 	std::string primaryLineText;
 	const preset* primaryLinePreset;
@@ -70,6 +71,7 @@ private:
 
 	SparkDataControl* dataControl() {return spark_dc;}
 	void showInitialMessage();
+	void showConnection();
 	void showBankAndPresetNum();
 	void showPresetName();
 	void showFX_SecondaryName();

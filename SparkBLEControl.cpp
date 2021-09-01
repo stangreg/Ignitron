@@ -81,7 +81,7 @@ bool SparkBLEControl::connectToServer() {
 		if (pClient) {
 			if (!pClient->connect(advDevice, false)) {
 				Serial.println("Reconnect failed");
-				isConnected_ = false;
+				isAmpConnected_ = false;
 				return false;
 			}
 			Serial.println("Reconnected client");
@@ -99,7 +99,7 @@ bool SparkBLEControl::connectToServer() {
 		if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
 			Serial.println(
 					"Max clients reached - no more connections available");
-			isConnected_ = false;
+			isAmpConnected_ = false;
 			return false;
 		}
 
@@ -121,7 +121,7 @@ bool SparkBLEControl::connectToServer() {
 			/** Created a client but failed to connect, don't need to keep it as it has no data */
 			NimBLEDevice::deleteClient(pClient);
 			Serial.println("Failed to connect, deleted client");
-			isConnected_ = false;
+			isAmpConnected_ = false;
 			return false;
 		}
 	}
@@ -129,14 +129,14 @@ bool SparkBLEControl::connectToServer() {
 	if (!pClient->isConnected()) {
 		if (!pClient->connect(advDevice)) {
 			Serial.println("Failed to connect");
-			isConnected_ = false;
+			isAmpConnected_ = false;
 			return false;
 		}
 	}
 
 	Serial.print("Connected to: ");
 	Serial.println(pClient->getPeerAddress().toString().c_str());
-	isConnected_ = true;
+	isAmpConnected_ = true;
 	return true;
 }
 
@@ -184,19 +184,18 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 	} // pClient
 	else {
 		Serial.print("Client not found! Need reconnection");
-		isConnected_ = false;
+		isAmpConnected_ = false;
 		return false;
 	}
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
+bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd) {
 
 	if (pClient && pClient->isConnected()) {
 
 		NimBLERemoteService *pSvc = nullptr;
 		NimBLERemoteCharacteristic *pChr = nullptr;
-		NimBLERemoteDescriptor *pDsc = nullptr;
 
 		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) {
@@ -241,7 +240,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 					// Send each packet to Spark
 					for (auto packet : packets) {
 						if (pChr->writeValue(packet.data(), packet.size(),
-								response)) {
+								false)) {
 							// Delay seems to be required in order to not lose any packages.
 							// Seems to be more stable with a short delay
 							delay(10);
@@ -250,7 +249,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed
 							pClient->disconnect();
-							isConnected_ = false;
+							isAmpConnected_ = false;
 							return false;
 						}
 					} //For each packet
@@ -268,7 +267,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, boolean response) {
 		return true;
 	} else {
 		Serial.println("Client seems to be disconnected");
-		isConnected_ = false;
+		isAmpConnected_ = false;
 		return false;
 	}
 }
@@ -402,9 +401,9 @@ void SparkBLEControl::notifyClients(ByteVector msg){
 
 void SparkBLEControl::sendInitialNotification(){
 	//This is the serial number of the Spark. Sending fake one.
-		ByteVector preface1 = {0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0xF0, 0x01, 0x05, 0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39,
-				0x43, 0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7};
+	ByteVector preface1 = {0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0xF0, 0x01, 0x05, 0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39,
+			0x43, 0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7};
 
 	// When connecting app, we need to send a set of notifications for a successful connection
 	ByteVector preface2 ={0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -441,21 +440,51 @@ void SparkBLEControl::sendInitialNotification(){
 
 void SparkBLEControl::onConnect(NimBLEServer* pServer) {
 	Serial.println("Client connected");
-	isClientConnected_ = true;
+	isAppConnected_ = true;
 	Serial.println("Multi-connect support: start advertising");
 	NimBLEDevice::startAdvertising();
 };
 
 void SparkBLEControl::onDisconnect(NimBLEServer* pServer) {
 	Serial.println("Client disconnected");
-	isClientConnected_ = false;
+	isAppConnected_ = false;
 	notificationCount = 0;
 	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
 };
 
 void SparkBLEControl::onDisconnect(NimBLEClient* pClient){
-	isConnected_ = false;
+	isAmpConnected_ = false;
 	isConnectionFound_ = false;
 	NimBLEClientCallbacks::onDisconnect(pClient);
+}
+
+bool SparkBLEControl::isAmpConnected() {
+	bool retValue = lastHeartBeat;
+	unsigned long currentTime = millis();
+	if(currentTime - lastHeartBeatTime >= heartBeatInterval) {
+		if (pClient && pClient->isConnected()) {
+			NimBLERemoteService *pSvc = nullptr;
+			NimBLERemoteCharacteristic *pChr = nullptr;
+			pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
+			if (pSvc) {
+				pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
+				if(pChr) {
+					Serial.print("Checking heartBeat");
+					const unsigned char heartBeat[] = "\xFF";
+					if (pChr->writeValue(heartBeat, 1,
+							false)) {
+						retValue = true;
+					}
+					else {
+						retValue = false;
+					}
+				}
+			}
+		}
+		lastHeartBeatTime = currentTime;
+		lastHeartBeat = retValue;
+	}
+	return retValue;
+
 }

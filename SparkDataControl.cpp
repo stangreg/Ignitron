@@ -85,7 +85,7 @@ void SparkDataControl::startBLEServer(){
 }
 
 bool SparkDataControl::checkBLEConnection(){
-	if (bleControl.isConnected()){
+	if (bleControl.isAmpConnected()){
 		return true;
 	}
 	else{
@@ -115,12 +115,12 @@ int SparkDataControl::getNumberOfBanks(){
 	return presetBuilder.getNumberOfBanks();
 }
 
-bool SparkDataControl::isBLEConnected(){
-	return bleControl.isConnected();
+bool SparkDataControl::isAmpConnected(){
+	return bleControl.isAmpConnected();
 }
 
-bool SparkDataControl::isBLEClientConnected(){
-	return bleControl.isClientConnected();
+bool SparkDataControl::isAppConnected(){
+	return bleControl.isAppConnected();
 }
 
 
@@ -197,7 +197,7 @@ bool SparkDataControl::switchPreset(int pre) {
 	bool retValue = false;
 	int bnk = pendingBank_;
 	if (operationMode_ == SPARK_MODE_APP){
-		if (pre == activePresetNum_ && !activePreset_.isEmpty){
+		if (pre == activePresetNum_ && !(activePreset_.isEmpty)){
 			pedal drivePedal = activePreset_.pedals[2];
 			std::string drivePedalName = drivePedal.name;
 			bool isDriveEnabled = drivePedal.isOn;
@@ -209,10 +209,13 @@ bool SparkDataControl::switchPreset(int pre) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if(bleControl.writeBLE(current_msg) && getCurrentPresetFromSpark()){
-					// For HW presets we always need to get the preset from Spark
-					// as we don't know the parameters
-					retValue = true;
+				if(bleControl.writeBLE(current_msg)) {
+					delay(50);
+					if(getCurrentPresetFromSpark()){
+						// For HW presets we always need to get the preset from Spark
+						// as we don't know the parameters
+						retValue = true;
+					}
 				}
 			} else {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
@@ -265,7 +268,7 @@ void SparkDataControl::processPresetEdit(int presetNum){
 	} else if (presetEditMode_ == PRESET_EDIT_STORE) {
 		processStorePresetRequest(presetNum);
 	} else {
-		resetPresetEditMode();
+		resetPresetEdit(true, true);
 		activePresetNum_ = presetNum;
 		activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
 		pendingPreset_ = activePreset_;
@@ -281,9 +284,11 @@ void SparkDataControl::processStorePresetRequest(int presetNum) {
 				responseCode = presetBuilder.storePreset(appReceivedPreset_, pendingBank_, presetNum);
 				if (responseCode == STORE_PRESET_OK){
 					Serial.println("Successfully stored preset");
-					presetNumToEdit_ = 0;
-					presetBankToEdit_ = 0;
+					resetPresetEdit(true, true);
+					appReceivedPreset_ = {};
 					activePresetNum_ = presetNum;
+					activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
+					pendingPreset_ = activePreset_;
 					responseMsg_ = "SAVE OK";
 				}
 				if (responseCode == STORE_PRESET_FILE_EXISTS){
@@ -295,12 +300,12 @@ void SparkDataControl::processStorePresetRequest(int presetNum) {
 				}
 			}
 			else {
+				activePresetNum_ = presetNum;
+				activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
+				pendingPreset_ = activePreset_;
 				presetNumToEdit_ = presetNum;
 				presetBankToEdit_ = pendingBank_;
-				pendingPreset_ = presetBuilder.getPreset(pendingBank_, presetNum);
-				activePresetNum_ = presetNum;
 			}
-
 		}
 
 }
@@ -328,7 +333,7 @@ void SparkDataControl::processDeletePresetRequest(){
 				|| responseCode == STORE_PRESET_UNKNOWN_ERROR) {
 			responseMsg_ = "DELETE ERROR";
 		}
-		resetPresetEditMode();
+		resetPresetEdit(true, true);
 	}
 	else {
 		setPresetDeletionFlag();
@@ -339,9 +344,20 @@ void SparkDataControl::processDeletePresetRequest(){
 }
 
 
-void SparkDataControl::resetPresetEditMode() {
-	presetEditMode_ = PRESET_EDIT_NONE;
-	appReceivedPreset_ = {};
+void SparkDataControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
+	presetNumToEdit_ = 0;
+	presetBankToEdit_ = 0;
+
+	if(resetPreset) {
+		appReceivedPreset_ = {};
+	}
+	if(resetEditMode) {
+		presetEditMode_ = PRESET_EDIT_NONE;
+	}
+
+}
+
+void SparkDataControl::resetPresetEditResponse() {
 	responseMsg_ = "";
 }
 

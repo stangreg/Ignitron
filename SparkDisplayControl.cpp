@@ -51,7 +51,7 @@ void SparkDisplayControl::init(int mode) {
 	else{
 		showInitialMessage();
 		display.display();
-		delay(3000);
+		delay(1500);
 	}
 }
 
@@ -97,12 +97,12 @@ void SparkDisplayControl::showBankAndPresetNum(){
 	// Preset display
 	display.setTextSize(4);
 	std::string presetText = " ";
-	if (buttonMode == SWITCH_MODE_FX) {
+	if (opMode == SPARK_MODE_APP && buttonMode == SWITCH_MODE_FX) {
 		// If in FX mode, show an "M" for manual mode
 		presetText = "M";
 
 	}
-	if (opMode == SPARK_MODE_AMP){
+	if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE){
 		presetText = "*";
 	}
 	presetText += selPresetStr.str();
@@ -150,7 +150,7 @@ void SparkDisplayControl::showPresetName(){
 	if(msg != ""){ // message to show for some time
 		previousMillis = millis();
 		primaryLineText = msg;
-		spark_dc->resetPresetEditMode();
+		spark_dc->resetPresetEditResponse();
 		showMsgFlag = true;
 	}
 	if (showMsgFlag) {
@@ -236,6 +236,19 @@ void SparkDisplayControl::showFX_SecondaryName(){
 
 }
 
+void SparkDisplayControl::showConnection() {
+	// Display the bank and preset number
+	int xPos = display.width()/2.0;
+	int yPos = 5;
+	int radius = 4;
+	uint16_t color = SSD1306_WHITE;
+		if (isConnected) {
+			display.fillCircle(xPos, yPos, radius, color);
+		} else {
+			display.drawCircle(xPos, yPos, radius, color);
+		}
+
+}
 
 void SparkDisplayControl::update() {
 	display.clearDisplay();
@@ -250,10 +263,14 @@ void SparkDisplayControl::update() {
 	activePresetNum = spark_dc->activePresetNum();
 	presetFromApp = spark_dc->appReceivedPreset();
 	presetEditMode = spark_dc->presetEditMode();
+	isConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
 
+
+	showConnection();
 	showBankAndPresetNum();
 	showPresetName();
 	showFX_SecondaryName();
+
 
 	// in FX mode (manual mode) invert display
 	if (buttonMode == SWITCH_MODE_FX) {

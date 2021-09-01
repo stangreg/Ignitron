@@ -70,7 +70,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |Preset 2 | Short |Select preset 2 | Press same preset twice to store received preset from app |
 |Preset 3 | Short |Select preset 3 | Press same preset twice to store received preset from app |
 |Preset 4 | Short |Select preset 4 | Press same preset twice to store received preset from app |
-|Bank down | Long | Remove received preset from app| - |
+|Bank down | Long | Unload preset received from app| - |
 
 
 ### Deleting an existing preset

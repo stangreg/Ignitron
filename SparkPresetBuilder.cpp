@@ -159,19 +159,20 @@ int SparkPresetBuilder::getNumberOfBanks(){
 
 int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 	std::string presetNamePrefix = newPreset.name;
+	std::string presetNameWithPath;
 	// remove any blanks from the name for a new filename
 	presetNamePrefix.erase(std::remove_if(presetNamePrefix.begin(),
 									presetNamePrefix.end(),
 									[](char chr){
-										return not(std::regex_match(std::string(1,chr), std::regex("[A-z0-9]")));
+										return not(std::regex_match(std::string(1,chr), std::regex("[A-z0-9_]")));
 										}
 									),
 									presetNamePrefix.end());
-	//cut down name to 26 characters (.json will then increase to 30);
+	//cut down name to 24 characters (a potential counter + .json will then increase to 30);
 	const int nameLength = presetNamePrefix.length();
 	presetNamePrefix = presetNamePrefix.substr(0,std::min(24, nameLength));
 
-	std::string presetFileName = "/" + presetNamePrefix + ".json";
+	std::string presetFileName = presetNamePrefix + ".json";
 	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
 	int counter = 0;
 
@@ -180,10 +181,12 @@ int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
 		Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
 		char counterStr[2];
 		sprintf(counterStr, "%d", counter);
-		presetFileName = "/" + presetNamePrefix + counterStr + ".json";
+		presetFileName = presetNamePrefix + counterStr + ".json";
 	}
+	presetNameWithPath = "/" + presetFileName;
 	// First store the json string to a new file
-	fileSystem.saveToFile(presetFileName.c_str(), newPreset.json.c_str());
+	fileSystem.saveToFile(presetNameWithPath.c_str(), newPreset.json.c_str());
+
 	// Then insert the preset into the right position
 	std::string filestr = "";
 	std::string oldListFile;

@@ -129,8 +129,6 @@ void SparkLEDControl::updateLEDs() {
 		unsigned long currentMillis = millis();
 		int led_gpio = 0;
 
-
-
 		int presetNumToEdit = spark_dc->presetNumToEdit();
 		const int presetEditMode = spark_dc->presetEditMode();
 

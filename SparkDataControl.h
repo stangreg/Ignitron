@@ -42,8 +42,8 @@ public:
 	void init(int op_mode);
 	void setDisplayControl(SparkDisplayControl* display);
 	bool checkBLEConnection();
-	bool isBLEConnected();
-	bool isBLEClientConnected(); // true if ESP in AMP mode and client is connected
+	bool isAmpConnected();
+	bool isAppConnected(); // true if ESP in AMP mode and client is connected
 	void startBLEServer();
 
 	// Callback function when Spark notifies about a changed characteristic
@@ -93,7 +93,8 @@ public:
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
 	void processPresetEdit(int presetNum = 0);
-	void resetPresetEditMode();
+	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
+	void resetPresetEditResponse();
 
 private:
 	static int operationMode_;

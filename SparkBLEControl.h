@@ -31,11 +31,12 @@ public:
 	SparkBLEControl(SparkDataControl* dc);
 	virtual ~SparkBLEControl();
 	const bool isConnectionFound() const { return isConnectionFound_;}
-	const bool isConnected() const { return isConnected_;}
-	const bool isClientConnected() const { return isClientConnected_;}
+	//const bool isAmpConnected() const { return isAmpConnected_;}
+	bool isAmpConnected();
+	const bool isAppConnected() const { return isAppConnected_;}
 	bool connectToServer();
 	bool subscribeToNotifications(notify_callback notifyCallback=nullptr);
-	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
+	bool writeBLE(std::vector<ByteVector> cmd);
 	void initBLE();
 	void initScan();
 
@@ -50,10 +51,13 @@ private:
 	NimBLEAdvertisedDevice *advDevice;
 	NimBLEClient *pClient = nullptr;
 
-	bool isConnected_ = false;
+	bool isAmpConnected_ = false;
 	bool isConnectionFound_ = false;
 	// isClientConnected will be set when a client is connected to ESP in AMP mode
-	bool isClientConnected_ = false;
+	bool isAppConnected_ = false;
+	bool lastHeartBeat = false;
+	unsigned long lastHeartBeatTime = 0;
+	int heartBeatInterval = 5000;
 	uint32_t scanTime = 0; /** 0 = scan forever */
 	const uint8_t notificationOn[2] = { 0x1, 0x0 };
 

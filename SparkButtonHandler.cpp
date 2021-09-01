@@ -184,7 +184,13 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 				if (opMode == SPARK_MODE_AMP) {
 					spark_dc->activeBank() = pendingBank;
 					spark_dc->updateActiveWithPendingPreset();
-					spark_dc->resetPresetEditMode();
+					int editMode = spark_dc->presetEditMode();
+					if ( editMode == PRESET_EDIT_DELETE) {
+						spark_dc->resetPresetEdit(true, true);
+					}
+					else if (editMode == PRESET_EDIT_STORE) {
+						spark_dc->resetPresetEdit(false, false);
+					}
 				}
 			} // SWITCH_MODE_PREFIX
 		} // SINGLE PRESS
@@ -243,7 +249,7 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 			//Up preset
 			if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
 				if (presetEditMode == PRESET_EDIT_STORE) {
-					spark_dc->resetPresetEditMode();
+					spark_dc->resetPresetEdit(true, true);
 				}
 				else {
 					spark_dc->processPresetEdit();
@@ -265,8 +271,8 @@ int SparkButtonHandler::init() {
 	btn_preset4.onPress(btnPresetHandler);
 	btn_bank_down.onPress(btnBankHandler);
 	btn_bank_up.onPress(btnBankHandler);
-	btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
-	btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
+	btn_bank_up.onPressFor(btnSwitchModeHandler, 2000);
+	btn_bank_down.onPressFor(btnDeletePresetHandler, 2000);
 	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH){
 		return SPARK_MODE_AMP;
 	}
