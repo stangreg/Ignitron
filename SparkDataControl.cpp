@@ -50,7 +50,6 @@ void SparkDataControl::init(int op_mode) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
 		bleControl.startServer();
-		spark_display->init(operationMode_);
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);

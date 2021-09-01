@@ -7,15 +7,14 @@
 
 using ByteVector = std::vector<byte>;
 
-
 // Positions of FX types in preset struct
-const int FX_NOISEGATE = 0;
-const int FX_COMP = 1;
-const int FX_DRIVE = 2;
-const int FX_AMP = 3;
-const int FX_MOD = 4;
-const int FX_DELAY = 5;
-const int FX_REVERB = 6;
+#define FX_NOISEGATE 	0
+#define FX_COMP  	 	1
+#define FX_DRIVE 		2
+#define FX_AMP 			3
+#define FX_MOD 			4
+#define FX_DELAY 		5
+#define FX_REVERB 		6
 
 struct parameter {
 

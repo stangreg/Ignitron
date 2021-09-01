@@ -271,8 +271,8 @@ int SparkButtonHandler::init() {
 	btn_preset4.onPress(btnPresetHandler);
 	btn_bank_down.onPress(btnBankHandler);
 	btn_bank_up.onPress(btnBankHandler);
-	btn_bank_up.onPressFor(btnSwitchModeHandler, 2000);
-	btn_bank_down.onPressFor(btnDeletePresetHandler, 2000);
+	btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
+	btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
 	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH){
 		return SPARK_MODE_AMP;
 	}

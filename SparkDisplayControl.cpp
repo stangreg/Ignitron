@@ -38,13 +38,17 @@ void SparkDisplayControl::init(int mode) {
 	}
 	// Clear the buffer
 	display.clearDisplay(); //No Adafruit splash
-	//display.display();
+	display.display();
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextWrap(false);
 	opMode = spark_dc->operationMode();
 
 	showInitialMessage();
 	display.display();
+	if (opMode == SPARK_MODE_AMP) {
+		// Allow the initial screen to show for some time
+		delay(3000);
+	}
 }
 
 void SparkDisplayControl::showInitialMessage() {
@@ -55,7 +59,6 @@ void SparkDisplayControl::showInitialMessage() {
 		display.setTextSize(2);
 		display.setCursor(6, 48);
 		display.print("Connecting");
-		display.display();
 
 	} else if (opMode == SPARK_MODE_AMP) {
 		display.setTextColor(SSD1306_WHITE);
@@ -69,7 +72,6 @@ void SparkDisplayControl::showInitialMessage() {
 		display.print("Please connect");
 		display.setCursor(36, 55);
 		display.print("Spark App");
-		delay(1500);
 	}
 }
 
@@ -229,7 +231,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 void SparkDisplayControl::showConnection() {
 	// Display the bank and preset number
 	int xPos = display.width() / 2.0;
-	int yPos = 5;
+	int yPos = 15;
 	int radius = 4;
 	uint16_t color = SSD1306_WHITE;
 	if (isConnected) {
@@ -247,8 +249,6 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		showInitialMessage();
 	} else {
 		display.setTextWrap(false);
-		opMode = spark_dc->operationMode();
-
 		activeBank = spark_dc->activeBank();
 		pendingBank = spark_dc->pendingBank();
 		activePreset = spark_dc->activePreset();
