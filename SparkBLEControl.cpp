@@ -16,7 +16,7 @@ SparkBLEControl::SparkBLEControl() {
 
 }
 
-SparkBLEControl::SparkBLEControl(SparkDataControl* dc) {
+SparkBLEControl::SparkBLEControl(SparkDataControl *dc) {
 	//advDevCB = new AdvertisedDeviceCallbacks();
 	advDevice = new NimBLEAdvertisedDevice();
 	spark_dc = dc;
@@ -25,7 +25,8 @@ SparkBLEControl::SparkBLEControl(SparkDataControl* dc) {
 
 SparkBLEControl::~SparkBLEControl() {
 	//if(advDevCB) delete advDevCB;
-	if(advDevice) delete advDevice;
+	if (advDevice)
+		delete advDevice;
 }
 
 // Initializing BLE connection with NimBLE
@@ -39,7 +40,7 @@ void SparkBLEControl::initBLE() {
 	NimBLEScan *pScan = NimBLEDevice::getScan();
 
 	/** create a callback that gets called when advertisers are found */
-	pScan->setAdvertisedDeviceCallbacks(this,false);
+	pScan->setAdvertisedDeviceCallbacks(this, false);
 
 	/** Set scan interval (how often) and window (how long) in milliseconds */
 	pScan->setInterval(45);
@@ -56,15 +57,15 @@ void SparkBLEControl::initBLE() {
 	pScan->start(scanTime, scanEndedCB);
 }
 
-void SparkBLEControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device){
-	advDevice  = device;
+void SparkBLEControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
+	advDevice = device;
 }
 
-void SparkBLEControl::scanEndedCB(NimBLEScanResults results){
+void SparkBLEControl::scanEndedCB(NimBLEScanResults results) {
 	Serial.println("Scan ended.");
 }
 
-void SparkBLEControl::initScan(){
+void SparkBLEControl::initScan() {
 	NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
 	Serial.println("Scan initiated");
 }
@@ -155,7 +156,8 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 			if (pChr) { // make sure it's not null
 				if (pChr->canNotify()) {
 					Serial.printf(
-							"Subscribing to service notifications of %s\n", SPARK_BLE_NOTIF_CHAR_UUID);
+							"Subscribing to service notifications of %s\n",
+							SPARK_BLE_NOTIF_CHAR_UUID);
 					Serial.println("Notifications turned on");
 					// Descriptor 2902 needs to be activated in order to receive notifications
 					pChr->getDescriptor(BLEUUID((uint16_t) 0x2902))->writeValue(
@@ -170,7 +172,8 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 				}
 
 			} else {
-				Serial.printf("%s characteristic not found.\n", SPARK_BLE_NOTIF_CHAR_UUID);
+				Serial.printf("%s characteristic not found.\n",
+				SPARK_BLE_NOTIF_CHAR_UUID);
 				return false;
 			}
 
@@ -190,7 +193,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd) {
+bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 
 	if (pClient && pClient->isConnected()) {
 
@@ -239,13 +242,13 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd) {
 
 					// Send each packet to Spark
 					for (auto packet : packets) {
+						//Serial.println("Trying to send package");
 						if (pChr->writeValue(packet.data(), packet.size(),
-								false)) {
+								response)) {
 							// Delay seems to be required in order to not lose any packages.
 							// Seems to be more stable with a short delay
 							delay(10);
-						}
-						else {
+						} else {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed
 							pClient->disconnect();
@@ -257,7 +260,8 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd) {
 				}  // if can write
 			} // if pChr
 			else {
-				Serial.printf("Characteristic %s not found.\n", SPARK_BLE_WRITE_CHAR_UUID);
+				Serial.printf("Characteristic %s not found.\n",
+				SPARK_BLE_WRITE_CHAR_UUID);
 			}
 		} // if pSvc
 		else {
@@ -274,7 +278,8 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd) {
 
 void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
 
-	if (advertisedDevice->isAdvertisingService(NimBLEUUID(SPARK_BLE_SERVICE_UUID))) {
+	if (advertisedDevice->isAdvertisingService(
+			NimBLEUUID(SPARK_BLE_SERVICE_UUID))) {
 		Serial.println("Found Spark, connecting.");
 		/** stop scan before connecting */
 		NimBLEDevice::getScan()->stop();
@@ -293,42 +298,65 @@ void SparkBLEControl::startServer() {
 
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
-	NimBLEDevice::setSecurityAuth(/*BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM |*/ BLE_SM_PAIR_AUTHREQ_SC);
+	NimBLEDevice::setSecurityAuth(
+			/*BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM |*/BLE_SM_PAIR_AUTHREQ_SC);
 
 	pServer = NimBLEDevice::createServer();
 	pServer->setCallbacks(this);
 
-	NimBLEService* pSparkService = pServer->createService(SPARK_BLE_SERVICE_UUID);
-	NimBLECharacteristic* pSparkWriteCharacteristic = pSparkService->createCharacteristic(
+	NimBLEService *pSparkService = pServer->createService(
+	SPARK_BLE_SERVICE_UUID);
+	NimBLECharacteristic *pSparkWriteCharacteristic =
+			pSparkService->createCharacteristic(
 			SPARK_BLE_WRITE_CHAR_UUID,
-			NIMBLE_PROPERTY::READ |
-			NIMBLE_PROPERTY::WRITE |
-			NIMBLE_PROPERTY::WRITE_NR);
+					NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE
+							| NIMBLE_PROPERTY::WRITE_NR);
 
-	uint8_t initialWriteValue[] = {0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,
-			0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,
-			0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,
-			0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77};
+	uint8_t initialWriteValue[] = { 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+			0x77, 0x77, 0x77 };
 
 	pSparkWriteCharacteristic->setValue(initialWriteValue);
 	pSparkWriteCharacteristic->setCallbacks(this);
 
-	NimBLECharacteristic* pSparkNotificationCharacteristic = pSparkService->createCharacteristic(
+	NimBLECharacteristic *pSparkNotificationCharacteristic =
+			pSparkService->createCharacteristic(
 			SPARK_BLE_NOTIF_CHAR_UUID,
-			NIMBLE_PROPERTY::READ |
-			NIMBLE_PROPERTY::NOTIFY
-	);
-	uint8_t initialNotificationValue[] = {0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,
-			0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,
-			0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,
-			0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x88};
+					NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
+	uint8_t initialNotificationValue[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+			0x88, 0x88, 0x88, 0x88 };
 	pSparkNotificationCharacteristic->setValue(initialNotificationValue);
 	pSparkNotificationCharacteristic->setCallbacks(this);
 
 	/** Start the services when finished creating all Characteristics and Descriptors */
 	pSparkService->start();
 	//pSparkNotificationService->start();
-	NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
+	NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
 
 	//uint8_t Adv_DATA[] = {0xee, 0x03, 0x08, 0xEB, 0xED, 0x78, 0x0A, 0x6E};
 	//BLEAdvertisementData oAdvertisementCustom = BLEAdvertisementData();
@@ -349,7 +377,7 @@ void SparkBLEControl::startServer() {
 
 }
 
-void SparkBLEControl::onWrite(NimBLECharacteristic* pCharacteristic){
+void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 	//Serial.print(pCharacteristic->getUUID().toString().c_str());
 	//Serial.println(": onWrite()");
 	std::string rxValue = pCharacteristic->getValue();
@@ -357,28 +385,29 @@ void SparkBLEControl::onWrite(NimBLECharacteristic* pCharacteristic){
 	byteVector.clear();
 
 	if (rxValue.length() > 0) {
-		for (int i = 0; i < rxValue.length(); i++){
-			byteVector.push_back((byte)(rxValue[i]));
+		for (int i = 0; i < rxValue.length(); i++) {
+			byteVector.push_back((byte) (rxValue[i]));
 		}
 	}
 
-	if(spark_dc->processSparkData(byteVector) == MSG_PROCESS_RES_INITIAL){
+	if (spark_dc->processSparkData(byteVector) == MSG_PROCESS_RES_INITIAL) {
 		sendInitialNotification();
 	}
 }
 
-void SparkBLEControl::onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc, uint16_t subValue) {
+void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
+		ble_gap_conn_desc *desc, uint16_t subValue) {
 	String str = "Client ID: ";
 	str += desc->conn_handle;
 	str += " Address: ";
 	str += std::string(NimBLEAddress(desc->peer_ota_addr)).c_str();
-	if(subValue == 0) {
+	if (subValue == 0) {
 		str += " Unsubscribed to ";
-	}else if(subValue == 1) {
+	} else if (subValue == 1) {
 		str += " Subscribed to notfications for ";
-	} else if(subValue == 2) {
+	} else if (subValue == 2) {
 		str += " Subscribed to indications for ";
-	} else if(subValue == 3) {
+	} else if (subValue == 3) {
 		str += " Subscribed to notifications and indications for ";
 	}
 	str += std::string(pCharacteristic->getUUID()).c_str();
@@ -386,37 +415,41 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap
 	Serial.println(str);
 	sendInitialNotification();
 
-};
+}
+;
 
-void SparkBLEControl::notifyClients(ByteVector msg){
-	NimBLEService* pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
-	if(pSvc) {
-		NimBLECharacteristic* pChr = pSvc->getCharacteristic(SPARK_BLE_NOTIF_CHAR_UUID);
-		if(pChr) {
-			pChr->setValue(&msg.data()[0],msg.size());
+void SparkBLEControl::notifyClients(ByteVector msg) {
+	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
+	if (pSvc) {
+		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
+		SPARK_BLE_NOTIF_CHAR_UUID);
+		if (pChr) {
+			pChr->setValue(&msg.data()[0], msg.size());
 			pChr->notify(true);
 		}
 	}
 }
 
-void SparkBLEControl::sendInitialNotification(){
+void SparkBLEControl::sendInitialNotification() {
 	//This is the serial number of the Spark. Sending fake one.
-	ByteVector preface1 = {0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0xF0, 0x01, 0x05, 0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39,
-			0x43, 0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7};
+	ByteVector preface1 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x05,
+			0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39, 0x43,
+			0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7 };
 
 	// When connecting app, we need to send a set of notifications for a successful connection
-	ByteVector preface2 ={0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0xF0, 0x01, 0x01, 0x77, 0x03, 0x2F, 0x11, 0x4E, 0x01, 0x04, 0x03, 0x2E, 0xF7};
-	ByteVector preface3 = {0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0xF0, 0x01, 0x02, 0x2D, 0x03, 0x2A, 0x0D, 0x14, 0x7D, 0x4C, 0x07, 0x5A, 0x58, 0xF7};
-
+	ByteVector preface2 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x01,
+			0x77, 0x03, 0x2F, 0x11, 0x4E, 0x01, 0x04, 0x03, 0x2E, 0xF7 };
+	ByteVector preface3 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1E, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x02,
+			0x2D, 0x03, 0x2A, 0x0D, 0x14, 0x7D, 0x4C, 0x07, 0x5A, 0x58, 0xF7 };
 
 	int delayValue = 0;
-	if(pServer->getConnectedCount()) {
+	if (pServer->getConnectedCount()) {
 		//Serial.println("Sending notifications...");
 		notificationCount++;
-		switch(notificationCount){
+		switch (notificationCount) {
 		default:
 			notificationCount = 1;
 			/* no break */
@@ -438,53 +471,58 @@ void SparkBLEControl::sendInitialNotification(){
 	} // if server connected
 }
 
-void SparkBLEControl::onConnect(NimBLEServer* pServer) {
+void SparkBLEControl::onConnect(NimBLEServer *pServer) {
 	Serial.println("Client connected");
 	isAppConnected_ = true;
 	Serial.println("Multi-connect support: start advertising");
 	NimBLEDevice::startAdvertising();
-};
+}
+;
 
-void SparkBLEControl::onDisconnect(NimBLEServer* pServer) {
+void SparkBLEControl::onDisconnect(NimBLEServer *pServer) {
 	Serial.println("Client disconnected");
 	isAppConnected_ = false;
 	notificationCount = 0;
 	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
-};
+}
+;
 
-void SparkBLEControl::onDisconnect(NimBLEClient* pClient){
+void SparkBLEControl::onDisconnect(NimBLEClient *pClient) {
 	isAmpConnected_ = false;
 	isConnectionFound_ = false;
 	NimBLEClientCallbacks::onDisconnect(pClient);
 }
+/*
+ bool SparkBLEControl::isAmpConnected() {
+ bool retValue = lastHeartBeat;
+ if (!isAmpConnected_) {
+ lastHeartBeat = false;
+ return false;
+ }
+ unsigned long currentTime = millis();
+ if (currentTime - lastHeartBeatTime >= heartBeatInterval) {
+ if (pClient && pClient->isConnected()) {
+ NimBLERemoteService *pSvc = nullptr;
+ NimBLERemoteCharacteristic *pChr = nullptr;
+ pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
+ if (pSvc) {
+ pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
+ if (pChr) {
+ Serial.print("Checking heartBeat");
+ const unsigned char heartBeat[] = "\xFF";
+ if (pChr->writeValue(heartBeat, 1, false)) {
+ retValue = true;
+ } else {
+ retValue = false;
+ }
+ }
+ }
+ }
+ lastHeartBeatTime = currentTime;
+ lastHeartBeat = retValue;
+ }
+ return retValue;
 
-bool SparkBLEControl::isAmpConnected() {
-	bool retValue = lastHeartBeat;
-	unsigned long currentTime = millis();
-	if(currentTime - lastHeartBeatTime >= heartBeatInterval) {
-		if (pClient && pClient->isConnected()) {
-			NimBLERemoteService *pSvc = nullptr;
-			NimBLERemoteCharacteristic *pChr = nullptr;
-			pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
-			if (pSvc) {
-				pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
-				if(pChr) {
-					Serial.print("Checking heartBeat");
-					const unsigned char heartBeat[] = "\xFF";
-					if (pChr->writeValue(heartBeat, 1,
-							false)) {
-						retValue = true;
-					}
-					else {
-						retValue = false;
-					}
-				}
-			}
-		}
-		lastHeartBeatTime = currentTime;
-		lastHeartBeat = retValue;
-	}
-	return retValue;
-
-}
+ }
+ */
