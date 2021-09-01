@@ -47,32 +47,22 @@ void SparkDisplayControl::init(int mode) {
 	display.display();
 	if (opMode == SPARK_MODE_AMP) {
 		// Allow the initial screen to show for some time
-		delay(3000);
+		delay(5000);
 	}
 }
 
 void SparkDisplayControl::showInitialMessage() {
+	display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47,
+	SSD1306_WHITE);
+	display.setTextSize(2);
+
+	std::string modeText;
 	if (opMode == SPARK_MODE_APP) {
-
-		display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47,
-		SSD1306_WHITE);
-		display.setTextSize(2);
-		display.setCursor(6, 48);
-		display.print("Connecting");
-
+		modeText = "APP mode";
 	} else if (opMode == SPARK_MODE_AMP) {
-		display.setTextColor(SSD1306_WHITE);
-		display.setTextSize(2);
-		display.setCursor(18, 0);
-		display.print("SparkBLE");
-		display.setCursor(18, 24);
-		display.print("AMP mode");
-		display.setTextSize(1);
-		display.setCursor(24, 43);
-		display.print("Please connect");
-		display.setCursor(36, 55);
-		display.print("Spark App");
+		modeText = "AMP mode";
 	}
+	drawCentreString(modeText.c_str(), display.width() / 2, 49);
 }
 
 void SparkDisplayControl::showBankAndPresetNum() {
@@ -177,7 +167,7 @@ void SparkDisplayControl::showPresetName() {
 void SparkDisplayControl::showFX_SecondaryName() {
 	// The last line shows either the FX setup (in APP mode)
 	// or the new received preset from the app (in AMP mode)
-	secondaryLineText = " ";
+	secondaryLineText = "";
 	if (opMode == SPARK_MODE_AMP) {
 		//displayPreset = presetFromApp;
 		if (!(presetFromApp->isEmpty)) {
@@ -191,10 +181,12 @@ void SparkDisplayControl::showFX_SecondaryName() {
 		// Build string to show active FX
 		secondaryLinePreset = primaryLinePreset;
 		std::string currPedalStatus;
-		std::string fx_indicators_on[] = { "N", "C ", "D ", "  ", "M ", "D ",
-				"R" }; // blank placeholder for Amp
-		std::string fx_indicators_off[] = { " ", "  ", "  ", "  ", "  ", "  ",
-				" " }; // blank placeholder for Amp
+		// blank placeholder for Amp
+		std::string fx_indicators_on[] =
+				{ "N", "C ", "D ", " ", "M ", "D ",
+				"R" };
+		std::string fx_indicators_off[] = { " ", "  ", "  ", " ", "  ", "  ",
+				" " };
 
 		// When we switched to FX mode, we always show the current selected preset
 		if (buttonMode == SWITCH_MODE_FX) {
@@ -220,11 +212,13 @@ void SparkDisplayControl::showFX_SecondaryName() {
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextSize(2);
 	if (opMode == SPARK_MODE_APP) {
-		display.setCursor(-6, 49);
+		drawCentreString(secondaryLineText.c_str(), display.width() / 2, 49);
+		//display.setCursor(-6, 49);
 	} else {
 		display.setCursor(display_x2, 49);
+		display.print(secondaryLineText.c_str());
 	}
-	display.print(secondaryLineText.c_str());
+	
 
 }
 
@@ -321,4 +315,13 @@ void SparkDisplayControl::updateTextPositions() {
 			display_x2 += display_scroll_num2;
 		}
 	}
+}
+
+void SparkDisplayControl::drawCentreString(const char *buf, int x,
+		int y) {
+	int16_t x1, y1;
+	uint16_t w, h;
+	display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
+	display.setCursor(x - w / 2, y);
+	display.print(buf);
 }
