@@ -39,15 +39,19 @@ public:
 	const bool isAmpConnected() const {
 		return isAmpConnected_;
 	}
-	//bool isAmpConnected();
 	const bool isAppConnected() const {
 		return isAppConnected_;
 	}
 	bool connectToServer();
 	bool subscribeToNotifications(notify_callback notifyCallback = nullptr);
 	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
-	void initBLE();
+	void initBLE(notify_callback notifyCallback = nullptr);
 	void initScan();
+	const bool isScanning() const {
+		return NimBLEDevice::getScan()->isScanning();
+	}
+	void startScan();
+	void stopScan();
 
 	void startServer();
 	void notifyClients(ByteVector msg);
@@ -64,9 +68,8 @@ private:
 	bool isConnectionFound_ = false;
 	// isClientConnected will be set when a client is connected to ESP in AMP mode
 	bool isAppConnected_ = false;
-	bool lastHeartBeat = false;
-	unsigned long lastHeartBeatTime = 0;
-	int heartBeatInterval = 5000;
+	notify_callback notifyCB;
+
 	uint32_t scanTime = 0; /** 0 = scan forever */
 	const uint8_t notificationOn[2] = { 0x1, 0x0 };
 

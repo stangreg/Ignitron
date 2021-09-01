@@ -31,9 +31,7 @@ public:
 	SparkDisplayControl(SparkDataControl* dc);
 	virtual ~SparkDisplayControl();
 	void init(int mode);
-	void update();
-	// Can only be used in Server mode as in Client mode display is controlled by active preset
-	void showMessage(std::string* msg, int numLines, int size, int x = 0, int y = 0);
+	void update(bool isInitBoot = false);
 
 
 private:

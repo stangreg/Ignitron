@@ -30,6 +30,8 @@ std::string SparkDataControl::responseMsg_ = "";
 std::vector<ByteVector> SparkDataControl::ack_msg;
 int SparkDataControl::operationMode_ = SPARK_MODE_AMP;
 
+bool SparkDataControl::startup = true;
+
 SparkDataControl::SparkDataControl() {
 	//init();
 }
@@ -44,7 +46,7 @@ void SparkDataControl::init(int op_mode) {
 	operationMode_ = op_mode;
 	if (operationMode_ == SPARK_MODE_APP) {
 		// initialize BLE
-		bleControl.initBLE();
+		bleControl.initBLE(&notifyCB);
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
@@ -88,6 +90,10 @@ bool SparkDataControl::checkBLEConnection() {
 	if (bleControl.isAmpConnected()) {
 		return true;
 	} else {
+
+		/*if (!(bleControl.isScanning())) {
+			bleControl.initScan();
+		 }*/
 		if (bleControl.isConnectionFound()) {
 			if (bleControl.connectToServer()) {
 				bleControl.subscribeToNotifications(&notifyCB);
@@ -99,12 +105,50 @@ bool SparkDataControl::checkBLEConnection() {
 				bleControl.initScan();
 				startup = true;
 				return false;
+
 			}
 		}
+		return false;
 	}
-	return false;
 }
 
+/*		if (bleControl.isConnectionFound()) {
+ if (bleControl.connectToServer()) {
+ bleControl.subscribeToNotifications(&notifyCB);
+ Serial.println("BLE connection to Spark established.");
+ startup = false;
+ return true;
+ } else {
+ Serial.println("Failed to connect, starting scan");
+ bleControl.initScan(onScanEnded);
+ startup = true;
+ return false;
+ }
+ }
+ }
+ return false;
+ }*/
+
+/*
+ void SparkDataControl::onScanEnded(NimBLEScanResults results) {
+ Serial.println("Scan ended DC");
+ if (bleControl.isConnectionFound()) {
+ if (bleControl.connectToServer()) {
+ bleControl.subscribeToNotifications(&notifyCB);
+ Serial.println("BLE connection to Spark established.");
+
+ } else {
+ Serial.println("Failed to connect, starting scan");
+ bleControl.initScan();
+
+ }
+ } else {
+ Serial.println("Failed to connect, starting scan");
+ bleControl.initScan();
+
+ }
+ }
+ */
 preset SparkDataControl::getPreset(int bank, int pre) {
 	return presetBuilder.getPreset(bank, pre);
 }
@@ -125,7 +169,7 @@ void SparkDataControl::notifyCB(
 		NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
 		size_t length, bool isNotify) {
 
-	// Transform data into ByteVetor and process
+// Transform data into ByteVetor and process
 	ByteVector chunk(&pData[0], &pData[length]);
 	processSparkData(chunk);
 
@@ -136,12 +180,12 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	bool ackNeeded;
 	byte seq, cmd;
 
-	// Check if ack needed. In positive case the sequence number and command
-	// are also returned to send back to requester
+// Check if ack needed. In positive case the sequence number and command
+// are also returned to send back to requester
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
 		ack_msg = spark_msg.send_ack(seq, cmd);
-		//Serial.println("Sending acknowledgement");
+//Serial.println("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP) {
 			bleControl.writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
@@ -163,8 +207,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 			presetNumToEdit_ = 0;
 		}
 	}
-	// if last Ack was for preset change (0x38) or effect switch (0x15),
-	// confirm pending preset into active
+// if last Ack was for preset change (0x38) or effect switch (0x15),
+// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
 	if ((lastAck == 0x38 && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
@@ -176,7 +220,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
-	//Serial.println("Getting current preset from Spark");
+//Serial.println("Getting current preset from Spark");
 	if (bleControl.writeBLE(current_msg)) {
 		return true;
 	}

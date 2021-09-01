@@ -30,8 +30,9 @@ SparkBLEControl::~SparkBLEControl() {
 }
 
 // Initializing BLE connection with NimBLE
-void SparkBLEControl::initBLE() {
+void SparkBLEControl::initBLE(notify_callback notifyCallback) {
 	NimBLEDevice::init("");
+	notifyCB = notifyCallback;
 
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
@@ -61,8 +62,23 @@ void SparkBLEControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
 	advDevice = device;
 }
 
+
 void SparkBLEControl::scanEndedCB(NimBLEScanResults results) {
 	Serial.println("Scan ended.");
+
+	/*if (isConnectionFound()) {
+	 if (connectToServer()) {
+	 subscribeToNotifications();
+	 Serial.println("BLE connection to Spark established.");
+	 } else {
+	 Serial.println("Failed to connect, starting scan");
+	 initScan();
+
+	 }
+	 } else {
+	 Serial.println("Failed to connect, starting scan");
+	 initScan();
+	 }*/
 }
 
 void SparkBLEControl::initScan() {
@@ -71,7 +87,6 @@ void SparkBLEControl::initScan() {
 }
 
 bool SparkBLEControl::connectToServer() {
-
 	/** Check if we have a client we should reuse first **/
 	if (NimBLEDevice::getClientListSize()) {
 		/** Special case when we already know this device, we send false as the
@@ -106,8 +121,6 @@ bool SparkBLEControl::connectToServer() {
 
 		pClient = NimBLEDevice::createClient();
 
-		Serial.println("New client created");
-
 		pClient->setClientCallbacks(this, false);
 		/** Set initial connection parameters: These settings are 15ms interval, 0 latency, 120ms timout.
 		 These settings are safe for 3 clients to connect reliably, can go faster if you have less
@@ -117,7 +130,6 @@ bool SparkBLEControl::connectToServer() {
 		pClient->setConnectionParams(12, 12, 0, 51);
 		/** Set how long we are willing to wait for the connection to complete (seconds), default is 30. */
 		pClient->setConnectTimeout(5);
-
 		if (!pClient->connect(advDevice)) {
 			/** Created a client but failed to connect, don't need to keep it as it has no data */
 			NimBLEDevice::deleteClient(pClient);
@@ -163,7 +175,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 					pChr->getDescriptor(BLEUUID((uint16_t) 0x2902))->writeValue(
 							(uint8_t*) notificationOn, 2, true);
 					// Subscribing to Spark characteristic
-					if (!pChr->subscribe(true, notifyCallback)) {
+					if (!pChr->subscribe(true, notifyCB)) {
 						Serial.println("Subscribe failed, disconnecting");
 						// Disconnect if subscribe failed
 						pClient->disconnect();
@@ -194,7 +206,6 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 
 // To send messages to Spark via Bluetooth LE
 bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
-
 	if (pClient && pClient->isConnected()) {
 
 		NimBLERemoteService *pSvc = nullptr;
@@ -205,9 +216,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 			pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
 
 			if (pChr) {
-
 				if (pChr->canWrite()) {
-
 					std::vector<ByteVector> packets;
 					// Spark messages are sent in chunks of 173 (0xAD) bytes, so we do the same.
 					int max_send_size = 173;
@@ -282,6 +291,7 @@ void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
 			NimBLEUUID(SPARK_BLE_SERVICE_UUID))) {
 		Serial.println("Found Spark, connecting.");
 		/** stop scan before connecting */
+		//Commented as workaround, might need to get back here, is currently with DataControl;
 		NimBLEDevice::getScan()->stop();
 		/** Save the device reference in a global for the client to use*/
 		setAdvertisedDevice(advertisedDevice);
@@ -491,38 +501,18 @@ void SparkBLEControl::onDisconnect(NimBLEServer *pServer) {
 void SparkBLEControl::onDisconnect(NimBLEClient *pClient) {
 	isAmpConnected_ = false;
 	isConnectionFound_ = false;
+	if (!(NimBLEDevice::getScan()->isScanning())) {
+		initScan();
+	}
 	NimBLEClientCallbacks::onDisconnect(pClient);
 }
-/*
- bool SparkBLEControl::isAmpConnected() {
- bool retValue = lastHeartBeat;
- if (!isAmpConnected_) {
- lastHeartBeat = false;
- return false;
- }
- unsigned long currentTime = millis();
- if (currentTime - lastHeartBeatTime >= heartBeatInterval) {
- if (pClient && pClient->isConnected()) {
- NimBLERemoteService *pSvc = nullptr;
- NimBLERemoteCharacteristic *pChr = nullptr;
- pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
- if (pSvc) {
- pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
- if (pChr) {
- Serial.print("Checking heartBeat");
- const unsigned char heartBeat[] = "\xFF";
- if (pChr->writeValue(heartBeat, 1, false)) {
- retValue = true;
- } else {
- retValue = false;
- }
- }
- }
- }
- lastHeartBeatTime = currentTime;
- lastHeartBeat = retValue;
- }
- return retValue;
 
- }
- */
+void SparkBLEControl::stopScan() {
+	if (isScanning()) {
+		Serial.println("Stopping scan");
+		NimBLEDevice::getScan()->stop();
+	} else {
+		Serial.print("Scan is not running");
+	}
+
+}

@@ -38,50 +38,38 @@ void SparkDisplayControl::init(int mode) {
 	}
 	// Clear the buffer
 	display.clearDisplay(); //No Adafruit splash
-	display.display();
+	//display.display();
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextWrap(false);
+	opMode = spark_dc->operationMode();
 
-	if (mode == SPARK_MODE_APP) {
-		// Display the splash logo
+	showInitialMessage();
+	display.display();
+}
+
+void SparkDisplayControl::showInitialMessage() {
+	if (opMode == SPARK_MODE_APP) {
+
 		display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47,
-				SSD1306_WHITE);
+		SSD1306_WHITE);
 		display.setTextSize(2);
 		display.setCursor(6, 48);
 		display.print("Connecting");
 		display.display();
-	} else {
-		showInitialMessage();
-		display.display();
+
+	} else if (opMode == SPARK_MODE_AMP) {
+		display.setTextColor(SSD1306_WHITE);
+		display.setTextSize(2);
+		display.setCursor(18, 0);
+		display.print("SparkBLE");
+		display.setCursor(18, 24);
+		display.print("AMP mode");
+		display.setTextSize(1);
+		display.setCursor(24, 43);
+		display.print("Please connect");
+		display.setCursor(36, 55);
+		display.print("Spark App");
 		delay(1500);
-	}
-}
-
-void SparkDisplayControl::showInitialMessage() {
-	display.setTextColor(SSD1306_WHITE);
-	display.setTextSize(2);
-	display.setCursor(18, 0);
-	display.print("SparkBLE");
-	display.setCursor(18, 24);
-	display.print("AMP mode");
-	display.setTextSize(1);
-	display.setCursor(24, 43);
-	display.print("Please connect");
-	display.setCursor(36, 55);
-	display.print("Spark App");
-
-}
-
-void SparkDisplayControl::showMessage(std::string *msg, int numLines, int size,
-		int x, int y) {
-
-	display.setTextWrap(false);
-	display.setTextSize(size);
-	int distance = 24 * size;
-	for (int i = 0; i < numLines; i++) {
-		Serial.printf("Setting cursor to %d", i * distance);
-		display.setCursor(0, i * distance);
-		display.print(msg[i].substr(0, 18).c_str());
 	}
 }
 
@@ -252,33 +240,38 @@ void SparkDisplayControl::showConnection() {
 
 }
 
-void SparkDisplayControl::update() {
+void SparkDisplayControl::update(bool isInitBoot) {
+
 	display.clearDisplay();
-	display.setTextWrap(false);
-	opMode = spark_dc->operationMode();
-
-	activeBank = spark_dc->activeBank();
-	pendingBank = spark_dc->pendingBank();
-	activePreset = spark_dc->activePreset();
-	pendingPreset = spark_dc->pendingPreset();
-	buttonMode = spark_dc->buttonMode();
-	activePresetNum = spark_dc->activePresetNum();
-	presetFromApp = spark_dc->appReceivedPreset();
-	presetEditMode = spark_dc->presetEditMode();
-	isConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
-
-	showConnection();
-	showBankAndPresetNum();
-	showPresetName();
-	showFX_SecondaryName();
-
-	// in FX mode (manual mode) invert display
-	if (buttonMode == SWITCH_MODE_FX) {
-		display.invertDisplay(true);
+	if (opMode == SPARK_MODE_APP && isInitBoot) {
+		showInitialMessage();
 	} else {
-		display.invertDisplay(false);
+		display.setTextWrap(false);
+		opMode = spark_dc->operationMode();
+
+		activeBank = spark_dc->activeBank();
+		pendingBank = spark_dc->pendingBank();
+		activePreset = spark_dc->activePreset();
+		pendingPreset = spark_dc->pendingPreset();
+		buttonMode = spark_dc->buttonMode();
+		activePresetNum = spark_dc->activePresetNum();
+		presetFromApp = spark_dc->appReceivedPreset();
+		presetEditMode = spark_dc->presetEditMode();
+		isConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
+
+		showConnection();
+		showBankAndPresetNum();
+		showPresetName();
+		showFX_SecondaryName();
+
+		// in FX mode (manual mode) invert display
+		if (buttonMode == SWITCH_MODE_FX) {
+			display.invertDisplay(true);
+		} else {
+			display.invertDisplay(false);
+		}
+		updateTextPositions();
 	}
-	updateTextPositions();
 	display.display();
 }
 
