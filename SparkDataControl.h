@@ -137,8 +137,6 @@ private:
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
 
-	static bool isActivePresetUpdatedByAck;
-
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
 

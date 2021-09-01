@@ -15,7 +15,7 @@ SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 
 preset SparkDataControl::activePreset_;
 preset SparkDataControl::pendingPreset_ = activePreset_;
-bool SparkDataControl::isActivePresetUpdatedByAck = false;
+
 int SparkDataControl::activeBank_ = 0;
 int SparkDataControl::pendingBank_ = 0;
 preset SparkDataControl::appReceivedPreset_;
@@ -71,13 +71,8 @@ void SparkDataControl::checkForUpdates() {
 		activePreset_ = spark_ssr.currentSetting();
 		pendingPreset_ = activePreset_;
 		spark_ssr.resetPresetUpdateFlag();
-		isActivePresetUpdatedByAck = false;
 	}
-	// if preset is not updated by message from Spark, it can be updated by acknlowledging a previous preset change
-	else if (isActivePresetUpdatedByAck) {
-		isActivePresetUpdatedByAck = false;
-		activePreset_ = pendingPreset_;
-	}
+
 }
 
 void SparkDataControl::startBLEServer() {
@@ -202,7 +197,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	if ((lastAck == 0x38 && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
-		isActivePresetUpdatedByAck = true;
+		pendingPreset_ = activePreset_;
 	}
 	return retCode;
 }
