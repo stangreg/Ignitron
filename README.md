@@ -1,5 +1,5 @@
 # Sparky
-An ESP32 based footswitch to communicate with the Spark Amp.
+An ESP32 based footswitch to communicate with the Spark Amp via Bluetooth LE.
 
 Sparky gives you full control over your presets:
 * Switch between the four **hardware presets**
@@ -28,7 +28,7 @@ Standard mode on startup is the APP mode.
 
 **To enter AMP mode, hold the `Preset 1` button during startup.**
 
-## APP mode
+### APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). Modes can easily be switched by long pressing the `Bank-Up` button.
 When selecting Preset mode, four buttons are used to select presets. The other two buttons can be used to navigate through different preset banks. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In FX mode, the user has direct access to all effects of the selected preset. 
@@ -61,7 +61,7 @@ Each switch controls a different FX pedal type:
 |`Bank up` | Long | Switch to FX mode|
 |`Preset 2` | Long | Restart Sparky |
 
-## AMP mode
+### AMP mode
 In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
 
 #### Connecting the Spark app with Sparky
@@ -72,7 +72,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 5. Once the connection is established, you can give the connection a name so you can tell it better from your regular Spark amp connection.
 
 
-### Storing a new preset (a preset from the app needs to be loaded)
+#### Storing a new preset (a preset from the app needs to be loaded)
 1. Start Sparky in AMP mode (hold Preset 1 button during startup).
 2. Connect the Spark app with Sparky (see above)
 3. Select a preset in the app (either saved in the app or from the ToneCloud).
@@ -95,7 +95,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Bank down` | Long | Unload preset received from app| - |
 |`Preset 2` | Long | Restart Sparky |
 
-### Deleting an existing preset
+#### Deleting a preset (only possible with no preset from the app loaded)
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
 2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
@@ -104,9 +104,6 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 6. **Long press** the `Bank Down` button again to confirm deletion.
 (Hitting any other button will cancel the deletion and return back to navigation)
 
-
-
-#### Deleting a preset (only possible with no preset from the app loaded)
 |Switch | Press pattern |Function | Remark |
 |---| -----|------ | ----- |
 |`Bank down` | Short |Navigate bank up | - |
