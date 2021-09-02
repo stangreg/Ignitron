@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #include "SparkMessage.h"
 
 
@@ -241,7 +248,7 @@ std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, bool
 	return end_message();
 }
 
-std::vector<ByteVector> SparkMessage::create_preset (preset preset_data){
+std::vector<ByteVector> SparkMessage::create_preset (Preset preset_data){
 	cmd = '\x01';
 	sub_cmd = '\x01';
 
@@ -264,10 +271,10 @@ std::vector<ByteVector> SparkMessage::create_preset (preset preset_data){
 	add_float (preset_data.bpm);
 	add_byte ((byte)(0x90 + 7));        // 7 pedals
 	for (int i=0; i<7; i++){
-		pedal curr_pedal = preset_data.pedals[i];
+		Pedal curr_pedal = preset_data.pedals[i];
 		add_string (curr_pedal.name);
 		add_onoff(curr_pedal.isOn);
-		std::vector<parameter> curr_pedal_params = curr_pedal.parameters;
+		std::vector<Parameter> curr_pedal_params = curr_pedal.parameters;
 		int num_p = curr_pedal_params.size();
 		add_byte ((byte)(num_p + 0x90));
 		for (int p=0; p<num_p; p++){

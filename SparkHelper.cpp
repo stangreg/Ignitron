@@ -1,31 +1,14 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #include "SparkHelper.h"
 
 using ByteVector = std::vector<byte>;
 
-/*
-ByteVector SparkHelper::HexToBytes(const std::string& hex) {
-	ByteVector bytes;
-
-	for (unsigned int i = 0; i < hex.length(); i += 2) {
-		std::string byteString = hex.substr(i, 2);
-		byte by = (byte) strtol(byteString.c_str(), NULL, 16);
-		bytes.push_back(by);
-	}
-
-	return bytes;
-}*/
-
-/*
-std::string SparkHelper::hexStr(byte *data, int len){
-	std::stringstream ss;
-	ss << std::hex;
-
-	for ( int i(0) ; i < len; ++i )
-		ss << std::setw(2) << std::setfill('0') << (int)data[i];
-
-	return ss.str();
-}
-*/
 
 byte SparkHelper::HexToByte(const std::string& hex) {
 	byte ret_byte;
@@ -65,25 +48,4 @@ void SparkHelper::printByteVector(ByteVector vec){
 		Serial.print(SparkHelper::intToHex(by).c_str());
 	}
 }
-/*
-ByteVector SparkHelper::bytes(int value){
-
-	ByteVector value_bytes;
-	int val = value;
-	while (val != 0)
-	{
-		std::uint8_t byte = val & 0xFF;
-		value_bytes.insert(value_bytes.begin(), byte);
-
-		val >>= 8;
-	}
-
-	return value_bytes;
-    Serial.print("Converted ");
-    Serial.print(value);
-    Serial.print(" to ");
-    printByteVector(value_bytes);
-    Serial.println();
-    return value_bytes;
-}*/
 

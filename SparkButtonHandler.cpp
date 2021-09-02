@@ -51,7 +51,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 
 		const int buttonMode = spark_dc->buttonMode();
 		const int operationMode = spark_dc->operationMode();
-		preset* activePreset = spark_dc->activePreset();
+		Preset* activePreset = spark_dc->activePreset();
 		int selectedPresetNum;
 
 		if (pattern == BfButton::SINGLE_PRESS) {
@@ -118,7 +118,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
 	if(spark_dc){
 		int buttonMode = spark_dc->buttonMode();
-		preset* activePreset = spark_dc->activePreset();
+		Preset* activePreset = spark_dc->activePreset();
 		int activePresetNum = spark_dc->activePresetNum();
 		int pendingBank = spark_dc->pendingBank();
 		int numberOfBanks = spark_dc->numberOfBanks();

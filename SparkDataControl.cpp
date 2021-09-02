@@ -13,12 +13,12 @@ SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 
-preset SparkDataControl::activePreset_;
-preset SparkDataControl::pendingPreset_ = activePreset_;
+Preset SparkDataControl::activePreset_;
+Preset SparkDataControl::pendingPreset_ = activePreset_;
 
 int SparkDataControl::activeBank_ = 0;
 int SparkDataControl::pendingBank_ = 0;
-preset SparkDataControl::appReceivedPreset_;
+Preset SparkDataControl::appReceivedPreset_;
 int SparkDataControl::presetEditMode_ = PRESET_EDIT_NONE;
 
 int SparkDataControl::presetNumToEdit_ = 0;
@@ -133,7 +133,7 @@ bool SparkDataControl::checkBLEConnection() {
  }
  }
  */
-preset SparkDataControl::getPreset(int bank, int pre) {
+Preset SparkDataControl::getPreset(int bank, int pre) {
 	return presetBuilder.getPreset(bank, pre);
 }
 
@@ -223,7 +223,7 @@ bool SparkDataControl::switchPreset(int pre) {
 	int bnk = pendingBank_;
 	if (operationMode_ == SPARK_MODE_APP) {
 		if (pre == activePresetNum_ && !(activePreset_.isEmpty)) {
-			pedal drivePedal = activePreset_.pedals[2];
+			Pedal drivePedal = activePreset_.pedals[2];
 			std::string drivePedalName = drivePedal.name;
 			bool isDriveEnabled = drivePedal.isOn;
 			if (switchEffectOnOff(drivePedalName, !isDriveEnabled)) {
@@ -266,7 +266,7 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 	Serial.printf("Switching %s effect %s...", enable ? "On" : "Off",
 			fx_name.c_str());
 	for (int i = 0; i < pendingPreset_.pedals.size(); i++) {
-		pedal currentPedal = pendingPreset_.pedals[i];
+		Pedal currentPedal = pendingPreset_.pedals[i];
 		if (currentPedal.name == fx_name) {
 			pendingPreset_.pedals[i].isOn = enable;
 			break;

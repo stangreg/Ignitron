@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #ifndef SPARK_MESSAGE_H // include guard
 #define SPARK_MESSAGE_H
 
@@ -46,7 +53,7 @@ public:
 	std::vector<ByteVector> change_effect (std::string pedal1, std::string pedal2);
 	std::vector<ByteVector> change_hardware_preset (int preset_num);
 	std::vector<ByteVector> turn_effect_onoff (std::string pedal, boolean enable);
-	std::vector<ByteVector> create_preset (preset preset_data);
+	std::vector<ByteVector> create_preset (Preset preset_data);
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);

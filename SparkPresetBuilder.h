@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #ifndef SPARK_PRESET_BUILDER_H // include guard
 #define SPARK_PRESET_BUILDER_H
 
@@ -39,10 +46,10 @@ public:
 	SparkPresetBuilder();
 	//std::string getJsonFromPreset(preset pset);
 	void initializePresetListFromFS();
-	preset getPreset(int bank, int preset);
+	Preset getPreset(int bank, int preset);
 	int getNumberOfBanks();
-	preset getPresetFromJson(char* json);
-	int storePreset(preset newPreset, int bnk, int pre);
+	Preset getPresetFromJson(char* json);
+	int storePreset(Preset newPreset, int bnk, int pre);
 	int deletePreset(int bnk, int pre);
 
 };

@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #include "SparkPresetBuilder.h"
 
 SparkPresetBuilder::SparkPresetBuilder() {
@@ -5,9 +12,9 @@ SparkPresetBuilder::SparkPresetBuilder() {
 }
 
 
-preset SparkPresetBuilder::getPresetFromJson(char* json) {
+Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
-	preset resultPreset;
+	Preset resultPreset;
 	JSONVar jsonPreset = JSON.parse(json);
 
 	// JSON.typeof(jsonVar) can be used to get the type of the variable
@@ -58,13 +65,13 @@ preset SparkPresetBuilder::getPresetFromJson(char* json) {
 	if (jsonPreset.hasOwnProperty("Pedals")) {
 		JSONVar pedalArray = jsonPreset["Pedals"];
 		for ( int i = 0; i < pedalArray.length(); i++) {
-			pedal currentPedal;
+			Pedal currentPedal;
 			currentPedal.name = (std::string) pedalArray[i]["Name"];
 			currentPedal.isOn = (boolean) pedalArray[i]["IsOn"];
 			if (pedalArray[i].hasOwnProperty("Parameters")) {
 				JSONVar currentPedalParams = pedalArray[i]["Parameters"];
 				for (int j = 0; j < currentPedalParams.length(); j++) {
-					parameter currentParam;
+					Parameter currentParam;
 					currentParam.number = j;
 					currentParam.special = 0x91;
 					currentParam.value = (float)((double)currentPedalParams[j]);
@@ -130,8 +137,8 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 
 }
 
-preset SparkPresetBuilder::getPreset(int bank, int pre){
-	preset retPreset;
+Preset SparkPresetBuilder::getPreset(int bank, int pre){
+	Preset retPreset;
 	if(pre > PRESETS_PER_BANK){
 		Serial.println("Requested preset out of bounds.");
 		return retPreset;
@@ -157,7 +164,7 @@ int SparkPresetBuilder::getNumberOfBanks(){
 	return presetBanksNames.size();
 }
 
-int SparkPresetBuilder::storePreset(preset newPreset, int bnk, int pre){
+int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 	std::string presetNamePrefix = newPreset.name;
 	std::string presetNameWithPath;
 	// remove any blanks from the name for a new filename

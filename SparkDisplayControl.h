@@ -39,9 +39,9 @@ private:
 	SparkDataControl* spark_dc;
 	int activeBank = 1;
 	int pendingBank = 1;
-	const preset* activePreset;
-	const preset* pendingPreset;
-	const preset* presetFromApp;
+	const Preset* activePreset;
+	const Preset* pendingPreset;
+	const Preset* presetFromApp;
 	int presetEditMode;
 	int buttonMode = 1;
 	int activePresetNum = 1;
@@ -50,9 +50,9 @@ private:
 	bool isConnected = false;
 
 	std::string primaryLineText;
-	const preset* primaryLinePreset;
+	const Preset* primaryLinePreset;
 	std::string secondaryLineText;
-	const preset* secondaryLinePreset;
+	const Preset* secondaryLinePreset;
 
 	unsigned long previousMillis = 0;
 	int showMessageInterval = 2000;

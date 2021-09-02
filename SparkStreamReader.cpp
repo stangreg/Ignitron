@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #include "SparkStreamReader.h"
 
 
@@ -199,35 +206,53 @@ void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
 
 
 void SparkStreamReader::read_effect_parameter() {
-	start_str();
+	// Read object
 	std::string effect = read_prefixed_string ();
 	byte param = read_byte ();
 	float val = read_float();
+
+	// Build string representations
+	start_str();
 	add_str ("Effect", effect);
 	add_separator();
 	add_int ("Parameter", param);
 	add_separator();
 	add_float ("Value", val);
 	end_str();
+
+	// Set values
+	last_message_type_ = MSG_TYPE_FX_PARAM;
 }
 
 void SparkStreamReader::read_effect() {
-	start_str();
+	//Read object
 	std::string effect1 = read_prefixed_string ();
 	std::string effect2 = read_prefixed_string ();
+
+	// Build string representations
+	start_str();
 	add_str ("OldEffect", effect1);
 	add_separator();
 	add_newline();
 	add_str ("NewEffect", effect2);
 	end_str();
+
+	// Set values
+	last_message_type_ = MSG_TYPE_FX_CHANGE;
+
 }
 
 void SparkStreamReader::read_hardware_preset() {
-	start_str();
+	// Read object
 	read_byte ();
 	byte preset_num = read_byte () + 1;
+
+	// Build string representations
+	start_str();
 	add_int ("New HW Preset", preset_num);
 	end_str();
+
+	// Set values
 	currentPresetNumber_ = preset_num;
 	isPresetNumberUpdated_ = true;
 	last_message_type_ = MSG_TYPE_HWPRESET;
@@ -235,77 +260,81 @@ void SparkStreamReader::read_hardware_preset() {
 }
 
 void SparkStreamReader::read_store_hardware_preset() {
-	start_str();
+	// Read object
 	read_byte ();
 	byte preset_num = read_byte () + 1;
+
+	// Build string representations
+	start_str();
 	add_int ("NewStoredPreset", preset_num);
 	end_str();
+
+	// Set values
 	last_message_type_ = MSG_TYPE_HWPRESET;
 
 }
 
 void SparkStreamReader::read_effect_onoff() {
-	start_str();
+	// Read object
 	std::string effect = read_prefixed_string ();
 	boolean isOn = read_onoff ();
+
+	// Build string representations
+	start_str();
 	add_str ("Effect", effect);
 	add_separator();
 	add_bool ("IsOn", isOn);
 	end_str();
+
+	// Set values
 	last_message_type_ = MSG_TYPE_FX_ONOFF;
 
 }
 
 void SparkStreamReader::read_preset() {
-	start_str();
+	// Read object (Preset main data)
 	read_byte();
-
 	byte preset = read_byte();
 	currentSetting_.presetNumber = preset;
-	add_int ("PresetNumber", preset);
-	add_separator();
-
 	std::string uuid = read_string();
 	currentSetting_.uuid = uuid;
+	std::string name = read_string();
+	currentSetting_.name = name;
+	std::string version = read_string();
+	currentSetting_.version = version;
+	std::string descr = read_string();
+	currentSetting_.description = descr;
+	std::string icon = read_string();
+	currentSetting_.icon = icon;
+	float bpm = read_float();
+	currentSetting_.bpm = bpm;
+
+	// Build string representations
+	start_str();
+	add_int ("PresetNumber", preset);
+	add_separator();
 	add_str("UUID", uuid);
 	add_separator();
 	add_newline();
-
-
-	std::string name = read_string();
-	//Serial.printf("Read name: %s\n", name.c_str());
-	currentSetting_.name = name;
 	add_str("Name", name);
 	add_separator();
-
-	std::string version = read_string();
-	currentSetting_.version = version;
 	add_str("Version", version);
 	add_separator();
-
-	std::string descr = read_string();
-	currentSetting_.description = descr;
 	add_str("Description", descr);
 	add_separator();
-
-	std::string icon = read_string();
-	currentSetting_.icon = icon;
 	add_str("Icon", icon);
 	add_separator();
-
-	float bpm = read_float();
-	currentSetting_.bpm = bpm;
 	add_float("BPM", bpm);
 	add_separator();
 	add_newline();
 
+	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
 	add_python("\"Pedals\": [");
 	add_newline();
-	//add_indent();
 	currentSetting_.pedals = {};
-	for (int i = 0; i < 7; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
-		pedal currentPedal = {};
+	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
+		Pedal currentPedal = {};
 		std::string e_str = read_string();
 		currentPedal.name = e_str;
 		boolean e_onoff = read_onoff();
@@ -317,10 +346,10 @@ void SparkStreamReader::read_preset() {
 		add_separator();
 		int num_p = read_byte() - char(0x90);
 		add_python("\"Parameters\":[");
-		//add_indent();
+		// Read parameters of current pedal
 		currentPedal.parameters = {};
 		for (int p = 0; p < num_p; p++) {
-			parameter currentParameter = {};
+			Parameter currentParameter = {};
 			byte num = read_byte();
 			byte spec = read_byte();
 			float val = read_float();
@@ -329,20 +358,18 @@ void SparkStreamReader::read_preset() {
 			currentParameter.value = val;
 			//add_int("Parameter", num, "python");
 			//add_str("Special", SparkHelper::intToHex(spec), "python");
-			//add_str("Special", spec, "python");
 			//add_float("Value", val, "python");
 			add_float_pure(val, "python");
 			if(p < num_p - 1){
 				add_separator();
 			}
-
 			currentPedal.parameters.push_back(currentParameter);
 		}
-
+		
 		add_python("]");
 		//del_indent();
 		add_python("}");
-		if (i < 6){
+		if (i < currentSetting_.numberOfPedals - 1) {
 			add_separator();
 			add_newline();
 		}
@@ -350,7 +377,6 @@ void SparkStreamReader::read_preset() {
 	}
 	add_python("],");
 	add_newline();
-	//del_indent();
 	byte filler = read_byte();
 	currentSetting_.filler = filler;
 	add_str("Filler", SparkHelper::intToHex(filler));
@@ -423,7 +449,7 @@ boolean SparkStreamReader::structure_data() {
 		//Serial.println("Split at F7");
 
 
-		std::vector<cmd_data> chunk_8bit = {};
+		std::vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
 			byte this_cmd = chunk[4];
 			byte this_sub_cmd = chunk[5];
@@ -452,7 +478,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 			}
 			//Serial.println("Converted to 8bit");
-			struct cmd_data curr_data = {this_cmd, this_sub_cmd, data8bit};
+			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
 			chunk_8bit.push_back(curr_data);
 
 			// now check for mult-chunk messages and collapse their data into a single message
@@ -461,7 +487,7 @@ boolean SparkStreamReader::structure_data() {
 			message.clear();
 			ByteVector concat_data;
 			concat_data.clear();
-			for (cmd_data chunk : chunk_8bit) {
+			for (CmdData chunk : chunk_8bit) {
 				this_cmd     = chunk.cmd;
 				this_sub_cmd = chunk.subcmd;
 				ByteVector this_data = chunk.data;
@@ -604,7 +630,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	int retValue = MSG_PROCESS_RES_INCOMPLETE;
 
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
-	// This will reassemble the block by appending to the last one.
+	// This will reassemble the block by appending to the previous one.
 	if (!(blk[0] == '\x01' && blk[1] == '\xFE')){ // check if block needs to be appended to earlier block
 		ByteVector lastChunk = response.back();
 		response.pop_back();
@@ -613,7 +639,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		}
 		blk = lastChunk;
 	}
-	// Standard behaviour from here!
+
 	// Process:
 	// Read a block
 	// Check length of 01FE message (found in byte pos 6)
@@ -625,8 +651,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// else read on.
 	// Then pass everything to StreamReader
 	response.push_back(blk);
-	//SparkHelper::printByteVector(blk);
-	//Serial.println();
 
 	int blk_len = blk[6];
 	byte direction[2] = { blk[4], blk[5] };
@@ -643,11 +667,9 @@ int SparkStreamReader::processBlock(ByteVector blk){
 
 		// if the block length is less than the max size then
 		// definitely last block
-		// could be a full block and still last one
-		// but to be full surely means it is a multi-block as
-		// other messages are always small
-		// so need to check the chunk counts - in different places
-		// depending on whether
+		// otherwise we check either directly for the message counter,
+		// or we check if the block end with 0xF7. Then we can search for the last
+		// 0xF001 occurrence and check the message count.
 
 		if (msg_to_spark_comp == 0) {
 			if (blk_len < 0xad) {
@@ -706,8 +728,10 @@ int SparkStreamReader::processBlock(ByteVector blk){
 			retValue = MSG_PROCESS_RES_COMPLETE;
 		} // msg_last_block
 	} // If length not equal to announced length
+
 	// Message is not complete, has not been processed yet
-	// if request was an initiating one from app, return false,
+	// if request was an initiating one from the app, return value for INITIAL message,
+	// so SparkDataControl knows how to notify.
 	// so notifications will be triggered
 	if(cmd == 0x02){
 		retValue = MSG_PROCESS_RES_INITIAL;
@@ -727,7 +751,7 @@ void SparkStreamReader::interpret_data() {
 	message.clear();
 }
 
-std::vector<cmd_data> SparkStreamReader::read_message() {
+std::vector<CmdData> SparkStreamReader::read_message() {
 	if(structure_data()){
 		interpret_data();
 	}

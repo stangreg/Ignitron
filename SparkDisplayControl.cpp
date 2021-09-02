@@ -196,7 +196,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 			// Iterate through the corresponding preset's pedals and show indicators if switched on
 			for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored
 				if (i != 3) { // Amp is on position 3, ignore
-					pedal currPedal = secondaryLinePreset->pedals[i];
+					Pedal currPedal = secondaryLinePreset->pedals[i];
 					currPedalStatus =
 							secondaryLinePreset->pedals[i].isOn ?
 									fx_indicators_on[i] : fx_indicators_off[i];

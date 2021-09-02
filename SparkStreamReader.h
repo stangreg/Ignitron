@@ -1,11 +1,16 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #ifndef SPARK_STREAM_READER_H // include guard
 #define SPARK_STREAM_READER_H
 
-//#include <array>
-//#include <vector>
-//#include <iomanip>
-//#include <sstream>
 #include <tuple>
+#include <vector>
+#include <string>
 
 #include "SparkHelper.h"
 #include "SparkTypes.h"
@@ -36,11 +41,11 @@ private:
 	std::string json;
 
 	// Vector containing struct of cmd, sub_cmd, and payload
-	std::vector<cmd_data> message = {};
+	std::vector<CmdData> message = { };
 	// Unstructured input data, needs to go through structure_data first
 	std::vector<ByteVector> unstructured_data = {};
 
-	// payload of a cmd_data object to be interpreted. msg_pos is pointing at the next byte to read
+	// payload of a CmdData object to be interpreted. msg_pos is pointing at the next byte to read
 	ByteVector msg;
 	int msg_pos;
 	// indicator if a block received is the last one
@@ -49,7 +54,7 @@ private:
 
 
 	// In case a preset was received from Spark, it is saved here. Can then be read by main program
-	preset currentSetting_;
+	Preset currentSetting_;
 	// Preset number. Can be retrieved by main program in case it has been updated by Spark Amp.
 	int currentPresetNumber_ = 0;
 	//Flags to indicate that either preset or presetNumber have been updated
@@ -68,7 +73,7 @@ private:
 
 
 	// Functions to structure and process input data (high level)
-	std::vector<cmd_data> read_message();
+	std::vector<CmdData> read_message();
 	boolean structure_data();
 	void interpret_data();
 	void set_interpreter (ByteVector _msg);
@@ -107,7 +112,7 @@ public:
 	std::string getJson();
 
 	// Preset related methods to make information public
-	const preset currentSetting() const {return currentSetting_;}
+	const Preset currentSetting() const {return currentSetting_;}
 	const int currentPresetNumber() const { return currentPresetNumber_;}
 	const boolean isPresetNumberUpdated() const { return isPresetNumberUpdated_;}
 	const boolean isPresetUpdated() const { return isPresetUpdated_;}
@@ -118,10 +123,6 @@ public:
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
-
-
-	// Functions for Spark AMP (Server mode)
-
 
 };
 

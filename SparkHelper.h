@@ -1,3 +1,10 @@
+/*
+ * SparkDataControl.cpp
+ *
+ *  Created on: 19.08.2021
+ *      Author: stangreg
+ */
+
 #ifndef SPARK_HELPER_H // include guard
 #define SPARK_HELPER_H
 

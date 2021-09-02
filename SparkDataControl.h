@@ -63,15 +63,15 @@ public:
 	// Switch effect on/off
 	bool switchEffectOnOff(std::string fx_name, bool enable);
 	// get a preset from saved presets
-	preset getPreset(int bank, int pre);
+	Preset getPreset(int bank, int pre);
 	// return the number of banks in the preset list
 	int getNumberOfBanks();
 
 	// Return active or pending preset/bank, set/get active preset number
-	preset* activePreset() const {
+	Preset* activePreset() const {
 		return &activePreset_;
 	}
-	preset* pendingPreset() const {
+	Preset* pendingPreset() const {
 		return &pendingPreset_;
 	}
 	const int& activePresetNum() const {
@@ -95,7 +95,7 @@ public:
 	const int numberOfBanks() const {
 		return presetBuilder.getNumberOfBanks();
 	}
-	const preset* appReceivedPreset() const {
+	const Preset* appReceivedPreset() const {
 		return &appReceivedPreset_;
 	}
 	const int operationMode() const {
@@ -141,8 +141,8 @@ private:
 	int buttonMode_ = SWITCH_MODE_PRESET;
 
 	//PRESET variables
-	static preset activePreset_;
-	static preset pendingPreset_;
+	static Preset activePreset_;
+	static Preset pendingPreset_;
 	static int activeBank_;
 	static int pendingBank_;
 	static int activePresetNum_;
@@ -152,7 +152,7 @@ private:
 	static std::vector<ByteVector> ack_msg;
 
 	//Spark AMP mode
-	static preset appReceivedPreset_;
+	static Preset appReceivedPreset_;
 	static int presetNumToEdit_;
 	static int presetBankToEdit_;
 	static int presetEditMode_;

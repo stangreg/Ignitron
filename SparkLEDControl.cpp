@@ -35,7 +35,7 @@ void SparkLEDControl::init(){
 void SparkLEDControl::updateLEDs() {
 
 	int operationMode = spark_dc->operationMode();
-	preset *activePreset = spark_dc->activePreset();
+	Preset *activePreset = spark_dc->activePreset();
 	int activePresetNum = spark_dc->activePresetNum();
 
 	if(operationMode == SPARK_MODE_APP) {
@@ -82,42 +82,42 @@ void SparkLEDControl::updateLEDs() {
 		} else if (buttonMode == SWITCH_MODE_FX) {
 			if (!activePreset->isEmpty) {
 
-				pedal fx_noisegate = activePreset->pedals[FX_NOISEGATE];
+				Pedal fx_noisegate = activePreset->pedals[FX_NOISEGATE];
 				if (fx_noisegate.isOn) {
 					digitalWrite(LED_NOISEGATE_GPIO, HIGH);
 				} else {
 					digitalWrite(LED_NOISEGATE_GPIO, LOW);
 				}
 
-				pedal fx_comp = activePreset->pedals[FX_COMP];
+				Pedal fx_comp = activePreset->pedals[FX_COMP];
 				if (fx_comp.isOn) {
 					digitalWrite(LED_COMP_GPIO, HIGH);
 				} else {
 					digitalWrite(LED_COMP_GPIO, LOW);
 				}
 
-				pedal fx_dist = activePreset->pedals[FX_DRIVE];
+				Pedal fx_dist = activePreset->pedals[FX_DRIVE];
 				if (fx_dist.isOn) {
 					digitalWrite(LED_DRIVE_GPIO, HIGH);
 				} else {
 					digitalWrite(LED_DRIVE_GPIO, LOW);
 				}
 
-				pedal fx_mod = activePreset->pedals[FX_MOD];
+				Pedal fx_mod = activePreset->pedals[FX_MOD];
 				if (fx_mod.isOn) {
 					digitalWrite(LED_MOD_GPIO, HIGH);
 				} else {
 					digitalWrite(LED_MOD_GPIO, LOW);
 				}
 
-				pedal fx_delay = activePreset->pedals[FX_DELAY];
+				Pedal fx_delay = activePreset->pedals[FX_DELAY];
 				if (fx_delay.isOn) {
 					digitalWrite(LED_DELAY_GPIO, HIGH);
 				} else {
 					digitalWrite(LED_DELAY_GPIO, LOW);
 				}
 
-				pedal fx_reverb = activePreset->pedals[FX_REVERB];
+				Pedal fx_reverb = activePreset->pedals[FX_REVERB];
 				if (fx_reverb.isOn) {
 					digitalWrite(LED_REVERB_GPIO, HIGH);
 				} else {
