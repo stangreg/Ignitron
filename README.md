@@ -1,5 +1,24 @@
 # Sparky
-An ESP32 module to communicate with the Spark Amp
+An ESP32 based footswitch to communicate with the Spark Amp.
+
+Sparky gives you full control over your presets:
+* Switch between the four **hardware presets**
+* Switch between **custom saved presets** organized in banks
+* **Activate / Deactivate effects** for the selected preset
+* **Load new presets** via the Spark App
+* **Delete** stored presets
+
+Adding new presets to Sparky can easily be done as it can also act as a Spark Amp. So simply connect to Sparky with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Sparky. 
+
+One big advantage of Sparky is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
+This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
+
+The current active preset and effects are indicated via LEDs. In addition, the built-in display provides information on
+* selected bank / preset number
+* selected preset name
+* which effect types are activated in the FX chain
+* Connection status to Spark Amp and Spark App
+
 
 ## Operation modes
 The Sparky has two operation modes, APP mode and AMP mode.
@@ -9,12 +28,12 @@ Standard mode on startup is the APP mode. To enter AMP mode, hold the **Preset 1
 
 ## APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). Modes can easily be switched by long pressing the Bank-Up button.
-When selecting Preset mode, four buttons are used to select presets. The other two buttons can be used to navigate through different banks with presets. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled or disabled.
+When selecting Preset mode, four buttons are used to select presets. The other two buttons can be used to navigate through different preset banks. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In FX mode, the user has direct access to all effects of the selected preset. 
 Each switch controls a different FX pedal type:
 
 
-Function of switches:
+#### Function of switches:
 
 ##### FX mode (APP)
 |Switch | Press pattern |Function |
@@ -25,7 +44,8 @@ Function of switches:
 |Preset 2 | Short |Modulation |
 |Preset 3 | Short |Delay |
 |Preset 4 | Short |Reverb | 
-|Bank up | Long | Switch to Preset mode|
+|Bank up | Long | Switch to Preset mode |
+|Preset 2 | Long | Restart Sparky |
 
 ##### Preset mode (APP)
 |Switch | Press pattern |Function |
@@ -37,7 +57,7 @@ Function of switches:
 |Preset 3 | Short |Select preset 3 |
 |Preset 4 | Short |Select preset 4 | 
 |Bank up | Long | Switch to FX mode|
-
+|Preset 2 | Long | Restart Sparky |
 
 ## AMP mode
 In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
@@ -71,7 +91,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |Preset 3 | Short |Select preset 3 | Press same preset twice to store received preset from app |
 |Preset 4 | Short |Select preset 4 | Press same preset twice to store received preset from app |
 |Bank down | Long | Unload preset received from app| - |
-
+|Preset 2 | Long | Restart Sparky |
 
 ### Deleting an existing preset
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
@@ -95,6 +115,6 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |Preset 4 | Short |Select preset 4 | - |
 |Bank down | Long | Mark saved preset for deletion| *Pressing any other button in that state will cancel the deletion* |
 |Bank down | Long | Delete preset marked for deletion| *Only if preset was first marked for deletion* |
-
+|Preset 2 | Long | Restart Sparky |
 
 
