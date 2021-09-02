@@ -40,26 +40,26 @@ Each switch controls a different FX pedal type:
 ##### FX mode (APP)
 |Switch | Press pattern |Function |
 |---| -----|------ |
-|Bank down | Short |Noise Gate |
-|Bank up | Short |Compressor |
-|Preset 1 | Short |Drive |
-|Preset 2 | Short |Modulation |
-|Preset 3 | Short |Delay |
-|Preset 4 | Short |Reverb | 
-|Bank up | Long | Switch to Preset mode |
-|Preset 2 | Long | Restart Sparky |
+|`Bank down` | Short |Noise Gate |
+|`Bank up` | Short |Compressor |
+|`Preset 1` | Short |Drive |
+|`Preset 2` | Short |Modulation |
+|`Preset 3` | Short |Delay |
+|`Preset 4` | Short |Reverb | 
+|`Bank up` | Long | Switch to Preset mode |
+|`Preset 2` | Long | Restart Sparky |
 
 ##### Preset mode (APP)
 |Switch | Press pattern |Function |
 |---| -----|------ |
-|Bank down | Short |Navigate bank up |
-|Bank up | Short |Navigate bank down |
-|Preset 1 | Short |Select preset 1 |
-|Preset 2 | Short |Select preset 2 |
-|Preset 3 | Short |Select preset 3 |
-|Preset 4 | Short |Select preset 4 | 
-|Bank up | Long | Switch to FX mode|
-|Preset 2 | Long | Restart Sparky |
+|`Bank down` | Short |Navigate bank up |
+|`Bank up` | Short |Navigate bank down |
+|`Preset 1` | Short |Select preset 1 |
+|`Preset 2` | Short |Select preset 2 |
+|`Preset 3` | Short |Select preset 3 |
+|`Preset 4` | Short |Select preset 4 | 
+|`Bank up` | Long | Switch to FX mode|
+|`Preset 2` | Long | Restart Sparky |
 
 ## AMP mode
 In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
@@ -86,14 +86,14 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 
 |Switch | Press pattern |Function | Remark |
 |---| -----|------ | ----- |
-|Bank down | Short |Navigate bank up | - |
-|Bank up | Short |Navigate bank down | - |
-|Preset 1 | Short |Select preset 1 | Press same preset twice to store received preset from app |
-|Preset 2 | Short |Select preset 2 | Press same preset twice to store received preset from app |
-|Preset 3 | Short |Select preset 3 | Press same preset twice to store received preset from app |
-|Preset 4 | Short |Select preset 4 | Press same preset twice to store received preset from app |
-|Bank down | Long | Unload preset received from app| - |
-|Preset 2 | Long | Restart Sparky |
+|`Bank down` | Short |Navigate bank up | - |
+|`Bank up` | Short |Navigate bank down | - |
+|`Preset 1` | Short |Select preset 1 | Press same preset twice to store received preset from app |
+|`Preset 2` | Short |Select preset 2 | Press same preset twice to store received preset from app |
+|`Preset 3` | Short |Select preset 3 | Press same preset twice to store received preset from app |
+|`Preset 4` | Short |Select preset 4 | Press same preset twice to store received preset from app |
+|`Bank down` | Long | Unload preset received from app| - |
+|`Preset 2` | Long | Restart Sparky |
 
 ### Deleting an existing preset
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
@@ -109,14 +109,14 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 #### Deleting a preset (only possible with no preset from the app loaded)
 |Switch | Press pattern |Function | Remark |
 |---| -----|------ | ----- |
-|Bank down | Short |Navigate bank up | - |
-|Bank up | Short |Navigate bank down | - |
-|Preset 1 | Short |Select preset 1 | -  |
-|Preset 2 | Short |Select preset 2 | - |
-|Preset 3 | Short |Select preset 3 | - |
-|Preset 4 | Short |Select preset 4 | - |
-|Bank down | Long | Mark saved preset for deletion| *Pressing any other button in that state will cancel the deletion* |
-|Bank down | Long | Delete preset marked for deletion| *Only if preset was first marked for deletion* |
-|Preset 2 | Long | Restart Sparky |
+|`Bank down` | Short |Navigate bank up | - |
+|`Bank up` | Short |Navigate bank down | - |
+|`Preset 1` | Short |Select preset 1 | -  |
+|`Preset 2` | Short |Select preset 2 | - |
+|`Preset 3` | Short |Select preset 3 | - |
+|`Preset 4` | Short |Select preset 4 | - |
+|`Bank down` | Long | Mark saved preset for deletion| *Pressing any other button in that state will cancel the deletion* |
+|`Bank down` | Long | Delete preset marked for deletion| *Only if preset was first marked for deletion* |
+|`Preset 2` | Long | Restart Sparky |
 
 
