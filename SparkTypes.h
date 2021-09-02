@@ -41,9 +41,10 @@ struct Pedal {
 struct Preset {
 
 	boolean isEmpty = true;
-	const int numberOfPedals = 7;
+	static const int numberOfPedals = 7;
 
 	std::string json;
+	// Raw and text might not be filled (when read from the stored presets).
 	std::string raw;
 	std::string text;
 
@@ -66,7 +67,8 @@ struct CmdData {
 
 	std::string toString() {
 		std::string cmdStr;
-		cmdStr = "[" + cmd + "], [" + subcmd + "], [";
+		cmdStr = "[" + SparkHelper::intToHex(cmd) + "], ["
+				+ SparkHelper::intToHex(subcmd) + "], [";
 		for (byte by : data) {
 			cmdStr += SparkHelper::intToHex(by).c_str();
 		}

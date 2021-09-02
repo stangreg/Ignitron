@@ -279,7 +279,6 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 		//Serial.println("Done with this command!");
 		return true;
 	} else {
-		Serial.println("Client seems to be disconnected");
 		isAmpConnected_ = false;
 		return false;
 	}
@@ -407,7 +406,7 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 
 void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 		ble_gap_conn_desc *desc, uint16_t subValue) {
-	String str = "Client ID: ";
+	std::string str = "Client ID: ";
 	str += desc->conn_handle;
 	str += " Address: ";
 	str += std::string(NimBLEAddress(desc->peer_ota_addr)).c_str();
@@ -420,9 +419,9 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 	} else if (subValue == 3) {
 		str += " Subscribed to notifications and indications for ";
 	}
-	str += std::string(pCharacteristic->getUUID()).c_str();
+	str += std::string(pCharacteristic->getUUID());
 
-	Serial.println(str);
+	Serial.println(str.c_str());
 	sendInitialNotification();
 
 }

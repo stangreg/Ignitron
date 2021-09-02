@@ -15,85 +15,68 @@ SparkPresetBuilder::SparkPresetBuilder() {
 Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
 	Preset resultPreset;
-	JSONVar jsonPreset = JSON.parse(json);
+	const int capacity = JSON_OBJECT_SIZE(
+					10) + JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8*JSON_OBJECT_SIZE(8);
+	DynamicJsonDocument jsonPreset(capacity);
+	DeserializationError err = deserializeJson(jsonPreset, json);
 
-	// JSON.typeof(jsonVar) can be used to get the type of the variable
-	if (JSON.typeof(jsonPreset) == "undefined") {
-		Serial.println("Parsing input failed!");
-		return resultPreset;
+	if (err) {
+		Serial.print(F("deserializeJson() failed with code "));
+		Serial.println(err.f_str());
 	}
 
 	// Preset number is not used currently
 	resultPreset.presetNumber = 0;
 	// myObject.hasOwnProperty(key) checks if the object contains an entry for key
 	// preset UUID
-	if (jsonPreset.hasOwnProperty("UUID")) {
-		std::string presetUUID = (std::string) jsonPreset["UUID"];
-		resultPreset.uuid = presetUUID;
-	}
+	std::string presetUUID = jsonPreset["UUID"].as<std::string>();
+	resultPreset.uuid = presetUUID;
 
 	// preset NAME
-	if (jsonPreset.hasOwnProperty("Name")) {
-		std::string presetName = (std::string) jsonPreset["Name"];
-		resultPreset.name = presetName;
-	}
+	std::string presetName = jsonPreset["Name"].as<std::string>();
+	resultPreset.name = presetName;
+
 
 	// preset VERSION
-	if (jsonPreset.hasOwnProperty("Version")) {
-		std::string presetVersion = (std::string) jsonPreset["Version"];
-		resultPreset.version = presetVersion;
-	}
+	std::string presetVersion = jsonPreset["Version"].as<std::string>();
+	resultPreset.version = presetVersion;
 
 	// preset Description
-	if (jsonPreset.hasOwnProperty("Description")) {
-		std::string presetDescription = (std::string) jsonPreset["Description"];
-		resultPreset.description = presetDescription;
-	}
+	std::string presetDescription = jsonPreset["Description"].as<std::string>();
+	resultPreset.description = presetDescription;
 
 	// preset Icon
-	if (jsonPreset.hasOwnProperty("Icon")) {
-		std::string presetIcon = (std::string) jsonPreset["Icon"];
-		resultPreset.icon = presetIcon;
-	}
+	std::string presetIcon = jsonPreset["Icon"].as<std::string>();
+	resultPreset.icon = presetIcon;
 
 	// preset BPM
-	if (jsonPreset.hasOwnProperty("BPM")) {
-		float presetBpm = (float)((double) jsonPreset["BPM"]);
-		resultPreset.bpm = presetBpm;
-	}
-	// all pedals
-	if (jsonPreset.hasOwnProperty("Pedals")) {
-		JSONVar pedalArray = jsonPreset["Pedals"];
-		for ( int i = 0; i < pedalArray.length(); i++) {
-			Pedal currentPedal;
-			currentPedal.name = (std::string) pedalArray[i]["Name"];
-			currentPedal.isOn = (boolean) pedalArray[i]["IsOn"];
-			if (pedalArray[i].hasOwnProperty("Parameters")) {
-				JSONVar currentPedalParams = pedalArray[i]["Parameters"];
-				for (int j = 0; j < currentPedalParams.length(); j++) {
-					Parameter currentParam;
-					currentParam.number = j;
-					currentParam.special = 0x91;
-					currentParam.value = (float)((double)currentPedalParams[j]);
-					currentPedal.parameters.push_back(currentParam);
-				}
-				resultPreset.pedals.push_back(currentPedal);
-			}
-			else{
-				Serial.println("ERROR: Pedal has no paramters!");
-			}
-		}
-	}
-	else{
-		Serial.println("ERROR: No pedals found in file");
-	}
+	float presetBpm = jsonPreset["BPM"].as<float>();
+	resultPreset.bpm = presetBpm;
 
-	// preset Filler
-	if (jsonPreset.hasOwnProperty("Filler")) {
-		std::string presetFillerString = (std::string) jsonPreset["Filler"];
-		byte presetFiller = SparkHelper::HexToByte(presetFillerString);
-		resultPreset.filler = presetFiller;
+	// all pedals
+	JsonArray pedalArray = jsonPreset["Pedals"];
+	for (JsonObject currentJsonPedal : pedalArray) {
+		Pedal currentPedal;
+		currentPedal.name = currentJsonPedal["Name"].as<std::string>();
+		currentPedal.isOn = currentJsonPedal["IsOn"].as<bool>();
+
+		JsonArray pedalParamArray = currentJsonPedal["Parameters"];
+		int i = 0;
+		for (float currentJsonPedalParam : pedalParamArray) {
+				Parameter currentParam;
+			currentParam.number = i;
+				currentParam.special = 0x91;
+			currentParam.value = currentJsonPedalParam;
+				currentPedal.parameters.push_back(currentParam);
+			i++;
+			}
+			resultPreset.pedals.push_back(currentPedal);
 	}
+	// preset Filler
+	std::string presetFillerString = jsonPreset["Filler"].as<std::string>();
+	byte presetFiller = SparkHelper::HexToByte(presetFillerString);
+	resultPreset.filler = presetFiller;
+
 	resultPreset.isEmpty=false;
 	resultPreset.json = json;
 	return resultPreset;

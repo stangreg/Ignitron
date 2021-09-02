@@ -47,7 +47,7 @@ void SparkDisplayControl::init(int mode) {
 	display.display();
 	if (opMode == SPARK_MODE_AMP) {
 		// Allow the initial screen to show for some time
-		delay(5000);
+		delay(3000);
 	}
 }
 
@@ -224,7 +224,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 
 void SparkDisplayControl::showConnection() {
 	// Display the bank and preset number
-	int xPos = display.width() / 2.0;
+	int xPos = (display.width() / 2.0) - 2;
 	int yPos = 15;
 	int radius = 4;
 	uint16_t color = SSD1306_WHITE;

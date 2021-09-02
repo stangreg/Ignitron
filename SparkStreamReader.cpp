@@ -552,6 +552,8 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			Serial.print(SparkHelper::intToHex(_cmd).c_str());
 			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
 			Serial.println(" not handled");
+			SparkHelper::printByteVector(msg);
+			Serial.println();
 		}
 	}
 	else if (_cmd == 0x03) {
@@ -578,7 +580,9 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 		else {
 			Serial.print(SparkHelper::intToHex(_cmd).c_str());
 			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
-			Serial.println(" not handled");
+			Serial.println(" not handled2");
+			SparkHelper::printByteVector(msg);
+			Serial.println();
 		}
 	}
 	else if (_cmd == 0x04) {

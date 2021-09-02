@@ -66,6 +66,7 @@ void loop() {
 	if (operationMode == SPARK_MODE_APP) {
 		while (!(spark_dc->checkBLEConnection())) {
 			spark_display->update(isInitBoot);
+			spark_bh->readButtons();
 		}
 
 		//After connection is established, continue.

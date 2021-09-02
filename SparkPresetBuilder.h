@@ -9,7 +9,7 @@
 #define SPARK_PRESET_BUILDER_H
 
 #include <Arduino.h>
-#include <Arduino_JSON.h>
+#include <ArduinoJSON.h>
 #include <FS.h>
 #include <Effortless_SPIFFS.h>
 #include <algorithm>
@@ -25,6 +25,7 @@
 #define STORE_PRESET_FILE_EXISTS 2
 #define STORE_PRESET_ERROR_OPEN 3
 #define STORE_PRESET_UNKNOWN_ERROR 4
+
 #define DELETE_PRESET_OK 1
 #define DELETE_PRESET_FILE_NOT_EXIST 2
 #define DELETE_PRESET_ERROR_OPEN 3
@@ -37,7 +38,6 @@ class SparkPresetBuilder{
 
 private:
 	std::vector<std::vector<std::string>> presetBanksNames;
-	std::vector<char*> allPresetsJSON;
 	eSPIFFS fileSystem;
 	const char* presetListFileName = "/PresetList.txt";
 	bool deletePresetFile(int bnk, int pre);

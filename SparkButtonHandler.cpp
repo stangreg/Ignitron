@@ -20,6 +20,7 @@ BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_
 		false, HIGH);
 BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false,
 		HIGH);
+int SparkButtonHandler::operationMode = 0;
 
 // Initialize SparkDataControl;
 SparkDataControl* SparkButtonHandler::spark_dc = nullptr;
@@ -47,12 +48,17 @@ void SparkButtonHandler::readButtons(){
 
 // Buttons to change Preset (in preset mode) and control FX in FX mode
 void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc){
+	bool processButton = true;
+	if (operationMode == SPARK_MODE_APP) {
+		processButton = spark_dc->isAmpConnected();
+	}
 
+	if (spark_dc && processButton) {
 		const int buttonMode = spark_dc->buttonMode();
 		const int operationMode = spark_dc->operationMode();
 		Preset* activePreset = spark_dc->activePreset();
 		int selectedPresetNum;
+
 
 		if (pattern == BfButton::SINGLE_PRESS) {
 			int pressed_btn_gpio = btn->getID();
@@ -99,15 +105,15 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				} else if (pressed_btn_gpio == BUTTON_PRESET4_GPIO) {
 					selectedPresetNum = 4;
 				}
-				if(operationMode == SPARK_MODE_APP){
+				if (operationMode == SPARK_MODE_APP) {
 					spark_dc->switchPreset(selectedPresetNum);
-				}
-				else { // AMP mode
+				} else { // AMP mode
 					spark_dc->processPresetEdit(selectedPresetNum);
 				}
 
 			}
 		}
+
 	}
 	else {
 		Serial.println("SparkDataControl not setup yet, ignoring button press.");
@@ -116,7 +122,12 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 
 // Buttons to change the preset banks in preset mode and some other FX in FX mode
 void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc){
+	bool processButton = true;
+	if (operationMode == SPARK_MODE_APP) {
+		processButton = spark_dc->isAmpConnected();
+	}
+
+	if (spark_dc && processButton) {
 		int buttonMode = spark_dc->buttonMode();
 		Preset* activePreset = spark_dc->activePreset();
 		int activePresetNum = spark_dc->activePresetNum();
@@ -124,76 +135,81 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 		int numberOfBanks = spark_dc->numberOfBanks();
 		int opMode = spark_dc->operationMode();
 
+		if (opMode == SPARK_MODE_APP) {
+			processButton = spark_dc->isAmpConnected();
+		}
 
-		if (pattern == BfButton::SINGLE_PRESS) {
-			int pressed_btn_gpio = btn->getID();
-			// Debug
-			//Serial.print("Button pressed: ");
-			//Serial.println(pressed_btn_gpio);
+		if (processButton) {
 
-			if (buttonMode == SWITCH_MODE_FX) {
+			if (pattern == BfButton::SINGLE_PRESS) {
+				int pressed_btn_gpio = btn->getID();
+				// Debug
+				//Serial.print("Button pressed: ");
+				//Serial.println(pressed_btn_gpio);
 
-				std::string fx_name;
-				boolean fx_isOn;
-				if (!activePreset->isEmpty) {
-					if (pressed_btn_gpio == BUTTON_NOISEGATE_GPIO) {
-						fx_name = activePreset->pedals[FX_NOISEGATE].name;
-						fx_isOn = activePreset->pedals[FX_NOISEGATE].isOn;
-					} else if (pressed_btn_gpio == BUTTON_COMP_GPIO) {
-						fx_name = activePreset->pedals[FX_COMP].name;
-						fx_isOn = activePreset->pedals[FX_COMP].isOn;
-					}
-					// Switch corresponding effect
-					spark_dc->switchEffectOnOff(fx_name,
-							fx_isOn ? false : true);
-				}
+				if (buttonMode == SWITCH_MODE_FX) {
 
-				// Preset mode
-			} else if (buttonMode == SWITCH_MODE_PRESET) {
-				if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
-					// Cycle around if at the start
-					if (pendingBank == 0) {
-						pendingBank = numberOfBanks;
-					} else {
-						pendingBank--;
-					} // else
-					// Don't go to bank 0 in AMP mode
-					if (opMode == SPARK_MODE_AMP && pendingBank == 0){
-						pendingBank = numberOfBanks;
+					std::string fx_name;
+					boolean fx_isOn;
+					if (!activePreset->isEmpty) {
+						if (pressed_btn_gpio == BUTTON_NOISEGATE_GPIO) {
+							fx_name = activePreset->pedals[FX_NOISEGATE].name;
+							fx_isOn = activePreset->pedals[FX_NOISEGATE].isOn;
+						} else if (pressed_btn_gpio == BUTTON_COMP_GPIO) {
+							fx_name = activePreset->pedals[FX_COMP].name;
+							fx_isOn = activePreset->pedals[FX_COMP].isOn;
+						}
+						// Switch corresponding effect
+						spark_dc->switchEffectOnOff(fx_name,
+								fx_isOn ? false : true);
 					}
-				} //if BUTTON_BANK_UP/DOWN
-				else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
-					// Cycle around if at the end
-					if (pendingBank == numberOfBanks) {
-						pendingBank = 0;
-					} else {
-						pendingBank++;
+
+					// Preset mode
+				} else if (buttonMode == SWITCH_MODE_PRESET) {
+					if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
+						// Cycle around if at the start
+						if (pendingBank == 0) {
+							pendingBank = numberOfBanks;
+						} else {
+							pendingBank--;
+						} // else
+						  // Don't go to bank 0 in AMP mode
+						if (opMode == SPARK_MODE_AMP && pendingBank == 0) {
+							pendingBank = numberOfBanks;
+						}
+					} //if BUTTON_BANK_UP/DOWN
+					else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
+						// Cycle around if at the end
+						if (pendingBank == numberOfBanks) {
+							pendingBank = 0;
+						} else {
+							pendingBank++;
+						}
+						if (opMode == SPARK_MODE_AMP && pendingBank == 0) {
+							pendingBank = std::min(1, numberOfBanks);
+						}
 					}
-					if (opMode == SPARK_MODE_AMP && pendingBank == 0){
-						pendingBank = std::min(1,numberOfBanks);
+					// Mark selected bank as the pending Bank to mark in display.
+					// The device is configured so that it does not immediately
+					// switch presets when a bank is changed, it does so only when
+					// the preset button is pushed afterwards
+					spark_dc->pendingBank() = pendingBank;
+					if (pendingBank != 0) {
+						spark_dc->updatePendingPreset(pendingBank);
 					}
-				}
-				// Mark selected bank as the pending Bank to mark in display.
-				// The device is configured so that it does not immediately
-				// switch presets when a bank is changed, it does so only when
-				// the preset button is pushed afterwards
-				spark_dc->pendingBank() = pendingBank;
-				if(pendingBank != 0){
-					spark_dc->updatePendingPreset(pendingBank);
-				}
-				if (opMode == SPARK_MODE_AMP) {
-					spark_dc->activeBank() = pendingBank;
-					spark_dc->updateActiveWithPendingPreset();
-					int editMode = spark_dc->presetEditMode();
-					if ( editMode == PRESET_EDIT_DELETE) {
-						spark_dc->resetPresetEdit(true, true);
+					if (opMode == SPARK_MODE_AMP) {
+						spark_dc->activeBank() = pendingBank;
+						spark_dc->updateActiveWithPendingPreset();
+						int editMode = spark_dc->presetEditMode();
+						if (editMode == PRESET_EDIT_DELETE) {
+							spark_dc->resetPresetEdit(true, true);
+						} else if (editMode == PRESET_EDIT_STORE) {
+							spark_dc->resetPresetEdit(false, false);
+						}
 					}
-					else if (editMode == PRESET_EDIT_STORE) {
-						spark_dc->resetPresetEdit(false, false);
-					}
-				}
-			} // SWITCH_MODE_PREFIX
-		} // SINGLE PRESS
+				} // SWITCH_MODE_PREFIX
+			} // SINGLE PRESS
+		}
 	}
 	else {
 		Serial.println("SparkDataControl not setup yet, ignoring button press.");
@@ -201,7 +217,12 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 }
 
 void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_APP){
+	bool processButton = true;
+	if (operationMode == SPARK_MODE_APP) {
+		processButton = spark_dc->isAmpConnected();
+	}
+
+	if (spark_dc && operationMode == SPARK_MODE_APP && processButton) {
 		// Long press to switch between preset mode FX mode where FX can be separately switched
 		const int buttonMode = spark_dc->buttonMode();
 		if (pattern == BfButton::LONG_PRESS) {
@@ -209,7 +230,7 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 			// Debug
 			//Serial.print("Button long pressed: ");
 			//Serial.println(pressed_btn_gpio);
-			//Up preset
+			//Switch mode in APP mode
 			if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
 				Serial.print("Switching to ");
 				switch (buttonMode) {
@@ -236,7 +257,12 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 }
 
 void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern){
-	if(spark_dc && spark_dc->operationMode() == SPARK_MODE_AMP){
+	bool processButton = true;
+	if (operationMode == SPARK_MODE_APP) {
+		processButton = spark_dc->isAmpConnected();
+	}
+
+	if (spark_dc && operationMode == SPARK_MODE_AMP && processButton) {
 		const int buttonMode = spark_dc->buttonMode();
 		const int presetEditMode = spark_dc->presetEditMode();
 		const int presetNum = spark_dc->activePresetNum();
@@ -263,6 +289,21 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 
 }
 
+void SparkButtonHandler::btnResetHandler(BfButton *btn,
+		BfButton::press_pattern_t pattern) {
+	if (pattern == BfButton::LONG_PRESS) {
+		int pressed_btn_gpio = btn->getID();
+		// Debug
+		//Serial.print("Button long pressed: ");
+		//Serial.println(pressed_btn_gpio);
+		//RESET Sparky
+		Serial.println("!!! Restarting Sparky !!!");
+		if (pressed_btn_gpio == BUTTON_PRESET2_GPIO) {
+			ESP.restart();
+		}
+	}
+}
+
 int SparkButtonHandler::init() {
 	// Setup the button event handler
 	btn_preset1.onPress(btnPresetHandler);
@@ -273,10 +314,12 @@ int SparkButtonHandler::init() {
 	btn_bank_up.onPress(btnBankHandler);
 	btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
 	btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
+	btn_preset2.onPressFor(btnResetHandler, 2000);
 	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH){
-		return SPARK_MODE_AMP;
+		operationMode = SPARK_MODE_AMP;
 	}
 	else{
-		return SPARK_MODE_APP;
+		operationMode = SPARK_MODE_APP;
 	}
+	return operationMode;
 }

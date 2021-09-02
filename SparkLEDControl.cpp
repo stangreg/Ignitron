@@ -8,7 +8,7 @@
 #include "SparkLEDControl.h"
 
 SparkLEDControl::SparkLEDControl() {
-	spark_dc = null;
+	spark_dc = nullptr;
 
 }
 
@@ -29,6 +29,14 @@ void SparkLEDControl::init(){
 	pinMode(LED_PRESET4_GPIO, OUTPUT);
 	pinMode(LED_BANK_DOWN_GPIO, OUTPUT);
 	pinMode(LED_BANK_UP_GPIO, OUTPUT);
+
+	digitalWrite(LED_PRESET1_GPIO, LOW);
+	digitalWrite(LED_PRESET2_GPIO, LOW);
+	digitalWrite(LED_PRESET3_GPIO, LOW);
+	digitalWrite(LED_PRESET4_GPIO, LOW);
+	digitalWrite(LED_BANK_DOWN_GPIO, LOW);
+	digitalWrite(LED_BANK_UP_GPIO, LOW);
+
 
 }
 
