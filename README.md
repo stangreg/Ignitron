@@ -242,4 +242,4 @@ Parameters marked with `Switch` can only have values of 0 or 1.
 
 
 
-[Sparky]: https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo.png
+[Sparky]: https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_minimal.png
