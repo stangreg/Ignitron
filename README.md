@@ -4,7 +4,7 @@
 
 An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
 
-Sparky gives you full control over your presets:
+Sparky gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
 * **Activate / Deactivate effects** for the selected preset
@@ -111,7 +111,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
 |`Preset 2`  | Long          | Restart Sparky                  |        |
 
-### Deleting a preset (only possible with no preset from the app loaded)
+### Deleting a preset (only possible when no preset from the app loaded)
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
 2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
