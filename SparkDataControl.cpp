@@ -220,7 +220,8 @@ bool SparkDataControl::switchPreset(int pre) {
 	bool retValue = false;
 	int bnk = pendingBank_;
 	if (operationMode_ == SPARK_MODE_APP) {
-		if (pre == activePresetNum_ && !(activePreset_.isEmpty)) {
+		if (pre == activePresetNum_ && activeBank_ == pendingBank_
+				&& !(activePreset_.isEmpty)) {
 			Pedal drivePedal = activePreset_.pedals[2];
 			std::string drivePedalName = drivePedal.name;
 			bool isDriveEnabled = drivePedal.isOn;
