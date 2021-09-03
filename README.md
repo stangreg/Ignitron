@@ -8,9 +8,9 @@ An ESP32 based foot pedal to communicate with the Spark Amp via Bluetooth LE.
 * **Load new presets** via the Spark App
 * **Delete** stored presets
 
-Adding new presets to Sparky can easily be done as it can also act as a Spark Amp. Simply connect to Sparky with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Sparky. 
+Adding new presets to ![Sparky][Sparky] can easily be done as it can also act as a Spark Amp. Simply connect to ![Sparky][Sparky] with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to ![Sparky][Sparky]. 
 
-One big advantage of Sparky is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
+One big advantage of ![Sparky][Sparky] is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
 This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
 
 The current active preset and effects are indicated via LEDs.\
@@ -22,9 +22,9 @@ In addition, the **built-in display** provides information on
 
 
 ## Operation modes
-The Sparky has two operation modes, **APP mode** and **AMP mode**.\
-In **APP mode** (default mode on startup), Sparky connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
-**AMP mode** can be used to manage the presets stored on the Sparky, presets can be added from the app or be deleted from Sparky.\
+The ![Sparky][Sparky] has two operation modes, **APP mode** and **AMP mode**.\
+In **APP mode** (default mode on startup), ![Sparky][Sparky] connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
+**AMP mode** can be used to manage the presets stored on the ![Sparky][Sparky], presets can be added from the app or be deleted from ![Sparky][Sparky].\
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
@@ -64,10 +64,10 @@ Each switch controls a different FX pedal type:
 -----------------------------------------------------------------
 
 ## AMP mode
-In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
+In AMP mode, ![Sparky][Sparky] acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
 
 ### Connecting the Spark app with Sparky
-1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
+1. Start ![Sparky][Sparky] in AMP mode (hold `Preset 1` button during startup).
 2. Open the Spark app on the mobile
 3. For the first connection, make sure to have your real Spark amp powered off to avoid the app conneting to it.
 4. Hit the connect button in the app (or the + button in the connection overview)
@@ -76,11 +76,11 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 ### The easy way
 
 #### Storing a new preset (a preset from the app needs to be loaded)
-1. Start Sparky in AMP mode (hold Preset 1 button during startup).
-2. Connect the Spark app with Sparky (see above)
+1. Start ![Sparky][Sparky] in AMP mode (hold Preset 1 button during startup).
+2. Connect the Spark app with ![Sparky][Sparky] (see above)
 3. Select a preset in the app (either saved in the app or from the ToneCloud).
 4. The preset name should appear in the bottom line of the display
-5. The `Preset`/`Bank` buttons on Sparky can be used to navigate to the  desired preset position. 
+5. The `Preset`/`Bank` buttons on ![Sparky][Sparky] can be used to navigate to the  desired preset position. 
 6. Press the `Preset` button to mark the position for storing
 7. The LED of the selected preset position should start blinking
 8. Hit the same `Preset` button a second time to confirm storage
@@ -100,8 +100,8 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Preset 2`  | Long          | Restart Sparky                  |        |
 
 #### Deleting a preset (only possible with no preset from the app loaded)
-1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
-2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
+1. Start ![Sparky][Sparky] in AMP mode (hold `Preset 1` button during startup).
+2. Use the `Preset`/`Bank` buttons on ![Sparky][Sparky] to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
 4. The LED of the selected preset should start blinking
 5. In the display you should see a prompt if deletion should be executed
@@ -125,7 +125,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 -------------------------------------------------------
 
 ### The hard way (for techies)
-Sparky stores presets in a JSON format using the SPIFFS file system.
+![Sparky][Sparky] stores presets in a JSON format using the SPIFFS file system.
 Each preset is stored in a separate file and presets are organized in a separate text file called 'PresetList.txt'. This list simply stored the file names of the presets, the order defines the way the banks are filled.
 An example preset file would look like this:
 ```
@@ -150,7 +150,7 @@ An example preset file would look like this:
 3. Put the file name into the **data folder**
 4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
 5. *Place the PresetList.txt file into the data folder (if not already there)*
-6. **Upload the data folder** to Sparky via the Arduino IDE (or other tools) 
+6. **Upload the data folder** to ![Sparky][Sparky] via the Arduino IDE (or other tools) 
 
 As a guidance which effect and amp names cana be used and in which order the parameters of each effect have to be given, please refer to 
 
