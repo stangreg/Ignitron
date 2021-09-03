@@ -2,7 +2,7 @@
   <img width="387" height="141" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
 </p>
 
-An ESP32 based foot pedal to communicate with the Spark Amp via Bluetooth LE.
+An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
 
 Sparky gives you full control over your presets:
 * Switch between the four **hardware presets**
@@ -36,9 +36,9 @@ In addition, the **built-in display** provides information on
 
 
 ## Operation modes
-The Sparky has two operation modes, **APP mode** and **AMP mode**.\
+Sparky has two operation modes, **APP mode** and **AMP mode**.\
 In **APP mode** (default mode on startup), Sparky connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
-**AMP mode** can be used to manage the presets stored on the Sparky, presets can be added from the app or be deleted from Sparky.\
+**AMP mode** can be used to manage the presets stored on Sparky, presets can be added from the app or be deleted from Sparky.\
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
