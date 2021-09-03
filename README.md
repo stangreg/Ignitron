@@ -24,6 +24,17 @@ In addition, the **built-in display** provides information on
 * connection status to Spark Amp and Spark App
 
 
+## Table of contents
+* [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
+* [APP mode](https://github.com/stangreg/SparkBLE#app-mode)
+* [AMP mode](https://github.com/stangreg/SparkBLE#amp-mode)
+  * [Storing a new preset](https://github.com/stangreg/SparkBLE#storing-a-new-preset-a-preset-from-the-app-needs-to-be-loaded)
+  * [Deleting an existing preset](https://github.com/stangreg/SparkBLE#deleting-a-preset-only-possible-with-no-preset-from-the-app-loaded)
+  * [Manually creating presets](https://github.com/stangreg/SparkBLE#manually-creating-presets)
+    * [Preset format](https://github.com/stangreg/SparkBLE#preset-format)
+    * [FX parameter reference](https://github.com/stangreg/SparkBLE#fx-parameter-reference)
+
+
 ## Operation modes
 The Sparky has two operation modes, **APP mode** and **AMP mode**.\
 In **APP mode** (default mode on startup), Sparky connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
@@ -76,9 +87,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 4. Hit the connect button in the app (or the + button in the connection overview)
 5. Once the connection is established, you can give the connection a name so you can tell it better from your regular Spark amp connection.
 
-### The easy way
-
-#### Storing a new preset (a preset from the app needs to be loaded)
+### Storing a new preset (a preset from the app needs to be loaded)
 1. Start Sparky in AMP mode (hold Preset 1 button during startup).
 2. Connect the Spark app with Sparky (see above)
 3. Select a preset in the app (either saved in the app or from the ToneCloud).
@@ -90,7 +99,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 (Hitting any other `Preset`/`Bank` button will revert the state back to navigating)
 9. The preset will be entered in the selected position, other presets will be pushed back
 
-##### Button commands (case: preset has been received from Spark app)
+#### Button commands (case: preset has been received from Spark app)
 | Button     | Press pattern | Function                        | Remark |
 | ---------- | :-----------: | ------------------------------- | ------ |
 |`Bank down` | Short         | Navigate bank up                |        |
@@ -102,7 +111,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
 |`Preset 2`  | Long          | Restart Sparky                  |        |
 
-#### Deleting a preset (only possible with no preset from the app loaded)
+### Deleting a preset (only possible with no preset from the app loaded)
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
 2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
@@ -112,7 +121,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 7. Otherwise, **long press** the `Bank Down` button again to confirm deletion.
 (Hitting any other button will cancel the deletion and return back to navigation)
 
-##### Button commands (case: no preset has been received, slot is empty)
+#### Button commands (case: no preset has been received, slot is empty)
 | Button     | Press pattern | Function                 | Remark |
 | ---------- | :-----------: | ------------------------ | ------ |
 |`Bank down` | Short         | Navigate bank up         |        |
@@ -127,7 +136,16 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 
 -------------------------------------------------------
 
-### The hard way (for techies)
+### Manually creating presets
+*This method is only recommended if a preset cannot be transferred via the Spark app or if the preset files have been received/generated in a different way.*
+1. Create a **preset file** in JSON format as shown above
+2. Make sure the **file name** does not exceed 31 characters (including the `.json` suffix)
+3. Put the file name into the **data folder**
+4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
+5. *Place the PresetList.txt file into the data folder (if not already there)*
+6. **Upload the data folder** to Sparky via the Arduino IDE (or other tools) 
+
+#### Preset format
 Sparky stores presets in a JSON format using the SPIFFS file system.
 Each preset is stored in a separate file and presets are organized in a separate text file called 'PresetList.txt'. This list simply stored the file names of the presets, the order defines the way the banks are filled.
 An example preset file would look like this:
@@ -146,18 +164,9 @@ An example preset file would look like this:
 }
 ```
 
-#### Storing new presets
-*This method is only recommended if a preset cannot be transferred via the Spark app or if the preset files have been received/generated in a different way.*
-1. Create a **preset file** in JSON format as shown above
-2. Make sure the **file name** does not exceed 31 characters (including the `.json` suffix)
-3. Put the file name into the **data folder**
-4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
-5. *Place the PresetList.txt file into the data folder (if not already there)*
-6. **Upload the data folder** to Sparky via the Arduino IDE (or other tools) 
+As a guidance which effect and amp names can be used and in which order the parameters of each effect have to be given, please refer to 
 
-As a guidance which effect and amp names cana be used and in which order the parameters of each effect have to be given, please refer to 
-
-## FX reference
+#### FX parameter reference
 In order to know which effects are available with paramters, see below table.
 This data can be used to build own presets in JSON format (see above).
 Parameters marked with `Switch` can only have values of 0 or 1.
