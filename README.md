@@ -1,7 +1,7 @@
 # Sparky
 An ESP32 based foot pedal to communicate with the Spark Amp via Bluetooth LE.
 
-Sparky gives you full control over your presets:
+![Sparky][Sparky] gives you full control over your presets:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
 * **Activate / Deactivate effects** for the selected preset
@@ -241,3 +241,5 @@ Parameters marked with `Switch` can only have values of 0 or 1.
 # The code
 
 
+
+[Sparky]: https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo.png
