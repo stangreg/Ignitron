@@ -4,7 +4,7 @@
 
 An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
 
-Sparky gives you full control over your presets:
+Sparky gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
 * **Activate / Deactivate effects** for the selected preset
