@@ -1,8 +1,7 @@
 <p align="center">
-  <img width="484" height="176" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
+  <img width="387" height="141" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
 </p>
 
-# Sparky
 An ESP32 based foot pedal to communicate with the Spark Amp via Bluetooth LE.
 
 Sparky gives you full control over your presets:
