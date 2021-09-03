@@ -21,56 +21,58 @@ The current active preset and effects are indicated via LEDs. In addition, the b
 
 
 ## Operation modes
-The Sparky has two operation modes, APP mode and AMP mode.
-In APP mode, the pedal is in standard operation mode. It behaves like the Spark App towards the Spark Amp and can then be used to switch between presets and/or switch effects on and off.
-AMP mode can be used to manage the presets stored on the Sparky, presets can be added from the app or be deleted from Sparky.
-Standard mode on startup is the APP mode. 
+The Sparky has two operation modes, **APP mode** and **AMP mode**.\
+In **APP mode** (default mode on startup), Sparky connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
+**AMP mode** can be used to manage the presets stored on the Sparky, presets can be added from the app or be deleted from Sparky.\
+To enter **AMP mode**, hold the `Preset 1` button during startup.
 
-**To enter AMP mode, hold the `Preset 1` button during startup.**
-
-### APP mode
+## APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). Modes can easily be switched by long pressing the `Bank-Up` button.
 When selecting Preset mode, four buttons are used to select presets. The other two buttons can be used to navigate through different preset banks. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In FX mode, the user has direct access to all effects of the selected preset. 
 Each switch controls a different FX pedal type:
 
 
-#### Function of switches:
+### Function of switches:
 
-##### FX mode (APP)
-|Switch | Press pattern |Function |
-|---| -----|------ |
-|`Bank down` | Short |Noise Gate |
-|`Bank up` | Short |Compressor |
-|`Preset 1` | Short |Drive |
-|`Preset 2` | Short |Modulation |
-|`Preset 3` | Short |Delay |
-|`Preset 4` | Short |Reverb | 
-|`Bank up` | Long | Switch to Preset mode |
-|`Preset 2` | Long | Restart Sparky |
+#### Preset mode
+|Switch      | Press pattern | Function           |
+|----------- | :-----------: | ------------------ |
+|`Bank down` | Short         | Navigate bank up   |
+|`Bank up`   | Short         | Navigate bank down |
+|`Preset 1`  | Short         | Select preset 1    |
+|`Preset 2`  | Short         | Select preset 2    |
+|`Preset 3`  | Short         | Select preset 3    |
+|`Preset 4`  | Short         | Select preset 4    | 
+|`Bank up`   | Long          | Switch to FX mode  |
+|`Preset 2`  | Long          | Restart Sparky     |
 
-##### Preset mode (APP)
-|Switch | Press pattern |Function |
-|---| -----|------ |
-|`Bank down` | Short |Navigate bank up |
-|`Bank up` | Short |Navigate bank down |
-|`Preset 1` | Short |Select preset 1 |
-|`Preset 2` | Short |Select preset 2 |
-|`Preset 3` | Short |Select preset 3 |
-|`Preset 4` | Short |Select preset 4 | 
-|`Bank up` | Long | Switch to FX mode|
-|`Preset 2` | Long | Restart Sparky |
 
-### AMP mode
+#### FX mode
+|Switch      | Press pattern | Function              |
+|----------- | :-----------: | --------------------- |
+|`Bank down` | Short         | Noise Gate            |
+|`Bank up`   | Short         | Compressor            |
+|`Preset 1`  | Short         | Drive                 |
+|`Preset 2`  | Short         | Modulation            |
+|`Preset 3`  | Short         | Delay                 |
+|`Preset 4`  | Short         | Reverb                | 
+|`Bank up`   | Long          | Switch to Preset mode |
+|`Preset 2`  | Long          | Restart Sparky        |
+
+-----------------------------------------------------------------
+
+## AMP mode
 In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored and existing presets can be deleted.
 
-#### Connecting the Spark app with Sparky
-1. Start Sparky in AMP mode (hold Preset 1 button during startup).
+### Connecting the Spark app with Sparky
+1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
 2. Open the Spark app on the mobile
 3. For the first connection, make sure to have your real Spark amp powered off to avoid the app conneting to it.
 4. Hit the connect button in the app (or the + button in the connection overview)
 5. Once the connection is established, you can give the connection a name so you can tell it better from your regular Spark amp connection.
 
+### The easy way
 
 #### Storing a new preset (a preset from the app needs to be loaded)
 1. Start Sparky in AMP mode (hold Preset 1 button during startup).
@@ -84,16 +86,16 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 (Hitting any other `Preset`/`Bank` button will revert the state back to navigating)
 9. The preset will be entered in the selected position, other presets will be pushed back
 
-|Switch | Press pattern |Function | Remark |
-|---| -----|------ | ----- |
-|`Bank down` | Short |Navigate bank up | - |
-|`Bank up` | Short |Navigate bank down | - |
-|`Preset 1` | Short |Select preset 1 | Press same preset twice to store received preset from app |
-|`Preset 2` | Short |Select preset 2 | Press same preset twice to store received preset from app |
-|`Preset 3` | Short |Select preset 3 | Press same preset twice to store received preset from app |
-|`Preset 4` | Short |Select preset 4 | Press same preset twice to store received preset from app |
-|`Bank down` | Long | Unload preset received from app| - |
-|`Preset 2` | Long | Restart Sparky |
+| Switch     | Press pattern | Function                        | Remark |
+| ---------- | :-----------: | ------------------------------- | ------ |
+|`Bank down` | Short         | Navigate bank up                |        |
+|`Bank up`   | Short         | Navigate bank down              |        |
+|`Preset 1`  | Short         | Select preset 1                 | *Press twice to store received preset* |
+|`Preset 2`  | Short         | Select preset 2                 | *Press twice to store received preset* |
+|`Preset 3`  | Short         | Select preset 3                 | *Press twice to store received preset* |
+|`Preset 4`  | Short         | Select preset 4                 | *Press twice to store received preset* |
+|`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
+|`Preset 2`  | Long          | Restart Sparky                  |        |
 
 #### Deleting a preset (only possible with no preset from the app loaded)
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
@@ -104,31 +106,63 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 6. **Long press** the `Bank Down` button again to confirm deletion.
 (Hitting any other button will cancel the deletion and return back to navigation)
 
-|Switch | Press pattern |Function | Remark |
-|---| -----|------ | ----- |
-|`Bank down` | Short |Navigate bank up | - |
-|`Bank up` | Short |Navigate bank down | - |
-|`Preset 1` | Short |Select preset 1 | -  |
-|`Preset 2` | Short |Select preset 2 | - |
-|`Preset 3` | Short |Select preset 3 | - |
-|`Preset 4` | Short |Select preset 4 | - |
-|`Bank down` | Long | Mark saved preset for deletion| *Pressing any other button in that state will cancel the deletion* |
-|`Bank down` | Long | Delete preset marked for deletion| *Only if preset was first marked for deletion* |
-|`Preset 2` | Long | Restart Sparky |
+| Switch     | Press pattern | Function                 | Remark |
+| ---------- | :-----------: | ------------------------ | ------ |
+|`Bank down` | Short         | Navigate bank up         |        |
+|`Bank up`   | Short         | Navigate bank down       |        |
+|`Preset 1`  | Short         | Select preset 1          |        |
+|`Preset 2`  | Short         | Select preset 2          |        |
+|`Preset 3`  | Short         | Select preset 3          |        |
+|`Preset 4`  | Short         | Select preset 4          |        |
+|`Bank down` | Long          | Mark preset for deletion | *Pressing any other button in that state will cancel the deletion* |
+|`Bank down` | Long          | Delete marked preset     | *Only if preset was first marked for deletion* |
+|`Preset 2`  | Long          | Restart Sparky           |        |
 
+-------------------------------------------------------
+
+### The hard way (for techies)
+Sparky stores presets in a JSON format using the SPIFFS file system.
+Each preset is stored in a separate file and presets are organized in a separate text file called 'PresetList.txt'. This list simply stored the file names of the presets, the order defines the way the banks are filled.
+An example preset file would look like this:
+```
+{"PresetNumber": 127, "UUID":"DEFBB271-B3EE-4C7E-A623-2E5CA53B6DDA",
+"Name":"Studio Session" , "Version":"0.7", "Description":"Description for Acoustic Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": false,  "Parameters":[0.5000,0.3467] },
+  { "Name":"BBEOpticalComp",  "IsOn": true,   "Parameters":[0.7583,0.2585,0.0000] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.1396,0.4073,0.6898] },
+  { "Name":"Acoustic",  "IsOn": true,   "Parameters":[0.6398,0.3851,0.3834,0.5994,0.5195] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.8417,0.2275,0.9359,0.3513] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.2240,0.2112,0.4909,0.6000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.7228,0.3262,0.2758,0.3607,0.3439,0.4860,0.4000] } ],
+"Filler":"23"
+}
+```
+
+#### Storing new presets
+*This method is only recommended if a preset cannot be transferred via the Spark app or if the preset files have been received/generated in a different way.*
+1. Create a **preset file** in JSON format as shown above
+2. Make sure the **file name** does not exceed 31 characters (including the `.json` suffix)
+3. Put the file name into the **data folder**
+4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
+5. *Place the PresetList.txt file into the data folder (if not already there)*
+6. **Upload the data folder** to Sparky via the Arduino IDE (or other tools) 
+
+As a guidance which effect and amp names cana be used and in which order the parameters of each effect have to be given, please refer to 
 
 ## FX reference
 In order to know which effects are available with paramters, see below table.
-This data can be used to build own presets in JSON format `(to be described later)`
+This data can be used to build own presets in JSON format (see above).
+Parameters marked with `Switch` can only have values of 0 or 1.
 
 | Type       | App Name           | Technical Name    | Parameter 0             | Parameter 1             | Parameter 2         | Parameter 3    | Parameter 4  | Parameter 5 | Parameter 6         | Extra Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
 | Noise Gate | Noise Gate         | bias.noisegate    | Threshold               | Decay                   |                     |                |              |             |                     |                               |
-| Compressor | LA Comp            | LA2AComp          | Limit/Compress (Switch) | Gain                    | Peak Reduction      |                |              |             |                     |                               |
+| Compressor | LA Comp            | LA2AComp          | Limit/Compress `Switch` | Gain                    | Peak Reduction      |                |              |             |                     |                               |
 | Compressor | Sustain Comp       | BlueComp          | Level                   | Tone                    | Attack              | Sustain        |              |             |                     |                               |
 | Compressor | Red Comp           | Compressor        | Output                  | Sensitivity             |                     |                |              |             |                     |                               |
 | Compressor | Bass Comp          | BassComp          | Comp                    | Gain                    |                     |                |              |             |                     |                               |
-| Compressor | Optical Comp       | BBEOpticalComp    | Volume                  | Comp                    | Pad (Switch)        |                |              |             |                     |                               |
+| Compressor | Optical Comp       | BBEOpticalComp    | Volume                  | Comp                    | Pad `Switch`        |                |              |             |                     |                               |
 | Drive      | Booster            | Booster           | Gain                    |                         |                     |                |              |             |                     |                               |
 | Drive      | Clone Drive        | KlonCentaurSilver | Output                  | Treble                  | Gain                |                |              |             |                     |                               |
 | Drive      | Tube Drive         | DistortionTS9     | Overdrive               | Tone                    | Level               |                |              |             |                     |                               |
@@ -138,7 +172,7 @@ This data can be used to build own presets in JSON format `(to be described late
 | Drive      | Bass Muff          | BassBigMuff       | Volume                  | Tone                    | Sustain             |                |              |             |                     |                               |
 | Drive      | Guitar Muff        | GuitarMuff        | Volume                  | Tone                    | Sustain             |                |              |             |                     |                               |
 | Drive      | Bassmaster         | MaestroBassmaster | Brass Volume            | Sensitivity             | Bass Volume         |                |              |             |                     |                               |
-| Drive      | SAB Driver         | SABDriver         | Volume                  | Tone                    | Drive               | LP/HP (Switch) |              |             |                     |                               |
+| Drive      | SAB Driver         | SABDriver         | Volume                  | Tone                    | Drive               | LP/HP `Switch` |              |             |                     |                               |
 | Amp        | Silver 120         | RolandJC120       | Gain                    | Treble                  | Middle              | Bass           | Volume       |             |                     |                               |
 | Amp        | Black Duo          | Twin              | Gain                    | Treble                  | Middle              | Bass           | Volume       |             |                     |                               |
 | Amp        | AD Clean           | ADClean           | Gain                    | Treble                  | Middle              | Bass           | Volume       |             |                     |                               |
@@ -177,18 +211,18 @@ This data can be used to build own presets in JSON format `(to be described late
 | Modulation | Flanger            | Flanger           | Rate                    | Mix                     | Depth               |                |              |             |                     |                               |
 | Modulation | Phaser             | Phaser            | Speed                   | Intensity               |                     |                |              |             |                     |                               |
 | Modulation | Vibrato            | Vibrato01         | Speed                   | Depth                   |                     |                |              |             |                     |                               |
-| Modulation | UniVibe            | UniVibe           | Speed                   | Vibrato/Chorus (Switch) | Intensity           |                |              |             |                     |                               |
-| Modulation | Cloner Chorus      | Cloner            | Rate                    | Depth (Switch)          |                     |                |              |             |                     |                               |
+| Modulation | UniVibe            | UniVibe           | Speed                   | Vibrato/Chorus `Switch` | Intensity           |                |              |             |                     |                               |
+| Modulation | Cloner Chorus      | Cloner            | Rate                    | Depth `Switch`          |                     |                |              |             |                     |                               |
 | Modulation | Classic Vibe       | MiniVibe          | Speed                   | Intensity               |                     |                |              |             |                     |                               |
-| Modulation | Tremolator         | Tremolator        | Depth                   | Speed                   | BPM On/Off (Switch) |                |              |             |                     |                               |
+| Modulation | Tremolator         | Tremolator        | Depth                   | Speed                   | BPM On/Off `Switch` |                |              |             |                     |                               |
 | Modulation | Tremolo Square     | TremoloSquare     | Speed                   | Depth                   | Level               |                |              |             |                     |                               |
 | Modulation | Guitar EQ          | GuitarEQ6         | Level                   | 100                     | 200                 | 400            | 800          | 1.6k        | 3.2k                |                               |
 | Modulation | Bass EQ            | BassEQ6           | Level                   | 50                      | 120                 | 400            | 800          | 4.5k        | 10k                 |                               |
-| Delay      | Digital Delay      | DelayMono         | E.Level                 | Feedback                | DelayTime           | Mode           | BPM (Switch) |             |                     | Modes: 0.3 - 0.4 - 0.6 - 0.72 |
-| Delay      | Echo Filt          | DelayEchoFilt     | Delay                   | Feedback                | Level               | Tone           | BPM (Switch) |             |                     |                               |
-| Delay      | Vintage Delay      | VintageDelay      | Repeat Rate             | Intensity               | Echo                | BPM (Switch)   |              |             |                     |                               |
-| Delay      | Reverse Delay      | DelayReverse      | Mix                     | Decay                   | Filter              | Time           | BPM (Switch) |             |                     |                               |
-| Delay      | Multi Head         | DelayMultiHead    | Repeat Rate             | Intensity               | Echo Volume         | Mode Selector  | BPM (Switch) |             |                     | Modes: 0 - 0.35 - 0.65 - 0.95 |
+| Delay      | Digital Delay      | DelayMono         | E.Level                 | Feedback                | DelayTime           | Mode           | BPM `Switch` |             |                     | Modes: 0.3 (50ms) - 0.4 (200ms) - 0.6 (500ms) - 0.72 (1s) |
+| Delay      | Echo Filt          | DelayEchoFilt     | Delay                   | Feedback                | Level               | Tone           | BPM `Switch` |             |                     |                               |
+| Delay      | Vintage Delay      | VintageDelay      | Repeat Rate             | Intensity               | Echo                | BPM `Switch`   |              |             |                     |                               |
+| Delay      | Reverse Delay      | DelayReverse      | Mix                     | Decay                   | Filter              | Time           | BPM `Switch` |             |                     |                               |
+| Delay      | Multi Head         | DelayMultiHead    | Repeat Rate             | Intensity               | Echo Volume         | Mode Selector  | BPM `Switch` |             |                     | Modes: 0 (Head 1) - 0.35 (Head 2) - 0.65 (Head 3) - 0.95 (Head 4) |
 | Delay      | Echo Tape          | DelayRe201        | Sustain                 | Volume                  | Tone                | Short/Long     |              |             |                     |                               |
 | Reverb     | Room Studio A      | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.0                           |
 | Reverb     | Room Studio B      | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.1                           |
