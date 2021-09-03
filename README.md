@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="460" height="300" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
+  <img width="484" height="176" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
 </p>
 
 # Sparky
