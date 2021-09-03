@@ -1,5 +1,5 @@
 # Sparky
-An ESP32 based footswitch to communicate with the Spark Amp via Bluetooth LE.
+An ESP32 based foot pedal to communicate with the Spark Amp via Bluetooth LE.
 
 Sparky gives you full control over your presets:
 * Switch between the four **hardware presets**
@@ -8,16 +8,17 @@ Sparky gives you full control over your presets:
 * **Load new presets** via the Spark App
 * **Delete** stored presets
 
-Adding new presets to Sparky can easily be done as it can also act as a Spark Amp. So simply connect to Sparky with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Sparky. 
+Adding new presets to Sparky can easily be done as it can also act as a Spark Amp. Simply connect to Sparky with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Sparky. 
 
 One big advantage of Sparky is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
 This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
 
-The current active preset and effects are indicated via LEDs. In addition, the built-in display provides information on
-* selected bank / preset number
+The current active preset and effects are indicated via LEDs.\
+In addition, the **built-in display** provides information on
+* selected bank and preset number
 * selected preset name
 * activated pedal types in the FX chain
-* Connection status to Spark Amp and Spark App
+* connection status to Spark Amp and Spark App
 
 
 ## Operation modes
@@ -28,15 +29,15 @@ To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). Modes can easily be switched by long pressing the `Bank-Up` button.
-When selecting Preset mode, four buttons are used to select presets. The other two buttons can be used to navigate through different preset banks. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
-In FX mode, the user has direct access to all effects of the selected preset. 
+When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a big number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
+In **FX mode**, the user has direct access to all effects of the selected preset. 
 Each switch controls a different FX pedal type:
 
 
-### Function of switches:
+### Button commands in APP mode:
 
 #### Preset mode
-|Switch      | Press pattern | Function           |
+|Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
 |`Bank down` | Short         | Navigate bank up   |
 |`Bank up`   | Short         | Navigate bank down |
@@ -49,7 +50,7 @@ Each switch controls a different FX pedal type:
 
 
 #### FX mode
-|Switch      | Press pattern | Function              |
+|Button      | Press pattern | Function              |
 |----------- | :-----------: | --------------------- |
 |`Bank down` | Short         | Noise Gate            |
 |`Bank up`   | Short         | Compressor            |
@@ -86,7 +87,8 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 (Hitting any other `Preset`/`Bank` button will revert the state back to navigating)
 9. The preset will be entered in the selected position, other presets will be pushed back
 
-| Switch     | Press pattern | Function                        | Remark |
+##### Button commands (case: preset has been received from Spark app)
+| Button     | Press pattern | Function                        | Remark |
 | ---------- | :-----------: | ------------------------------- | ------ |
 |`Bank down` | Short         | Navigate bank up                |        |
 |`Bank up`   | Short         | Navigate bank down              |        |
@@ -102,11 +104,13 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
 4. The LED of the selected preset should start blinking
-5. In the display you should see a message that deletion is prepared
-6. **Long press** the `Bank Down` button again to confirm deletion.
+5. In the display you should see a prompt if deletion should be executed
+6. If you want to cancel the deletion, simply short press any other button
+7. Otherwise, **long press** the `Bank Down` button again to confirm deletion.
 (Hitting any other button will cancel the deletion and return back to navigation)
 
-| Switch     | Press pattern | Function                 | Remark |
+##### Button commands (case: no preset has been received, slot is empty)
+| Button     | Press pattern | Function                 | Remark |
 | ---------- | :-----------: | ------------------------ | ------ |
 |`Bank down` | Short         | Navigate bank up         |        |
 |`Bank up`   | Short         | Navigate bank down       |        |
@@ -233,3 +237,7 @@ Parameters marked with `Switch` can only have values of 0 or 1.
 | Reverb     | Plate Short        | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.6                           |
 | Reverb     | Plate Rich         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.7                           |
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
+
+# The code
+
+
