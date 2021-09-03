@@ -111,7 +111,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
 |`Preset 2`  | Long          | Restart Sparky                  |        |
 
-### Deleting a preset (only possible with no preset from the app loaded)
+### Deleting a preset (only possible when no preset from the app loaded)
 1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
 2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
