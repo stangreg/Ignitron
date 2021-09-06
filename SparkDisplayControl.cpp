@@ -52,7 +52,7 @@ void SparkDisplayControl::init(int mode) {
 }
 
 void SparkDisplayControl::showInitialMessage() {
-	display.drawBitmap(0, 0, epd_bitmap_Sparky_Logo, 128, 47,
+	display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
 	SSD1306_WHITE);
 	display.setTextSize(2);
 

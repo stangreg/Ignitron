@@ -10,8 +10,8 @@
 #include "SparkDisplayControl.h"
 
 // Device Info Definitions
-const std::string DEVICE_NAME = "SparkBLE";
-const std::string VERSION = "0.5";
+const std::string DEVICE_NAME = "Ignitron";
+const std::string VERSION = "1.0";
 
 // Control classes
 SparkDataControl *spark_dc;
@@ -37,9 +37,7 @@ void setup() {
 
 	Serial.println("Initializing");
 	spark_dc = new SparkDataControl();
-
 	spark_bh = new SparkButtonHandler(spark_dc);
-
 	operationMode = spark_bh->init();
 	if (operationMode == SPARK_MODE_APP) {
 		Serial.println("======= Entering APP mode =======");
@@ -53,7 +51,7 @@ void setup() {
 	spark_display->init(operationMode);
 
 	// Assigning data control to buttons;
-	spark_bh->dataControl(spark_dc);
+	spark_bh->setDataControl(spark_dc);
 
 	// Initializing control classes
 	spark_led = new SparkLEDControl(spark_dc);
