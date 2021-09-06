@@ -1,19 +1,19 @@
 <p align="center">
-  <img width="387" height="141" src="https://github.com/stangreg/SparkBLE/blob/main/Sparky_logo_large.png">
+  <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/Ignitron_logo_large.png">
 </p>
 
 An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
 
-Sparky gives you full control over your Spark Amp:
+Ignitron gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
 * **Activate / Deactivate effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
 
-Adding new presets to Sparky can easily be done as it can also act as a Spark Amp. Simply connect to Sparky with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Sparky. 
+Adding new presets to Ignitron can easily be done as it can also act as a Spark Amp. Simply connect to Ignitron with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to Ignitron. 
 
-One big advantage of Sparky is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
+One big advantage of Ignitron is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
 This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
 
 The current active preset and effects are indicated via LEDs.\
@@ -36,9 +36,9 @@ In addition, the **built-in display** provides information on
 
 
 ## Operation modes
-Sparky has two operation modes, **APP mode** and **AMP mode**.\
-In **APP mode** (default mode on startup), Sparky connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
-**AMP mode** can be used to manage the presets stored on Sparky, presets can be added from the app or be deleted from Sparky.\
+Ignitron has two operation modes, **APP mode** and **AMP mode**.\
+In **APP mode** (default mode on startup), Ignitron connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
+**AMP mode** can be used to manage the presets stored on Ignitron, presets can be added from the app or be deleted from Ignitron.\
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
@@ -60,7 +60,7 @@ Each switch controls a different FX pedal type:
 |`Preset 3`  | Short         | Select preset 3    |
 |`Preset 4`  | Short         | Select preset 4    | 
 |`Bank up`   | Long          | Switch to FX mode  |
-|`Preset 2`  | Long          | Restart Sparky     |
+|`Preset 2`  | Long          | Restart Ignitron     |
 
 
 #### FX mode
@@ -73,26 +73,26 @@ Each switch controls a different FX pedal type:
 |`Preset 3`  | Short         | Delay                 |
 |`Preset 4`  | Short         | Reverb                | 
 |`Bank up`   | Long          | Switch to Preset mode |
-|`Preset 2`  | Long          | Restart Sparky        |
+|`Preset 2`  | Long          | Restart Ignitron        |
 
 -----------------------------------------------------------------
 
 ## AMP mode
-In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on Sparky and existing presets can be deleted.
+In AMP mode, Ignitron acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on Ignitron and existing presets can be deleted.
 
-### Connecting the Spark app with Sparky
-1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
+### Connecting the Spark app with Ignitron
+1. Start Ignitron in AMP mode (hold `Preset 1` button during startup).
 2. Open the Spark App on the mobile
 3. For the first connection, make sure to have your real Spark Amp powered off to avoid the app conneting to it.
 4. Hit the connect button in the app (or the + button in the connection overview)
 5. Once the connection is established, you can give the connection a name in the app so you can distinguish from your regular Spark Amp connection.
 
 ### Storing a new preset (a preset from the app needs to be loaded)
-1. Start Sparky in AMP mode (hold Preset 1 button during startup).
-2. Connect the Spark App with Sparky (see above)
+1. Start Ignitron in AMP mode (hold Preset 1 button during startup).
+2. Connect the Spark App with Ignitron (see above)
 3. Select a preset in the app (either saved in the app or from the ToneCloud).
 4. The preset name should appear in the bottom line of the display
-5. The `Preset`/`Bank` buttons on Sparky can be used to navigate to the  desired preset position. 
+5. The `Preset`/`Bank` buttons on Ignitron can be used to navigate to the  desired preset position. 
 6. Press the `Preset` button to mark the position for storing
 7. The LED of the selected preset position should start blinking
 8. Hit the same `Preset` button a second time to confirm storage
@@ -109,11 +109,11 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Preset 3`  | Short         | Select preset 3                 | *Press twice to store received preset* |
 |`Preset 4`  | Short         | Select preset 4                 | *Press twice to store received preset* |
 |`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
-|`Preset 2`  | Long          | Restart Sparky                  |        |
+|`Preset 2`  | Long          | Restart Ignitron                  |        |
 
 ### Deleting a preset (only possible when no preset from the app is loaded)
-1. Start Sparky in AMP mode (hold `Preset 1` button during startup).
-2. Use the `Preset`/`Bank` buttons on Sparky to navigate to the desired preset position
+1. Start Ignitron in AMP mode (hold `Preset 1` button during startup).
+2. Use the `Preset`/`Bank` buttons on Ignitron to navigate to the desired preset position
 3. **Long press** the `Bank Down` button to mark the selected preset for deletion
 4. The LED of the selected preset should start blinking
 5. In the display you should see a prompt if deletion should be executed
@@ -132,7 +132,7 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 |`Preset 4`  | Short         | Select preset 4          |        |
 |`Bank down` | Long          | Mark preset for deletion | *Pressing any other button in that state will cancel the deletion* |
 |`Bank down` | Long          | Delete marked preset     | *Only if preset was first marked for deletion* |
-|`Preset 2`  | Long          | Restart Sparky           |        |
+|`Preset 2`  | Long          | Restart Ignitron           |        |
 
 -------------------------------------------------------
 
@@ -143,10 +143,10 @@ In AMP mode, Sparky acts like a Spark AMP and can communicate with the Spark app
 3. Put the file name into the **data folder**
 4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
 5. *Place the PresetList.txt file into the data folder (if not already there)*
-6. **Upload the data folder** to Sparky via the Arduino IDE (or other tools) 
+6. **Upload the data folder** to Ignitron via the Arduino IDE (or other tools) 
 
 #### Preset format
-Sparky stores presets in a JSON format using the SPIFFS file system.
+Ignitron stores presets in a JSON format using the SPIFFS file system.
 Each preset is stored in a separate file and presets are organized in a separate text file called 'PresetList.txt'. This list simply stored the file names of the presets, the order defines the way the banks are filled.
 An example preset file would look like this:
 ```
