@@ -171,7 +171,7 @@ In order to know which effects are available with paramters, see below table.
 This data can be used to build own presets in JSON format (see above).
 Parameters marked with `Switch` can only have values of 0 or 1.
 
-| Type       | App Name           | Technical Name    | Parameter 0             | Parameter 1             | Parameter 2         | Parameter 3    | Parameter 4  | Parameter 5 | Parameter 6         | Extra Info                    |
+| Type       | App Name           | Technical Name    | Parameter 0             | Parameter 1             | Parameter 2         | Parameter 3    | Parameter&nbsp;4  | Parameter 5 | Parameter 6         | Extra Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
 | Noise Gate | Noise Gate         | bias.noisegate    | Threshold               | Decay                   |                     |                |              |             |                     |                               |
 | Compressor | LA Comp            | LA2AComp          | Limit/Compress `Switch` | Gain                    | Peak Reduction      |                |              |             |                     |                               |
