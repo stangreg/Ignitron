@@ -12,11 +12,11 @@
 #include "SparkDataControl.h"
 
 // GPIOs
-#define LED_PRESET1_GPIO 23
-#define LED_DRIVE_GPIO 23
+#define LED_PRESET1_GPIO 27
+#define LED_DRIVE_GPIO 27
 
-#define LED_PRESET2_GPIO 17
-#define LED_MOD_GPIO 17
+#define LED_PRESET2_GPIO 13
+#define LED_MOD_GPIO 13
 
 #define LED_PRESET3_GPIO 16
 #define LED_DELAY_GPIO 16
@@ -24,11 +24,11 @@
 #define LED_PRESET4_GPIO 14
 #define LED_REVERB_GPIO 14
 
-#define LED_BANK_DOWN_GPIO 27
-#define LED_NOISEGATE_GPIO 27
+#define LED_BANK_DOWN_GPIO 23
+#define LED_NOISEGATE_GPIO 23
 
-#define LED_BANK_UP_GPIO 13
-#define LED_COMP_GPIO 13
+#define LED_BANK_UP_GPIO 17
+#define LED_COMP_GPIO 17
 
 class SparkLEDControl {
 public:
