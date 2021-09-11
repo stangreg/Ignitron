@@ -105,7 +105,8 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				} else if (pressed_btn_gpio == BUTTON_PRESET4_GPIO) {
 					selectedPresetNum = 4;
 				}
-				if (operationMode == SPARK_MODE_APP || SPARK_MODE_LOOPER) {
+				if (operationMode == SPARK_MODE_APP
+						|| operationMode == SPARK_MODE_LOOPER) {
 					Serial.println("Switching preset");
 					spark_dc->switchPreset(selectedPresetNum);
 				} else if (operationMode == SPARK_MODE_AMP) { // AMP mode

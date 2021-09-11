@@ -45,7 +45,7 @@ void SparkDataControl::init(int opMode) {
 	presetBuilder.initializePresetListFromFS();
 	if (operationMode_ == SPARK_MODE_APP) {
 		// initialize BLE
-		bleKeyboard.setName("Spark 40 BLE");
+		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
 		bleControl.initBLE(&notifyCB);
 
