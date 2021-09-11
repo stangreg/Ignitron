@@ -31,7 +31,7 @@ SparkBLEControl::~SparkBLEControl() {
 
 // Initializing BLE connection with NimBLE
 void SparkBLEControl::initBLE(notify_callback notifyCallback) {
-	NimBLEDevice::init("");
+	//NimBLEDevice::init("");
 	notifyCB = notifyCallback;
 
 	/** Optional: set the transmit power, default is 3db */
@@ -65,20 +65,6 @@ void SparkBLEControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
 
 void SparkBLEControl::scanEndedCB(NimBLEScanResults results) {
 	Serial.println("Scan ended.");
-
-	/*if (isConnectionFound()) {
-	 if (connectToServer()) {
-	 subscribeToNotifications();
-	 Serial.println("BLE connection to Spark established.");
-	 } else {
-	 Serial.println("Failed to connect, starting scan");
-	 initScan();
-
-	 }
-	 } else {
-	 Serial.println("Failed to connect, starting scan");
-	 initScan();
-	 }*/
 }
 
 void SparkBLEControl::initScan() {
@@ -514,4 +500,20 @@ void SparkBLEControl::stopScan() {
 		Serial.print("Scan is not running");
 	}
 
+}
+
+int SparkBLEControl::disconnectClient() {
+	if (pClient) {
+		return pClient->disconnect();
+	}
+	return -1;
+}
+
+void SparkBLEControl::deinit(bool remove) {
+	if (pServer || pClient) {
+		NimBLEDevice::deinit(remove);
+	}
+	else {
+		Serial.println("Nothing to deinit");
+	}
 }

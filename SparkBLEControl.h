@@ -11,6 +11,7 @@
 #include <NimBLEDevice.h>
 #include <Arduino.h>
 #include <vector>
+#include <BleKeyboard.h>
 
 #include "SparkDataControl.h"
 
@@ -43,6 +44,7 @@ public:
 		return isAppConnected_;
 	}
 	bool connectToServer();
+	int disconnectClient();
 	bool subscribeToNotifications(notify_callback notifyCallback = nullptr);
 	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
 	void initBLE(notify_callback notifyCallback = nullptr);
@@ -56,6 +58,8 @@ public:
 	void startServer();
 	void notifyClients(ByteVector msg);
 	void sendInitialNotification();
+
+	void deinit(bool remove = false);
 
 private:
 

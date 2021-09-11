@@ -39,7 +39,7 @@ public:
 	virtual ~SparkButtonHandler();
 
 	void readButtons();
-	int init();
+	static int init(bool startup = true);
 	SparkDataControl* dataControl() {
 		return spark_dc;
 	}
@@ -63,6 +63,10 @@ private:
 	static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnResetHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
+	static void btnKeyboardHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
+	static void btnToggleLoopHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
 };
 

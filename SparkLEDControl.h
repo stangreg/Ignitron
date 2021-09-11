@@ -44,6 +44,10 @@ private:
 	void init();
 	SparkDataControl* spark_dc;
 
+	int operationMode;
+	Preset *activePreset;
+	int activePresetNum;
+
 	int delayTimeMs = 100;
 	// For blinking mode
 	int ledState = LOW;             // ledState used to set the LED
@@ -51,7 +55,12 @@ private:
 	// The value will quickly become too large for an int to store
 	unsigned long previousMillis = 0;        // will store last time LED was updated
 	// constants won't change:
-	const long interval = 100;           // interval at which to blink (milliseconds)
+	const long interval = 100; // interval at which to blink (milliseconds)
+
+	void updateLED_APP_PresetMode();
+	void updateLED_APP_FXMode();
+	void updateLED_AMP();
+	void updateLED_LOOPER();
 
 
 };

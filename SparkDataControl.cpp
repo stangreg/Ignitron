@@ -28,7 +28,7 @@ int SparkDataControl::activePresetNum_ = 1;
 std::string SparkDataControl::responseMsg_ = "";
 
 std::vector<ByteVector> SparkDataControl::ack_msg;
-int SparkDataControl::operationMode_ = SPARK_MODE_AMP;
+int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
 
 SparkDataControl::SparkDataControl() {
@@ -39,13 +39,16 @@ SparkDataControl::~SparkDataControl() {
 	// TODO Auto-generated destructor stub
 }
 
-void SparkDataControl::init(int op_mode) {
+void SparkDataControl::init(int opMode) {
+	operationMode_ = opMode;
 	// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
-	operationMode_ = op_mode;
 	if (operationMode_ == SPARK_MODE_APP) {
 		// initialize BLE
+		bleKeyboard.setName("Spark 40 BLE");
+		bleKeyboard.begin();
 		bleControl.initBLE(&notifyCB);
+
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
@@ -54,6 +57,11 @@ void SparkDataControl::init(int op_mode) {
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
 	}
+
+}
+
+void SparkDataControl::switchOperationMode(int opMode) {
+	operationMode_ = opMode;
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
@@ -96,43 +104,7 @@ bool SparkDataControl::checkBLEConnection() {
 	return false;
 }
 
-/*		if (bleControl.isConnectionFound()) {
- if (bleControl.connectToServer()) {
- bleControl.subscribeToNotifications(&notifyCB);
- Serial.println("BLE connection to Spark established.");
- startup = false;
- return true;
- } else {
- Serial.println("Failed to connect, starting scan");
- bleControl.initScan(onScanEnded);
- startup = true;
- return false;
- }
- }
- }
- return false;
- }*/
 
-/*
- void SparkDataControl::onScanEnded(NimBLEScanResults results) {
- Serial.println("Scan ended DC");
- if (bleControl.isConnectionFound()) {
- if (bleControl.connectToServer()) {
- bleControl.subscribeToNotifications(&notifyCB);
- Serial.println("BLE connection to Spark established.");
-
- } else {
- Serial.println("Failed to connect, starting scan");
- bleControl.initScan();
-
- }
- } else {
- Serial.println("Failed to connect, starting scan");
- bleControl.initScan();
-
- }
- }
- */
 Preset SparkDataControl::getPreset(int bank, int pre) {
 	return presetBuilder.getPreset(bank, pre);
 }
@@ -219,7 +191,7 @@ void SparkDataControl::updatePendingWithActiveBank() {
 bool SparkDataControl::switchPreset(int pre) {
 	bool retValue = false;
 	int bnk = pendingBank_;
-	if (operationMode_ == SPARK_MODE_APP) {
+	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 		if (pre == activePresetNum_ && activeBank_ == pendingBank_
 				&& !(activePreset_.isEmpty)) {
 			Pedal drivePedal = activePreset_.pedals[2];
@@ -390,4 +362,14 @@ void SparkDataControl::setPresetDeletionFlag() {
 
 void SparkDataControl::updateActiveWithPendingPreset() {
 	activePreset_ = pendingPreset_;
+}
+
+void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
+	if (bleKeyboard.isConnected()) {
+		bleKeyboard.write(c);
+	}
+	else {
+		Serial.println("Keyboard not connected");
+	}
+
 }

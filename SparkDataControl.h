@@ -8,6 +8,8 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
+#include <BleKeyboard.h>>
+
 #include <vector>
 #include <Arduino.h>
 
@@ -23,6 +25,7 @@
 
 #define SPARK_MODE_APP 1
 #define SPARK_MODE_AMP 2
+#define SPARK_MODE_LOOPER 3
 
 #define PRESET_EDIT_NONE 0
 #define PRESET_EDIT_STORE 1
@@ -98,7 +101,10 @@ public:
 	const Preset* appReceivedPreset() const {
 		return &appReceivedPreset_;
 	}
-	const int operationMode() const {
+	const int& operationMode() const {
+		return operationMode_;
+	}
+	int& operationMode() {
 		return operationMode_;
 	}
 	const int presetNumToEdit() const {
@@ -127,6 +133,10 @@ public:
 	void processPresetEdit(int presetNum = 0);
 	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
 	void resetPresetEditResponse();
+	void switchOperationMode(int opMode);
+
+	// Functions for Looper mode
+	void sendButtonPressAsKeyboard(uint8_t c);
 
 private:
 	static int operationMode_;
@@ -136,6 +146,8 @@ private:
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
+
+	BleKeyboard bleKeyboard;
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;

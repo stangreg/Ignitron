@@ -61,6 +61,8 @@ void SparkDisplayControl::showInitialMessage() {
 		modeText = "APP mode";
 	} else if (opMode == SPARK_MODE_AMP) {
 		modeText = "AMP mode";
+	} else if (opMode == SPARK_MODE_LOOPER) {
+		modeText = "LOOPER";
 	}
 	drawCentreString(modeText.c_str(), display.width() / 2, 49);
 }
@@ -87,6 +89,11 @@ void SparkDisplayControl::showBankAndPresetNum() {
 	}
 	if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
 		presetText = "*";
+	}
+	if (opMode == SPARK_MODE_LOOPER) {
+		// If in Looper mode, show an "L" for Looper mode
+		presetText = "L";
+
 	}
 	presetText += selPresetStr.str();
 	display.print(presetText.c_str());
@@ -177,7 +184,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 		} else {
 			secondaryLineText = "Select preset";
 		}
-	} else if (opMode == SPARK_MODE_APP) {
+	} else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
 		// Build string to show active FX
 		secondaryLinePreset = primaryLinePreset;
 		std::string currPedalStatus;
@@ -214,7 +221,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 	if (opMode == SPARK_MODE_APP) {
 		drawCentreString(secondaryLineText.c_str(), display.width() / 2, 49);
 		//display.setCursor(-6, 49);
-	} else {
+	} else if (opMode == SPARK_MODE_AMP) {
 		display.setCursor(display_x2, 49);
 		display.print(secondaryLineText.c_str());
 	}
@@ -239,7 +246,7 @@ void SparkDisplayControl::showConnection() {
 void SparkDisplayControl::update(bool isInitBoot) {
 
 	display.clearDisplay();
-	if (opMode == SPARK_MODE_APP && isInitBoot) {
+	if ((opMode == SPARK_MODE_APP && isInitBoot)) {
 		showInitialMessage();
 	} else {
 		display.setTextWrap(false);
@@ -252,6 +259,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		presetFromApp = spark_dc->appReceivedPreset();
 		presetEditMode = spark_dc->presetEditMode();
 		isConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
+		opMode = spark_dc->operationMode();
 
 		showConnection();
 		showBankAndPresetNum();

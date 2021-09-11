@@ -30,6 +30,7 @@ int operationMode = SPARK_MODE_APP;
 /////////////////////////////////////////////////////////
 
 void setup() {
+	//delay(2000);
 	isInitBoot = true;
 	Serial.begin(115200);
 	while (!Serial)
@@ -41,7 +42,7 @@ void setup() {
 	operationMode = spark_bh->init();
 	if (operationMode == SPARK_MODE_APP) {
 		Serial.println("======= Entering APP mode =======");
-	} else {
+	} else if (operationMode == SPARK_MODE_AMP) {
 		Serial.println("======= Entering AMP mode =======");
 	}
 	spark_display = new SparkDisplayControl(spark_dc);
