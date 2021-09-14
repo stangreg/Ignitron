@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SparkBLE: SparkBLEControl Class Reference</title>
+<title>Ignitron: SparkBLEControl Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,9 +25,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SparkBLE<span id="projectnumber">&#160;0.8</span>
+   <div id="projectname">Ignitron
    </div>
-   <div id="projectbrief">ESP32 program to control the Positive Grid Spark Amp</div>
   </td>
  </tr>
  </tbody>
@@ -95,11 +94,25 @@ $(document).ready(function(){initNavTree('class_spark_b_l_e_control.html',''); i
 Inheritance diagram for SparkBLEControl:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_spark_b_l_e_control__inherit__graph.png" border="0" usemap="#a_spark_b_l_e_control_inherit__map" alt="Inheritance graph"/></div>
+<map name="a_spark_b_l_e_control_inherit__map" id="a_spark_b_l_e_control_inherit__map">
+<area shape="rect" title=" " alt="" coords="285,81,411,108"/>
+<area shape="rect" title=" " alt="" coords="5,5,237,32"/>
+<area shape="rect" title=" " alt="" coords="16,56,227,83"/>
+<area shape="rect" title=" " alt="" coords="37,107,205,133"/>
+<area shape="rect" title=" " alt="" coords="40,157,203,184"/>
+</map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for SparkBLEControl:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_spark_b_l_e_control__coll__graph.png" border="0" usemap="#a_spark_b_l_e_control_coll__map" alt="Collaboration graph"/></div>
+<map name="a_spark_b_l_e_control_coll__map" id="a_spark_b_l_e_control_coll__map">
+<area shape="rect" title=" " alt="" coords="285,81,411,108"/>
+<area shape="rect" title=" " alt="" coords="5,5,237,32"/>
+<area shape="rect" title=" " alt="" coords="16,56,227,83"/>
+<area shape="rect" title=" " alt="" coords="37,107,205,133"/>
+<area shape="rect" title=" " alt="" coords="40,157,203,184"/>
+</map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -111,24 +124,43 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a146f9ca774939f3890003f32aa0ac9d9"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a146f9ca774939f3890003f32aa0ac9d9">~SparkBLEControl</a> ()</td></tr>
 <tr class="separator:a146f9ca774939f3890003f32aa0ac9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cb06df732fb1dd7bb74fb8d22be3c46"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a5cb06df732fb1dd7bb74fb8d22be3c46">isConnectionFound</a> () const</td></tr>
+<tr class="memdesc:a5cb06df732fb1dd7bb74fb8d22be3c46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a Spark amp has been found to connect.  <a href="class_spark_b_l_e_control.html#a5cb06df732fb1dd7bb74fb8d22be3c46">More...</a><br /></td></tr>
 <tr class="separator:a5cb06df732fb1dd7bb74fb8d22be3c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09ab2d543cbd5864281ff9fc62b3fa79"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a09ab2d543cbd5864281ff9fc62b3fa79">isConnected</a> () const</td></tr>
-<tr class="separator:a09ab2d543cbd5864281ff9fc62b3fa79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8283cf9af54fc2de8091c9bd312ce071"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a8283cf9af54fc2de8091c9bd312ce071">isAmpConnected</a> () const</td></tr>
+<tr class="memdesc:a8283cf9af54fc2de8091c9bd312ce071"><td class="mdescLeft">&#160;</td><td class="mdescRight">To check if Ignitron is connected to the Spark Amp.  <a href="class_spark_b_l_e_control.html#a8283cf9af54fc2de8091c9bd312ce071">More...</a><br /></td></tr>
+<tr class="separator:a8283cf9af54fc2de8091c9bd312ce071"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd96121fe34606f8486a7e80c1b0300"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a9fd96121fe34606f8486a7e80c1b0300">isAppConnected</a> () const</td></tr>
+<tr class="memdesc:a9fd96121fe34606f8486a7e80c1b0300"><td class="mdescLeft">&#160;</td><td class="mdescRight">To check if the Spark App is connected to Ignitron.  <a href="class_spark_b_l_e_control.html#a9fd96121fe34606f8486a7e80c1b0300">More...</a><br /></td></tr>
+<tr class="separator:a9fd96121fe34606f8486a7e80c1b0300"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8064d2e4673a20cb21c5c8970339b3ad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a8064d2e4673a20cb21c5c8970339b3ad">connectToServer</a> ()</td></tr>
+<tr class="memdesc:a8064d2e4673a20cb21c5c8970339b3ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiates connection to the Spark Amp.  <a href="class_spark_b_l_e_control.html#a8064d2e4673a20cb21c5c8970339b3ad">More...</a><br /></td></tr>
 <tr class="separator:a8064d2e4673a20cb21c5c8970339b3ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a432b0b9efc5c94340ef76c95f2e5b89e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a432b0b9efc5c94340ef76c95f2e5b89e">subscribeToNotifications</a> (notify_callback notifyCallback=nullptr)</td></tr>
+<tr class="memdesc:a432b0b9efc5c94340ef76c95f2e5b89e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe to notifications from Spark Amp.  <a href="class_spark_b_l_e_control.html#a432b0b9efc5c94340ef76c95f2e5b89e">More...</a><br /></td></tr>
 <tr class="separator:a432b0b9efc5c94340ef76c95f2e5b89e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff9085c1d7216700f4aa726db79a063a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#aff9085c1d7216700f4aa726db79a063a">writeBLE</a> (std::vector&lt; <a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a> &gt; cmd, bool response=false)</td></tr>
+<tr class="memdesc:aff9085c1d7216700f4aa726db79a063a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send messages via BLE to Spark Amp or App.  <a href="class_spark_b_l_e_control.html#aff9085c1d7216700f4aa726db79a063a">More...</a><br /></td></tr>
 <tr class="separator:aff9085c1d7216700f4aa726db79a063a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba9084a82e8829c039cd7aca3348f7c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#aba9084a82e8829c039cd7aca3348f7c2">initBLE</a> ()</td></tr>
-<tr class="separator:aba9084a82e8829c039cd7aca3348f7c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac69bc6917d49dc7ebe001a5d567e11e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#ac69bc6917d49dc7ebe001a5d567e11e2">initScan</a> ()</td></tr>
-<tr class="separator:ac69bc6917d49dc7ebe001a5d567e11e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89d606d37709461b313a4c8cf2cb84d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a89d606d37709461b313a4c8cf2cb84d3">initBLE</a> (notify_callback notifyCallback=nullptr)</td></tr>
+<tr class="memdesc:a89d606d37709461b313a4c8cf2cb84d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes Ignitron BLE as client to connect to the Spark Amp.  <a href="class_spark_b_l_e_control.html#a89d606d37709461b313a4c8cf2cb84d3">More...</a><br /></td></tr>
+<tr class="separator:a89d606d37709461b313a4c8cf2cb84d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48401d0946f87c7e226c4eb70dce9c5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a48401d0946f87c7e226c4eb70dce9c5c">startScan</a> ()</td></tr>
+<tr class="memdesc:a48401d0946f87c7e226c4eb70dce9c5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts a scan for servers to connect to.  <a href="class_spark_b_l_e_control.html#a48401d0946f87c7e226c4eb70dce9c5c">More...</a><br /></td></tr>
+<tr class="separator:a48401d0946f87c7e226c4eb70dce9c5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08fe5e999b760004093c2df10a426134"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a08fe5e999b760004093c2df10a426134">isScanning</a> () const</td></tr>
+<tr class="memdesc:a08fe5e999b760004093c2df10a426134"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a scan is currently running.  <a href="class_spark_b_l_e_control.html#a08fe5e999b760004093c2df10a426134">More...</a><br /></td></tr>
+<tr class="separator:a08fe5e999b760004093c2df10a426134"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa279f646c79f5735b4caaa74c665e264"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#aa279f646c79f5735b4caaa74c665e264">stopScan</a> ()</td></tr>
+<tr class="memdesc:aa279f646c79f5735b4caaa74c665e264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops a running scan.  <a href="class_spark_b_l_e_control.html#aa279f646c79f5735b4caaa74c665e264">More...</a><br /></td></tr>
+<tr class="separator:aa279f646c79f5735b4caaa74c665e264"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a062a5d911df989d81806312968850b5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a062a5d911df989d81806312968850b5d">startServer</a> ()</td></tr>
+<tr class="memdesc:a062a5d911df989d81806312968850b5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts Ignitron BLE as server.  <a href="class_spark_b_l_e_control.html#a062a5d911df989d81806312968850b5d">More...</a><br /></td></tr>
 <tr class="separator:a062a5d911df989d81806312968850b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a064664de844bab60230ee276c3502ab1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#a064664de844bab60230ee276c3502ab1">notifyClients</a> (<a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a> msg)</td></tr>
+<tr class="memdesc:a064664de844bab60230ee276c3502ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notifies Spark App for any new messages.  <a href="class_spark_b_l_e_control.html#a064664de844bab60230ee276c3502ab1">More...</a><br /></td></tr>
 <tr class="separator:a064664de844bab60230ee276c3502ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adaa43d506b8c9203d1a1772fed16aeea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_b_l_e_control.html#adaa43d506b8c9203d1a1772fed16aeea">sendInitialNotification</a> ()</td></tr>
+<tr class="memdesc:adaa43d506b8c9203d1a1772fed16aeea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a series of initial notifications to the Spark App during initiation.  <a href="class_spark_b_l_e_control.html#adaa43d506b8c9203d1a1772fed16aeea">More...</a><br /></td></tr>
 <tr class="separator:adaa43d506b8c9203d1a1772fed16aeea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -207,6 +239,10 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Initiates connection to the Spark Amp. </p>
+<p >After a connection has been found, this function can be used to establish a connection to the Spark Amp</p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if connection was successful </dd></dl>
 <p >Check if we have a client we should reuse first</p>
 <p >Special case when we already know this device, we send false as the second argument in connect() to prevent refreshing the service database. This saves considerable time and power.</p>
 <p >We don't already have a client that knows this device, we will check for a client that is disconnected that we can use.</p>
@@ -217,8 +253,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aba9084a82e8829c039cd7aca3348f7c2" name="aba9084a82e8829c039cd7aca3348f7c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba9084a82e8829c039cd7aca3348f7c2">&#9670;&nbsp;</a></span>initBLE()</h2>
+<a id="a89d606d37709461b313a4c8cf2cb84d3" name="a89d606d37709461b313a4c8cf2cb84d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89d606d37709461b313a4c8cf2cb84d3">&#9670;&nbsp;</a></span>initBLE()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,11 +262,21 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void SparkBLEControl::initBLE </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">notify_callback&#160;</td>
+          <td class="paramname"><em>notifyCallback</em> = <code>nullptr</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Initializes Ignitron BLE as client to connect to the Spark Amp. </p>
+<p >Sets up the BLE connection and initiates a scan for the Spark Amp. When servers have been found, the notifyCallback function is called back.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">notifyCallback</td><td>function called back when servers are found </td></tr>
+  </table>
+  </dd>
+</dl>
 <p >Optional: set the transmit power, default is 3db</p>
 <p >+9db</p>
 <p >create new scan</p>
@@ -241,25 +287,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac69bc6917d49dc7ebe001a5d567e11e2" name="ac69bc6917d49dc7ebe001a5d567e11e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac69bc6917d49dc7ebe001a5d567e11e2">&#9670;&nbsp;</a></span>initScan()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void SparkBLEControl::initScan </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a09ab2d543cbd5864281ff9fc62b3fa79" name="a09ab2d543cbd5864281ff9fc62b3fa79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09ab2d543cbd5864281ff9fc62b3fa79">&#9670;&nbsp;</a></span>isConnected()</h2>
+<a id="a8283cf9af54fc2de8091c9bd312ce071" name="a8283cf9af54fc2de8091c9bd312ce071"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8283cf9af54fc2de8091c9bd312ce071">&#9670;&nbsp;</a></span>isAmpConnected()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -268,7 +297,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool SparkBLEControl::isConnected </td>
+          <td class="memname">const bool SparkBLEControl::isAmpConnected </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -280,6 +309,39 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>To check if Ignitron is connected to the Spark Amp. </p>
+<p >This is used in a loop to check if the connection to the Spark Amp is active</p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if connected </dd></dl>
+
+</div>
+</div>
+<a id="a9fd96121fe34606f8486a7e80c1b0300" name="a9fd96121fe34606f8486a7e80c1b0300"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fd96121fe34606f8486a7e80c1b0300">&#9670;&nbsp;</a></span>isAppConnected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool SparkBLEControl::isAppConnected </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>To check if the Spark App is connected to Ignitron. </p>
+<p >This is used in a loop to check if the connection to the Spark App is active</p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if connected </dd></dl>
 
 </div>
 </div>
@@ -306,6 +368,38 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Checks if a Spark amp has been found to connect. </p>
+<p >When scanning for devices in APP mode, this function can be used to check if a Spark Amp has been found to connect</p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if found </dd></dl>
+
+</div>
+</div>
+<a id="a08fe5e999b760004093c2df10a426134" name="a08fe5e999b760004093c2df10a426134"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08fe5e999b760004093c2df10a426134">&#9670;&nbsp;</a></span>isScanning()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool SparkBLEControl::isScanning </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if a scan is currently running. </p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if scan is running </dd></dl>
+
 </div>
 </div>
 <a id="a064664de844bab60230ee276c3502ab1" name="a064664de844bab60230ee276c3502ab1"></a>
@@ -324,6 +418,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Notifies Spark App for any new messages. </p>
+<p >This is used to notify Spark App mainly during the initiation of a connection so that the Spark App can connect to Ignitron </p>
+
 </div>
 </div>
 <a id="adaa43d506b8c9203d1a1772fed16aeea" name="adaa43d506b8c9203d1a1772fed16aeea"></a>
@@ -341,6 +438,29 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sends a series of initial notifications to the Spark App during initiation. </p>
+<p >When the Spark App connects to Spark Amp (and Ignitron), it expects a number of special messages from Spark/Ignitron for a successful connection. This function cycles through three different messages to send to the App which are required for the connection </p>
+
+</div>
+</div>
+<a id="a48401d0946f87c7e226c4eb70dce9c5c" name="a48401d0946f87c7e226c4eb70dce9c5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48401d0946f87c7e226c4eb70dce9c5c">&#9670;&nbsp;</a></span>startScan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SparkBLEControl::startScan </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts a scan for servers to connect to. </p>
+<p >Initiates a scan for servers. To be called when not connected to a server </p>
+
 </div>
 </div>
 <a id="a062a5d911df989d81806312968850b5d" name="a062a5d911df989d81806312968850b5d"></a>
@@ -357,12 +477,35 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Starts Ignitron BLE as server. </p>
+<p >This enables the Spark App to connect to Ignitron to send presets. </p>
 <p >sets device name</p>
 <p >Optional: set the transmit power, default is 3db</p>
 <p >+9db</p>
 <p >Start the services when finished creating all Characteristics and Descriptors</p>
 <p >Add the services to the advertisment data</p>
 <p >If your device is battery powered you may consider setting scan response to false as it will extend battery life at the expense of less data sent.</p>
+
+</div>
+</div>
+<a id="aa279f646c79f5735b4caaa74c665e264" name="aa279f646c79f5735b4caaa74c665e264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa279f646c79f5735b4caaa74c665e264">&#9670;&nbsp;</a></span>stopScan()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SparkBLEControl::stopScan </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stops a running scan. </p>
+<p >Stops a scan for servers. Has to be called before establishing a connection to a server </p>
 
 </div>
 </div>
@@ -381,6 +524,16 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Subscribe to notifications from Spark Amp. </p>
+<p >This is called by <a class="el" href="class_spark_data_control.html">SparkDataControl</a> so it gets notified when the Spark Amp returns messages to Ignitron</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">notifyCallback</td><td>Function to be called when notifications are received</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if successful </dd></dl>
 
 </div>
 </div>
@@ -409,6 +562,17 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Send messages via BLE to Spark Amp or App. </p>
+<p >Send messages/commands/acknowledgements to the Spark Amp and App This will trigger a change in the Spark Amp setting.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>vector of byte vectors containing the messages. Each byte vector is a chunk to be sent to Spark Amp/App </td></tr>
+    <tr><td class="paramname">response</td><td>indicate if a response is expected. Always false in this case</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if successful </dd></dl>
 
 </div>
 </div>

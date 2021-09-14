@@ -1,15 +1,15 @@
 var _spark_types_8h =
 [
-    [ "parameter", "structparameter.html", "structparameter" ],
-    [ "pedal", "structpedal.html", "structpedal" ],
-    [ "preset", "structpreset.html", "structpreset" ],
-    [ "cmd_data", "structcmd__data.html", "structcmd__data" ],
-    [ "ByteVector", "_spark_types_8h.html#a9ca15c3f786d188fb82ec188300346f3", null ],
-    [ "FX_AMP", "_spark_types_8h.html#ad3d3184d5baa7177020a8466a82c9fde", null ],
-    [ "FX_COMP", "_spark_types_8h.html#ac7d094b3cc2f84f069ff237b521561c8", null ],
-    [ "FX_DELAY", "_spark_types_8h.html#a8f0f38d66813b2c93f9e5655b7ef36de", null ],
-    [ "FX_DRIVE", "_spark_types_8h.html#acc6decd0470413e4eeba3be49fd65921", null ],
-    [ "FX_MOD", "_spark_types_8h.html#a8761a2953f23f563a7634b1e05408d7f", null ],
-    [ "FX_NOISEGATE", "_spark_types_8h.html#a36e6414f24dcbb833819e8d9396cbba5", null ],
-    [ "FX_REVERB", "_spark_types_8h.html#a38eae3b2b4befa3ea9ab84f2873718c6", null ]
+    [ "Parameter", "struct_parameter.html", "struct_parameter" ],
+    [ "Pedal", "struct_pedal.html", "struct_pedal" ],
+    [ "Preset", "struct_preset.html", "struct_preset" ],
+    [ "CmdData", "struct_cmd_data.html", "struct_cmd_data" ],
+    [ "FX_AMP", "_spark_types_8h.html#aaa1ab7148634a4b0382eb5cde06155a6", null ],
+    [ "FX_COMP", "_spark_types_8h.html#a56e40d1d1229bec3da61be488441cf37", null ],
+    [ "FX_DELAY", "_spark_types_8h.html#ab7671ac07df1fa126798ccd28b35b500", null ],
+    [ "FX_DRIVE", "_spark_types_8h.html#ac6525942da181e145bd869a144a378ba", null ],
+    [ "FX_MOD", "_spark_types_8h.html#a078f802e89a665b24086c51a7a6df0d1", null ],
+    [ "FX_NOISEGATE", "_spark_types_8h.html#a7fdbd632df4c280c93333871161b9ffc", null ],
+    [ "FX_REVERB", "_spark_types_8h.html#a2ba8e39870eeec695bf141a65a1b7c95", null ],
+    [ "ByteVector", "_spark_types_8h.html#a9ca15c3f786d188fb82ec188300346f3", null ]
 ];

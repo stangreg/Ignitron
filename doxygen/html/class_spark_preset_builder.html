@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SparkBLE: SparkPresetBuilder Class Reference</title>
+<title>Ignitron: SparkPresetBuilder Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,9 +25,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SparkBLE<span id="projectnumber">&#160;0.8</span>
+   <div id="projectname">Ignitron
    </div>
-   <div id="projectbrief">ESP32 program to control the Positive Grid Spark Amp</div>
   </td>
  </tr>
  </tbody>
@@ -98,10 +97,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5fdb43aa34592822701ff11acfc41324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7392c0aa6d5c5771ff1d355419650b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#ae7392c0aa6d5c5771ff1d355419650b3">initializePresetListFromFS</a> ()</td></tr>
 <tr class="separator:ae7392c0aa6d5c5771ff1d355419650b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ef4f1b3ea6e51532c1c4960c8bbd56f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpreset.html">preset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#a6ef4f1b3ea6e51532c1c4960c8bbd56f">getPreset</a> (int <a class="el" href="structpreset.html">preset</a>, int bank)</td></tr>
-<tr class="separator:a6ef4f1b3ea6e51532c1c4960c8bbd56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f307ea20b870204bb4cefa344d72204"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_preset.html">Preset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#a5f307ea20b870204bb4cefa344d72204">getPreset</a> (int bank, int preset)</td></tr>
+<tr class="separator:a5f307ea20b870204bb4cefa344d72204"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaa4c5f69850a454b77c9f0e584cd84c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#acaa4c5f69850a454b77c9f0e584cd84c">getNumberOfBanks</a> ()</td></tr>
 <tr class="separator:acaa4c5f69850a454b77c9f0e584cd84c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4483b9e18c504c4fddae98d3b79851bf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_preset.html">Preset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#a4483b9e18c504c4fddae98d3b79851bf">getPresetFromJson</a> (char *json)</td></tr>
+<tr class="separator:a4483b9e18c504c4fddae98d3b79851bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20476bc94dd7351cfb74041d032fd41a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#a20476bc94dd7351cfb74041d032fd41a">storePreset</a> (<a class="el" href="struct_preset.html">Preset</a> newPreset, int bnk, int pre)</td></tr>
+<tr class="separator:a20476bc94dd7351cfb74041d032fd41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef37f0c203d67a80b5ab6ada556b28ae"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_preset_builder.html#aef37f0c203d67a80b5ab6ada556b28ae">deletePreset</a> (int bnk, int pre)</td></tr>
+<tr class="separator:aef37f0c203d67a80b5ab6ada556b28ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5fdb43aa34592822701ff11acfc41324" name="a5fdb43aa34592822701ff11acfc41324"></a>
@@ -122,6 +127,34 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aef37f0c203d67a80b5ab6ada556b28ae" name="aef37f0c203d67a80b5ab6ada556b28ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef37f0c203d67a80b5ab6ada556b28ae">&#9670;&nbsp;</a></span>deletePreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int SparkPresetBuilder::deletePreset </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>bnk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pre</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="acaa4c5f69850a454b77c9f0e584cd84c" name="acaa4c5f69850a454b77c9f0e584cd84c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acaa4c5f69850a454b77c9f0e584cd84c">&#9670;&nbsp;</a></span>getNumberOfBanks()</h2>
 
@@ -139,28 +172,46 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6ef4f1b3ea6e51532c1c4960c8bbd56f" name="a6ef4f1b3ea6e51532c1c4960c8bbd56f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ef4f1b3ea6e51532c1c4960c8bbd56f">&#9670;&nbsp;</a></span>getPreset()</h2>
+<a id="a5f307ea20b870204bb4cefa344d72204" name="a5f307ea20b870204bb4cefa344d72204"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f307ea20b870204bb4cefa344d72204">&#9670;&nbsp;</a></span>getPreset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structpreset.html">preset</a> SparkPresetBuilder::getPreset </td>
+          <td class="memname"><a class="el" href="struct_preset.html">Preset</a> SparkPresetBuilder::getPreset </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>preset</em>, </td>
+          <td class="paramname"><em>bank</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>bank</em>&#160;</td>
+          <td class="paramname"><em>preset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
           <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4483b9e18c504c4fddae98d3b79851bf" name="a4483b9e18c504c4fddae98d3b79851bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4483b9e18c504c4fddae98d3b79851bf">&#9670;&nbsp;</a></span>getPresetFromJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_preset.html">Preset</a> SparkPresetBuilder::getPresetFromJson </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>json</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -178,6 +229,40 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a20476bc94dd7351cfb74041d032fd41a" name="a20476bc94dd7351cfb74041d032fd41a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20476bc94dd7351cfb74041d032fd41a">&#9670;&nbsp;</a></span>storePreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int SparkPresetBuilder::storePreset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_preset.html">Preset</a>&#160;</td>
+          <td class="paramname"><em>newPreset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>bnk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pre</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

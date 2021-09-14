@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['data_0',['data',['../structcmd__data.html#aa9a4e00bc3e3ac00e3ab2e85f697861c',1,'cmd_data']]],
-  ['description_1',['description',['../structpreset.html#a09f8a9a3ebbd77b5596cb1985db2196f',1,'preset']]]
+  ['data_0',['data',['../struct_cmd_data.html#a8623a877dd94b079b79d3452cccb8698',1,'CmdData']]],
+  ['description_1',['description',['../struct_preset.html#a8a29114697fb2afae83cbd72d107ea91',1,'Preset']]]
 ];

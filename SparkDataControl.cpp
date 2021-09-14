@@ -97,7 +97,7 @@ bool SparkDataControl::checkBLEConnection() {
 			return true;
 		} else {
 			Serial.println("Failed to connect, starting scan");
-			bleControl.initScan();
+			bleControl.startScan();
 			return false;
 		}
 	}

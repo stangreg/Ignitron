@@ -34,32 +34,131 @@ public:
 	SparkBLEControl();
 	SparkBLEControl(SparkDataControl *dc);
 	virtual ~SparkBLEControl();
+
+	/**
+	 * @brief  Checks if a Spark amp has been found to connect
+	 *
+	 * When scanning for devices in APP mode, this function can be used
+	 * to check if a Spark Amp has been found to connect
+	 *
+	 *
+	 * @return TRUE if found
+	 */
 	const bool isConnectionFound() const {
 		return isConnectionFound_;
 	}
+	/**
+	 * @brief  To check if Ignitron is connected to the Spark Amp
+	 *
+	 * This is used in a loop to check if the connection to the Spark Amp is active
+	 *
+	 *
+	 * @return TRUE if connected
+	 */
 	const bool isAmpConnected() const {
 		return isAmpConnected_;
 	}
+	/**
+	 * @brief  To check if the Spark App is connected to Ignitron
+	 *
+	 * This is used in a loop to check if the connection to the Spark App is active
+	 *
+	 *
+	 * @return TRUE if connected
+	 */
 	const bool isAppConnected() const {
 		return isAppConnected_;
 	}
+	/**
+	 * @brief  Initiates connection to the Spark Amp
+	 *
+	 * After a connection has been found, this function can be used to
+	 * establish a connection to the Spark Amp
+	 *
+	 *
+	 * @return TRUE if connection was successful
+	 */	
 	bool connectToServer();
-	int disconnectClient();
+	/**
+	 * @brief  Subscribe to notifications from Spark Amp.
+	 *
+	 * This is called by SparkDataControl so it gets notified when the Spark Amp
+	 * returns messages to Ignitron
+	 *
+	 * @param notifyCallback Function to be called when notifications are received
+	 *
+	 * @return TRUE if successful
+	 */
 	bool subscribeToNotifications(notify_callback notifyCallback = nullptr);
+	/**
+	 * @brief  Send messages via BLE to Spark Amp or App
+	 *
+	 * Send messages/commands/acknowledgements to the Spark Amp and App
+	 * This will trigger a change in the Spark Amp setting.
+	 *
+	 * @param cmd vector of byte vectors containing the messages. Each byte vector is a chunk to be sent to Spark Amp/App
+	 * @param response indicate if a response is expected. Always false in this case
+	 *
+	 * @return TRUE if successful
+	 */
 	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
+	/**
+	 * @brief  Initializes Ignitron BLE as client to connect to the Spark Amp
+	 *
+	 * Sets up the BLE connection and initiates a scan for the Spark Amp. When
+	 * servers have been found, the notifyCallback function is called back.
+	 *
+	 * @param notifyCallback function called back when servers are found
+	 *
+	 */
 	void initBLE(notify_callback notifyCallback = nullptr);
-	void initScan();
+	/**
+	 * @brief  Starts a scan for servers to connect to. 
+	 *
+	 * Initiates a scan for servers. To be called when not connected to a server
+	 *
+	 */
+	void startScan();
+	/**
+	 * @brief  Checks if a scan is currently running
+	 *
+	 * @return TRUE if scan is running
+	 */
 	const bool isScanning() const {
 		return NimBLEDevice::getScan()->isScanning();
 	}
-	void startScan();
+	/**
+	 * @brief  Stops a running scan. 
+	 *
+	 * Stops a scan for servers. Has to be called before establishing a connection to a server
+	 *
+	 */
 	void stopScan();
 
+	/**
+	 * @brief  Starts Ignitron BLE as server. 
+	 *
+	 * This enables the Spark App to connect to Ignitron to send presets. 
+	 *
+	 */
 	void startServer();
+	/**
+	 * @brief  Notifies Spark App for any new messages 
+	 *
+	 * This is used to notify Spark App mainly during the initiation of a connection 
+	 * so that the Spark App can connect to Ignitron
+	 *
+	 */
 	void notifyClients(ByteVector msg);
+	/**
+	 * @brief  Sends a series of initial notifications to the Spark App during initiation 
+	 *
+	 * When the Spark App connects to Spark Amp (and Ignitron), it expects a number of special 
+	 * messages from Spark/Ignitron for a successful connection. This function cycles through 
+	 * three different messages to send to the App which are required for the connection
+	 *
+	 */
 	void sendInitialNotification();
-
-	void deinit(bool remove = false);
 
 private:
 

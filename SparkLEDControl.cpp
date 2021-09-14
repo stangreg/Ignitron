@@ -9,7 +9,7 @@
 
 SparkLEDControl::SparkLEDControl() {
 	spark_dc = nullptr;
-
+	activePreset = nullptr;
 }
 
 SparkLEDControl::SparkLEDControl(SparkDataControl* dc) {

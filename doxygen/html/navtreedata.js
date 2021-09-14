@@ -24,8 +24,8 @@
 */
 var NAVTREE =
 [
-  [ "SparkBLE", "index.html", [
-    [ "SparkBLE", "md__r_e_a_d_m_e.html", null ],
+  [ "Ignitron", "index.html", [
+    [ "README", "md__r_e_a_d_m_e.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -40,7 +40,6 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Variables", "globals_vars.html", null ],
         [ "Typedefs", "globals_type.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
@@ -50,7 +49,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_spark_b_l_e_control_8cpp.html"
+"_spark_b_l_e_control_8cpp.html",
+"struct_preset.html#a9d74a3b3fba2cbc49ebc570e9830418a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

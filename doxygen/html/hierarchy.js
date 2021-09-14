@@ -1,6 +1,6 @@
 var hierarchy =
 [
-    [ "cmd_data", "structcmd__data.html", null ],
+    [ "CmdData", "struct_cmd_data.html", null ],
     [ "NimBLEAdvertisedDeviceCallbacks", null, [
       [ "SparkBLEControl", "class_spark_b_l_e_control.html", null ]
     ] ],
@@ -8,14 +8,14 @@ var hierarchy =
       [ "SparkBLEControl", "class_spark_b_l_e_control.html", null ]
     ] ],
     [ "NimBLEClientCallbacks", null, [
-      [ "ClientCallbacks", "class_client_callbacks.html", null ]
+      [ "SparkBLEControl", "class_spark_b_l_e_control.html", null ]
     ] ],
     [ "NimBLEServerCallbacks", null, [
       [ "SparkBLEControl", "class_spark_b_l_e_control.html", null ]
     ] ],
-    [ "parameter", "structparameter.html", null ],
-    [ "pedal", "structpedal.html", null ],
-    [ "preset", "structpreset.html", null ],
+    [ "Parameter", "struct_parameter.html", null ],
+    [ "Pedal", "struct_pedal.html", null ],
+    [ "Preset", "struct_preset.html", null ],
     [ "SparkButtonHandler", "class_spark_button_handler.html", null ],
     [ "SparkDataControl", "class_spark_data_control.html", null ],
     [ "SparkDisplayControl", "class_spark_display_control.html", null ],

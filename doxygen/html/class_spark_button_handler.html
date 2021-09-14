@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SparkBLE: SparkButtonHandler Class Reference</title>
+<title>Ignitron: SparkButtonHandler Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,9 +25,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SparkBLE<span id="projectnumber">&#160;0.8</span>
+   <div id="projectname">Ignitron
    </div>
-   <div id="projectbrief">ESP32 program to control the Positive Grid Spark Amp</div>
   </td>
  </tr>
  </tbody>
@@ -85,6 +84,7 @@ $(document).ready(function(){initNavTree('class_spark_button_handler.html',''); 
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_spark_button_handler-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">SparkButtonHandler Class Reference</div></div>
 </div><!--header-->
@@ -102,12 +102,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2def05501d94239b1dc187bb635a857e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66e702e5db0015df4a7d15092eb9eeae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#a66e702e5db0015df4a7d15092eb9eeae">readButtons</a> ()</td></tr>
 <tr class="separator:a66e702e5db0015df4a7d15092eb9eeae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe27406faa5471c453ddb03b055fed08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#abe27406faa5471c453ddb03b055fed08">init</a> ()</td></tr>
-<tr class="separator:abe27406faa5471c453ddb03b055fed08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc6a16dba1a3c5f9af1260328e82f411"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_spark_data_control.html">SparkDataControl</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#abc6a16dba1a3c5f9af1260328e82f411">dataControl</a> ()</td></tr>
 <tr class="separator:abc6a16dba1a3c5f9af1260328e82f411"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcb1a6713e679df56cd553c6f4d2e5d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#afcb1a6713e679df56cd553c6f4d2e5d2">dataControl</a> (<a class="el" href="class_spark_data_control.html">SparkDataControl</a> *dc)</td></tr>
-<tr class="separator:afcb1a6713e679df56cd553c6f4d2e5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a013fc2512c7a25d850d989354fac6694"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#a013fc2512c7a25d850d989354fac6694">setDataControl</a> (<a class="el" href="class_spark_data_control.html">SparkDataControl</a> *dc)</td></tr>
+<tr class="separator:a013fc2512c7a25d850d989354fac6694"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a209a2db6e86a54cb9602fa9d43a87925"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_button_handler.html#a209a2db6e86a54cb9602fa9d43a87925">init</a> (bool startup=true)</td></tr>
+<tr class="separator:a209a2db6e86a54cb9602fa9d43a87925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae38be4097b5b226fa5bc690755e2800c" name="ae38be4097b5b226fa5bc690755e2800c"></a>
@@ -172,7 +175,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="abc6a16dba1a3c5f9af1260328e82f411" name="abc6a16dba1a3c5f9af1260328e82f411"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc6a16dba1a3c5f9af1260328e82f411">&#9670;&nbsp;</a></span>dataControl() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abc6a16dba1a3c5f9af1260328e82f411">&#9670;&nbsp;</a></span>dataControl()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,8 +199,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afcb1a6713e679df56cd553c6f4d2e5d2" name="afcb1a6713e679df56cd553c6f4d2e5d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcb1a6713e679df56cd553c6f4d2e5d2">&#9670;&nbsp;</a></span>dataControl() <span class="overload">[2/2]</span></h2>
+<a id="a209a2db6e86a54cb9602fa9d43a87925" name="a209a2db6e86a54cb9602fa9d43a87925"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a209a2db6e86a54cb9602fa9d43a87925">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -206,35 +209,18 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void SparkButtonHandler::dataControl </td>
+          <td class="memname">int SparkButtonHandler::init </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_spark_data_control.html">SparkDataControl</a> *&#160;</td>
-          <td class="paramname"><em>dc</em></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>startup</em> = <code>true</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="abe27406faa5471c453ddb03b055fed08" name="abe27406faa5471c453ddb03b055fed08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe27406faa5471c453ddb03b055fed08">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int SparkButtonHandler::init </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>
@@ -252,6 +238,32 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a013fc2512c7a25d850d989354fac6694" name="a013fc2512c7a25d850d989354fac6694"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a013fc2512c7a25d850d989354fac6694">&#9670;&nbsp;</a></span>setDataControl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SparkButtonHandler::setDataControl </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_spark_data_control.html">SparkDataControl</a> *&#160;</td>
+          <td class="paramname"><em>dc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

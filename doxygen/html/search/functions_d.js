@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['update_0',['update',['../class_spark_display_control.html#a4dac4aa692ce07fd15f3320e05cfce65',1,'SparkDisplayControl']]],
-  ['updateleds_1',['updateLEDs',['../class_spark_l_e_d_control.html#ac0f07b1b5cb031c0e8e7bb7aa9ffa412',1,'SparkLEDControl']]],
-  ['updatependingpreset_2',['updatePendingPreset',['../class_spark_data_control.html#a0d79289c48cebf0f8831cada16c284a8',1,'SparkDataControl']]],
-  ['updatependingwithactivebank_3',['updatePendingWithActiveBank',['../class_spark_data_control.html#aac0c38919bd2fc9eb8b3247c728075f0',1,'SparkDataControl']]]
+  ['tostring_0',['toString',['../struct_cmd_data.html#ac77bfbd69cd9dd1ce68b6eeb7a979e66',1,'CmdData']]],
+  ['triggerinitialblenotifications_1',['triggerInitialBLENotifications',['../class_spark_data_control.html#a101f9f723cf0b7aaa911788b16865ba3',1,'SparkDataControl']]],
+  ['turn_5feffect_5fonoff_2',['turn_effect_onoff',['../class_spark_message.html#a117d425cc97913bea224fb89484dc96f',1,'SparkMessage']]]
 ];

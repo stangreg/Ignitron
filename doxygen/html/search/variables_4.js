@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['icon_0',['icon',['../structpreset.html#ad2140177ece580e9ca31686751377803',1,'preset']]],
-  ['indent_1',['indent',['../structpreset.html#a24e79451ec22e5ede1ed6ab5cece0ec5',1,'preset']]],
-  ['isempty_2',['isEmpty',['../structpreset.html#a2c93dbeab991f907c94f97554e991099',1,'preset']]],
-  ['ison_3',['isOn',['../structpedal.html#a7968f33ef16a194866e23401dba84a22',1,'pedal']]]
+  ['icon_0',['icon',['../struct_preset.html#a3098c47c1518e37fcff15229cb23e557',1,'Preset']]],
+  ['isempty_1',['isEmpty',['../struct_preset.html#a99cb597bf2a059d3b40be770574d4679',1,'Preset']]],
+  ['ison_2',['isOn',['../struct_pedal.html#a5fd385a56e030ebde1eafd2ad8d1fc51',1,'Pedal']]]
 ];

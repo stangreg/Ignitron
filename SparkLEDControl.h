@@ -44,9 +44,9 @@ private:
 	void init();
 	SparkDataControl* spark_dc;
 
-	int operationMode;
+	int operationMode = SPARK_MODE_APP;
 	Preset *activePreset;
-	int activePresetNum;
+	int activePresetNum = 1;
 
 	int delayTimeMs = 100;
 	// For blinking mode

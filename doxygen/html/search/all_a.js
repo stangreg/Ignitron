@@ -1,15 +1,11 @@
 var searchData=
 [
-  ['led_5fbank_5fdown_5fgpio_0',['LED_BANK_DOWN_GPIO',['../_spark_l_e_d_control_8h.html#a5075c6790d4bd330328ef7daf8737f9d',1,'SparkLEDControl.h']]],
-  ['led_5fbank_5fup_5fgpio_1',['LED_BANK_UP_GPIO',['../_spark_l_e_d_control_8h.html#a83d68911de615ea868666997746ce7f8',1,'SparkLEDControl.h']]],
-  ['led_5fcomp_5fgpio_2',['LED_COMP_GPIO',['../_spark_l_e_d_control_8h.html#a29c36b676c8a534fc4dcd5b7564d8aa0',1,'SparkLEDControl.h']]],
-  ['led_5fdelay_5fgpio_3',['LED_DELAY_GPIO',['../_spark_l_e_d_control_8h.html#af147a35247e1f7aef5ea64f20dc47479',1,'SparkLEDControl.h']]],
-  ['led_5fdrive_5fgpio_4',['LED_DRIVE_GPIO',['../_spark_l_e_d_control_8h.html#a20a66dd34d2b41e7c2621631caecb10a',1,'SparkLEDControl.h']]],
-  ['led_5fmod_5fgpio_5',['LED_MOD_GPIO',['../_spark_l_e_d_control_8h.html#ac07acbf861c1dbab5cd96b3145e2694f',1,'SparkLEDControl.h']]],
-  ['led_5fnoisegate_5fgpio_6',['LED_NOISEGATE_GPIO',['../_spark_l_e_d_control_8h.html#a15667b05a4d70cab162434610eaaa413',1,'SparkLEDControl.h']]],
-  ['led_5fpreset1_5fgpio_7',['LED_PRESET1_GPIO',['../_spark_l_e_d_control_8h.html#a3073f64bddcfb711416652fa6303d910',1,'SparkLEDControl.h']]],
-  ['led_5fpreset2_5fgpio_8',['LED_PRESET2_GPIO',['../_spark_l_e_d_control_8h.html#a9b275bbf06fe8630d074d7bb6d3ab9e9',1,'SparkLEDControl.h']]],
-  ['led_5fpreset3_5fgpio_9',['LED_PRESET3_GPIO',['../_spark_l_e_d_control_8h.html#a7db7e6d855c23937b4adc479a903d17c',1,'SparkLEDControl.h']]],
-  ['led_5fpreset4_5fgpio_10',['LED_PRESET4_GPIO',['../_spark_l_e_d_control_8h.html#aea76f6f9df03e0e6612822f286b1b448',1,'SparkLEDControl.h']]],
-  ['led_5freverb_5fgpio_11',['LED_REVERB_GPIO',['../_spark_l_e_d_control_8h.html#abc8db00ae94b67667c2b8432abfd5c75',1,'SparkLEDControl.h']]]
+  ['msg_5fprocess_5fres_5fcomplete_0',['MSG_PROCESS_RES_COMPLETE',['../_spark_stream_reader_8h.html#ab7c5c536ba081fba7ee36cfb875443b5',1,'SparkStreamReader.h']]],
+  ['msg_5fprocess_5fres_5fincomplete_1',['MSG_PROCESS_RES_INCOMPLETE',['../_spark_stream_reader_8h.html#ab40e10f29c7603c3d16f108a9af71aaa',1,'SparkStreamReader.h']]],
+  ['msg_5fprocess_5fres_5finitial_2',['MSG_PROCESS_RES_INITIAL',['../_spark_stream_reader_8h.html#a20b5fb17efde7663cc5b95b0ffa2865e',1,'SparkStreamReader.h']]],
+  ['msg_5ftype_5ffx_5fchange_3',['MSG_TYPE_FX_CHANGE',['../_spark_stream_reader_8h.html#a1aa532561fe27585c9e91556a2efb3ec',1,'SparkStreamReader.h']]],
+  ['msg_5ftype_5ffx_5fonoff_4',['MSG_TYPE_FX_ONOFF',['../_spark_stream_reader_8h.html#a465e673a4ee9479d6d7f8eb2d405b0a0',1,'SparkStreamReader.h']]],
+  ['msg_5ftype_5ffx_5fparam_5',['MSG_TYPE_FX_PARAM',['../_spark_stream_reader_8h.html#a3c1b5769fc9ce51b16d0a4c90747d73e',1,'SparkStreamReader.h']]],
+  ['msg_5ftype_5fhwpreset_6',['MSG_TYPE_HWPRESET',['../_spark_stream_reader_8h.html#ab2de54beab2df2fb20f40b5abe9b0858',1,'SparkStreamReader.h']]],
+  ['msg_5ftype_5fpreset_7',['MSG_TYPE_PRESET',['../_spark_stream_reader_8h.html#a11c4b899b308c85700a41e9418cff2dc',1,'SparkStreamReader.h']]]
 ];

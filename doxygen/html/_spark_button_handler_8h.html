@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SparkBLE: SparkButtonHandler.h File Reference</title>
+<title>Ignitron: SparkButtonHandler.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,9 +25,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SparkBLE<span id="projectnumber">&#160;0.8</span>
+   <div id="projectname">Ignitron
    </div>
-   <div id="projectbrief">ESP32 program to control the Positive Grid Spark Amp</div>
   </td>
  </tr>
  </tbody>
@@ -95,11 +94,43 @@ $(document).ready(function(){initNavTree('_spark_button_handler_8h.html',''); in
 Include dependency graph for SparkButtonHandler.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="_spark_button_handler_8h__incl.png" border="0" usemap="#a_spark_button_handler_8h" alt=""/></div>
+<map name="a_spark_button_handler_8h" id="a_spark_button_handler_8h">
+<area shape="rect" title=" " alt="" coords="660,5,812,32"/>
+<area shape="rect" title=" " alt="" coords="626,80,710,107"/>
+<area shape="rect" href="_spark_data_control_8h.html" title=" " alt="" coords="735,80,873,107"/>
+<area shape="rect" title=" " alt="" coords="23,229,132,256"/>
+<area shape="rect" title=" " alt="" coords="489,379,548,405"/>
+<area shape="rect" title=" " alt="" coords="1041,379,1119,405"/>
+<area shape="rect" href="_spark_b_l_e_control_8h.html" title=" " alt="" coords="271,155,407,181"/>
+<area shape="rect" href="_spark_message_8h.html" title=" " alt="" coords="841,155,964,181"/>
+<area shape="rect" href="_spark_types_8h.html" title=" " alt="" coords="761,229,865,256"/>
+<area shape="rect" href="_spark_preset_builder_8h.html" title=" " alt="" coords="1233,155,1380,181"/>
+<area shape="rect" href="_spark_stream_reader_8h.html" title=" " alt="" coords="493,155,646,181"/>
+<area shape="rect" href="_spark_display_control_8h.html" title=" " alt="" coords="1807,155,1961,181"/>
+<area shape="rect" title=" " alt="" coords="156,229,279,256"/>
+<area shape="rect" title=" " alt="" coords="703,379,755,405"/>
+<area shape="rect" title=" " alt="" coords="789,379,859,405"/>
+<area shape="rect" title=" " alt="" coords="921,379,991,405"/>
+<area shape="rect" href="_spark_helper_8h.html" title=" " alt="" coords="759,304,865,331"/>
+<area shape="rect" title=" " alt="" coords="1143,229,1257,256"/>
+<area shape="rect" title=" " alt="" coords="1281,229,1332,256"/>
+<area shape="rect" title=" " alt="" coords="1357,229,1499,256"/>
+<area shape="rect" title=" " alt="" coords="1524,229,1601,256"/>
+<area shape="rect" title=" " alt="" coords="1625,229,1681,256"/>
+<area shape="rect" title=" " alt="" coords="505,229,556,256"/>
+<area shape="rect" title=" " alt="" coords="581,229,635,256"/>
+<area shape="rect" title=" " alt="" coords="1818,229,1931,256"/>
+<area shape="rect" title=" " alt="" coords="1956,229,2100,256"/>
+</map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="_spark_button_handler_8h__dep__incl.png" border="0" usemap="#a_spark_button_handler_8hdep" alt=""/></div>
+<map name="a_spark_button_handler_8hdep" id="a_spark_button_handler_8hdep">
+<area shape="rect" title=" " alt="" coords="13,5,165,32"/>
+<area shape="rect" href="_spark_button_handler_8cpp.html" title=" " alt="" coords="5,80,172,107"/>
+</map>
 </div>
 </div>
 <p><a href="_spark_button_handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -111,29 +142,29 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a160b4a2e7a3f6ae7520390779d1e454a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a160b4a2e7a3f6ae7520390779d1e454a">BUTTON_PRESET1_GPIO</a>&#160;&#160;&#160;19</td></tr>
+<tr class="memitem:a160b4a2e7a3f6ae7520390779d1e454a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a160b4a2e7a3f6ae7520390779d1e454a">BUTTON_PRESET1_GPIO</a>&#160;&#160;&#160;25</td></tr>
 <tr class="separator:a160b4a2e7a3f6ae7520390779d1e454a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea349f5cfb292c32c5c6d8c7fefe2325"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#aea349f5cfb292c32c5c6d8c7fefe2325">BUTTON_DRIVE_GPIO</a>&#160;&#160;&#160;19</td></tr>
+<tr class="memitem:aea349f5cfb292c32c5c6d8c7fefe2325"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#aea349f5cfb292c32c5c6d8c7fefe2325">BUTTON_DRIVE_GPIO</a>&#160;&#160;&#160;25</td></tr>
 <tr class="separator:aea349f5cfb292c32c5c6d8c7fefe2325"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1882cac404a80f86545bc1309accc59"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ad1882cac404a80f86545bc1309accc59">BUTTON_PRESET2_GPIO</a>&#160;&#160;&#160;18</td></tr>
+<tr class="memitem:ad1882cac404a80f86545bc1309accc59"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ad1882cac404a80f86545bc1309accc59">BUTTON_PRESET2_GPIO</a>&#160;&#160;&#160;26</td></tr>
 <tr class="separator:ad1882cac404a80f86545bc1309accc59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0391ee00ed8b05fb2f67a20dd2fe8975"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a0391ee00ed8b05fb2f67a20dd2fe8975">BUTTON_MOD_GPIO</a>&#160;&#160;&#160;18</td></tr>
+<tr class="memitem:a0391ee00ed8b05fb2f67a20dd2fe8975"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a0391ee00ed8b05fb2f67a20dd2fe8975">BUTTON_MOD_GPIO</a>&#160;&#160;&#160;26</td></tr>
 <tr class="separator:a0391ee00ed8b05fb2f67a20dd2fe8975"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98b3fe8443e3774b96e789857dbbbf73"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a98b3fe8443e3774b96e789857dbbbf73">BUTTON_PRESET3_GPIO</a>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:a98b3fe8443e3774b96e789857dbbbf73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ce4195ed6f2726bd486b019b6d10c5f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a0ce4195ed6f2726bd486b019b6d10c5f">BUTTON_DELAY_GPIO</a>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:a0ce4195ed6f2726bd486b019b6d10c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d12521eee80fc788ef076c858275687"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a9d12521eee80fc788ef076c858275687">BUTTON_PRESET4_GPIO</a>&#160;&#160;&#160;25</td></tr>
+<tr class="memitem:a9d12521eee80fc788ef076c858275687"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a9d12521eee80fc788ef076c858275687">BUTTON_PRESET4_GPIO</a>&#160;&#160;&#160;33</td></tr>
 <tr class="separator:a9d12521eee80fc788ef076c858275687"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15d652a18963c42ce0a838c76ffe33eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a15d652a18963c42ce0a838c76ffe33eb">BUTTON_REVERB_GPIO</a>&#160;&#160;&#160;25</td></tr>
+<tr class="memitem:a15d652a18963c42ce0a838c76ffe33eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a15d652a18963c42ce0a838c76ffe33eb">BUTTON_REVERB_GPIO</a>&#160;&#160;&#160;33</td></tr>
 <tr class="separator:a15d652a18963c42ce0a838c76ffe33eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54818f72a6c0c047dcecdd61b51e6a0b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a54818f72a6c0c047dcecdd61b51e6a0b">BUTTON_BANK_DOWN_GPIO</a>&#160;&#160;&#160;26</td></tr>
+<tr class="memitem:a54818f72a6c0c047dcecdd61b51e6a0b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#a54818f72a6c0c047dcecdd61b51e6a0b">BUTTON_BANK_DOWN_GPIO</a>&#160;&#160;&#160;19</td></tr>
 <tr class="separator:a54818f72a6c0c047dcecdd61b51e6a0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6307cb7e2d6478cf084b67ab43a1eef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#af6307cb7e2d6478cf084b67ab43a1eef">BUTTON_NOISEGATE_GPIO</a>&#160;&#160;&#160;26</td></tr>
+<tr class="memitem:af6307cb7e2d6478cf084b67ab43a1eef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#af6307cb7e2d6478cf084b67ab43a1eef">BUTTON_NOISEGATE_GPIO</a>&#160;&#160;&#160;19</td></tr>
 <tr class="separator:af6307cb7e2d6478cf084b67ab43a1eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5600702a2ee0732aac82b5c3d0d7be4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ab5600702a2ee0732aac82b5c3d0d7be4">BUTTON_BANK_UP_GPIO</a>&#160;&#160;&#160;33</td></tr>
+<tr class="memitem:ab5600702a2ee0732aac82b5c3d0d7be4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ab5600702a2ee0732aac82b5c3d0d7be4">BUTTON_BANK_UP_GPIO</a>&#160;&#160;&#160;18</td></tr>
 <tr class="separator:ab5600702a2ee0732aac82b5c3d0d7be4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1a4071fed8043bd3db681e7f96909f2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ac1a4071fed8043bd3db681e7f96909f2">BUTTON_COMP_GPIO</a>&#160;&#160;&#160;33</td></tr>
+<tr class="memitem:ac1a4071fed8043bd3db681e7f96909f2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_spark_button_handler_8h.html#ac1a4071fed8043bd3db681e7f96909f2">BUTTON_COMP_GPIO</a>&#160;&#160;&#160;18</td></tr>
 <tr class="separator:ac1a4071fed8043bd3db681e7f96909f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -144,7 +175,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_BANK_DOWN_GPIO&#160;&#160;&#160;26</td>
+          <td class="memname">#define BUTTON_BANK_DOWN_GPIO&#160;&#160;&#160;19</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -158,7 +189,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_BANK_UP_GPIO&#160;&#160;&#160;33</td>
+          <td class="memname">#define BUTTON_BANK_UP_GPIO&#160;&#160;&#160;18</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -172,7 +203,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_COMP_GPIO&#160;&#160;&#160;33</td>
+          <td class="memname">#define BUTTON_COMP_GPIO&#160;&#160;&#160;18</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -200,7 +231,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_DRIVE_GPIO&#160;&#160;&#160;19</td>
+          <td class="memname">#define BUTTON_DRIVE_GPIO&#160;&#160;&#160;25</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -214,7 +245,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_MOD_GPIO&#160;&#160;&#160;18</td>
+          <td class="memname">#define BUTTON_MOD_GPIO&#160;&#160;&#160;26</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -228,7 +259,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_NOISEGATE_GPIO&#160;&#160;&#160;26</td>
+          <td class="memname">#define BUTTON_NOISEGATE_GPIO&#160;&#160;&#160;19</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -242,7 +273,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_PRESET1_GPIO&#160;&#160;&#160;19</td>
+          <td class="memname">#define BUTTON_PRESET1_GPIO&#160;&#160;&#160;25</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -256,7 +287,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_PRESET2_GPIO&#160;&#160;&#160;18</td>
+          <td class="memname">#define BUTTON_PRESET2_GPIO&#160;&#160;&#160;26</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -284,7 +315,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_PRESET4_GPIO&#160;&#160;&#160;25</td>
+          <td class="memname">#define BUTTON_PRESET4_GPIO&#160;&#160;&#160;33</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -298,7 +329,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define BUTTON_REVERB_GPIO&#160;&#160;&#160;25</td>
+          <td class="memname">#define BUTTON_REVERB_GPIO&#160;&#160;&#160;33</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['text_0',['text',['../structpreset.html#ae7993eeec15c75d1c8f34f080eadb560',1,'preset']]]
+  ['uuid_0',['uuid',['../struct_preset.html#afb1eb2e2f1e13019f077c0cec32b0cba',1,'Preset']]]
 ];

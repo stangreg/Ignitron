@@ -40,9 +40,6 @@ public:
 
 	void readButtons();
 	static int init(bool startup = true);
-	SparkDataControl* dataControl() {
-		return spark_dc;
-	}
 	void setDataControl(SparkDataControl *dc) {
 		spark_dc = dc;
 	}

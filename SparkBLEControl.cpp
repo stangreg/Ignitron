@@ -67,7 +67,7 @@ void SparkBLEControl::scanEndedCB(NimBLEScanResults results) {
 	Serial.println("Scan ended.");
 }
 
-void SparkBLEControl::initScan() {
+void SparkBLEControl::startScan() {
 	NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
 	Serial.println("Scan initiated");
 }
@@ -426,6 +426,8 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 }
 
 void SparkBLEControl::sendInitialNotification() {
+
+// TODO: Find and process real messages as requested by app
 	//This is the serial number of the Spark. Sending fake one.
 	ByteVector preface1 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x05,
@@ -487,14 +489,14 @@ void SparkBLEControl::onDisconnect(NimBLEClient *pClient) {
 	isAmpConnected_ = false;
 	isConnectionFound_ = false;
 	if (!(NimBLEDevice::getScan()->isScanning())) {
-		initScan();
+		startScan();
 	}
 	NimBLEClientCallbacks::onDisconnect(pClient);
 }
 
 void SparkBLEControl::stopScan() {
 	if (isScanning()) {
-		Serial.println("Stopping scan");
+		Serial.println("Scan stopped");
 		NimBLEDevice::getScan()->stop();
 	} else {
 		Serial.print("Scan is not running");
@@ -502,18 +504,3 @@ void SparkBLEControl::stopScan() {
 
 }
 
-int SparkBLEControl::disconnectClient() {
-	if (pClient) {
-		return pClient->disconnect();
-	}
-	return -1;
-}
-
-void SparkBLEControl::deinit(bool remove) {
-	if (pServer || pClient) {
-		NimBLEDevice::deinit(remove);
-	}
-	else {
-		Serial.println("Nothing to deinit");
-	}
-}

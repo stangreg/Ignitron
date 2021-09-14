@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SparkBLE: SparkStreamReader Class Reference</title>
+<title>Ignitron: SparkStreamReader Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,9 +25,8 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SparkBLE<span id="projectnumber">&#160;0.8</span>
+   <div id="projectname">Ignitron
    </div>
-   <div id="projectbrief">ESP32 program to control the Positive Grid Spark Amp</div>
   </td>
  </tr>
  </tbody>
@@ -100,22 +99,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad42704e156783c2cef19cad16f0e2f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a543ea78e11135fe1d0652c11643e0014"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a543ea78e11135fe1d0652c11643e0014">getJson</a> ()</td></tr>
 <tr class="separator:a543ea78e11135fe1d0652c11643e0014"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac54f68054abf73e071e5c9ed9319946a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structpreset.html">preset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#ac54f68054abf73e071e5c9ed9319946a">currentSetting</a> () const</td></tr>
-<tr class="separator:ac54f68054abf73e071e5c9ed9319946a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8201b663b72e3f5c48eb4ddcda446300"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_preset.html">Preset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a8201b663b72e3f5c48eb4ddcda446300">currentSetting</a> () const</td></tr>
+<tr class="separator:a8201b663b72e3f5c48eb4ddcda446300"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ee9009cfc87d80e1611f9267be31e3b"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a7ee9009cfc87d80e1611f9267be31e3b">currentPresetNumber</a> () const</td></tr>
 <tr class="separator:a7ee9009cfc87d80e1611f9267be31e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b87fd59d0979252551a6b61656bd5ab"><td class="memItemLeft" align="right" valign="top">const boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a9b87fd59d0979252551a6b61656bd5ab">isPresetNumberUpdated</a> () const</td></tr>
 <tr class="separator:a9b87fd59d0979252551a6b61656bd5ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a093d76ab3748d433a7a3f7b68cd7153b"><td class="memItemLeft" align="right" valign="top">const boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a093d76ab3748d433a7a3f7b68cd7153b">isPresetUpdated</a> () const</td></tr>
 <tr class="separator:a093d76ab3748d433a7a3f7b68cd7153b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad277dc6f43c9e04abb7722f4f3fd408d"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#ad277dc6f43c9e04abb7722f4f3fd408d">lastMessageType</a> () const</td></tr>
+<tr class="separator:ad277dc6f43c9e04abb7722f4f3fd408d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6852bb79e7223f74d813642ae29f240e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a6852bb79e7223f74d813642ae29f240e">resetPresetNumberUpdateFlag</a> ()</td></tr>
 <tr class="separator:a6852bb79e7223f74d813642ae29f240e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8b15282931519e3f442c70bc7deba36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#ad8b15282931519e3f442c70bc7deba36">resetPresetUpdateFlag</a> ()</td></tr>
 <tr class="separator:ad8b15282931519e3f442c70bc7deba36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeddd0c5feb554b3230cec1c27370e2b1"><td class="memItemLeft" align="right" valign="top">std::tuple&lt; boolean, byte, byte &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#aeddd0c5feb554b3230cec1c27370e2b1">needsAck</a> (<a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a> block)</td></tr>
 <tr class="separator:aeddd0c5feb554b3230cec1c27370e2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb33e7df9c0aae2f6d23c51ec69911d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#afb33e7df9c0aae2f6d23c51ec69911d4">processBlock</a> (<a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a> block)</td></tr>
-<tr class="separator:afb33e7df9c0aae2f6d23c51ec69911d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af72216f849b8f73f409f70524331332d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#af72216f849b8f73f409f70524331332d">processBlock</a> (<a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a> block)</td></tr>
+<tr class="separator:af72216f849b8f73f409f70524331332d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8da2fda86560e46c4779872e4d6388fe"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spark_stream_reader.html#a8da2fda86560e46c4779872e4d6388fe">getLastAckAndEmpty</a> ()</td></tr>
 <tr class="separator:a8da2fda86560e46c4779872e4d6388fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -163,8 +164,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac54f68054abf73e071e5c9ed9319946a" name="ac54f68054abf73e071e5c9ed9319946a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac54f68054abf73e071e5c9ed9319946a">&#9670;&nbsp;</a></span>currentSetting()</h2>
+<a id="a8201b663b72e3f5c48eb4ddcda446300" name="a8201b663b72e3f5c48eb4ddcda446300"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8201b663b72e3f5c48eb4ddcda446300">&#9670;&nbsp;</a></span>currentSetting()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -173,7 +174,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="structpreset.html">preset</a> SparkStreamReader::currentSetting </td>
+          <td class="memname">const <a class="el" href="struct_preset.html">Preset</a> SparkStreamReader::currentSetting </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -272,6 +273,31 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ad277dc6f43c9e04abb7722f4f3fd408d" name="ad277dc6f43c9e04abb7722f4f3fd408d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad277dc6f43c9e04abb7722f4f3fd408d">&#9670;&nbsp;</a></span>lastMessageType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int SparkStreamReader::lastMessageType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeddd0c5feb554b3230cec1c27370e2b1" name="aeddd0c5feb554b3230cec1c27370e2b1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeddd0c5feb554b3230cec1c27370e2b1">&#9670;&nbsp;</a></span>needsAck()</h2>
 
@@ -290,14 +316,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afb33e7df9c0aae2f6d23c51ec69911d4" name="afb33e7df9c0aae2f6d23c51ec69911d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb33e7df9c0aae2f6d23c51ec69911d4">&#9670;&nbsp;</a></span>processBlock()</h2>
+<a id="af72216f849b8f73f409f70524331332d" name="af72216f849b8f73f409f70524331332d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af72216f849b8f73f409f70524331332d">&#9670;&nbsp;</a></span>processBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool SparkStreamReader::processBlock </td>
+          <td class="memname">int SparkStreamReader::processBlock </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="_spark_b_l_e_control_8h.html#a9ca15c3f786d188fb82ec188300346f3">ByteVector</a>&#160;</td>
           <td class="paramname"><em>block</em></td><td>)</td>

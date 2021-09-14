@@ -1,10 +1,9 @@
 var annotated_dup =
 [
-    [ "ClientCallbacks", "class_client_callbacks.html", null ],
-    [ "cmd_data", "structcmd__data.html", "structcmd__data" ],
-    [ "parameter", "structparameter.html", "structparameter" ],
-    [ "pedal", "structpedal.html", "structpedal" ],
-    [ "preset", "structpreset.html", "structpreset" ],
+    [ "CmdData", "struct_cmd_data.html", "struct_cmd_data" ],
+    [ "Parameter", "struct_parameter.html", "struct_parameter" ],
+    [ "Pedal", "struct_pedal.html", "struct_pedal" ],
+    [ "Preset", "struct_preset.html", "struct_preset" ],
     [ "SparkBLEControl", "class_spark_b_l_e_control.html", "class_spark_b_l_e_control" ],
     [ "SparkButtonHandler", "class_spark_button_handler.html", "class_spark_button_handler" ],
     [ "SparkDataControl", "class_spark_data_control.html", "class_spark_data_control" ],
