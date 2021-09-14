@@ -66,14 +66,14 @@ Each switch controls a different FX pedal type:
 #### FX mode
 |Button      | Press pattern | Function              |
 |----------- | :-----------: | --------------------- |
-|`Bank down` | Short         | Noise Gate            |
-|`Bank up`   | Short         | Compressor            |
-|`Preset 1`  | Short         | Drive                 |
-|`Preset 2`  | Short         | Modulation            |
-|`Preset 3`  | Short         | Delay                 |
-|`Preset 4`  | Short         | Reverb                | 
+|`Bank down` | Short         | Toggle Noise Gate     |
+|`Bank up`   | Short         | Toggle Compressor     |
+|`Preset 1`  | Short         | Toggle Drive          |
+|`Preset 2`  | Short         | Toggle Modulation     |
+|`Preset 3`  | Short         | Toggle Delay          |
+|`Preset 4`  | Short         | Toggle Reverb         | 
 |`Bank up`   | Long          | Switch to Preset mode |
-|`Preset 2`  | Long          | Restart **Ignitron**        |
+|`Preset 2`  | Long          | Restart **Ignitron**  |
 
 -----------------------------------------------------------------
 
