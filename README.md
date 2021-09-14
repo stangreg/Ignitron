@@ -37,7 +37,7 @@ In addition, the **built-in display** provides information on
 
 ## Operation modes
 **Ignitron** has two operation modes, **APP mode** and **AMP mode**.\
-In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches.
+In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets, toggle FX pedals, and even connect it to a Looper app on a mobile.
 **AMP mode** can be used to manage the presets stored on **Ignitron**, presets can be added from the app or be deleted from **Ignitron**.\
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
