@@ -188,6 +188,23 @@ void SparkDataControl::updatePendingPreset(int bnk) {
 void SparkDataControl::updatePendingWithActiveBank() {
 	pendingBank_ = activeBank_;
 }
+
+bool SparkDataControl::getSparkSerialNumber() {
+	current_msg = spark_msg.get_serial_number();
+	if (bleControl.writeBLE(current_msg)) {
+		return true;
+	}
+	return false;
+}
+
+bool SparkDataControl::getSparkName() {
+	current_msg = spark_msg.get_spark_name();
+	if (bleControl.writeBLE(current_msg)) {
+		return true;
+	}
+	return false;
+}
+
 bool SparkDataControl::switchPreset(int pre) {
 	bool retValue = false;
 	int bnk = pendingBank_;

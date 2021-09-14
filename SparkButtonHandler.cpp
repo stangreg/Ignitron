@@ -52,15 +52,14 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		processButton = spark_dc->isAmpConnected();
 	}
-	Serial.println("Button preset change pressed");
 	if (spark_dc && processButton) {
 		const int buttonMode = spark_dc->buttonMode();
 		const int operationMode = spark_dc->operationMode();
 		Preset* activePreset = spark_dc->activePreset();
 		int selectedPresetNum;
 
-		Serial.println("I am in");
 		if (pattern == BfButton::SINGLE_PRESS) {
+			spark_dc->getSparkSerialNumber();
 			int pressed_btn_gpio = btn->getID();
 			// Debug
 			//Serial.print("Button pressed: ");

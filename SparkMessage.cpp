@@ -203,6 +203,26 @@ std::vector<ByteVector> SparkMessage::get_current_preset(){
 	return msg;
 }
 
+std::vector<ByteVector> SparkMessage::get_serial_number() {
+
+	cmd = '\x02';
+	sub_cmd = '\x23';
+	start_message(cmd, sub_cmd);
+	add_byte(0);
+	add_byte(0);
+	return end_message();
+}
+
+std::vector<ByteVector> SparkMessage::get_spark_name() {
+
+	cmd = '\x02';
+	sub_cmd = '\x11';
+	start_message(cmd, sub_cmd);
+	add_byte(0);
+	add_byte(0);
+	return end_message();
+}
+
 std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal, int param, float val){
 	cmd = '\x01';
 	sub_cmd = '\x04';

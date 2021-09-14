@@ -57,6 +57,8 @@ public:
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
+	std::vector<ByteVector> get_serial_number();
+	std::vector<ByteVector> get_spark_name();
 
 };
 

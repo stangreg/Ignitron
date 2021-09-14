@@ -69,6 +69,8 @@ public:
 	Preset getPreset(int bank, int pre);
 	// return the number of banks in the preset list
 	int getNumberOfBanks();
+	bool getSparkSerialNumber();
+	bool getSparkName();
 
 	// Return active or pending preset/bank, set/get active preset number
 	Preset* activePreset() const {
