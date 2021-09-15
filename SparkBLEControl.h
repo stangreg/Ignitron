@@ -149,7 +149,7 @@ public:
 	 * so that the Spark App can connect to Ignitron
 	 *
 	 */
-	void notifyClients(ByteVector msg);
+	void notifyClients(std::vector<ByteVector> msg);
 	/**
 	 * @brief  Sends a series of initial notifications to the Spark App during initiation 
 	 *

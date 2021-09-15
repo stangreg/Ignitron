@@ -18,11 +18,13 @@
 using ByteVector = std::vector<byte>;
 
 
+#define MSG_TYPE_NONE 0
 #define MSG_TYPE_PRESET 1
 #define MSG_TYPE_HWPRESET 2
 #define MSG_TYPE_FX_ONOFF 3
 #define MSG_TYPE_FX_CHANGE 4
 #define MSG_TYPE_FX_PARAM 5
+#define MSG_TYPE_FW_VERSION 6
 
 #define MSG_PROCESS_RES_COMPLETE 1
 #define MSG_PROCESS_RES_INCOMPLETE 2
@@ -42,6 +44,7 @@ private:
 
 	// Vector containing struct of cmd, sub_cmd, and payload
 	std::vector<CmdData> message = { };
+	int request_counter_ = 0;
 	// Unstructured input data, needs to go through structure_data first
 	std::vector<ByteVector> unstructured_data = {};
 
@@ -70,6 +73,8 @@ private:
 	void read_hardware_preset();
 	void read_store_hardware_preset();
 	void read_preset();
+	void read_firmware_version_request();
+	void read_nothing();
 
 
 	// Functions to structure and process input data (high level)
@@ -117,12 +122,17 @@ public:
 	const boolean isPresetNumberUpdated() const { return isPresetNumberUpdated_;}
 	const boolean isPresetUpdated() const { return isPresetUpdated_;}
 	const int lastMessageType() const { return last_message_type_;}
+	const int requestCounter() const {
+		return request_counter_;
+	}
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
+	byte getLastCommand();
+	byte getLastSubCommand();
 
 };
 

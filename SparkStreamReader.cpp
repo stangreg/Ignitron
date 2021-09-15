@@ -19,6 +19,14 @@ std::string SparkStreamReader::getJson(){
 	return json;
 }
 
+byte SparkStreamReader::getLastCommand() {
+	return message.back().cmd;
+}
+
+byte SparkStreamReader::getLastSubCommand() {
+	return message.back().subcmd;
+}
+
 void SparkStreamReader::setMessage(std::vector<ByteVector> msg){
 	unstructured_data = msg;
 	message.clear();
@@ -291,6 +299,14 @@ void SparkStreamReader::read_effect_onoff() {
 
 }
 
+void SparkStreamReader::read_firmware_version_request() {
+	last_message_type_ = MSG_TYPE_FW_VERSION;
+}
+
+void SparkStreamReader::read_nothing() {
+	last_message_type_ = MSG_TYPE_NONE;
+}
+
 void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
 	read_byte();
@@ -365,7 +381,7 @@ void SparkStreamReader::read_preset() {
 			}
 			currentPedal.parameters.push_back(currentParameter);
 		}
-		
+
 		add_python("]");
 		//del_indent();
 		add_python("}");
@@ -556,6 +572,29 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			Serial.println();
 		}
 	}
+	if (_cmd == 0x02) {
+		if (_sub_cmd == 0x10) {
+			// TODO: Check how to treat app requests
+			Serial.println("Reading preset request");
+			//read_preset();
+		} else if (_sub_cmd == 0x23) {
+			Serial.println("Reading serial number request");
+			//read_effect_parameter();
+		} else if (_sub_cmd == 0x2A) {
+			Serial.println("Reading unknown initial request");
+			//read_effect();
+		} else if (_sub_cmd == 0x2F) {
+			Serial.println("Reading Firmware version request");
+			read_firmware_version_request();
+		} else {
+			Serial.print(SparkHelper::intToHex(_cmd).c_str());
+			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
+			Serial.println(" not handled");
+			SparkHelper::printByteVector(msg);
+			Serial.println();
+			read_nothing();
+		}
+	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
 			//Serial.println("Reading preset");
@@ -662,6 +701,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	byte seq = blk[18];
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
+	request_counter = blk[22];
 
 	//Check if announced size matches real size, otherwise skip (and wait for more data);
 	if(blk_len == blk.size()){
@@ -738,9 +778,9 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// if request was an initiating one from the app, return value for INITIAL message,
 	// so SparkDataControl knows how to notify.
 	// so notifications will be triggered
-	if(cmd == 0x02){
+	/*if(cmd == 0x02){
 		retValue = MSG_PROCESS_RES_INITIAL;
-	}
+	 }*/// TODO Taken out to test proper processing of initial messages
 	return retValue;
 }
 

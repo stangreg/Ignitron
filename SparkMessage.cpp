@@ -16,6 +16,10 @@ SparkMessage::SparkMessage(){
 	sub_cmd=0;
 }
 
+void SparkMessage::setSender(int sender) {
+	msg_sender = sender;
+}
+
 void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 	cmd = _cmd;
 	sub_cmd = _sub_cmd;
@@ -87,9 +91,16 @@ std::vector<ByteVector> SparkMessage::end_message(){
 
 
 	// now we can create the final message with the message header and the chunk header
-	ByteVector block_header = {'\x01','\xfe','\x00','\x00','\x53','\xfe'};
+	ByteVector block_header;
+	if (msg_sender == MSG_SENDER_APP) {
+		block_header = { '\x01', '\xfe', '\x00', '\x00', '\x53', '\xfe' };
+	} else if (msg_sender == MSG_SENDER_AMP) {
+		block_header = { '\x01', '\xfe', '\x00', '\x00', '\x41', '\xff' };
+	}
 	ByteVector block_filler = {'\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00'};
-	ByteVector chunk_header = {'\xf0','\x01','\x3a','\x15'};
+	ByteVector chunk_header = { '\xf0', '\x01' };
+	chunk_header.push_back(request_counter);
+	chunk_header.push_back('\x15');
 
 	for (auto chunk: split_data7){
 		int block_size = chunk.size() + 16 + 6 + 1;
@@ -323,3 +334,28 @@ std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte cmd) {
 	return ack_cmd;
 }
 
+std::vector<ByteVector> SparkMessage::get_firmware_version() {
+
+	cmd = '\x03';
+	sub_cmd = '\x2F';
+	/*
+	start_message(cmd, sub_cmd);
+	ByteVector fw_version = { 0x4E, 0x01, 0x04, 0x03, 0x2E };
+	add_bytes(fw_version);
+	return end_message();
+	 */
+	std::vector<ByteVector> fw_cmd;
+	/*
+	ByteVector fw_version = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x01,
+			0x77, 0x03, 0x2F, 0x11, 0x4E, 0x01, 0x04, 0x03, 0x2E, 0xF7 };
+	 */
+	ByteVector fw_version = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x02,
+			0x77, 0x03, 0x2F, 0x11, 0x4E, 0x01, 0x04, 0x03, 0x2E, 0xF7 };
+
+	//01FE000041FF1D000000000000000000F0013A15032F004E0104032EF7
+	fw_cmd.push_back(fw_version);
+	return fw_cmd;
+
+}

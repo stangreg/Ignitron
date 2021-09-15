@@ -298,6 +298,7 @@ void SparkBLEControl::startServer() {
 
 	pServer = NimBLEDevice::createServer();
 	pServer->setCallbacks(this);
+	Serial.println("Started NimBLE Server");
 
 	NimBLEService *pSparkService = pServer->createService(
 	SPARK_BLE_SERVICE_UUID);
@@ -323,6 +324,8 @@ void SparkBLEControl::startServer() {
 			0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
 			0x77, 0x77, 0x77 };
 
+	Serial.println("Seting value1");
+
 	pSparkWriteCharacteristic->setValue(initialWriteValue);
 	pSparkWriteCharacteristic->setCallbacks(this);
 
@@ -345,6 +348,8 @@ void SparkBLEControl::startServer() {
 			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
 			0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
 			0x88, 0x88, 0x88, 0x88 };
+
+	Serial.println("Seting value2");
 	pSparkNotificationCharacteristic->setValue(initialNotificationValue);
 	pSparkNotificationCharacteristic->setCallbacks(this);
 
@@ -366,6 +371,7 @@ void SparkBLEControl::startServer() {
 	 *  to false as it will extend battery life at the expense of less data sent.
 	 */
 	pAdvertising->setScanResponse(true);
+	Serial.println("Starting");
 	pAdvertising->start();
 
 	Serial.println("Advertising Started");
@@ -408,42 +414,50 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 	str += std::string(pCharacteristic->getUUID());
 
 	Serial.println(str.c_str());
-	sendInitialNotification();
+	//sendInitialNotification();
 
 }
 ;
 
-void SparkBLEControl::notifyClients(ByteVector msg) {
+void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 	if (pSvc) {
 		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
 		SPARK_BLE_NOTIF_CHAR_UUID);
 		if (pChr) {
-			pChr->setValue(&msg.data()[0], msg.size());
-			pChr->notify(true);
+
+			for (auto packet : msg) {
+				//Serial.println("Trying to send package");
+				pChr->setValue(&packet.data()[0], packet.size());
+				pChr->notify(true);
+			}
 		}
 	}
 }
 
 void SparkBLEControl::sendInitialNotification() {
 
-// TODO: Find and process real messages as requested by app
+	// TODO: Find and process real messages as requested by app
 	//This is the serial number of the Spark. Sending fake one.
-	ByteVector preface1 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x05,
+	ByteVector preface3 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x29, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x03,
 			0x32, 0x03, 0x23, 0x02, 0x0D, 0x2D, 0x53, 0x39, 0x39, 0x39, 0x43,
 			0x00, 0x39, 0x39, 0x39, 0x42, 0x39, 0x39, 0x39, 0x01, 0x77, 0xF7 };
 
 	// When connecting app, we need to send a set of notifications for a successful connection
 	// example Spark Name "Spark 40" 08 is length, rest is string 08A8537061726B203430
 	// Ignitron: 0x49, 0x67, 0x6e, 0x69, 0x74, 0x72, 0x6f, 0x6e
-	ByteVector preface2 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00,
+	// This message seems to be for the firmware version (CMD 03 2F)
+	ByteVector preface1 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1D, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x01,
 			0x77, 0x03, 0x2F, 0x11, 0x4E, 0x01, 0x04, 0x03, 0x2E, 0xF7 };
-	ByteVector preface3 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1E, 0x00,
+	ByteVector preface2 = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1E, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x02,
 			0x2D, 0x03, 0x2A, 0x0D, 0x14, 0x7D, 0x4C, 0x07, 0x5A, 0x58, 0xF7 };
 
+	// ORder of commands: 022F, 022A, 0210, 022F, 0223, 022F
+	std::vector<ByteVector> notify_cmd;
+	notify_cmd.clear();
 	int delayValue = 0;
 	if (pServer->getConnectedCount()) {
 		//Serial.println("Sending notifications...");
@@ -453,19 +467,22 @@ void SparkBLEControl::sendInitialNotification() {
 			notificationCount = 1;
 			/* no break */
 		case 1:
-			notifyClients(preface1);
-			delay(delayValue);
+			Serial.print("Sending message 1");
+			notify_cmd.push_back(preface1);
 			break;
 		case 2:
-			notifyClients(preface2);
-			delay(delayValue);
+			Serial.print("Sending message 2");
+			notify_cmd.push_back(preface2);
 			break;
 		case 3:
-			notifyClients(preface3);
-			delay(delayValue);
+			Serial.print("Sending message 3");
+			notify_cmd.push_back(preface3);
 			break;
 
 		}
+
+		notifyClients(notify_cmd);
+		delay(delayValue);
 
 	} // if server connected
 }

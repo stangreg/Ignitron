@@ -48,6 +48,7 @@ void SparkDataControl::init(int opMode) {
 		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
 		bleControl.initBLE(&notifyCB);
+		spark_msg.setSender(MSG_SENDER_APP);
 
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
@@ -56,6 +57,7 @@ void SparkDataControl::init(int opMode) {
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
+		spark_msg.setSender(MSG_SENDER_AMP);
 	}
 
 }
@@ -135,7 +137,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 	bool ackNeeded;
 	byte seq, cmd;
-
+	Serial.println("Received data:");
+	SparkHelper::printByteVector(blk);
+	Serial.println();
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
@@ -145,7 +149,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		if (operationMode_ == SPARK_MODE_APP) {
 			bleControl.writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
-			bleControl.notifyClients(ack_msg[0]);
+			bleControl.notifyClients(ack_msg);
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
@@ -153,6 +157,13 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		Serial.println("Message processed:");
 		std::string msgStr = spark_ssr.getJson();
 		Serial.println(msgStr.c_str());
+		if (spark_ssr.lastMessageType() == MSG_TYPE_FW_VERSION) {
+			// TODO INITIAL MESSAGE
+			Serial.println("Sending FW version");
+			// TODO Cleanup the [0] !
+			SparkHelper::printByteVector(spark_msg.get_firmware_version()[0]);
+			bleControl.notifyClients(spark_msg.get_firmware_version());
+		}
 		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 			presetEditMode_ = PRESET_EDIT_STORE;
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);

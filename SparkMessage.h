@@ -17,6 +17,9 @@
 
 #include "SparkTypes.h"
 
+#define MSG_SENDER_APP 1
+#define MSG_SENDER_AMP 2
+
 using ByteVector = std::vector<byte>;
 
 class SparkMessage{
@@ -30,6 +33,7 @@ private:
 	std::vector<ByteVector> split_data7;
 	ByteVector data;
 	std::vector<ByteVector> final_message;
+	int msg_sender = MSG_SENDER_APP;
 
 
 	void start_message (byte cmd, byte sub_cmd);
@@ -47,6 +51,7 @@ private:
 public:
 
 	SparkMessage();
+	void setSender(int sender);
 
 	// Command messages to send to Spark
 	std::vector<ByteVector> change_effect_parameter (std::string pedal, int param, float val);
@@ -59,6 +64,7 @@ public:
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
 	std::vector<ByteVector> get_serial_number();
 	std::vector<ByteVector> get_spark_name();
+	std::vector<ByteVector> get_firmware_version();
 
 };
 
