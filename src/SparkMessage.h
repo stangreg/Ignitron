@@ -13,9 +13,9 @@
 #include <iomanip>
 #include <sstream>
 #include <Arduino.h>
-#include "SparkHelper.h"
+#include "../src/SparkHelper.h"
+#include "../src/SparkTypes.h"
 
-#include "SparkTypes.h"
 
 using ByteVector = std::vector<byte>;
 

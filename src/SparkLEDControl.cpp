@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "SparkLEDControl.h"
+#include "../src/SparkLEDControl.h"
 
 SparkLEDControl::SparkLEDControl() {
 	spark_dc = nullptr;

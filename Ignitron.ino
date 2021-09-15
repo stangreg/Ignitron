@@ -4,10 +4,10 @@
 #include <string>
 #include <NimBLEDevice.h> // github NimBLE
 
-#include "SparkDataControl.h"
-#include "SparkButtonHandler.h"
-#include "SparkLEDControl.h"
-#include "SparkDisplayControl.h"
+#include "src/SparkButtonHandler.h"
+#include "src/SparkDataControl.h"
+#include "src/SparkDisplayControl.h"
+#include "src/SparkLEDControl.h"
 
 // Device Info Definitions
 const std::string DEVICE_NAME = "Ignitron";

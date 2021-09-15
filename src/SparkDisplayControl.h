@@ -11,7 +11,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
 
-#include "SparkDataControl.h"
+#include "../src/SparkDataControl.h"
+#include "../src/SparkTypes.h"
 
 // OLED Screen config
 #define SCREEN_WIDTH 128 // Display width

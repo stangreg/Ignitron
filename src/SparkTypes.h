@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <Arduino.h>
-#include "SparkHelper.h"
+#include "../src/SparkHelper.h"
 
 using ByteVector = std::vector<byte>;
 

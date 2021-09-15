@@ -12,13 +12,13 @@
 
 #include <vector>
 #include <Arduino.h>
+#include "../src/SparkBLEControl.h"
+#include "../src/SparkDisplayControl.h"
+#include "../src/SparkMessage.h"
+#include "../src/SparkPresetBuilder.h"
+#include "../src/SparkStreamReader.h"
 
-#include "SparkBLEControl.h"
-#include "SparkMessage.h"
-#include "SparkPresetBuilder.h"
-#include "SparkStreamReader.h"
-#include "SparkTypes.h"
-#include "SparkDisplayControl.h"
+#include "../src/SparkTypes.h"
 
 #define SWITCH_MODE_FX 1
 #define SWITCH_MODE_PRESET 2

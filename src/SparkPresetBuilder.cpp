@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "SparkPresetBuilder.h"
+#include "../src/SparkPresetBuilder.h"
 
 SparkPresetBuilder::SparkPresetBuilder() {
 	presetBanksNames = {};

@@ -13,7 +13,7 @@
 #include <vector>
 #include <BleKeyboard.h>
 
-#include "SparkDataControl.h"
+#include "../src/SparkDataControl.h"
 
 // Service and characteristics UUIDs of Spark Amp
 #define SPARK_BLE_SERVICE_UUID "FFC0"

@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "SparkButtonHandler.h"
+#include "../src/SparkButtonHandler.h"
 
 // Intialize buttons
 BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false,
