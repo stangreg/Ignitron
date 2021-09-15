@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/Ignitron_logo_large.png">
+  <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_logo_large.png">
 </p>
 
 An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
@@ -11,7 +11,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 * **Load new presets** via the Spark App
 * **Delete** stored presets
 
-Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**. 
+Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
 One big advantage of **Ignitron** is that it communicates with your Spark Amp using the **Bluetooth LE** protocol.
 This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
@@ -44,7 +44,7 @@ To enter **AMP mode**, hold the `Preset 1` button during startup.
 ## APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). You can easily toggle between these modes by long pressing the `Bank-Up` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
-In **FX mode**, the user has direct access to all effects of the selected preset. 
+In **FX mode**, the user has direct access to all effects of the selected preset.
 Each switch controls a different FX pedal type:
 
 
@@ -58,7 +58,7 @@ Each switch controls a different FX pedal type:
 |`Preset 1`  | Short         | Select preset 1    |
 |`Preset 2`  | Short         | Select preset 2    |
 |`Preset 3`  | Short         | Select preset 3    |
-|`Preset 4`  | Short         | Select preset 4    | 
+|`Preset 4`  | Short         | Select preset 4    |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**     |
 
@@ -71,7 +71,7 @@ Each switch controls a different FX pedal type:
 |`Preset 1`  | Short         | Toggle Drive          |
 |`Preset 2`  | Short         | Toggle Modulation     |
 |`Preset 3`  | Short         | Toggle Delay          |
-|`Preset 4`  | Short         | Toggle Reverb         | 
+|`Preset 4`  | Short         | Toggle Reverb         |
 |`Bank up`   | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
@@ -92,7 +92,7 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 2. Connect the Spark App with **Ignitron** (see above)
 3. Select a preset in the app (either saved in the app or from the ToneCloud).
 4. The preset name should appear in the bottom line of the display
-5. The `Preset`/`Bank` buttons on **Ignitron** can be used to navigate to the  desired preset position. 
+5. The `Preset`/`Bank` buttons on **Ignitron** can be used to navigate to the  desired preset position.
 6. Press the `Preset` button to mark the position for storing
 7. The LED of the selected preset position should start blinking
 8. Hit the same `Preset` button a second time to confirm storage
@@ -143,7 +143,7 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 3. Put the file name into the **data folder**
 4. Insert the file name (including the `.json` suffix) to the desired prefix location in the `PresetList.txt` file
 5. *Place the PresetList.txt file into the data folder (if not already there)*
-6. **Upload the data folder** to **Ignitron** via the Arduino IDE (or other tools) 
+6. **Upload the data folder** to **Ignitron** via the Arduino IDE (or other tools)
 
 #### Preset format
 **Ignitron** stores presets in a JSON format using the SPIFFS file system.
@@ -164,7 +164,7 @@ An example preset file would look like this:
 }
 ```
 
-As a guidance which effect and amp names can be used and in which order the parameters of each effect have to be given, please refer to 
+As a guidance which effect and amp names can be used and in which order the parameters of each effect have to be given, please refer to
 
 #### FX parameter reference
 In order to know which effects are available with paramters, see below table.
@@ -249,4 +249,3 @@ Parameters marked with `Switch` can only have values of 0 or 1.
 | Reverb     | Plate Short        | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.6                           |
 | Reverb     | Plate Rich         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.7                           |
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
-
