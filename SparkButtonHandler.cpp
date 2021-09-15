@@ -326,17 +326,20 @@ int SparkButtonHandler::init(bool startup) {
 	btn_preset4.onPress(btnPresetHandler);
 	// Long press handlers
 	btn_preset2.onPressFor(btnResetHandler, 2000);
-	btn_preset4.onPressFor(btnToggleLoopHandler, 2000);
+	btn_bank_down.onPressFor(btnToggleLoopHandler, 1500);
 
-	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_AMP) {
+	if (operationMode == SPARK_MODE_LOOPER) {
+		btn_bank_down.onPress(btnKeyboardHandler);
+		btn_bank_up.onPress(btnKeyboardHandler);
+	} else {
 		// Setup the button event handler
 		btn_bank_down.onPress(btnBankHandler);
 		btn_bank_up.onPress(btnBankHandler);
+	}
+
+	// Special buttons only available in certain modes
+	if (operationMode == SPARK_MODE_APP) {
 		btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
-	} else if (operationMode == SPARK_MODE_LOOPER) {
-		Serial.println("Registering looper buttons");
-		btn_bank_down.onPress(btnKeyboardHandler);
-		btn_bank_up.onPress(btnKeyboardHandler);
 	}
 	if (operationMode == SPARK_MODE_AMP) {
 		btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
@@ -398,7 +401,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 			//Serial.print("Button long pressed: ");
 			//Serial.println(pressed_btn_gpio);
 			//Switch mode in APP mode
-			if (pressed_btn_gpio == BUTTON_PRESET3_GPIO) {
+			if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
 				Serial.print("Switching to ");
 				switch (operationMode) {
 				case SPARK_MODE_APP:
