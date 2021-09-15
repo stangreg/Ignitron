@@ -52,14 +52,12 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		processButton = spark_dc->isAmpConnected();
 	}
-	Serial.println("Button preset change pressed");
 	if (spark_dc && processButton) {
 		const int buttonMode = spark_dc->buttonMode();
 		const int operationMode = spark_dc->operationMode();
 		Preset* activePreset = spark_dc->activePreset();
 		int selectedPresetNum;
 
-		Serial.println("I am in");
 		if (pattern == BfButton::SINGLE_PRESS) {
 			int pressed_btn_gpio = btn->getID();
 			// Debug
@@ -107,7 +105,6 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				}
 				if (operationMode == SPARK_MODE_APP
 						|| operationMode == SPARK_MODE_LOOPER) {
-					Serial.println("Switching preset");
 					spark_dc->switchPreset(selectedPresetNum);
 				} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
 					spark_dc->processPresetEdit(selectedPresetNum);
@@ -300,7 +297,7 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 		//Serial.print("Button long pressed: ");
 		//Serial.println(pressed_btn_gpio);
 		//RESET Sparky
-		Serial.println("!!! Restarting Sparky !!!");
+		Serial.println("!!! Restarting !!!");
 		if (pressed_btn_gpio == BUTTON_PRESET2_GPIO) {
 			ESP.restart();
 		}
@@ -401,7 +398,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 			//Serial.print("Button long pressed: ");
 			//Serial.println(pressed_btn_gpio);
 			//Switch mode in APP mode
-			if (pressed_btn_gpio == BUTTON_PRESET4_GPIO) {
+			if (pressed_btn_gpio == BUTTON_PRESET3_GPIO) {
 				Serial.print("Switching to ");
 				switch (operationMode) {
 				case SPARK_MODE_APP:
