@@ -9,7 +9,7 @@
 #define SPARKBUTTONHANDLER_H_
 
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
-#include "../src/SparkDataControl.h"
+#include "SparkDataControl.h"
 
 // GPIO Buttons/LEDs
 #define BUTTON_PRESET1_GPIO 25

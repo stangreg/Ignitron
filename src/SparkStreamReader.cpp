@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkStreamReader.h"
+#include "SparkStreamReader.h"
 
 
 SparkStreamReader::SparkStreamReader(){

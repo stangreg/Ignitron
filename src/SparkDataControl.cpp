@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkDataControl.h"
+#include "SparkDataControl.h"
 
 SparkBLEControl SparkDataControl::bleControl;
 SparkStreamReader SparkDataControl::spark_ssr;

@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkMessage.h"
+#include "SparkMessage.h"
 
 
 SparkMessage::SparkMessage(){

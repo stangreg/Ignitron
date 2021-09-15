@@ -12,8 +12,8 @@
 #include <vector>
 #include <string>
 
-#include "../src/SparkHelper.h"
-#include "../src/SparkTypes.h"
+#include "SparkHelper.h"
+#include "SparkTypes.h"
 
 using ByteVector = std::vector<byte>;
 

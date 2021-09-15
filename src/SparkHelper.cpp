@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkHelper.h"
+#include "SparkHelper.h"
 
 using ByteVector = std::vector<byte>;
 

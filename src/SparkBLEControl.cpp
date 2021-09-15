@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkBLEControl.h"
+#include "SparkBLEControl.h"
 
 //ClientCallbacks SparkBLEControl::clientCB;
 

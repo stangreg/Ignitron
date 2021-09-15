@@ -16,8 +16,8 @@
 #include <regex>
 
 
-#include "../src/SparkHelper.h"
-#include "../src/SparkTypes.h"
+#include "SparkHelper.h"
+#include "SparkTypes.h"
 
 #define PRESETS_PER_BANK 4
 

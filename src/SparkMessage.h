@@ -13,8 +13,8 @@
 #include <iomanip>
 #include <sstream>
 #include <Arduino.h>
-#include "../src/SparkHelper.h"
-#include "../src/SparkTypes.h"
+#include "SparkHelper.h"
+#include "SparkTypes.h"
 
 
 using ByteVector = std::vector<byte>;

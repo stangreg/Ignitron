@@ -5,7 +5,7 @@
  *      Author: stangreg
  */
 
-#include "../src/SparkDisplayControl.h"
+#include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
 		&Wire, OLED_RESET);
