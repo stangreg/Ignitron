@@ -184,7 +184,8 @@ As a guidance which effect and amp names can be used and in which order the para
 #### FX parameter reference
 In order to know which effects are available with paramters, see below table.
 This data can be used to build own presets in JSON format (see above).
-Parameters marked with `Switch` can only have values of 0 or 1.
+Use the Technical Name information in the JSON files.
+Parameters marked with `Switch` can only have values of 0 or 1, others can have any value between 0 and 1.
 
 | Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
