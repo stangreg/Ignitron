@@ -10,6 +10,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 * **Activate / Deactivate effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
+* Control **Looper apps** (and other apps which can be controlled via bluetooth keyboards)
 
 Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
@@ -42,9 +43,11 @@ In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp 
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
-In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**) or to control all single effects in the selected preset (**FX mode**). You can easily toggle between these modes by long pressing the `Bank-Up` button.
+In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app. You can easily toggle between **Preset mode** and **FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Preset 4` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In **FX mode**, the user has direct access to all effects of the selected preset.
+When **Looper mode** is activated, you can swtich between presets of the current selected preset bank and use the `Bank down`/`Bank up` buttons to control your Looper app, e.g. to record on two separate loops.
+
 Each switch controls a different FX pedal type:
 
 
@@ -75,6 +78,18 @@ Each switch controls a different FX pedal type:
 |`Bank up`   | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
+#### Looper mode
+|Button      | Press pattern | Function           |
+|----------- | :-----------: | ------------------ |
+|`Bank down` | Short         | Toggle recording on Loop 1 (example) |
+|`Bank up`   | Short         | Toggle recording on Loop 2 (example) |
+|`Preset 1`  | Short         | Select preset 1    |
+|`Preset 2`  | Short         | Select preset 2    |
+|`Preset 3`  | Short         | Select preset 3    |
+|`Preset 4`  | Short         | Select preset 4    |
+|`Bank up`   | Long          | Switch to FX mode  |
+|`Preset 2`  | Long          | Restart **Ignitron**     |
+***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the `bank down`/`bank up` buttons can be freely configured to any function offered.*
 -----------------------------------------------------------------
 
 ## AMP mode
