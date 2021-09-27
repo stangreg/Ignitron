@@ -7,7 +7,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
-* **Activate / Deactivate effects** for the selected preset
+* **Toggle effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
 * Control **Looper apps** (and other apps which supports bluetooth keyboards)
