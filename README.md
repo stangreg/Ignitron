@@ -10,7 +10,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 * **Activate / Deactivate effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
-* Control **Looper apps** (and other apps which can be controlled via bluetooth keyboards)
+* Control **Looper apps** (and other apps which supports bluetooth keyboards)
 
 Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
