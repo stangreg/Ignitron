@@ -62,6 +62,7 @@ void SparkDataControl::init(int opMode) {
 
 void SparkDataControl::switchOperationMode(int opMode) {
 	operationMode_ = opMode;
+	buttonMode_ = SWITCH_MODE_PRESET;
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
