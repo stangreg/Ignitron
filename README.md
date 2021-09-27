@@ -89,6 +89,7 @@ Each switch controls a different FX pedal type:
 |`Preset 4`  | Short         | Select preset 4    |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**     |
+
 ***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the `bank down`/`bank up` buttons can be freely configured to any function offered.*
 -----------------------------------------------------------------
 
