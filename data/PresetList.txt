@@ -1,118 +1,100 @@
---Custom Presets
-------Bank 1
+-- Bank 1 
 SweetChildOfMine.json
 SlashV2.json
 SlashAFD.json
 SlashDontCry.json
-
-------Bank 2
+-- Bank 2 
 NovemberRainSolo.json
 ParadiseCity.json
 KnockingOnHeaven.json
 GunsNRoses.json
-
-------Bank 3
+-- Bank 3 
 RockDistortion.json
 RageNowInTheFire.json
 ComfortablyNumbSolo.json
 StairwayToHeavenSolo.json
-
-------Bank 4
+-- Bank 4 
 BohemianRhapsody.json
 CliffsOfDover.json
 FinalCountdown.json
 AcDc.json
-
-------Bank 5
+-- Bank 5 
 TremontiAlternative.json
 TremontiClean.json
 FooFighters.json
 FooFightersEverlong.json
-
-------Bank 6
+-- Bank 6 
 EnterSandman.json
 NothingElseMatters.json
 NothingElseMattersAcous.json
 HateToSay.json
-
-------Bank 7
+-- Bank 7 
 RedHotChiliPeppers.json
 AliceCooper.json
 EddieVanHalen.json
 Rush.json
-
-------Bank 8
+-- Bank 8 
 SantanaBlackMagicWoman.json
 SunshineOfMyLove.json
 SatrianiSatchBoogie.json
 ToolClean.json
-
-------Bank 9
+-- Bank 9 
 VintageCreamyLarson.json
+WizoQuadrat.json
 Wizo.json
 JethroTull.json
 BrownSoundLarson.json
-
-------Bank 10
+-- Bank 10 
 MasterOfPuppets.json
 Megadeth.json
 GhostDanceMacabreMart.json
 GtrHeroLarson.json
-
-------Bank 11
+-- Bank 11 
 CrazyTrain.json
 IronMaiden.json
 BangBang.json
 CleanForBallads.json
-
-------Bank 12
+-- Bank 12 
 OrangeAD30Arpeggio.json
 ModernVintageClean.json
 PerfectCleanLarson.json
 Oasis.json
-
-------Bank 13
+-- Bank 13 
 ThroatyLarson.json
 LynyrdSkynyrd.json
 CozySerenade.json
+Hendrix.json
+-- Bank 14 
+EnglFireball.json
+DireStraits.json
+DireStraitsnicemidrockto.json
 StudioSession.json
-
-------Bank 14
-JimiHendrix.json
--- FILLER to get Bank complete
-StudioSession.json
-StudioSession.json
-StudioSession.json
-
-
---Factory Presets
-----Pop (Bank 14)
+-- Bank 15 
+TornadoOfSouls.json
+SpookyMelody.json
+NothingElseMattersMetall.json
 SilverShip.json
+-- Bank 16 
 SweetMemory.json
 DancingInTheRoom.json
 RoyalCrown.json
-
-----Blues (Bank 15)
 WoodenBridge.json
+-- Bank 17 
 StoneBreaker.json
 CountryRoad.json
 BluesArk.json
-
-----Rock (Bank 16)
 ModernStone.json
+-- Bank 18 
 CrazyCrue.json
 DarkSoul.json
 BritishAccent.json
-
-----Metal (Bank 17)
 IronHammer.json
+-- Bank 19 
 MillenialLead.json
 HeavyAxe.json
 DualTrain.json
-
-----Alternative (Bank 18)
 SpookyMelody.json
+-- Bank 20 
 FuzzyJam.json
 AngryMonkey.json
 HideAndSeek.json
-

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "AA52F422-BE44-4D27-BD10-4A6B5B87AD19", 
+"Name": "Engl Fireball", "Version": "0.7", "Description": "Tubescreamer, Fireball, EQ, Reverb", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.5455, 0.5695]}, 
+{"Name": "LA2AComp", "IsOn": false, "Parameters":[0.0000, 0.7126, 0.7248]}, 
+{"Name": "DistortionTS9", "IsOn": true, "Parameters":[0.1265, 0.8161, 1.0000]}, 
+{"Name": "SwitchAxeLead", "IsOn": true, "Parameters":[0.7000, 0.5040, 0.0563, 1.0000, 0.7000]}, 
+{"Name": "Tremolo", "IsOn": false, "Parameters":[0.4541, 0.6999, 0.5962]}, 
+{"Name": "DelayMono", "IsOn": false, "Parameters":[0.3818, 0.3983, 0.7363, 0.6000, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2857, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000]}],
+"Filler": "34"
+}
