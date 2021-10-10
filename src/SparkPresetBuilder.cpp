@@ -6,6 +6,7 @@
  */
 
 #include "SparkPresetBuilder.h"
+#include <ArduinoJson.h>
 
 SparkPresetBuilder::SparkPresetBuilder() {
 	presetBanksNames = {};
@@ -15,6 +16,8 @@ SparkPresetBuilder::SparkPresetBuilder() {
 Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
 	Preset resultPreset;
+	std::string jsonString(json);
+
 	const int capacity = JSON_OBJECT_SIZE(
 					10) + JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8*JSON_OBJECT_SIZE(8);
 	DynamicJsonDocument jsonPreset(capacity);
@@ -73,12 +76,15 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 			resultPreset.pedals.push_back(currentPedal);
 	}
 	// preset Filler
-	std::string presetFillerString = jsonPreset["Filler"].as<std::string>();
-	byte presetFiller = SparkHelper::HexToByte(presetFillerString);
+	byte presetFiller = jsonPreset["Filler"].as<unsigned char>();
+	//byte presetFiller = SparkHelper::HexToByte(presetFillerString);
 	resultPreset.filler = presetFiller;
 
 	resultPreset.isEmpty=false;
-	resultPreset.json = json;
+	resultPreset.json = jsonString;
+	//Serial.println("JSON:");
+	//Serial.println(resultPreset.json.c_str());
+	//Serial.println(resultPreset.pedals[0].parameters[0].value);
 	return resultPreset;
 
 }
@@ -149,6 +155,11 @@ int SparkPresetBuilder::getNumberOfBanks(){
 
 int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 	std::string presetNamePrefix = newPreset.name;
+	if (presetNamePrefix == "null" || presetNamePrefix.empty()) {
+		presetNamePrefix = "Preset";
+	}
+	Serial.println("Saving preset:");
+	Serial.println(newPreset.json.c_str());
 	std::string presetNameWithPath;
 	// remove any blanks from the name for a new filename
 	presetNamePrefix.erase(std::remove_if(presetNamePrefix.begin(),

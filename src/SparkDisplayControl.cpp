@@ -5,6 +5,7 @@
  *      Author: stangreg
  */
 
+
 #include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,

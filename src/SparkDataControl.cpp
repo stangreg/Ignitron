@@ -157,6 +157,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 			presetEditMode_ = PRESET_EDIT_STORE;
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
+			//Serial.println("received from app:");
+			//Serial.println(appReceivedPreset_.json.c_str());
 			spark_ssr.resetPresetUpdateFlag();
 			spark_ssr.resetPresetNumberUpdateFlag();
 			presetNumToEdit_ = 0;
