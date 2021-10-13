@@ -17,6 +17,7 @@
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
+#include "SparkOTAServer.h"
 
 #include "SparkTypes.h"
 
@@ -43,6 +44,7 @@ public:
 	virtual ~SparkDataControl();
 
 	void init(int op_mode);
+	void connectToWifi();
 	void setDisplayControl(SparkDisplayControl *display);
 	bool checkBLEConnection();
 	bool isAmpConnected();
@@ -125,6 +127,10 @@ public:
 		return buttonMode_;
 	}
 
+	const bool isWifiConnected() const {
+		return isWifiConnected_;
+	}
+
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
@@ -142,12 +148,14 @@ private:
 	static int operationMode_;
 
 	static SparkBLEControl bleControl;
+	static SparkOTAServer otaServer;
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
 
 	BleKeyboard bleKeyboard;
+	bool isWifiConnected_ = false;
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;

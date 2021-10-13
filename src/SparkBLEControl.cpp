@@ -114,6 +114,7 @@ bool SparkBLEControl::connectToServer() {
 		 Min interval: 12 * 1.25ms = 15, Max interval: 12 * 1.25ms = 15, 0 latency, 51 * 10ms = 510ms timeout
 		 */
 		pClient->setConnectionParams(12, 12, 0, 51);
+		//pClient->setConnectionParams(40, 80, 5, 51);
 		/** Set how long we are willing to wait for the connection to complete (seconds), default is 30. */
 		pClient->setConnectTimeout(5);
 		if (!pClient->connect(advDevice)) {
@@ -468,13 +469,14 @@ void SparkBLEControl::sendInitialNotification() {
 	} // if server connected
 }
 
-void SparkBLEControl::onConnect(NimBLEServer *pServer) {
-	Serial.println("Client connected");
+
+void SparkBLEControl::onConnect(NimBLEServer *pServer,
+		ble_gap_conn_desc *desc) {
 	isAppConnected_ = true;
 	Serial.println("Multi-connect support: start advertising");
+//	pServer->updateConnParams(desc->conn_handle, 40, 80, 5, 51);
 	NimBLEDevice::startAdvertising();
 }
-;
 
 void SparkBLEControl::onDisconnect(NimBLEServer *pServer) {
 	Serial.println("Client disconnected");
@@ -503,4 +505,9 @@ void SparkBLEControl::stopScan() {
 	}
 
 }
+
+
+
+
+
 

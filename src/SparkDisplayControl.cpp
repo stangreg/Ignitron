@@ -46,10 +46,10 @@ void SparkDisplayControl::init(int mode) {
 
 	showInitialMessage();
 	display.display();
-	if (opMode == SPARK_MODE_AMP) {
+	//if (opMode == SPARK_MODE_AMP) {
 		// Allow the initial screen to show for some time
-		delay(3000);
-	}
+	//	delay(3000);
+	//}
 }
 
 void SparkDisplayControl::showInitialMessage() {
@@ -231,15 +231,20 @@ void SparkDisplayControl::showFX_SecondaryName() {
 }
 
 void SparkDisplayControl::showConnection() {
-	// Display the bank and preset number
-	int xPos = (display.width() / 2.0) - 2;
-	int yPos = 15;
+	// Display the Connection symbols
+	int xPos = (display.width() / 2.0) - 7;
+	int yPos = 1;
 	int radius = 4;
 	uint16_t color = SSD1306_WHITE;
-	if (isConnected) {
-		display.fillCircle(xPos, yPos, radius, color);
-	} else {
-		display.drawCircle(xPos, yPos, radius, color);
+	// Bluetooth
+	if (isBTConnected) {
+		display.drawBitmap(xPos - 3, yPos, epd_bitmap_bt_logo, 15, 17, color);
+	}
+	// WiFi
+	if (isWifiConnected) {
+		display.drawBitmap(xPos, yPos + 17,
+				epd_bitmap_wi_fi, 9, 9,
+		color);
 	}
 
 }
@@ -259,8 +264,9 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		activePresetNum = spark_dc->activePresetNum();
 		presetFromApp = spark_dc->appReceivedPreset();
 		presetEditMode = spark_dc->presetEditMode();
-		isConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
+		isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
 		opMode = spark_dc->operationMode();
+	isWifiConnected = spark_dc->isWifiConnected();
 
 		showConnection();
 		showBankAndPresetNum();
@@ -333,4 +339,19 @@ void SparkDisplayControl::drawCentreString(const char *buf, int x,
 	display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
 	display.setCursor(x - w / 2, y);
 	display.print(buf);
+}
+
+void SparkDisplayControl::drawInvertBitmapColor(int16_t x, int16_t y,
+		const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
+
+	int16_t i, j, byteWidth = (w + 7) / 8;
+
+	for (j = 0; j < h; j++) {
+		for (i = 0; i < w; i++) {
+			if ((pgm_read_byte(bitmap + j * byteWidth + i / 8)
+					& (128 >> (i & 7))) == 0) {
+				display.drawPixel(x + i, y + j, color);
+			}
+		}
+	}
 }

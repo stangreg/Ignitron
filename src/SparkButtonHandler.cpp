@@ -121,7 +121,6 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 
 // Buttons to change the preset banks in preset mode and some other FX in FX mode
 void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-	Serial.println("Bank handler");
 	bool processButton = true;
 	if (operationMode == SPARK_MODE_APP) {
 		processButton = spark_dc->isAmpConnected();
@@ -325,7 +324,7 @@ int SparkButtonHandler::init(bool startup) {
 	btn_preset3.onPress(btnPresetHandler);
 	btn_preset4.onPress(btnPresetHandler);
 	// Long press handlers
-	btn_preset2.onPressFor(btnResetHandler, 2000);
+	btn_preset2.onPressFor(btnResetHandler, 1500);
 	btn_bank_down.onPressFor(btnToggleLoopHandler, 1500);
 
 	if (operationMode == SPARK_MODE_LOOPER) {

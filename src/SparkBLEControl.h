@@ -187,7 +187,7 @@ private:
 	void onWrite(NimBLECharacteristic *pCharacteristic);
 	void onSubscribe(NimBLECharacteristic *pCharacteristic,
 			ble_gap_conn_desc *desc, uint16_t subValue);
-	void onConnect(NimBLEServer *pServer);
+	void onConnect(NimBLEServer *pServer, ble_gap_conn_desc *desc);
 	void onDisconnect(NimBLEServer *pServer);
 
 	int notificationCount = 0;

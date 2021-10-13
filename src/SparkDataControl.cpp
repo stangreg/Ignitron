@@ -8,6 +8,7 @@
 #include "SparkDataControl.h"
 
 SparkBLEControl SparkDataControl::bleControl;
+SparkOTAServer SparkDataControl::otaServer;
 SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
@@ -47,6 +48,7 @@ void SparkDataControl::init(int opMode) {
 		// initialize BLE
 		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
+		bleKeyboard.end();
 		bleControl.initBLE(&notifyCB);
 
 	} else if (operationMode_ == SPARK_MODE_AMP) {
@@ -60,9 +62,22 @@ void SparkDataControl::init(int opMode) {
 
 }
 
+void SparkDataControl::connectToWifi() {
+	if (otaServer.init()) {
+		isWifiConnected_ = true;
+	} else {
+		isWifiConnected_ = false;
+	}
+}
+
 void SparkDataControl::switchOperationMode(int opMode) {
 	operationMode_ = opMode;
 	buttonMode_ = SWITCH_MODE_PRESET;
+	if (opMode == SPARK_MODE_APP) {
+		bleKeyboard.end();
+	} else if (opMode == SPARK_MODE_LOOPER) {
+		bleKeyboard.start();
+	}
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
@@ -80,6 +95,10 @@ void SparkDataControl::checkForUpdates() {
 		activePreset_ = spark_ssr.currentSetting();
 		pendingPreset_ = activePreset_;
 		spark_ssr.resetPresetUpdateFlag();
+	}
+	// Checking if OTA server has been requested
+	if (operationMode_ == SPARK_MODE_AMP) {
+		otaServer.handleClient();
 	}
 
 }
