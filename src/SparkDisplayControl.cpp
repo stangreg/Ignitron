@@ -219,7 +219,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextSize(2);
-	if (opMode == SPARK_MODE_APP) {
+	if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
 		drawCentreString(secondaryLineText.c_str(), display.width() / 2, 49);
 		//display.setCursor(-6, 49);
 	} else if (opMode == SPARK_MODE_AMP) {
