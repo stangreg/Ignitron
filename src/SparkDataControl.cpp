@@ -48,6 +48,7 @@ void SparkDataControl::init(int opMode) {
 		// initialize BLE
 		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
+		delay(1000);
 		bleKeyboard.end();
 		bleControl.initBLE(&notifyCB);
 
@@ -78,6 +79,7 @@ void SparkDataControl::switchOperationMode(int opMode) {
 	} else if (opMode == SPARK_MODE_LOOPER) {
 		bleKeyboard.start();
 	}
+	updatePendingWithActiveBank();
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
@@ -388,6 +390,7 @@ void SparkDataControl::updateActiveWithPendingPreset() {
 
 void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
 	if (bleKeyboard.isConnected()) {
+		Serial.printf("Sending button: %d\n", c);
 		bleKeyboard.write(c);
 	}
 	else {

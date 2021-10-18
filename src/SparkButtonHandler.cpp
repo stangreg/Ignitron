@@ -406,12 +406,10 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 				case SPARK_MODE_APP:
 					Serial.println("LOOPER mode");
 					operationMode = SPARK_MODE_LOOPER;
-					spark_dc->updatePendingWithActiveBank();
 					break;
 				case SPARK_MODE_LOOPER:
 					Serial.println("APP mode");
 					operationMode = SPARK_MODE_APP;
-					spark_dc->updatePendingWithActiveBank();
 					break;
 				default:
 					Serial.println(
