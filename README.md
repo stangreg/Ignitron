@@ -2,7 +2,7 @@
   <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_logo_large.png">
 </p>
 
-An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
+An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE. Also works as a control device for a Looper app on the mobile.
 
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
@@ -10,7 +10,8 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 * **Toggle effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
-* Control **Looper apps** (and other apps which supports bluetooth keyboards)
+* Control **Looper apps** (and other apps which support bluetooth keyboards)
+* Firmware can (rudimentarily) be updated via OTA Web interface.
 
 Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
@@ -22,8 +23,9 @@ In addition, the **built-in display** provides information on
 * selected bank and preset number
 * selected preset name
 * activated pedal types in the FX chain
-* connection status to Spark Amp and Spark App
+* show Bluetooth connection status to Spark Amp and Spark App and WiFi connection status
 
+This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal) and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
 
 ## Table of contents
 * [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
@@ -34,6 +36,7 @@ In addition, the **built-in display** provides information on
   * [Manually creating presets](https://github.com/stangreg/SparkBLE#manually-creating-presets)
     * [Preset format](https://github.com/stangreg/SparkBLE#preset-format)
     * [FX parameter reference](https://github.com/stangreg/SparkBLE#fx-parameter-reference)
+* [OTA Update](https://github.com/stangreg/SparkBLE#OTA-Update)
 
 
 ## Operation modes
@@ -268,3 +271,6 @@ Parameters marked with `Switch` can only have values of 0 or 1, others can have 
 | Reverb     | Plate Short        | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.6                           |
 | Reverb     | Plate Rich         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.7                           |
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
+
+## OTA Updates
+When in AMP mode, the firmware can be updated Over-the-air by using a web interface. In order to enable this, you need to rename the file `Credentials.h.template` to `Credentials.h` and enter your WiFi SSID and password before compiling the code. Once installed manually for the first time, subsequent firmware versions  can be uploaded by opening a web browser and connecting to http://Ignitron.local and uploading the compiled *Ignitron.bin* file. The Ignitron should restart automatically after the upgrade finished successfully.
