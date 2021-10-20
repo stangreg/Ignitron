@@ -68,10 +68,10 @@ Each switch controls a different FX pedal type:
 |----------- | :-----------: | ------------------ |
 |`Bank down` | Short         | Navigate bank up   |
 |`Bank up`   | Short         | Navigate bank down |
-|`Preset 1`  | Short         | Select preset 1    |
-|`Preset 2`  | Short         | Select preset 2    |
-|`Preset 3`  | Short         | Select preset 3    |
-|`Preset 4`  | Short         | Select preset 4    |
+|`Preset 1`  | Short         | Select preset 1 / Toggle Drive |
+|`Preset 2`  | Short         | Select preset 2 / Toggle Drive |
+|`Preset 3`  | Short         | Select preset 3 / Toggle Drive |
+|`Preset 4`  | Short         | Select preset 4 / Toggle Drive |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 |`Preset 4`  | Long          | Switch to Looper mode |
