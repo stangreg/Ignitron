@@ -27,6 +27,13 @@ In addition, the **built-in display** provides information on
 
 This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal) and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
 
+<p align="center">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_with_Spark.JPG">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_preset_mode.JPG">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ingitron_FX_Mode2.jpg">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_full_wiring.JPG">
+</p>
+
 ## Table of contents
 * [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
 * [APP mode](https://github.com/stangreg/SparkBLE#app-mode)
