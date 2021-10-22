@@ -202,6 +202,8 @@ This data can be used to build own presets in JSON format (see above).
 Use the Technical Name information in the JSON files.
 Parameters marked with `Switch` can only have values of 0 or 1, others can have any value between 0 and 1.
 
+##### Standard Tones
+
 | Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
 | Noise Gate | Noise Gate         | bias.noisegate    | Threshold               | Decay                   |                     |                |              |             |                     |                               |
@@ -280,6 +282,19 @@ Parameters marked with `Switch` can only have values of 0 or 1, others can have 
 | Reverb     | Plate Short        | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.6                           |
 | Reverb     | Plate Rich         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.7                           |
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
+
+##### Hendrix Tones
+**Note:** You can easily store tones using Hendrix gear on Ignitron. As the effects are licensed and purchased In-App, you need to connect your mobile Spark App to the Spark Amp after switching on the Spark Amp. When you then disconnect the Spark App and connect Ignitron afterwards you should be able to use presets using below gear. 
+
+| Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
+|------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
+| Compressor/Wah | J.H. Legendary Wah         | JH.Vox846    | Auto Wah Mode               | BPM Mode `Switch`                  |  ms (BPM Off)                   | Bar (BPM On)               | Sensitivity             |             |                     | Auto Wah Mode: 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 - Bar: 0.0 (1/8), 0.25 (1/4), 0.5 (1/2), 0.75 (1/1)                              |
+| Drive | J.H. Axle Fuzz           | JH.AxisFuzz          | Volume | Drive                    |             |                |              |             |                     |                               |
+| Drive | J.H. Super Fuzz      | JH.SupaFuzz          | Volume                   | Filter                    |               |         |              |             |                     |                               |
+| Drive | J.H. Octave Fuzz           | JH.Octavia        | Level                  | Fuzz             |                     |                |              |             |                     |                               |
+| Drive | J.H. Fuzz Zone          | JH.FuzzTone          | Volume                    | Attack                    |                     |                |              |             |                     |                               |
+| Modulation/EQ | J.H. Legendary Vibe      | JH.VoodooVibeJr    | Speed                  | Sweep                    | Intensity        | Mix (Vibrato/Chorus)               |              |             |                     |                               |
+
 
 ## OTA Updates
 When in AMP mode, the firmware can be updated Over-the-air by using a web interface. In order to enable this, you need to rename the file `Credentials.h.template` to `Credentials.h` and enter your WiFi SSID and password before compiling the code. Once installed manually for the first time, subsequent firmware versions  can be uploaded by opening a web browser and connecting to http://Ignitron.local and uploading the compiled *Ignitron.bin* file. The Ignitron should restart automatically after the upgrade finished successfully.
