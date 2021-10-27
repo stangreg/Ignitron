@@ -32,6 +32,7 @@ The following sections explain how to build and operate the pedal.
 
 ## Building the pedal
 Software: [click here](https://github.com/stangreg/Ignitron/blob/main/src/)
+
 Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
 
 <p align="center">
