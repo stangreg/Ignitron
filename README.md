@@ -2,7 +2,7 @@
   <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_logo_large.png">
 </p>
 
-An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
+An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE. Also works as a control device for a Looper app on the mobile.
 
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
@@ -10,7 +10,8 @@ An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetoot
 * **Toggle effects** for the selected preset
 * **Load new presets** via the Spark App
 * **Delete** stored presets
-* Control **Looper apps** (and other apps which supports bluetooth keyboards)
+* Control **Looper apps** (and other apps which support bluetooth keyboards)
+* Firmware can (rudimentarily) be updated via OTA Web interface.
 
 Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
@@ -21,9 +22,18 @@ The current active preset and effects are indicated via LEDs.\
 In addition, the **built-in display** provides information on
 * selected bank and preset number
 * selected preset name
+* operation mode (Preset, Manual/FX, Looper)
 * activated pedal types in the FX chain
-* connection status to Spark Amp and Spark App
+* show Bluetooth connection status to Spark Amp and Spark App and WiFi connection status
 
+This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal) and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
+
+<p align="center">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_with_Spark.JPG">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_preset_mode.JPG">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ingitron_FX_Mode2.jpg">
+  <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_full_wiring.JPG">
+</p>
 
 ## Table of contents
 * [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
@@ -34,6 +44,7 @@ In addition, the **built-in display** provides information on
   * [Manually creating presets](https://github.com/stangreg/SparkBLE#manually-creating-presets)
     * [Preset format](https://github.com/stangreg/SparkBLE#preset-format)
     * [FX parameter reference](https://github.com/stangreg/SparkBLE#fx-parameter-reference)
+* [OTA Update](https://github.com/stangreg/SparkBLE#OTA-Update)
 
 
 ## Operation modes
@@ -43,9 +54,9 @@ In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp 
 To enter **AMP mode**, hold the `Preset 1` button during startup.
 
 ## APP mode
-In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app. You can easily toggle between **Preset mode** and **FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Preset 4` button.
+In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper mode**). You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Bank down` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
-In **FX mode**, the user has direct access to all effects of the selected preset.
+In **Manual/FX mode**, the user has direct access to all effects of the selected preset.
 When **Looper mode** is activated, you can swtich between presets of the current selected preset bank and use the `Bank down`/`Bank up` buttons to control your Looper app, e.g. to record on two separate loops.
 
 Each switch controls a different FX pedal type:
@@ -58,16 +69,17 @@ Each switch controls a different FX pedal type:
 |----------- | :-----------: | ------------------ |
 |`Bank down` | Short         | Navigate bank up   |
 |`Bank up`   | Short         | Navigate bank down |
-|`Preset 1`  | Short         | Select preset 1    |
-|`Preset 2`  | Short         | Select preset 2    |
-|`Preset 3`  | Short         | Select preset 3    |
-|`Preset 4`  | Short         | Select preset 4    |
+|`Preset 1`  | Short         | Select preset 1 / Toggle Drive |
+|`Preset 2`  | Short         | Select preset 2 / Toggle Drive |
+|`Preset 3`  | Short         | Select preset 3 / Toggle Drive |
+|`Preset 4`  | Short         | Select preset 4 / Toggle Drive |
+|`Bank down` | Long          | Switch to Looper mode |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
-|`Preset 4`  | Long          | Switch to Looper mode |
 
 
-#### FX mode
+
+#### Manual/FX mode
 |Button      | Press pattern | Function              |
 |----------- | :-----------: | --------------------- |
 |`Bank down` | Short         | Toggle Noise Gate     |
@@ -82,13 +94,13 @@ Each switch controls a different FX pedal type:
 #### Looper mode
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
-|`Bank down` | Short         | Toggle recording on Loop 1 (example) |
-|`Bank up`   | Short         | Toggle recording on Loop 2 (example) |
+|`Bank down` | Short         | Toggle recording on Loop 1 (can be freely configured in app) |
+|`Bank up`   | Short         | Toggle recording on Loop 2 (can be freely configured in app) |
 |`Preset 1`  | Short         | Select preset 1    |
 |`Preset 2`  | Short         | Select preset 2    |
 |`Preset 3`  | Short         | Select preset 3    |
 |`Preset 4`  | Short         | Select preset 4    |
-|`Bank up`   | Long          | Switch to FX mode  |
+|`Bank down` | Long          | Switch to Preset mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**     |
 
 ***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the `Bank down`/`Bank up` buttons can be freely configured to any function offered.*
@@ -96,7 +108,7 @@ Each switch controls a different FX pedal type:
 -----------------------------------------------------------------
 
 ## AMP mode
-In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted.
+In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted. In this mode, Ignitron's firmware can also be updated OTA via a web browser.
 
 ### Connecting the Spark app with **Ignitron**
 1. Start **Ignitron** in AMP mode (hold `Preset 1` button during startup).
@@ -190,6 +202,8 @@ This data can be used to build own presets in JSON format (see above).
 Use the Technical Name information in the JSON files.
 Parameters marked with `Switch` can only have values of 0 or 1, others can have any value between 0 and 1.
 
+##### Standard Tones
+
 | Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
 | Noise Gate | Noise Gate         | bias.noisegate    | Threshold               | Decay                   |                     |                |              |             |                     |                               |
@@ -268,3 +282,19 @@ Parameters marked with `Switch` can only have values of 0 or 1, others can have 
 | Reverb     | Plate Short        | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.6                           |
 | Reverb     | Plate Rich         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.7                           |
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
+
+##### Hendrix Tones
+**Note:** You can easily store tones using Hendrix gear on Ignitron. As the effects are licensed and purchased In-App, you need to connect your mobile Spark App to the Spark Amp after switching on the Spark Amp. When you then disconnect the Spark App and connect Ignitron afterwards you should be able to use presets using below gear. 
+
+| Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
+|------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
+| Compressor/Wah | J.H. Legendary Wah         | JH.Vox846    | Auto Wah Mode               | BPM Mode `Switch`                  |  ms (BPM Off)                   | Bar (BPM On)               | Sensitivity             |             |                     | Auto Wah Mode: 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 - Bar: 0.0 (1/8), 0.25 (1/4), 0.5 (1/2), 0.75 (1/1)                              |
+| Drive | J.H. Axle Fuzz           | JH.AxisFuzz          | Volume | Drive                    |             |                |              |             |                     |                               |
+| Drive | J.H. Super Fuzz      | JH.SupaFuzz          | Volume                   | Filter                    |               |         |              |             |                     |                               |
+| Drive | J.H. Octave Fuzz           | JH.Octavia        | Level                  | Fuzz             |                     |                |              |             |                     |                               |
+| Drive | J.H. Fuzz Zone          | JH.FuzzTone          | Volume                    | Attack                    |                     |                |              |             |                     |                               |
+| Modulation/EQ | J.H. Legendary Vibe      | JH.VoodooVibeJr    | Speed                  | Sweep                    | Intensity        | Mix (Vibrato/Chorus)               |              |             |                     |                               |
+
+
+## OTA Updates
+When in AMP mode, the firmware can be updated Over-the-air by using a web interface. In order to enable this, you need to rename the file `Credentials.h.template` to `Credentials.h` and enter your WiFi SSID and password before compiling the code. Once installed manually for the first time, subsequent firmware versions  can be uploaded by opening a web browser and connecting to http://Ignitron.local and uploading the compiled *Ignitron.bin* file. The Ignitron should restart automatically after the upgrade finished successfully.
