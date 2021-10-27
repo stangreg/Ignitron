@@ -7,14 +7,15 @@ Whichever IDE you are using, you will need to set it up so it can build the code
 I assume you already know how to setup an ESP32 project in an IDE, only specifics I have used will be described here.
 
 You need to add the board manager URL https://dl.espressif.com/dl/package_esp32_index.json
+
 The following board configuration has been setup for the specific board used:
-Board: ESP 32 (Node32s)
-Upload protocol : Default
-Port: *select a serial port from the dropdown*
-Partition scheme: Minimal SPIFFS (Large APPS with OTA)
-Flash frequency: 80 Mhz
-Core Debug Level: None
-Upload Speed: 921600
+- Board: ESP 32 (Node32s)
+- Upload protocol : Default
+- Port: *select a serial port from the dropdown*
+- Partition scheme: Minimal SPIFFS (Large APPS with OTA)
+- Flash frequency: 80 Mhz
+- Core Debug Level: None
+- Upload Speed: 921600
 
 When configuring the Serial monitor, please make sure to select a baud rate of 115200, otherwise nothing will be visible.
 
