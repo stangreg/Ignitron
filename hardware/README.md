@@ -41,6 +41,11 @@ To populate the PCB itself you will need the following components:
 |R1, R2, R3, R4, R5, R6|6|¼ W Resistor|470R|Resistors for the "Drive" (R1), "Mod" (R2), "Delay" (R3), "Reverb" (R4), "Noise Gate" (R5) and "Comp" (R6) LEDs. Match with the actual LEDs.|
 |R7, R8, R9, R10, R11, R12|6|¼ W Resistor|1K|Resistors for the switches|
 
+<p align="center">
+  <img width="512" height="341" src="PCBPiggybackISO.jpg">
+  <img width="512" height="341" src="PCBPiggybackTOP.jpg">
+</p>
+
 ### OLED Frame
 The OLED frame was designed with [OpenSCAD](https://openscad.org/). The project file is [tinyOledBezel.scad](tinyOledBezel.scad) which is an adjusted version of [this design](https://www.thingiverse.com/thing:1645893).
 
