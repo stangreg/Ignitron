@@ -30,7 +30,7 @@ This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3
 
 The following sections explain how to build and operate the pedal. 
 
-## Building the pedal
+# Building Ignitron
 Software: [click here](https://github.com/stangreg/Ignitron/blob/main/src/)
 
 Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
@@ -41,6 +41,8 @@ Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
   <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ingitron_FX_Mode2.jpg">
   <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_full_wiring.JPG">
 </p>
+
+# Operating Ignitron
 
 ## Table of contents
 * [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
