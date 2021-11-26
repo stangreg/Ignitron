@@ -159,7 +159,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	byte seq, cmd;
 
 	DEBUG_PRINTLN("Received data:");
-	//SparkHelper::printByteVector(blk);
+	DEBUG_PRINTVECTOR(blk);
 	DEBUG_PRINTLN();
 
 	// Check if ack needed. In positive case the sequence number and command
