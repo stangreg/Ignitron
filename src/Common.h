@@ -13,10 +13,12 @@
 #define DEBUG_PRINT(x) Serial.print(x)
 #define DEBUG_PRINTLN(x) Serial.println(x)
 #define DEBUG_PRINTF(...) Serial.printf(__VA_ARGS__)
+#define DEBUG_PRINTVECTOR(x) SparkHelper::printByteVector(x)
 #else
 #define DEBUG_PRINT(x)
 #define DEBUG_PRINTLN(x)
 #define DEBUG_PRINTF(...)
+#define DEBUG_PRINTVECTOR(x)
 #endif
 
 

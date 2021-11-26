@@ -295,18 +295,25 @@ void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
 	read_byte();
 	byte preset = read_byte();
+	//DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
 	currentSetting_.presetNumber = preset;
 	std::string uuid = read_string();
+	//DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
 	currentSetting_.uuid = uuid;
 	std::string name = read_string();
+	//DEBUG_PRINTF("Read Name: %s\n", name.c_str());
 	currentSetting_.name = name;
 	std::string version = read_string();
+	//DEBUG_PRINTF("Read Version: %s\n", version.c_str());
 	currentSetting_.version = version;
 	std::string descr = read_string();
+	//DEBUG_PRINTF("Read Description: %s\n", descr.c_str());
 	currentSetting_.description = descr;
 	std::string icon = read_string();
+	//DEBUG_PRINTF("Read Icon: %s\n", icon.c_str());
 	currentSetting_.icon = icon;
 	float bpm = read_float();
+	//DEBUG_PRINTF("Read BPM: %f\n", bpm);
 	currentSetting_.bpm = bpm;
 
 	// Build string representations
@@ -330,14 +337,18 @@ void SparkStreamReader::read_preset() {
 
 	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
+	//DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
 	add_python("\"Pedals\": [");
 	add_newline();
 	currentSetting_.pedals = {};
 	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 		Pedal currentPedal = {};
+		//DEBUG_PRINTF("Reading Pedal %d:\n", i);
 		std::string e_str = read_string();
+		//DEBUG_PRINTF("  Pedal name: %s\n", e_str.c_str());
 		currentPedal.name = e_str;
 		boolean e_onoff = read_onoff();
+		//DEBUG_PRINTF("  Pedal state: %s\n", e_onoff);
 		currentPedal.isOn = e_onoff;
 		add_python ("{");
 		add_str("Name", e_str);
@@ -345,14 +356,21 @@ void SparkStreamReader::read_preset() {
 		add_bool("IsOn", e_onoff);
 		add_separator();
 		int num_p = read_byte() - char(0x90);
+		//DEBUG_PRINTF("  Number of Parameters: %d\n", num_p);
+
 		add_python("\"Parameters\":[");
 		// Read parameters of current pedal
 		currentPedal.parameters = {};
 		for (int p = 0; p < num_p; p++) {
 			Parameter currentParameter = {};
+			//DEBUG_PRINTF("  Reading parameter %d:\n", p);
 			byte num = read_byte();
+			//DEBUG_PRINTF("    Parameter ID: %d\n", SparkHelper::intToHex(num));
 			byte spec = read_byte();
+			//DEBUG_PRINTF("    Parameter Special: %s\n",
+			//	SparkHelper::intToHex(spec));
 			float val = read_float();
+			//DEBUG_PRINTF("    Parameter Value: %f\n", val);
 			currentParameter.number = num;
 			currentParameter.special = spec;
 			currentParameter.value = val;
@@ -378,6 +396,7 @@ void SparkStreamReader::read_preset() {
 	add_python("],");
 	add_newline();
 	byte filler = read_byte();
+	//DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
 	currentSetting_.filler = filler;
 	add_str("Filler", SparkHelper::intToHex(filler));
 	add_newline();
@@ -397,16 +416,16 @@ boolean SparkStreamReader::structure_data() {
 	block_content.clear();
 	message.clear();
 
-	DEBUG_PRINTLN("Structuring data..:");
+	//DEBUG_PRINTLN("Structuring data..:");
 	//SparkHelper::printDataAsHexString(unstructured_data);
 	for (auto block : unstructured_data) {
-		DEBUG_PRINTLN("Processing block");
+		//DEBUG_PRINTLN("Processing block");
 		//SparkHelper::printByteVector(block);
-		DEBUG_PRINTLN();
-		DEBUG_PRINTF("Current heap size: %d\n", ESP.getFreeHeap());
+		//DEBUG_PRINTLN();
+		//DEBUG_PRINTF("Current heap size: %d\n", ESP.getFreeHeap());
 		int block_length = block[6];
 		int data_size = block.size();
-		DEBUG_PRINTF("Read block size %d, %d\n", block_length, data_size);
+		//DEBUG_PRINTF("Read block size %d, %d\n", block_length, data_size);
 		if ( data_size != block_length) {
 			Serial.printf("Data is of size %d and reports %d\n", data_size, block_length );
 			Serial.println("Corrupt block:");
@@ -415,17 +434,17 @@ boolean SparkStreamReader::structure_data() {
 			}
 			Serial.println();
 		}
-		DEBUG_PRINTLN("Sizes match");
+		//DEBUG_PRINTLN("Sizes match");
 		ByteVector chunk;
 		chunk.assign(block.begin() + 16, block.end());
-		DEBUG_PRINTF("Assigned block of size %d", chunk.size());
+		//DEBUG_PRINTF("Assigned block of size %d", chunk.size());
 		for (auto chunk_byte : chunk) {
-			DEBUG_PRINT(SparkHelper::intToHex(chunk_byte).c_str());
+			//DEBUG_PRINT(SparkHelper::intToHex(chunk_byte).c_str());
 			block_content.push_back(chunk_byte);
 		} // FOR chunk_byte
-		DEBUG_PRINTLN("Pushed chunk bytes to block content");
+		  //DEBUG_PRINTLN("Pushed chunk bytes to block content");
 	} // FOR block
-	DEBUG_PRINTLN("...Processed");
+	  //DEBUG_PRINTLN("...Processed");
 
 
 	if (block_content[0] != 0xF0 || block_content[1] != 0x01){
@@ -434,7 +453,7 @@ boolean SparkStreamReader::structure_data() {
 	}
 	else
 	{
-		DEBUG_PRINTLN("Data seems correct");
+		//DEBUG_PRINTLN("Data seems correct");
 		// and split them into chunks now, splitting on each f7
 		std::vector<ByteVector> chunks;
 		chunks.clear();
@@ -446,7 +465,7 @@ boolean SparkStreamReader::structure_data() {
 				chunk_temp = {};
 			}
 		}
-		DEBUG_PRINTLN("Split at F7");
+		//DEBUG_PRINTLN("Split at F7");
 
 
 		std::vector<CmdData> chunk_8bit = {};
@@ -457,8 +476,8 @@ boolean SparkStreamReader::structure_data() {
 			data7bit.assign(chunk.begin() + 6, chunk.end() - 1);
 
 			int chunk_len = data7bit.size();
-			DEBUG_PRINT("Chunk_len:");
-			DEBUG_PRINTLN(chunk_len);
+			//DEBUG_PRINT("Chunk_len:");
+			//DEBUG_PRINTLN(chunk_len);
 			int num_seq = int ((chunk_len + 7) / 8);
 			ByteVector data8bit = {};
 
@@ -477,7 +496,7 @@ boolean SparkStreamReader::structure_data() {
 					data8bit.push_back(by);
 				}
 			}
-			DEBUG_PRINTLN("Converted to 8bit");
+			//DEBUG_PRINTLN("Converted to 8bit");
 			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
 			chunk_8bit.push_back(curr_data);
 
@@ -492,7 +511,7 @@ boolean SparkStreamReader::structure_data() {
 				this_sub_cmd = chunk.subcmd;
 				ByteVector this_data = chunk.data;
 				if ((this_cmd == 1 || this_cmd == 3) && this_sub_cmd == 1) {
-					DEBUG_PRINTLN("Multi message");
+					//DEBUG_PRINTLN("Multi message");
 					//found a multi-message
 					int num_chunks = this_data[0];
 					int this_chunk = this_data[1];
@@ -503,7 +522,7 @@ boolean SparkStreamReader::structure_data() {
 					}
 					// if at last chunk of multi-chunk
 					if (this_chunk == num_chunks - 1) {
-						DEBUG_PRINTLN("Last chunk to process");
+						//DEBUG_PRINTLN("Last chunk to process");
 						curr_data = {this_cmd, this_sub_cmd, concat_data};
 						message.push_back(curr_data);
 						concat_data = {};
@@ -512,7 +531,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					DEBUG_PRINT("Copying old one");
+					//DEBUG_PRINTLN("Copying old one");
 					message.push_back(chunk);
 				} // else
 			} // For all in 8-bit vector
@@ -549,11 +568,10 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			read_hardware_preset();
 		}
 		else {
-			Serial.print(SparkHelper::intToHex(_cmd).c_str());
-			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
-			Serial.println(" not handled");
-			SparkHelper::printByteVector(msg);
-			Serial.println();
+			DEBUG_PRINT(SparkHelper::intToHex(_cmd).c_str());
+			DEBUG_PRINT(SparkHelper::intToHex(_sub_cmd).c_str());
+			DEBUG_PRINTLN(" not handled");
+			DEBUG_PRINTVECTOR(msg);DEBUG_PRINTLN();
 		}
 	}
 	else if (_cmd == 0x03) {
@@ -578,11 +596,10 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			read_hardware_preset();
 		}
 		else {
-			Serial.print(SparkHelper::intToHex(_cmd).c_str());
-			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
-			Serial.println(" not handled2");
-			SparkHelper::printByteVector(msg);
-			Serial.println();
+			DEBUG_PRINT(SparkHelper::intToHex(_cmd).c_str());
+			DEBUG_PRINT(SparkHelper::intToHex(_sub_cmd).c_str());
+			DEBUG_PRINTLN(" not handled");
+			DEBUG_PRINTVECTOR(msg);DEBUG_PRINTLN();
 		}
 	}
 	else if (_cmd == 0x04) {
@@ -594,9 +611,9 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 
 		std::string cmd_str = SparkHelper::intToHex(_cmd);
 		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
-		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
-		SparkHelper::printByteVector(msg);
-		DEBUG_PRINTLN();
+		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(),
+				sub_cmd_str.c_str());
+		DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
 	}
 	return 1;
 }
