@@ -549,11 +549,7 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			read_hardware_preset();
 		}
 		else {
-			Serial.print(SparkHelper::intToHex(_cmd).c_str());
-			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
-			Serial.println(" not handled");
-			SparkHelper::printByteVector(msg);
-			Serial.println();
+			DEBUG_PRINT(SparkHelper::intToHex(_cmd).c_str()); DEBUG_PRINT(SparkHelper::intToHex(_sub_cmd).c_str()); DEBUG_PRINTLN(" not handled"); DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
 		}
 	}
 	else if (_cmd == 0x03) {
@@ -578,11 +574,7 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			read_hardware_preset();
 		}
 		else {
-			Serial.print(SparkHelper::intToHex(_cmd).c_str());
-			Serial.print(SparkHelper::intToHex(_sub_cmd).c_str());
-			Serial.println(" not handled2");
-			SparkHelper::printByteVector(msg);
-			Serial.println();
+			DEBUG_PRINT(SparkHelper::intToHex(_cmd).c_str()); DEBUG_PRINT(SparkHelper::intToHex(_sub_cmd).c_str()); DEBUG_PRINTLN(" not handled"); DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
 		}
 	}
 	else if (_cmd == 0x04) {
@@ -594,9 +586,9 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 
 		std::string cmd_str = SparkHelper::intToHex(_cmd);
 		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
-		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
-		SparkHelper::printByteVector(msg);
-		DEBUG_PRINTLN();
+		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(),
+				sub_cmd_str.c_str());
+		DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
 	}
 	return 1;
 }

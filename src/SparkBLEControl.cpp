@@ -419,7 +419,7 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 		SPARK_BLE_NOTIF_CHAR_UUID);
 		if (pChr) {
 			DEBUG_PRINTLN("Sending data:");
-			SparkHelper::printByteVector(msg);
+			DEBUG_PRINTVECTOR(msg);
 			DEBUG_PRINTLN();
 			pChr->setValue(&msg.data()[0], msg.size());
 			pChr->notify(true);
