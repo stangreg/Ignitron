@@ -79,7 +79,7 @@ void SparkDataControl::switchOperationMode(int opMode) {
 	} else if (opMode == SPARK_MODE_LOOPER) {
 		bleKeyboard.start();
 	}
-	updatePendingWithActiveBank();
+	updatePendingWithActive();
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
@@ -158,12 +158,16 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	bool ackNeeded;
 	byte seq, cmd;
 
+	DEBUG_PRINTLN("Received data:");
+	//SparkHelper::printByteVector(blk);
+	DEBUG_PRINTLN();
+
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
 		ack_msg = spark_msg.send_ack(seq, cmd);
-		//Serial.println("Sending acknowledgement");
+		DEBUG_PRINTLN("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP) {
 			bleControl.writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
@@ -178,8 +182,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 			presetEditMode_ = PRESET_EDIT_STORE;
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
-			//Serial.println("received from app:");
-			//Serial.println(appReceivedPreset_.json.c_str());
+			DEBUG_PRINTLN("received from app:");
+			DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
 			spark_ssr.resetPresetUpdateFlag();
 			spark_ssr.resetPresetNumberUpdateFlag();
 			presetNumToEdit_ = 0;
@@ -198,7 +202,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
-	//Serial.println("Getting current preset from Spark");
+	DEBUG_PRINTLN("Getting current preset from Spark");
 	if (bleControl.writeBLE(current_msg)) {
 		return true;
 	}
@@ -209,8 +213,9 @@ void SparkDataControl::updatePendingPreset(int bnk) {
 	pendingPreset_ = getPreset(bnk, activePresetNum_);
 }
 
-void SparkDataControl::updatePendingWithActiveBank() {
+void SparkDataControl::updatePendingWithActive() {
 	pendingBank_ = activeBank_;
+	pendingPreset_ = activePreset_;
 }
 bool SparkDataControl::switchPreset(int pre) {
 	bool retValue = false;
@@ -329,6 +334,23 @@ void SparkDataControl::processStorePresetRequest(int presetNum) {
 
 }
 
+void SparkDataControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
+	presetNumToEdit_ = 0;
+	presetBankToEdit_ = 0;
+
+	if (resetPreset) {
+		appReceivedPreset_ = { };
+	}
+	if (resetEditMode) {
+		presetEditMode_ = PRESET_EDIT_NONE;
+	}
+
+}
+
+void SparkDataControl::resetPresetEditResponse() {
+	responseMsg_ = "";
+}
+
 void SparkDataControl::processDeletePresetRequest() {
 	int responseCode;
 	responseMsg_ = "";
@@ -361,23 +383,6 @@ void SparkDataControl::processDeletePresetRequest() {
 		presetBankToEdit_ = activeBank_;
 	}
 
-}
-
-void SparkDataControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
-	presetNumToEdit_ = 0;
-	presetBankToEdit_ = 0;
-
-	if (resetPreset) {
-		appReceivedPreset_ = { };
-	}
-	if (resetEditMode) {
-		presetEditMode_ = PRESET_EDIT_NONE;
-	}
-
-}
-
-void SparkDataControl::resetPresetEditResponse() {
-	responseMsg_ = "";
 }
 
 void SparkDataControl::setPresetDeletionFlag() {

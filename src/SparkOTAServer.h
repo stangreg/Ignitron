@@ -15,6 +15,7 @@
 #include <Update.h>
 #include <Arduino.h>
 #include "Credentials.h"
+#include "Common.h"
 
 
 class SparkOTAServer {

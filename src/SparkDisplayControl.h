@@ -13,6 +13,8 @@
 
 #include "SparkDataControl.h"
 #include "SparkTypes.h"
+#include "Common.h"
+
 
 // OLED Screen config
 #define SCREEN_WIDTH 128 // Display width

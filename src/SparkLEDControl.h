@@ -10,6 +10,8 @@
 
 #include <Arduino.h>
 #include "SparkDataControl.h"
+#include "Common.h"
+
 
 // GPIOs
 #define LED_PRESET1_GPIO 27

@@ -397,16 +397,16 @@ boolean SparkStreamReader::structure_data() {
 	block_content.clear();
 	message.clear();
 
-	//Serial.println("Structuring data..:");
+	DEBUG_PRINTLN("Structuring data..:");
 	//SparkHelper::printDataAsHexString(unstructured_data);
 	for (auto block : unstructured_data) {
-		//Serial.println("Processing block");
+		DEBUG_PRINTLN("Processing block");
 		//SparkHelper::printByteVector(block);
-		//Serial.println();
-		//Serial.printf("Current heap size: %d\n", ESP.getFreeHeap());
+		DEBUG_PRINTLN();
+		DEBUG_PRINTF("Current heap size: %d\n", ESP.getFreeHeap());
 		int block_length = block[6];
 		int data_size = block.size();
-		//Serial.printf("Read block size %d, %d\n", block_length, data_size);
+		DEBUG_PRINTF("Read block size %d, %d\n", block_length, data_size);
 		if ( data_size != block_length) {
 			Serial.printf("Data is of size %d and reports %d\n", data_size, block_length );
 			Serial.println("Corrupt block:");
@@ -415,17 +415,17 @@ boolean SparkStreamReader::structure_data() {
 			}
 			Serial.println();
 		}
-		//Serial.println("Sizes match");
+		DEBUG_PRINTLN("Sizes match");
 		ByteVector chunk;
 		chunk.assign(block.begin() + 16, block.end());
-		//Serial.printf("Assigned block of size %d", chunk.size());
+		DEBUG_PRINTF("Assigned block of size %d", chunk.size());
 		for (auto chunk_byte : chunk) {
-			//Serial.print(SparkHelper::intToHex(chunk_byte).c_str());
+			DEBUG_PRINT(SparkHelper::intToHex(chunk_byte).c_str());
 			block_content.push_back(chunk_byte);
 		} // FOR chunk_byte
-		//Serial.println("Pushed chunk bytes to block content");
+		DEBUG_PRINTLN("Pushed chunk bytes to block content");
 	} // FOR block
-	//Serial.println("...Processed");
+	DEBUG_PRINTLN("...Processed");
 
 
 	if (block_content[0] != 0xF0 || block_content[1] != 0x01){
@@ -434,7 +434,7 @@ boolean SparkStreamReader::structure_data() {
 	}
 	else
 	{
-		//Serial.println("Data seems correct");
+		DEBUG_PRINTLN("Data seems correct");
 		// and split them into chunks now, splitting on each f7
 		std::vector<ByteVector> chunks;
 		chunks.clear();
@@ -446,7 +446,7 @@ boolean SparkStreamReader::structure_data() {
 				chunk_temp = {};
 			}
 		}
-		//Serial.println("Split at F7");
+		DEBUG_PRINTLN("Split at F7");
 
 
 		std::vector<CmdData> chunk_8bit = {};
@@ -457,8 +457,8 @@ boolean SparkStreamReader::structure_data() {
 			data7bit.assign(chunk.begin() + 6, chunk.end() - 1);
 
 			int chunk_len = data7bit.size();
-			//Serial.print("Chunk_len:");
-			//Serial.println(chunk_len);
+			DEBUG_PRINT("Chunk_len:");
+			DEBUG_PRINTLN(chunk_len);
 			int num_seq = int ((chunk_len + 7) / 8);
 			ByteVector data8bit = {};
 
@@ -477,7 +477,7 @@ boolean SparkStreamReader::structure_data() {
 					data8bit.push_back(by);
 				}
 			}
-			//Serial.println("Converted to 8bit");
+			DEBUG_PRINTLN("Converted to 8bit");
 			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
 			chunk_8bit.push_back(curr_data);
 
@@ -492,7 +492,7 @@ boolean SparkStreamReader::structure_data() {
 				this_sub_cmd = chunk.subcmd;
 				ByteVector this_data = chunk.data;
 				if ((this_cmd == 1 || this_cmd == 3) && this_sub_cmd == 1) {
-					//Serial.println("Multi message");
+					DEBUG_PRINTLN("Multi message");
 					//found a multi-message
 					int num_chunks = this_data[0];
 					int this_chunk = this_data[1];
@@ -503,7 +503,7 @@ boolean SparkStreamReader::structure_data() {
 					}
 					// if at last chunk of multi-chunk
 					if (this_chunk == num_chunks - 1) {
-						//Serial.println("Last chunk to process");
+						DEBUG_PRINTLN("Last chunk to process");
 						curr_data = {this_cmd, this_sub_cmd, concat_data};
 						message.push_back(curr_data);
 						concat_data = {};
@@ -512,7 +512,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					//Serial.print("Copying old one");
+					DEBUG_PRINT("Copying old one");
 					message.push_back(chunk);
 				} // else
 			} // For all in 8-bit vector
@@ -530,19 +530,19 @@ void SparkStreamReader::set_interpreter (ByteVector _msg) {
 int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	if (_cmd == 0x01) {
 		if (_sub_cmd == 0x01) {
-			//Serial.println("Reading preset");
+			DEBUG_PRINTLN("Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x04) {
-			//Serial.println("Reading effect param");
+			DEBUG_PRINTLN("Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x06) {
-			//Serial.println("Reading effect");
+			DEBUG_PRINTLN("Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x15) {
-			//Serial.println("Reading effect on off");
+			DEBUG_PRINTLN("Reading effect on off");
 			read_effect_onoff();
 		}
 		else if (_sub_cmd == 0x38) {
@@ -558,23 +558,23 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
-			//Serial.println("Reading preset");
+			DEBUG_PRINTLN("Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x06) {
-			//Serial.println("Reading effect");
+			DEBUG_PRINTLN("Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x27) {
-			//Serial.println("Storing HW preset");
+			DEBUG_PRINTLN("Storing HW preset");
 			read_store_hardware_preset();
 		}
 		else if (_sub_cmd == 0x37) {
-			//Serial.println("Reading effect param");
+			DEBUG_PRINTLN("Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x38 || _sub_cmd == 0x10) {
-			//Serial.println("Reading HW preset");
+			DEBUG_PRINTLN("Reading HW preset");
 			read_hardware_preset();
 		}
 		else {
@@ -587,16 +587,16 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else if (_cmd == 0x04) {
 		acknowledgements.push_back(_sub_cmd);
-		//Serial.printf("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
+		DEBUG_PRINTF("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
 	}
 	else {
 		// unprocessed command (likely the initial ones sent from the app
 
-		//std::string cmd_str = SparkHelper::intToHex(_cmd);
-		//std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
-		//Serial.printf("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
-		//SparkHelper::printByteVector(msg);
-		//Serial.println();
+		std::string cmd_str = SparkHelper::intToHex(_cmd);
+		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
+		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(), sub_cmd_str.c_str());
+		SparkHelper::printByteVector(msg);
+		DEBUG_PRINTLN();
 	}
 	return 1;
 }
@@ -693,7 +693,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				sizeof(direction));
 		if (msg_from_spark_comp == 0) {
 			if (blk_len < 0x6a) {
-				//Serial.println("Last message, shorter");
+				DEBUG_PRINTLN("Last message, shorter");
 				// if the message is smaller than the largest size possible for block, definitely the last block
 				msg_last_block = true;
 			}
@@ -702,7 +702,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				// this is from Spark so chunk header could be anywhere
 				// so search from the end
 				int pos = -1;
-				//Serial.println("Searching backwards for chunk header");
+				DEBUG_PRINTLN("Searching backwards for chunk header");
 				for (int i = blk.size() - 2; i >= 0; i--) {
 					if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
 						Serial.println("Found F001");
@@ -726,7 +726,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		if (msg_last_block) {
 			msg_last_block = false;
 			setMessage(response);
-			//Serial.println("Reading message");
+			DEBUG_PRINTLN("Reading message");
 			read_message();
 			response.clear();
 			retValue = MSG_PROCESS_RES_COMPLETE;

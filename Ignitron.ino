@@ -1,3 +1,5 @@
+
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -81,7 +83,7 @@ void loop() {
 		//After connection is established, continue.
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
-			//Serial.println("Initial boot, setting preset to HW 1");
+			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
 			if (spark_dc->switchPreset(1)) {
 				isInitBoot = false;
 			}

@@ -20,6 +20,8 @@
 #include "SparkOTAServer.h"
 
 #include "SparkTypes.h"
+#include "Common.h"
+
 
 #define SWITCH_MODE_FX 1
 #define SWITCH_MODE_PRESET 2
@@ -59,7 +61,7 @@ public:
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
 	void updatePendingPreset(int bnk);
-	void updatePendingWithActiveBank();
+	void updatePendingWithActive();
 	void updateActiveWithPendingPreset();
 	// Retrieves the current preset from Spark (required for HW presets)
 	bool getCurrentPresetFromSpark();

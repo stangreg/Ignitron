@@ -14,6 +14,8 @@
 #include <sstream>
 
 #include <Arduino.h>
+#include "Common.h"
+
 
 using ByteVector = std::vector<byte>;
 

@@ -82,9 +82,9 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
 	resultPreset.isEmpty=false;
 	resultPreset.json = jsonString;
-	//Serial.println("JSON:");
-	//Serial.println(resultPreset.json.c_str());
-	//Serial.println(resultPreset.pedals[0].parameters[0].value);
+	DEBUG_PRINTLN("JSON:");
+	DEBUG_PRINTLN(resultPreset.json.c_str());
+	DEBUG_PRINTLN(resultPreset.pedals[0].parameters[0].value);
 	return resultPreset;
 
 }
@@ -96,7 +96,7 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 	presetBanksNames.clear();
 	std::string allPresetsAsText;
 	std::vector<std::string> tmpVector;
-	//Serial.println("Trying to read file list");
+	DEBUG_PRINTLN("Trying to read file list");
 	if(!fileSystem.openFromFile(presetListFileName, allPresetsAsText)){
 		Serial.println("ERROR while trying to open presets list file");
 		return;

@@ -15,6 +15,8 @@
 #include <Arduino.h>
 #include "SparkHelper.h"
 #include "SparkTypes.h"
+#include "Common.h"
+
 
 
 using ByteVector = std::vector<byte>;
