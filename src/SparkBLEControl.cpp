@@ -394,8 +394,10 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 		ble_gap_conn_desc *desc, uint16_t subValue) {
 	std::string str = "Client ID: ";
-	str += desc->conn_handle;
-	str += " Address: ";
+	std::ostringstream conn_handle_str;
+	conn_handle_str << desc->conn_handle;
+	str += conn_handle_str.str();
+	str += ", Address: ";
 	str += std::string(NimBLEAddress(desc->peer_ota_addr)).c_str();
 	if (subValue == 0) {
 		str += " Unsubscribed to ";

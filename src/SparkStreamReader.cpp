@@ -167,7 +167,7 @@ void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 
 
 void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
-	char string_add[200] = "";
+	char string_add[sizeof(float)] = "";
 	sprintf(string_add, "%2.4f ", a_float);
 	raw += string_add;
 	sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
@@ -183,7 +183,7 @@ void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
 }
 
 void SparkStreamReader::add_float_pure(float a_float, char* nature) {
-	char string_add[200] = "";
+	char string_add[sizeof(float)] = "";
 	sprintf(string_add, "%2.4f ", a_float);
 	raw += string_add;
 	sprintf(string_add, "%2.4f ", a_float);
@@ -295,18 +295,25 @@ void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
 	read_byte();
 	byte preset = read_byte();
+	DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
 	currentSetting_.presetNumber = preset;
 	std::string uuid = read_string();
+	DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
 	currentSetting_.uuid = uuid;
 	std::string name = read_string();
+	DEBUG_PRINTF("Read Name: %s\n", name.c_str());
 	currentSetting_.name = name;
 	std::string version = read_string();
+	DEBUG_PRINTF("Read Version: %s\n", version.c_str());
 	currentSetting_.version = version;
 	std::string descr = read_string();
+	DEBUG_PRINTF("Read Description: %s\n", descr.c_str());
 	currentSetting_.description = descr;
 	std::string icon = read_string();
+	DEBUG_PRINTF("Read Icon: %s\n", icon.c_str());
 	currentSetting_.icon = icon;
 	float bpm = read_float();
+	DEBUG_PRINTF("Read BPM: %f\n", bpm);
 	currentSetting_.bpm = bpm;
 
 	// Build string representations
@@ -330,14 +337,18 @@ void SparkStreamReader::read_preset() {
 
 	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
+	DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
 	add_python("\"Pedals\": [");
 	add_newline();
 	currentSetting_.pedals = {};
 	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 		Pedal currentPedal = {};
+		DEBUG_PRINTF("Reading Pedal %d:\n", i + 1);
 		std::string e_str = read_string();
+		DEBUG_PRINTF("  Pedal name: %s\n", e_str.c_str());
 		currentPedal.name = e_str;
 		boolean e_onoff = read_onoff();
+		DEBUG_PRINTF("  Pedal state: %s\n", e_onoff);
 		currentPedal.isOn = e_onoff;
 		add_python ("{");
 		add_str("Name", e_str);
@@ -345,14 +356,21 @@ void SparkStreamReader::read_preset() {
 		add_bool("IsOn", e_onoff);
 		add_separator();
 		int num_p = read_byte() - char(0x90);
+		DEBUG_PRINTF("  Number of Parameters: %d\n", num_p);
+
 		add_python("\"Parameters\":[");
 		// Read parameters of current pedal
 		currentPedal.parameters = {};
 		for (int p = 0; p < num_p; p++) {
 			Parameter currentParameter = {};
+			DEBUG_PRINTF("  Reading parameter %d:\n", p);
 			byte num = read_byte();
+			DEBUG_PRINTF("    Parameter ID: %d\n", SparkHelper::intToHex(num));
 			byte spec = read_byte();
+			DEBUG_PRINTF("    Parameter Special: %s\n",
+					SparkHelper::intToHex(spec));
 			float val = read_float();
+			DEBUG_PRINTF("    Parameter Value: %f\n", val);
 			currentParameter.number = num;
 			currentParameter.special = spec;
 			currentParameter.value = val;
@@ -378,6 +396,7 @@ void SparkStreamReader::read_preset() {
 	add_python("],");
 	add_newline();
 	byte filler = read_byte();
+	DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
 	currentSetting_.filler = filler;
 	add_str("Filler", SparkHelper::intToHex(filler));
 	add_newline();
