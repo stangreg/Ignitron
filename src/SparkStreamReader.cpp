@@ -343,12 +343,12 @@ void SparkStreamReader::read_preset() {
 	currentSetting_.pedals = {};
 	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 		Pedal currentPedal = {};
-		DEBUG_PRINTF("Reading Pedal %d:\n", i + 1);
+		//DEBUG_PRINTF("Reading Pedal %d:\n", i);
 		std::string e_str = read_string();
-		DEBUG_PRINTF("  Pedal name: %s\n", e_str.c_str());
+		//DEBUG_PRINTF("  Pedal name: %s\n", e_str.c_str());
 		currentPedal.name = e_str;
 		boolean e_onoff = read_onoff();
-		DEBUG_PRINTF("  Pedal state: %s\n", e_onoff);
+		//DEBUG_PRINTF("  Pedal state: %s\n", e_onoff);
 		currentPedal.isOn = e_onoff;
 		add_python ("{");
 		add_str("Name", e_str);
@@ -531,7 +531,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					DEBUG_PRINT("Copying old one");
+					DEBUG_PRINTLN("Copying old one");
 					message.push_back(chunk);
 				} // else
 			} // For all in 8-bit vector
