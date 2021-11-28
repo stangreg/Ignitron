@@ -15,6 +15,7 @@
 
 #include "SparkDataControl.h"
 #include "Common.h"
+#include "Credentials.h"
 
 
 // Service and characteristics UUIDs of Spark Amp
@@ -174,6 +175,7 @@ private:
 	// isClientConnected will be set when a client is connected to ESP in AMP mode
 	bool isAppConnected_ = false;
 	notify_callback notifyCB;
+	const SparkData sparkData;
 
 	uint32_t scanTime = 0; /** 0 = scan forever */
 	const uint8_t notificationOn[2] = { 0x1, 0x0 };

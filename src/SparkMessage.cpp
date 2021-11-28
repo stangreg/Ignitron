@@ -188,6 +188,14 @@ std::vector<ByteVector> SparkMessage::get_current_preset_num(){
 	return msg;
 }
 
+std::vector<ByteVector> SparkMessage::send_license_key() {
+	// hardcoded message
+	std::vector<ByteVector> msg;
+	ByteVector msg_vec = sparkData.licenseKey;
+	msg.push_back(msg_vec);
+	return msg;
+}
+
 std::vector<ByteVector> SparkMessage::get_current_preset(){
 	// hardcoded message
 	std::vector<ByteVector> msg;

@@ -71,6 +71,7 @@ public:
 	bool switchEffectOnOff(std::string fx_name, bool enable);
 	// get a preset from saved presets
 	Preset getPreset(int bank, int pre);
+	bool sendLicenseKey();
 	// return the number of banks in the preset list
 	int getNumberOfBanks();
 

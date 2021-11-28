@@ -131,6 +131,16 @@ Preset SparkDataControl::getPreset(int bank, int pre) {
 	return presetBuilder.getPreset(bank, pre);
 }
 
+bool SparkDataControl::sendLicenseKey() {
+	bool retValue = false;
+	current_msg = spark_msg.send_license_key();
+	Serial.println("Sending license key");
+	if (bleControl.writeBLE(current_msg)) {
+		retValue = true;
+	}
+	return retValue;
+}
+
 int SparkDataControl::getNumberOfBanks() {
 	return presetBuilder.getNumberOfBanks();
 }
@@ -173,7 +183,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		} else if (operationMode_ == SPARK_MODE_AMP) {
 			bleControl.notifyClients(ack_msg[0]);
 		}
-	}
+		}
 	int retCode = spark_ssr.processBlock(blk);
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
 		std::string msgStr = spark_ssr.getJson();
@@ -190,7 +200,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 			spark_ssr.resetPresetNumberUpdateFlag();
 			presetNumToEdit_ = 0;
 		}
-	}
+		}
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
 	// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
@@ -198,9 +208,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
 		pendingPreset_ = activePreset_;
-	}
+		}
 	return retCode;
-}
+	}
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
@@ -209,11 +219,11 @@ bool SparkDataControl::getCurrentPresetFromSpark() {
 		return true;
 	}
 	return false;
-}
+	}
 
 void SparkDataControl::updatePendingPreset(int bnk) {
 	pendingPreset_ = getPreset(bnk, activePresetNum_);
-}
+	}
 
 void SparkDataControl::updatePendingWithActive() {
 	pendingBank_ = activeBank_;
@@ -229,9 +239,9 @@ bool SparkDataControl::switchPreset(int pre) {
 			std::string drivePedalName = drivePedal.name;
 			bool isDriveEnabled = drivePedal.isOn;
 			if (switchEffectOnOff(drivePedalName, !isDriveEnabled)) {
-				retValue = true;
-			}
-		} else {
+					retValue = true;
+				}
+			} else {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
@@ -245,23 +255,23 @@ bool SparkDataControl::switchPreset(int pre) {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
 				current_msg = spark_msg.create_preset(pendingPreset_);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
-				if (bleControl.writeBLE(current_msg)) {
+					if (bleControl.writeBLE(current_msg)) {
 					// This is the final message with actually switches over to the
 					//previously sent preset
 					current_msg = spark_msg.change_hardware_preset(128);
 					if (bleControl.writeBLE(current_msg)) {
 						retValue = true;
 					}
+					}
 				}
 			}
 		}
-	}
 	if (retValue == true) {
 		activeBank_ = bnk;
 		activePresetNum_ = pre;
 	}
 	return retValue;
-}
+	}
 
 bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 
@@ -277,13 +287,13 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 	current_msg = spark_msg.turn_effect_onoff(fx_name, enable);
 	if (bleControl.writeBLE(current_msg)) {
 		return true;
-	}
+		}
 	return false;
-}
+	}
 
 void SparkDataControl::triggerInitialBLENotifications() {
 	bleControl.sendInitialNotification();
-}
+	}
 
 void SparkDataControl::processPresetEdit(int presetNum) {
 	if (presetNum == 0) {
@@ -297,7 +307,7 @@ void SparkDataControl::processPresetEdit(int presetNum) {
 		pendingPreset_ = activePreset_;
 
 	}
-}
+	}
 
 void SparkDataControl::processStorePresetRequest(int presetNum) {
 	int responseCode;
@@ -325,16 +335,16 @@ void SparkDataControl::processStorePresetRequest(int presetNum) {
 				responseMsg_ = "SAVE ERROR";
 			}
 		} else {
-			activePresetNum_ = presetNum;
-			activePreset_ = presetBuilder.getPreset(activeBank_,
-					activePresetNum_);
-			pendingPreset_ = activePreset_;
+				activePresetNum_ = presetNum;
+				activePreset_ = presetBuilder.getPreset(activeBank_,
+						activePresetNum_);
+				pendingPreset_ = activePreset_;
 			presetNumToEdit_ = presetNum;
 			presetBankToEdit_ = pendingBank_;
+			}
 		}
-	}
 
-}
+	}
 
 void SparkDataControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
 	presetNumToEdit_ = 0;
@@ -347,18 +357,18 @@ void SparkDataControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
 		presetEditMode_ = PRESET_EDIT_NONE;
 	}
 
-}
+	}
 
 void SparkDataControl::resetPresetEditResponse() {
 	responseMsg_ = "";
-}
+	}
 
 void SparkDataControl::processDeletePresetRequest() {
 	int responseCode;
 	responseMsg_ = "";
 	if (presetEditMode_ == PRESET_EDIT_DELETE && activeBank_ > 0) {
 		responseCode = presetBuilder.deletePreset(activeBank_,
-				activePresetNum_);
+					activePresetNum_);
 		if (responseCode == DELETE_PRESET_OK
 				|| responseCode == DELETE_PRESET_FILE_NOT_EXIST) {
 			Serial.printf("Successfully deleted preset %d-%d\n", pendingBank_,
@@ -377,15 +387,15 @@ void SparkDataControl::processDeletePresetRequest() {
 		if (responseCode == DELETE_PRESET_ERROR_OPEN
 				|| responseCode == STORE_PRESET_UNKNOWN_ERROR) {
 			responseMsg_ = "DELETE ERROR";
-		}
+			}
 		resetPresetEdit(true, true);
 	} else {
 		setPresetDeletionFlag();
 		presetNumToEdit_ = activePresetNum_;
 		presetBankToEdit_ = activeBank_;
-	}
+		}
 
-}
+	}
 
 void SparkDataControl::setPresetDeletionFlag() {
 	presetEditMode_ = PRESET_EDIT_DELETE;
@@ -399,9 +409,8 @@ void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
 	if (bleKeyboard.isConnected()) {
 		Serial.printf("Sending button: %d\n", c);
 		bleKeyboard.write(c);
-	}
-	else {
+	} else {
 		Serial.println("Keyboard not connected");
 	}
 
-}
+	}

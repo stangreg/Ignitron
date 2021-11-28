@@ -16,6 +16,7 @@
 #include "SparkHelper.h"
 #include "SparkTypes.h"
 #include "Common.h"
+#include "Credentials.h"
 
 
 
@@ -32,6 +33,7 @@ private:
 	std::vector<ByteVector> split_data7;
 	ByteVector data;
 	std::vector<ByteVector> final_message;
+	const SparkData sparkData;
 
 
 	void start_message (byte cmd, byte sub_cmd);
@@ -59,6 +61,7 @@ public:
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
+	std::vector<ByteVector> send_license_key();
 
 };
 
