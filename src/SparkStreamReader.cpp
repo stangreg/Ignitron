@@ -499,6 +499,7 @@ boolean SparkStreamReader::structure_data() {
 			//DEBUG_PRINTLN("Converted to 8bit");
 			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
 			chunk_8bit.push_back(curr_data);
+			DEBUG_PRINT("Data 8-bit: "); DEBUG_PRINTVECTOR(data8bit); DEBUG_PRINTLN();
 
 			// now check for mult-chunk messages and collapse their data into a single message
 			// multi-chunk messages are cmd/sub_cmd of 1,1 or 3,1

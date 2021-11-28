@@ -291,10 +291,6 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 	return false;
 	}
 
-void SparkDataControl::triggerInitialBLENotifications() {
-	bleControl.sendInitialNotification();
-	}
-
 void SparkDataControl::processPresetEdit(int presetNum) {
 	if (presetNum == 0) {
 		processDeletePresetRequest();

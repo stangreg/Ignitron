@@ -138,7 +138,6 @@ public:
 	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
 	static int processSparkData(ByteVector blk);
-	void triggerInitialBLENotifications();
 	void processPresetEdit(int presetNum = 0);
 	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
 	void resetPresetEditResponse();
