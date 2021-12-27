@@ -6,7 +6,6 @@
  */
 
 #include "SparkPresetBuilder.h"
-#include <ArduinoJson.h>
 
 SparkPresetBuilder::SparkPresetBuilder() {
 	presetBanksNames = {};

@@ -8,7 +8,9 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
-#include <BleKeyboard.h>>
+#define USE_NIMBLE
+
+#include <BleKeyboard.h>
 
 #include <vector>
 #include <Arduino.h>

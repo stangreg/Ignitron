@@ -9,7 +9,7 @@
 #define SPARK_PRESET_BUILDER_H
 
 #include <Arduino.h>
-#include <ArduinoJSON.h>
+#include <ArduinoJson.h>
 #include <FS.h>
 #include <Effortless_SPIFFS.h>
 #include <algorithm>

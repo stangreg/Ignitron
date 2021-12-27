@@ -2,7 +2,7 @@
 This document describes the software side of the **Ignitron** foot pedal.
 
 ## IDE
-I am using the [Sloeber](http://sloeber.io) Eclipse plugin for development as it offers more convenient functions than the standard Arduino IDE. Of course, you can use the IDE of your choice.
+I am using the [Sloeber](https://eclipse.baeyens.it) Eclipse plugin for development as it offers more convenient functions than the standard Arduino IDE. Of course, you can use the IDE of your choice.
 Whichever IDE you are using, you will need to set it up so it can build the code for the ESP32.
 I assume you already know how to setup an ESP32 project in an IDE, only specifics I have used will be described here.
 
@@ -26,7 +26,7 @@ There is a number of custom libraries used on top of the standard ones to use wi
 |---|---:|---|
 | Adafruit SSD1306 | 2.4.6 | Display control|
 | Adafruit_GFX_Library | 1.10.12 | Advanced display control |
-| ArduinoJson | 6.8.15 | JSON document parsing |
+| ArduinoJson | 6.18.5 | JSON document parsing |
 | ButtonFever | 1.0.0 | Button library |
 | Effortless-SPIFFS | 2.3.0 | File system to manage the presets |
 | ESP32-BLE-Keyboard | 0.3.0 | Keyboard used for the looper app control |
