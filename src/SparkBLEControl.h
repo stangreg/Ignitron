@@ -8,12 +8,10 @@
 #ifndef SPARKBLECONTROL_H_
 #define SPARKBLECONTROL_H_
 
-#define USE_NIMBLE
 
 #include <NimBLEDevice.h>
 #include <Arduino.h>
 #include <vector>
-#include <BleKeyboard.h>
 
 #include "SparkDataControl.h"
 #include "Common.h"

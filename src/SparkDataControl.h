@@ -10,11 +10,12 @@
 
 #define USE_NIMBLE
 
-#include <BleKeyboard.h>
+
 
 #include <vector>
 #include <Arduino.h>
 #include "SparkBLEControl.h"
+#include "SparkBLEKeyboard.h"
 #include "SparkDisplayControl.h"
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
@@ -158,7 +159,7 @@ private:
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
 
-	BleKeyboard bleKeyboard;
+	SparkBLEKeyboard bleKeyboard;
 	bool isWifiConnected_ = false;
 
 	//Button data
