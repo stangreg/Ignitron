@@ -46,6 +46,7 @@ Class structure:
 |---|---|
 | Ignitron.ino | Basic .ino file which only provides the setup() and loop() functions. It invokes the other control classes (see below) and controls the execution loop |
 | SparkBLEControl | Controls the communication via Bluetooth LE protocol. Holds the connections to the Spark Amp and the App. |
+| SparkBLEKeyboard | BLE Keyboard class, inherited from BleKeyboard. Adds start method to enable/disable easily |
 | SparkButtonHandler | Registers HW button presses and delegates execution to the control classes. |
 | **SparkDataControl** | **This is the core control class. It controls data flow and status across all other control classes.** |
 | SparkDisplayControl | This controls which information is shown when on the display |
@@ -61,3 +62,5 @@ Class structure:
 ## Building the code
 **Important:** Before building the code, rename the file to Credentials.h and put in your SSID name and WiFi password.
 After setting up the project in the IDE, the code should build with the standard tool chain.
+
+To compile, add the switch "-D USE_NIMBLE" to the compile options.
