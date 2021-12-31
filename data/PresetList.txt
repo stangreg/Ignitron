@@ -67,11 +67,9 @@ Hendrix.json
 -- Bank 14 
 EnglFireball.json
 DireStraits.json
-DireStraitsnicemidrockto.json
 StudioSession.json
 -- Bank 15 
 TornadoOfSouls.json
-SpookyMelody.json
 NothingElseMattersMetall.json
 SilverShip.json
 -- Bank 16 
