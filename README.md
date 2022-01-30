@@ -119,10 +119,12 @@ Each switch controls a different FX pedal type:
 ## AMP mode
 In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted. In this mode, Ignitron's firmware can also be updated OTA via a web browser.
 
+**Note: With the current version of Ignitron, it is only possible to connect the iOS version of the Spark app with the pedal. The Android version of the app uses Bluetooth classic to connect to the amp which is currently not supported by Ignitron.**  
+
 ### Connecting the Spark app with **Ignitron**
 1. Start **Ignitron** in AMP mode (hold `Preset 1` button during startup).
 2. Open the Spark App on the mobile
-3. For the first connection, make sure to have your real Spark Amp powered off to avoid the app conneting to it.
+3. For the first connection, make sure to have your real Spark Amp powered off to avoid the app connecting to it.
 4. Hit the connect button in the app (or the + button in the connection overview)
 5. Once the connection is established, you can give the connection a name in the app so you can distinguish from your regular Spark Amp connection.
 
