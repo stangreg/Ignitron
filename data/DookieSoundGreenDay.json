@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "C9F1BDE3-51F9-477A-BE7E-507B094207A6", 
+"Name": "Dookie Sound - Green Day", "Version": "0.7", "Description": "Comes close to the Marshall 1959 Plexi (with modification) used for the recordin", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.0000, 0.0100]}, 
+{"Name": "LA2AComp", "IsOn": false, "Parameters":[0.0000, 0.7126, 0.7248]}, 
+{"Name": "DistortionTS9", "IsOn": true, "Parameters":[0.9250, 0.4725, 0.5661]}, 
+{"Name": "Plexi", "IsOn": true, "Parameters":[1.0000, 0.5316, 0.0000, 0.4967, 0.7000]}, 
+{"Name": "Tremolo", "IsOn": false, "Parameters":[0.4541, 0.6999, 0.5962]}, 
+{"Name": "DelayMono", "IsOn": false, "Parameters":[0.3818, 0.3983, 0.7363, 0.6000, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": false, "Parameters":[0.3593, 0.5067, 0.4179, 0.3008, 0.6023, 0.5941, 0.0000]}],
+"Filler": "D5"
+}

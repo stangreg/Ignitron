@@ -56,9 +56,13 @@ std::vector<ByteVector> SparkMessage::end_message(){
 	// and in each chunk loop over every sequence of (max) 7 bytes
 	// and extract the 8th bit and put in 'bit8'
 	// and then add bit8 and the 7-bit sequence to data7
-
+	DEBUG_PRINTLN("8-bit chunks:");
 	for (auto chunk : split_data8){
-
+		//DEBUG
+		for (auto byte : chunk){
+			DEBUG_PRINTF("%s",SparkHelper::intToHex(byte));
+		}
+		DEBUG_PRINTLN();
 		int chunk_len = chunk.size();
 		int num_seq = int ((chunk_len + 6) / 7);
 		ByteVector bytes7 = {};
@@ -81,6 +85,8 @@ std::vector<ByteVector> SparkMessage::end_message(){
 			bytes7.push_back(bit8);
 			bytes7.insert(bytes7.end(), seq.begin(), seq.end());
 		}
+		//DEBUG_PRINTLN("7-bit chunk:");
+		//SparkHelper::printByteVector(bytes7);
 		split_data7.push_back(bytes7);
 	}
 
@@ -156,14 +162,19 @@ void SparkMessage::add_float (float flt){
 		byte temp_array[4];
 	} u;
 	// Overwrite bytes of union with float variable
-	u.float_variable = flt;
+	// ROundign float to 4 digits before converting to avoid rounding errors during conversion
+	u.float_variable = roundf(flt * 10000) / 10000;
 	ByteVector byte_pack;
 	byte_pack.push_back((byte)0xca);
 	// Assign bytes to input array
 	for(int i=3; i>=0; i--){
 		byte_pack.push_back(u.temp_array[i]);
 	}
-
+	DEBUG_PRINTF("Converting float %f to HEX: ", u.float_variable);
+	for (auto byte : byte_pack) {
+		DEBUG_PRINTF("%s", SparkHelper::intToHex(byte).c_str());
+	}
+	DEBUG_PRINTLN();
 	add_bytes(byte_pack);
 }
 

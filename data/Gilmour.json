@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "28E4AF06-ED64-45A4-B444-1B403F57A0C9", 
+"Name": "Gilmour", "Version": "0.7", "Description": "from his Marshall days saved all my presets by hand to my iPod so I could downlo", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": false, "Parameters":[0.2182, 0.0649]}, 
+{"Name": "BlueComp", "IsOn": true, "Parameters":[0.6000, 0.4800, 0.4000, 0.6000]}, 
+{"Name": "Booster", "IsOn": false, "Parameters":[0.7670]}, 
+{"Name": "YJM100", "IsOn": true, "Parameters":[0.6500, 0.7000, 0.4000, 0.6000, 0.7000]}, 
+{"Name": "Tremolo", "IsOn": false, "Parameters":[0.4541, 0.6999, 0.5962]}, 
+{"Name": "DelayRe201", "IsOn": true, "Parameters":[0.6000, 0.3992, 0.5321, 0.7500, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.3357, 0.6438, 0.5208, 0.2813, 0.4695, 0.4555, 0.6000]}],
+"Filler": "AF"
+}
