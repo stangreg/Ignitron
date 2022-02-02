@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "7088D3B1-C383-402E-B7C3-399BF8779780", 
+"Name": "Ain’t Talkin’ Bout Love - LARSON", "Version": "0.7", "Description": "", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.1753, 0.5729, 1.0000]}, 
+{"Name": "LA2AComp", "IsOn": true, "Parameters":[0.0000, 0.7000, 0.7000]}, 
+{"Name": "Overdrive", "IsOn": true, "Parameters":[0.3787, 0.6745, 0.6183]}, 
+{"Name": "SwitchAxeLead", "IsOn": true, "Parameters":[0.6746, 1.0000, 0.8017, 0.4265, 0.6785]}, 
+{"Name": "Flanger", "IsOn": true, "Parameters":[0.1569, 0.4178, 0.2731]}, 
+{"Name": "DelayMono", "IsOn": true, "Parameters":[0.2717, 0.0916, 0.7999, 0.6000, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.1829, 0.3898, 0.3143, 0.3667, 0.5933, 0.5688, 0.3000, 1.0000]}],
+"Filler": "8B"
+}

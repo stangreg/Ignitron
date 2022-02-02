@@ -214,6 +214,11 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 						// This it to split messages into sizes of max. max_send_size.
 						// As we have chosen 173, usually no further splitting is requried.
 						// SparkMessage already creates messages split into 173 byte chunks
+						DEBUG_PRINTLN("Sending packet:");
+						for (auto byte: block){
+							DEBUG_PRINTF("%s",SparkHelper::intToHex(byte));
+						}
+						DEBUG_PRINTLN();
 						curr_pos = 0;
 
 						int packetsToSend = (int) ceil(
