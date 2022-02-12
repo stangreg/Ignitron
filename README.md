@@ -8,7 +8,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
 * **Toggle effects** for the selected preset
-* **Load new presets** via the Spark App
+* **Load new presets** via the Spark App (iOS only)
 * **Delete** stored presets
 * Control **Looper apps** (and other apps which support bluetooth keyboards)
 * Firmware can (rudimentarily) be updated via OTA Web interface.
