@@ -64,3 +64,11 @@ Class structure:
 After setting up the project in the IDE, the code should build with the standard tool chain.
 
 To compile, add the switch "-D USE_NIMBLE" to the compile options.
+
+## Installing Firmware and data files
+After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber. 
+
+In case you don't like the default presets, you can delete the presets you don't want, and also need to change the file *PresetList.txt* accordingly. This file just contains the file names of the presets to use. Lines starting with "--" are ignored. 
+
+**Note:** Please be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automaticalle rewritten, so custom commented lines will be removed.
+
