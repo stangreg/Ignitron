@@ -24,9 +24,9 @@ There is a number of custom libraries used on top of the standard ones to use wi
 
 |Library|Version|Comment| Source
 |---|---:|---|---|
-| Adafruit SSD1306 | 2.4.6 | Display control | Arduino IDE Library |
-| Adafruit_GFX_Library | 1.10.12 | Advanced display control | Arduino IDE Library |
-| ArduinoJson | 6.18.5 | JSON document parsing | Arduino IDE Library |
+| Adafruit SSD1306 | 2.5.3 | Display control | Arduino IDE Library |
+| Adafruit_GFX_Library | 1.10.14 | Advanced display control | Arduino IDE Library |
+| ArduinoJson | 6.19.4 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | Effortless-SPIFFS | 2.3.0 | File system to manage the presets | Arduino IDE Library |
 | ESP32-BLE-Keyboard | 0.3.0 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
