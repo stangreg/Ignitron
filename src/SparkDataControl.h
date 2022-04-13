@@ -69,7 +69,7 @@ public:
 	// Retrieves the current preset from Spark (required for HW presets)
 	bool getCurrentPresetFromSpark();
 	// Switch to a selected preset of the current bank
-	bool switchPreset(int pre);
+	bool switchPreset(int pre, bool isInitial);
 	// Switch effect on/off
 	bool switchEffectOnOff(std::string fx_name, bool enable);
 	// get a preset from saved presets

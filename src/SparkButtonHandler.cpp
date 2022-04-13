@@ -108,7 +108,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				}
 				if (operationMode == SPARK_MODE_APP
 						|| operationMode == SPARK_MODE_LOOPER) {
-					spark_dc->switchPreset(selectedPresetNum);
+					spark_dc->switchPreset(selectedPresetNum, false);
 				} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
 					spark_dc->processPresetEdit(selectedPresetNum);
 				}
