@@ -50,8 +50,6 @@ void setup() {
 		esp_base_mac_addr_set(&mac_keyboard[0]);
 		Serial.println("======= Entering APP mode =======");
 	} else if (operationMode == SPARK_MODE_AMP) {
-		//uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x46 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
-		//esp_base_mac_addr_set(&mac_keyboard[0]);
 		Serial.println("======= Entering AMP mode =======");
 	}
 	// Setting operation mode before initializing

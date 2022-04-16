@@ -21,6 +21,8 @@
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
 #include "SparkOTAServer.h"
+//#include "BluetoothSerial.h"
+
 
 #include "SparkTypes.h"
 #include "Common.h"
@@ -181,6 +183,7 @@ private:
 	static int presetNumToEdit_;
 	static int presetBankToEdit_;
 	static int presetEditMode_;
+	//BluetoothSerial SerialBT;
 
 	static std::string responseMsg_;
 
