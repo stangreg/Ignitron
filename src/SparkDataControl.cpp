@@ -219,12 +219,12 @@ void SparkDataControl::updatePendingWithActive() {
 	pendingBank_ = activeBank_;
 	pendingPreset_ = activePreset_;
 }
-bool SparkDataControl::switchPreset(int pre) {
+bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	bool retValue = false;
 	int bnk = pendingBank_;
 	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 		if (pre == activePresetNum_ && activeBank_ == pendingBank_
-				&& !(activePreset_.isEmpty)) {
+				&& !(activePreset_.isEmpty) && !isInitial) {
 			Pedal drivePedal = activePreset_.pedals[2];
 			std::string drivePedalName = drivePedal.name;
 			bool isDriveEnabled = drivePedal.isOn;

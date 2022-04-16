@@ -82,11 +82,14 @@ void loop() {
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
 			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-			if (spark_dc->switchPreset(1, true)) {
+			spark_dc->switchPreset(1, true);
+			delay(1500);
+			if (!(spark_dc->activePreset()->isEmpty)) {
 				isInitBoot = false;
 			}
 		}
-	}
+
+		}
 	// Check if presets have been updated
 	spark_dc->checkForUpdates();
 	// Reading button input
