@@ -55,7 +55,8 @@ void SparkDataControl::init(int opMode) {
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
-		bleControl.startServer();
+		//bleControl.startServer();
+		bleControl.startBTClassic();
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
@@ -101,6 +102,27 @@ void SparkDataControl::checkForUpdates() {
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
 		otaServer.handleClient();
+		while (bleControl.byteAvailable()) {
+			byte inputByte = bleControl.readByte();
+			if (inputByte < 16)
+				Serial.print("0");
+			Serial.print(inputByte, HEX);
+			currentBTMsg.push_back(inputByte);
+			int msgSize = currentBTMsg.size();
+			if (msgSize >= 2) {
+				if (currentBTMsg[msgSize - 1] == 0xF7) {
+					/*if (processSparkData(
+							currentBTMsg) == MSG_PROCESS_RES_INITIAL) {
+						Serial.println("Received initial request");
+						bleControl.sendInitialNotification();
+					 }*/
+					processSparkData(currentBTMsg);
+					bleControl.sendInitialNotification();
+					currentBTMsg.clear();
+
+				}
+			}
+		}
 	}
 
 }

@@ -416,6 +416,8 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 ;
 
 void SparkBLEControl::notifyClients(ByteVector msg) {
+	// BLE mode, commented for testing
+	/*
 	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 	if (pSvc) {
 		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
@@ -427,7 +429,17 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 			pChr->setValue(&msg.data()[0], msg.size());
 			pChr->notify(true);
 		}
+	 }*/
+	Serial.println("Sending message");
+	for (byte by : msg) {
+		if (by < 16) {
+			Serial.print("0");
+			serialBT.write('0');
+		}
+		Serial.print(by, HEX);
+		serialBT.write(by);
 	}
+	Serial.println();
 }
 
 void SparkBLEControl::sendInitialNotification() {
@@ -551,7 +563,7 @@ void SparkBLEControl::sendInitialNotification() {
 			0x00, 0x04, 0x70, 0x00, 0x00, 0xF7 };
 
 	int delayValue = 0;
-	if (pServer->getConnectedCount()) {
+	//if (pServer->getConnectedCount()) {
 		DEBUG_PRINTLN("Sending notifications...");
 		notificationCount++;
 		switch (notificationCount) {
@@ -592,7 +604,7 @@ void SparkBLEControl::sendInitialNotification() {
 			break;
 		}
 
-	} // if server connected
+	//} // if server connected
 }
 
 
@@ -630,6 +642,12 @@ void SparkBLEControl::stopScan() {
 		Serial.print("Scan is not running");
 	}
 
+}
+
+void SparkBLEControl::startBTClassic() {
+	//Serial.printf("Initializing BT Classic with name %s",
+	//		SPARK_BT_NAME.c_str());
+	serialBT.begin("Spark 40 Audio", false);
 }
 
 

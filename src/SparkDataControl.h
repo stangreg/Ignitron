@@ -21,7 +21,6 @@
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
 #include "SparkOTAServer.h"
-//#include "BluetoothSerial.h"
 
 
 #include "SparkTypes.h"
@@ -139,7 +138,6 @@ public:
 	}
 
 	// Functions for Spark AMP (Server mode)
-	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
@@ -152,6 +150,7 @@ public:
 	void sendButtonPressAsKeyboard(uint8_t c);
 
 private:
+
 	static int operationMode_;
 
 	static SparkBLEControl bleControl;
@@ -183,9 +182,10 @@ private:
 	static int presetNumToEdit_;
 	static int presetBankToEdit_;
 	static int presetEditMode_;
-	//BluetoothSerial SerialBT;
+
 
 	static std::string responseMsg_;
+	ByteVector currentBTMsg;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();
