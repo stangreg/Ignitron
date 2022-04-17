@@ -5,8 +5,8 @@
 {"Name": "LA2AComp", "IsOn": true, "Parameters":[0.0000, 0.7126, 0.7248]}, 
 {"Name": "Overdrive", "IsOn": true, "Parameters":[0.7514, 0.6000, 0.6000]}, 
 {"Name": "AmericanHighGain", "IsOn": true, "Parameters":[0.8280, 0.4311, 0.5562, 0.4951, 0.7804]}, 
-{"Name": "Tremolo", "IsOn": false, "Parameters":[0.3214, 0.6999, 0.5962]}, 
+{"Name": "ChorusAnalog", "IsOn": false, "Parameters":[0.7613, 0.2797, 0.5808, 0.5678]}, 
 {"Name": "DelayMono", "IsOn": true, "Parameters":[0.2479, 0.1940, 0.0000, 0.3000, 1.0000]}, 
 {"Name": "bias.reverb", "IsOn": true, "Parameters":[0.4451, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000, 1.0000]}],
-"Filler": "E7"
+"Filler": "F8"
 }

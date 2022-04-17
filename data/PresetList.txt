@@ -18,91 +18,95 @@ BohemianRhapsody.json
 EricJohnsoncliffsofDover.json
 FinalCountdown.json
 AcDc.json
-TremontiAlternative.json
 -- Bank 5 
+TremontiAlternative.json
 TremontiClean.json
 FooFighters.json
 FooFightersEverlong.json
-EnterSandman.json
 -- Bank 6 
+EnterSandman.json
 NothingElseMatters.json
 NothingElseMattersAcous.json
 PapaResortLastResort.json
-HateToSay.json
 -- Bank 7 
+HateToSay.json
 RedHotChiliPeppers.json
 AliceCooper.json
 EddieVanHalen.json
-Rush.json
 -- Bank 8 
+Rush.json
 SantanaBlackMagicWoman.json
 SunshineOfMyLove.json
 SatrianiSatchBoogie.json
-ToolClean.json
 -- Bank 9 
+ToolClean.json
 VintageCreamyLarson.json
 WizoQuadrat.json
 Wizo.json
-JethroTull.json
 -- Bank 10 
+JethroTull.json
 VoodooKidWah.json
 BrownSoundLarson.json
 MasterOfPuppets.json
-Megadeth.json
 -- Bank 11 
+Megadeth.json
 Gilmour.json
 GhostDanceMacabreMart.json
 GtrHeroLarson.json
-CrazyTrain.json
 -- Bank 12 
+CrazyTrain.json
 IronMaiden.json
 BangBang.json
 CleanForBallads.json
-OrangeAD30Arpeggio.json
 -- Bank 13 
+OrangeAD30Arpeggio.json
 ModernVintageClean.json
 PerfectCleanLarson.json
 Oasis.json
-DookieSoundGreenDay.json
 -- Bank 14 
+DookieSoundGreenDay.json
 ThroatyLarson.json
 LynyrdSkynyrd.json
 Hendrix.json
-EnglFireball.json
 -- Bank 15 
+EnglFireball.json
+-- Bank 16 
 Anastasia.json
 Gilmour.json
 The1975.json
+HouseoftheRisingSonJusti.json
+-- Bank 17 
 DireStraits.json
--- Bank 16 
+SultansOfSwingKnopfler.json
+SultansOfSwing2.json
 TornadoOfSouls.json
+-- Bank 18 
 AintTalkinBoutLoveLARSON.json
 VanHalen.json
 SpookyMelody.json
--- Bank 17 
 NothingElseMattersMetall.json
+-- Bank 19 
 SilverShip.json
 SweetMemory.json
 DancingInTheRoom.json
--- Bank 18 
 RoyalCrown.json
+-- Bank 20 
 WoodenBridge.json
 StoneBreaker.json
 CountryRoad.json
--- Bank 19 
 BluesArk.json
+-- Bank 21 
 ModernStone.json
 CrazyCrue.json
 DarkSoul.json
--- Bank 20 
 BritishAccent.json
+-- Bank 22 
 IronHammer.json
 MillenialLead.json
 HeavyAxe.json
--- Bank 21 
 DualTrain.json
+-- Bank 23 
 SpookyMelody.json
 FuzzyJam.json
 AngryMonkey.json
--- Bank 22 
 HideAndSeek.json
