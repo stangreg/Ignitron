@@ -424,6 +424,10 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 			DEBUG_PRINTLN("Sending data:");
 			DEBUG_PRINTVECTOR(msg);
 			DEBUG_PRINTLN();
+			Serial.println("Sending data:");
+			SparkHelper::printByteVector(msg);
+			Serial.println();
+
 			pChr->setValue(&msg.data()[0], msg.size());
 			pChr->notify(true);
 		}

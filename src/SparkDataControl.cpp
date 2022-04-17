@@ -162,6 +162,10 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	DEBUG_PRINTVECTOR(blk);
 	DEBUG_PRINTLN();
 
+	Serial.println("Received data:");
+	SparkHelper::printByteVector(blk);
+	Serial.println();
+
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
