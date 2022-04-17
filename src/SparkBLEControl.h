@@ -194,7 +194,7 @@ private:
 	void onDisconnect(NimBLEClient *pClient);
 
 	// Server mode functions
-	//const String SPARK_BT_NAME = "Spark 40 Audio";
+	const String SPARK_BT_NAME = "Spark 40 Audio";
 	BluetoothSerial serialBT;
 	NimBLEServer *pServer = nullptr;
 	SparkDataControl *spark_dc;

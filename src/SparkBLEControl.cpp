@@ -431,10 +431,11 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 		}
 	 }*/
 	Serial.println("Sending message");
+	//serialBT.write(msg[0], msg.size());
 	for (byte by : msg) {
 		if (by < 16) {
 			Serial.print("0");
-			serialBT.write('0');
+			//		serialBT.write('0');
 		}
 		Serial.print(by, HEX);
 		serialBT.write(by);
@@ -558,9 +559,8 @@ void SparkBLEControl::sendInitialNotification() {
 	// License key Acknowledge
 	// Sixth request
 	ByteVector msg_license_ack = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x19,
-			0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01, 0x06,
-			0x00, 0x04, 0x70, 0x00, 0x00, 0xF7 };
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x01,
+			0x06, 0x00, 0x04, 0x70, 0x00, 0x00, 0xF7 };
 
 	int delayValue = 0;
 	//if (pServer->getConnectedCount()) {
@@ -577,11 +577,11 @@ void SparkBLEControl::sendInitialNotification() {
 		case 2:
 			notifyClients(msg_interim1);
 			delay(delayValue);
-			break;
+		break;
 		case 3:
 			notifyClients(msg_presetNum);
 			delay(delayValue);
-			break;
+		break;
 		case 4:
 			notifyClients(msg_preset_1_7);
 			delay(delayValue);
@@ -597,11 +597,11 @@ void SparkBLEControl::sendInitialNotification() {
 			delay(delayValue);
 			notifyClients(msg_preset_7_7);
 			delay(delayValue);
-			break;
+		break;
 		case 5:
 			notifyClients(msg_serial);
 			delay(delayValue);
-			break;
+		break;
 		}
 
 	//} // if server connected
@@ -645,8 +645,8 @@ void SparkBLEControl::stopScan() {
 }
 
 void SparkBLEControl::startBTClassic() {
-	//Serial.printf("Initializing BT Classic with name %s",
-	//		SPARK_BT_NAME.c_str());
+	Serial.printf("Initializing BT Classic with name %s \n",
+			SPARK_BT_NAME.c_str());
 	serialBT.begin("Spark 40 Audio", false);
 }
 
