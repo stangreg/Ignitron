@@ -632,7 +632,7 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 	if (msg_to_spark_comp == 0 && cmd == 0x01 && sub_cmd != 0x04) {
 		// the app sent a message that needs a response
-		return std::tuple<bool, byte, byte>(true, seq, cmd);
+		return std::tuple<bool, byte, byte>(true, seq, sub_cmd);
 	}
 	return std::tuple<bool, byte, byte>(false, 0, 0);
 }

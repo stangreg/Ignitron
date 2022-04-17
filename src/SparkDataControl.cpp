@@ -156,7 +156,7 @@ void SparkDataControl::notifyCB(
 int SparkDataControl::processSparkData(ByteVector blk) {
 
 	bool ackNeeded;
-	byte seq, cmd;
+	byte seq, sub_cmd;
 
 	DEBUG_PRINTLN("Received data:");
 	DEBUG_PRINTVECTOR(blk);
@@ -164,9 +164,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
-	std::tie(ackNeeded, seq, cmd) = spark_ssr.needsAck(blk);
+	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
-		ack_msg = spark_msg.send_ack(seq, cmd);
+		ack_msg = spark_msg.send_ack(seq, sub_cmd);
 		DEBUG_PRINTLN("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP) {
 			bleControl.writeBLE(ack_msg);

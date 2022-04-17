@@ -176,7 +176,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
 	int counter = 0;
 
-	while(fileSystem.getFileSize(presetFileName.c_str()) != 0){
+	while (fileSystem.getFileSize(("/" + presetFileName).c_str()) != 0) {
 		counter++;
 		Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
 		char counterStr[2];
