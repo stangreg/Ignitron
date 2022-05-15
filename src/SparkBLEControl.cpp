@@ -297,6 +297,8 @@ void SparkBLEControl::startServer() {
 	/** sets device name */
 	NimBLEDevice::init("Spark 40 BLE");
 
+	//startBTClassic();
+
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
 	NimBLEDevice::setSecurityAuth(
@@ -411,7 +413,7 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 
 void SparkBLEControl::notifyClients(ByteVector msg) {
 	// BLE mode, commented for testing
-	/*
+
 	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 	if (pSvc) {
 		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
@@ -423,9 +425,9 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 			pChr->setValue(&msg.data()[0], msg.size());
 			pChr->notify(true);
 		}
-	 }*/
+	}
 	Serial.println("Sending message");
-	//serialBT.write(msg[0], msg.size());
+
 	for (byte by : msg) {
 		if (by < 16) {
 			Serial.print("0");

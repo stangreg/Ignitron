@@ -55,8 +55,9 @@ void SparkDataControl::init(int opMode) {
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
-		//bleControl.startServer();
-		bleControl.startBTClassic();
+		//bleControl.startBTClassic();
+		bleControl.startServer();
+
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
