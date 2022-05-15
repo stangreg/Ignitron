@@ -20,7 +20,7 @@
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
-#include "SparkOTAServer.h"
+//#include "SparkOTAServer.h"
 
 
 #include "SparkTypes.h"
@@ -154,7 +154,7 @@ private:
 	static int operationMode_;
 
 	static SparkBLEControl bleControl;
-	static SparkOTAServer otaServer;
+	//static SparkOTAServer otaServer;
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;

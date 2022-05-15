@@ -359,12 +359,6 @@ void SparkBLEControl::startServer() {
 	//pSparkNotificationService->start();
 	NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
 
-	//uint8_t Adv_DATA[] = {0xee, 0x03, 0x08, 0xEB, 0xED, 0x78, 0x0A, 0x6E};
-	//BLEAdvertisementData oAdvertisementCustom = BLEAdvertisementData();
-	//oAdvertisementCustom.setManufacturerData(std::string((char *)&Adv_DATA[0], 8)); // 8 is length of Adv_DATA
-	//oAdvertisementCustom.setPartialServices(NimBLEUUID(SPARK_BLE_SERVICE_UUID));
-	//oAdvertisementCustom.setFlags(0x06);
-	//pAdvertising->setAdvertisementData(oAdvertisementCustom);
 	pAdvertising->addServiceUUID(pSparkService->getUUID());
 
 	/** Add the services to the advertisment data **/
@@ -435,7 +429,6 @@ void SparkBLEControl::notifyClients(ByteVector msg) {
 	for (byte by : msg) {
 		if (by < 16) {
 			Serial.print("0");
-			//		serialBT.write('0');
 		}
 		Serial.print(by, HEX);
 		serialBT.write(by);

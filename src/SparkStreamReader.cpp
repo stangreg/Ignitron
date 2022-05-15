@@ -317,6 +317,8 @@ void SparkStreamReader::read_preset() {
 	currentSetting_.bpm = bpm;
 
 	// Build string representations
+	//DEBUG
+	Serial.println("Building JSON");
 	start_str();
 	add_int ("PresetNumber", preset);
 	add_separator();
@@ -334,7 +336,7 @@ void SparkStreamReader::read_preset() {
 	add_float("BPM", bpm);
 	add_separator();
 	add_newline();
-
+	Serial.println("Built prefixes, building pedal data");
 	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
 	//DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
@@ -342,6 +344,7 @@ void SparkStreamReader::read_preset() {
 	add_newline();
 	currentSetting_.pedals = {};
 	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
+		Serial.printf("Pedal number %d\n", i);
 		Pedal currentPedal = {};
 		//DEBUG_PRINTF("Reading Pedal %d:\n", i);
 		std::string e_str = read_string();
@@ -361,7 +364,9 @@ void SparkStreamReader::read_preset() {
 		add_python("\"Parameters\":[");
 		// Read parameters of current pedal
 		currentPedal.parameters = {};
+		Serial.println("Building pedal parameters");
 		for (int p = 0; p < num_p; p++) {
+			Serial.printf("Parameter %d\n", p);
 			Parameter currentParameter = {};
 			//DEBUG_PRINTF("  Reading parameter %d:\n", p);
 			byte num = read_byte();
@@ -387,26 +392,40 @@ void SparkStreamReader::read_preset() {
 		add_python("]");
 		//del_indent();
 		add_python("}");
+		Serial.println("Added brackets");
 		if (i < currentSetting_.numberOfPedals - 1) {
 			add_separator();
 			add_newline();
 		}
 		currentSetting_.pedals.push_back(currentPedal);
 	}
+	Serial.println("Pedals done");
 	add_python("],");
 	add_newline();
 	byte filler = read_byte();
 	//DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
 	currentSetting_.filler = filler;
+	Serial.println("Filler");
 	add_str("Filler", SparkHelper::intToHex(filler));
 	add_newline();
 	end_str();
+	Serial.println("Done with strings1");
 	currentSetting_.text = text;
+	Serial.println(text.c_str());
+	Serial.println("Done with strings2");
 	currentSetting_.raw = raw;
-	currentSetting_.json = json;
+	Serial.println("Done with strings3");
+	currentSetting_.json = "TEST";
+	//currentSetting_.json = json;
+	Serial.println("Done with strings4");
 	currentSetting_.isEmpty = false;
+	Serial.println("Done with strings5");
 	isPresetUpdated_ = true;
+	Serial.println("Done with strings6");
 	last_message_type_ = MSG_TYPE_PRESET;
+	Serial.println("Done with strings7");
+	Serial.println("JSON:");
+	Serial.println(json.c_str());
 
 }
 

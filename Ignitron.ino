@@ -20,7 +20,7 @@ SparkDataControl *spark_dc;
 SparkButtonHandler *spark_bh;
 SparkLEDControl *spark_led;
 SparkDisplayControl *spark_display;
-SparkOTAServer *spark_ota;
+//SparkOTAServer *spark_ota;
 
 // Check for initial boot
 bool isInitBoot;
