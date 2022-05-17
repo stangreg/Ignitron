@@ -63,13 +63,15 @@ struct Preset {
 };
 
 struct CmdData {
+	byte msg_count;
 	byte cmd;
 	byte subcmd;
 	ByteVector data;
 
 	std::string toString() {
 		std::string cmdStr;
-		cmdStr = "[" + SparkHelper::intToHex(cmd) + "], ["
+		cmdStr = "[" + SparkHelper::intToHex(msg_count) + "], ["
+				+ SparkHelper::intToHex(cmd) + "], ["
 				+ SparkHelper::intToHex(subcmd) + "], [";
 		for (byte by : data) {
 			cmdStr += SparkHelper::intToHex(by).c_str();

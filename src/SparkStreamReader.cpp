@@ -470,6 +470,7 @@ boolean SparkStreamReader::structure_data() {
 
 		std::vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
+			byte msg_count = chunk[2];
 			byte this_cmd = chunk[4];
 			byte this_sub_cmd = chunk[5];
 			ByteVector data7bit = {};
@@ -497,7 +498,8 @@ boolean SparkStreamReader::structure_data() {
 				}
 			}
 			//DEBUG_PRINTLN("Converted to 8bit");
-			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
+			struct CmdData curr_data = { msg_count, this_cmd, this_sub_cmd,
+					data8bit };
 			chunk_8bit.push_back(curr_data);
 
 			// now check for mult-chunk messages and collapse their data into a single message
@@ -762,6 +764,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 
 void SparkStreamReader::interpret_data() {
 	for (auto msg : message) {
+		int msg_count = msg.msg_count;
 		int this_cmd = msg.cmd;
 		int this_sub_cmd = msg.subcmd;
 		ByteVector this_data = msg.data;
