@@ -375,11 +375,11 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		 */
 		case BUTTON_BANK_DOWN_GPIO:
 			Serial.println("Pressed bank down keyboard");
-			spark_dc->sendButtonPressAsKeyboard('A');
+			spark_dc->sendButtonPressAsKeyboard('1');
 			break;
 		case BUTTON_BANK_UP_GPIO:
 			Serial.println("Pressed bank up keyboard");
-			spark_dc->sendButtonPressAsKeyboard('B');
+			spark_dc->sendButtonPressAsKeyboard('2');
 			break;
 		}
 
