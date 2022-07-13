@@ -85,7 +85,7 @@ void loop() {
 		if (isInitBoot == true) {
 			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
 			spark_dc->switchPreset(1, true);
-			delay(1500);
+			delay(2000);
 			if (!(spark_dc->activePreset()->isEmpty)) {
 				isInitBoot = false;
 			}
