@@ -26,6 +26,12 @@ using ByteVector = std::vector<byte>;
 #define MSG_TYPE_FX_CHANGE 4
 #define MSG_TYPE_FX_PARAM 5
 
+#define MSG_REQ_SERIAL = 11
+#define MSG_REQ_FW_VER = 12
+#define MSG_REQ_PRESET_CHK = 13
+#define MSG_REQ_CURR_PRESET_NUM = 14
+#define MSG_REQ_CURR_PRESET = 15
+
 #define MSG_PROCESS_RES_COMPLETE 1
 #define MSG_PROCESS_RES_INCOMPLETE 2
 #define MSG_PROCESS_RES_INITIAL 3
@@ -64,6 +70,7 @@ private:
 	boolean isPresetNumberUpdated_ = false;
 	ByteVector acknowledgements;
 	int last_message_type_ = 0;
+	byte last_message_num_ = 0x00;
 
 	// Functions to process calls based on identified cmd/sub_cmd.
 	void read_effect_parameter();
@@ -119,6 +126,12 @@ public:
 	const boolean isPresetNumberUpdated() const { return isPresetNumberUpdated_;}
 	const boolean isPresetUpdated() const { return isPresetUpdated_;}
 	const int lastMessageType() const { return last_message_type_;}
+	const byte lastMessageNum() const {
+		return last_message_num_;
+	}
+	const std::vector<CmdData> lastMessage() const {
+		return message;
+	}
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();

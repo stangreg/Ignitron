@@ -215,9 +215,13 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 						// As we have chosen 173, usually no further splitting is requried.
 						// SparkMessage already creates messages split into 173 byte chunks
 						DEBUG_PRINTLN("Sending packet:");
-						for (auto byte: block){
+						DEBUG_PRINTVECTOR(block);
+						/*
+
+						 for (auto byte: block){
 							DEBUG_PRINTF("%s",SparkHelper::intToHex(byte));
 						}
+						 */
 						DEBUG_PRINTLN();
 						curr_pos = 0;
 
@@ -391,9 +395,11 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 		}
 	}
 
+	//spark_dc->processSparkData(byteVector);
+	/*
 	if (spark_dc->processSparkData(byteVector) == MSG_PROCESS_RES_INITIAL) {
 		sendInitialNotification();
-	}
+	 }*/
 }
 
 void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,

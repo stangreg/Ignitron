@@ -531,7 +531,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					//DEBUG_PRINTLN("Copying old one");
+					DEBUG_PRINTLN("Copying old one");
 					message.push_back(chunk);
 				} // else
 			} // For all in 8-bit vector
@@ -573,6 +573,9 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			DEBUG_PRINTLN(" not handled");
 			DEBUG_PRINTVECTOR(msg);DEBUG_PRINTLN();
 		}
+	}
+	else if (_cmd == 0x02) {
+		DEBUG_PRINTLN("Reading request from Amp");
 	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
@@ -624,7 +627,7 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 		return std::tuple<bool, byte, byte>(false, 0, 0);
 	}
 	byte direction[2] = { blk[4], blk[5] };
-	byte seq = blk[18];
+	last_message_num_ = blk[18];
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
@@ -632,7 +635,7 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 	if (msg_to_spark_comp == 0 && cmd == 0x01 && sub_cmd != 0x04) {
 		// the app sent a message that needs a response
-		return std::tuple<bool, byte, byte>(true, seq, sub_cmd);
+		return std::tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
 	}
 	return std::tuple<bool, byte, byte>(false, 0, 0);
 }
@@ -754,6 +757,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// if request was an initiating one from the app, return value for INITIAL message,
 	// so SparkDataControl knows how to notify.
 	// so notifications will be triggered
+
 	if(cmd == 0x02){
 		retValue = MSG_PROCESS_RES_INITIAL;
 	}
@@ -769,7 +773,7 @@ void SparkStreamReader::interpret_data() {
 		set_interpreter(this_data);
 		run_interpreter(this_cmd, this_sub_cmd);
 	}
-	message.clear();
+	//message.clear();
 }
 
 std::vector<CmdData> SparkStreamReader::read_message() {

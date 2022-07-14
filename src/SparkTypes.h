@@ -25,6 +25,9 @@ using ByteVector = std::vector<byte>;
 #define FX_DELAY 		5
 #define FX_REVERB 		6
 
+#define DIR_TO_SPARK	0
+#define DIR_FROM_SPARK  1
+
 struct Parameter {
 
 	int number;

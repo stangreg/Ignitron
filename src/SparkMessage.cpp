@@ -25,7 +25,7 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 	final_message = {};
 };
 
-std::vector<ByteVector> SparkMessage::end_message(){
+std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	// determine how many chunks there are
 	int data_len = data.size();
@@ -56,13 +56,7 @@ std::vector<ByteVector> SparkMessage::end_message(){
 	// and in each chunk loop over every sequence of (max) 7 bytes
 	// and extract the 8th bit and put in 'bit8'
 	// and then add bit8 and the 7-bit sequence to data7
-	DEBUG_PRINTLN("8-bit chunks:");
 	for (auto chunk : split_data8){
-		//DEBUG
-		for (auto byte : chunk){
-			DEBUG_PRINTF("%s",SparkHelper::intToHex(byte));
-		}
-		DEBUG_PRINTLN();
 		int chunk_len = chunk.size();
 		int num_seq = int ((chunk_len + 6) / 7);
 		ByteVector bytes7 = {};
@@ -93,24 +87,44 @@ std::vector<ByteVector> SparkMessage::end_message(){
 
 
 	// now we can create the final message with the message header and the chunk header
-	ByteVector block_header = {'\x01','\xfe','\x00','\x00','\x53','\xfe'};
+	ByteVector block_header = { '\x01', '\xfe', '\x00', '\x00' };
+	ByteVector block_header_direction;
+	if (dir == DIR_TO_SPARK) {
+		block_header_direction = msg_to_spark;
+	} else {
+		block_header_direction = msg_from_spark;
+	}
 	ByteVector block_filler = {'\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00'};
-	ByteVector chunk_header = {'\xf0','\x01','\x3a','\x15'};
+	ByteVector chunk_header = { '\xf0', '\x01' };
+	byte msg_num;
+	if (msg_number == 0) {
+		msg_num = '\x01';
+	} else {
+		msg_num = (byte) msg_number;
+	}
+	byte trailer = '\xf7';
 
 	for (auto chunk: split_data7){
 		int block_size = chunk.size() + 16 + 6 + 1;
 
-		ByteVector header = block_header;
+		byte checksum = calculate_checksum(chunk);
+
 		// Build header
+		ByteVector header = block_header;
+		header.insert(header.end(), block_header_direction.begin(),
+				block_header_direction.end());
 		header.push_back(block_size);
 		header.insert(header.end(), block_filler.begin(), block_filler.end());
 		header.insert(header.end(), chunk_header.begin(), chunk_header.end());
+		header.push_back(msg_num);
+		header.push_back(checksum);
 		header.push_back(cmd);
 		header.push_back(sub_cmd);
-		byte trailer = '\xf7';
+
 		ByteVector full_chunk = header;
 		full_chunk.insert(full_chunk.end(), chunk.begin(), chunk.end());
 		full_chunk.push_back(trailer);
+
 		final_message.push_back(full_chunk);
 	}
 
@@ -259,6 +273,17 @@ std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, bool
 	return end_message();
 }
 
+std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
+	cmd = '\x03';
+	sub_cmd = '\x23';
+
+	start_message(cmd, sub_cmd);
+	add_prefixed_string("S999C999B999");
+	add_byte(0x01);
+	add_byte(0x77);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}
+
 std::vector<ByteVector> SparkMessage::create_preset (Preset preset_data){
 	cmd = '\x01';
 	sub_cmd = '\x01';
@@ -312,5 +337,13 @@ std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte sub_cmd) {
 
 	ack_cmd.push_back(ack);
 	return ack_cmd;
+}
+
+byte SparkMessage::calculate_checksum(ByteVector chunk) {
+	byte current_sum = 0x00;
+	for (byte by : chunk) {
+		current_sum ^= by;
+	}
+	return (byte) current_sum;
 }
 

@@ -33,9 +33,12 @@ private:
 	ByteVector data;
 	std::vector<ByteVector> final_message;
 
+	const ByteVector msg_from_spark = { '\x41', '\xff' };
+	const ByteVector msg_to_spark = { '\x53', '\xfe' };
+
 
 	void start_message (byte cmd, byte sub_cmd);
-	std::vector<ByteVector> end_message();
+	std::vector<ByteVector> end_message(int dir = 0, byte msg_number = 0x00);
 	//ByteVector end_message();
 	void add_bytes(ByteVector bytes_8);
 	void add_byte(byte by);
@@ -45,6 +48,7 @@ private:
 	void add_prefixed_string(std::string pack_str);
 	void add_float (float flt);
 	void add_onoff (boolean onoff);
+	byte calculate_checksum(ByteVector chunk);
 
 public:
 
@@ -59,6 +63,8 @@ public:
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
+
+	std::vector<ByteVector> send_serial_number(byte msg_number);
 
 };
 

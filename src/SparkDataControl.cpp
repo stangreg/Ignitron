@@ -175,6 +175,28 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
+	if (retCode == MSG_PROCESS_RES_INITIAL && operationMode_ == SPARK_MODE_AMP) {
+		DEBUG_PRINTLN("Found request!");
+		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
+		DEBUG_PRINTF("Message size: %d\n", currentMessage.size());
+
+		byte currentMessageNum = spark_ssr.lastMessageNum();
+		DEBUG_PRINTF("Message Number: %x\n", currentMessageNum);
+		byte sub_cmd = currentMessage.back().subcmd;
+		DEBUG_PRINTF("Message subcmd = %x\n", (byte )sub_cmd);
+
+		switch (sub_cmd) {
+
+		case 0x23:
+			DEBUG_PRINTLN("Found request for serial number");
+			std::vector<ByteVector> msg = spark_msg.send_serial_number(
+					currentMessageNum);
+			//TODO cleanup, move iteration to notifyClients
+			for (auto msg_item : msg) {
+				bleControl.notifyClients(msg_item);
+			}
+		}
+	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
 		std::string msgStr = spark_ssr.getJson();
 		if (msgStr.length() > 0) {
