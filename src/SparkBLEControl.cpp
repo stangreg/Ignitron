@@ -395,7 +395,7 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 		}
 	}
 
-	//spark_dc->processSparkData(byteVector);
+	spark_dc->processSparkData(byteVector);
 	/*
 	if (spark_dc->processSparkData(byteVector) == MSG_PROCESS_RES_INITIAL) {
 		sendInitialNotification();

@@ -65,6 +65,8 @@ public:
 	std::vector<ByteVector> send_ack(byte seq, byte cmd);
 
 	std::vector<ByteVector> send_serial_number(byte msg_number);
+	std::vector<ByteVector> send_firmware_version(byte msg_number);
+	std::vector<ByteVector> send_hw_checksums(byte msg_number);
 
 };
 

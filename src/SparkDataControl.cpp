@@ -176,6 +176,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	}
 	int retCode = spark_ssr.processBlock(blk);
 	if (retCode == MSG_PROCESS_RES_INITIAL && operationMode_ == SPARK_MODE_AMP) {
+
+		std::vector<ByteVector> msg;
+
 		DEBUG_PRINTLN("Found request!");
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
 		DEBUG_PRINTF("Message size: %d\n", currentMessage.size());
@@ -189,12 +192,25 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 		case 0x23:
 			DEBUG_PRINTLN("Found request for serial number");
-			std::vector<ByteVector> msg = spark_msg.send_serial_number(
+			msg = spark_msg.send_serial_number(
 					currentMessageNum);
-			//TODO cleanup, move iteration to notifyClients
-			for (auto msg_item : msg) {
-				bleControl.notifyClients(msg_item);
-			}
+
+			break;
+		case 0x2F:
+			DEBUG_PRINTLN("Found request for firmware version");
+			msg = spark_msg.send_firmware_version(
+					currentMessageNum);
+			break;
+		case 0x2A:
+			DEBUG_PRINTLN("Found request for hw checksum");
+			msg = spark_msg.send_hw_checksums(currentMessageNum);
+			break;
+		default:
+			break;
+		}
+		//TODO cleanup, move iteration to notifyClients
+		for (auto msg_item : msg) {
+			bleControl.notifyClients(msg_item);
 		}
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {

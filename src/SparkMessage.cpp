@@ -169,6 +169,7 @@ void SparkMessage::add_long_string(std::string pack_str){
 	add_bytes(byte_pack);
 }
 
+
 void SparkMessage::add_float (float flt){
 
 	union {
@@ -281,6 +282,34 @@ std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 	add_prefixed_string("S999C999B999");
 	add_byte(0x01);
 	add_byte(0x77);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}
+
+std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
+	cmd = '\x03';
+	sub_cmd = '\x2F';
+
+	//TODO take version string as input
+	start_message(cmd, sub_cmd);
+	//add_byte(0x11);
+	add_byte(0xCE);
+	//Version string 1.6.5.160
+	add_byte((byte) 1);
+	add_byte((byte) 6);
+	add_byte((byte) 5);
+	add_byte((byte) 160 - 128);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}
+
+std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
+	cmd = '\x03';
+	sub_cmd = '\x2A';
+
+	// TODO : Take checksums as input
+	ByteVector checksums = { 0x0D, 0x14, 0x50, 0x4C, 0x70, 0x5A, 0x58 };
+	//TODO take version string as input
+	start_message(cmd, sub_cmd);
+	add_bytes(checksums);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
