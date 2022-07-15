@@ -71,6 +71,7 @@ private:
 	ByteVector acknowledgements;
 	int last_message_type_ = 0;
 	byte last_message_num_ = 0x00;
+	byte last_requested_preset = 0x00;
 
 	// Functions to process calls based on identified cmd/sub_cmd.
 	void read_effect_parameter();

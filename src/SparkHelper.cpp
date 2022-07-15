@@ -49,3 +49,10 @@ void SparkHelper::printByteVector(ByteVector vec){
 	}
 }
 
+int SparkHelper::dataVectorNumOfBytes(std::vector<ByteVector> data) {
+	int count = 0;
+	for (auto vec : data) {
+		count += vec.size();
+	}
+	return count;
+}

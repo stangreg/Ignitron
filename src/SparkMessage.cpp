@@ -7,7 +7,6 @@
 
 #include "SparkMessage.h"
 
-
 SparkMessage::SparkMessage(){
 	data = {};
 	split_data8={};
@@ -27,16 +26,27 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 
 std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
+	//TODO: split into sub functions
+
+	int max_chunk_size;
+	if (dir == DIR_TO_SPARK) {
+		max_chunk_size = 0x80;
+	} else {
+		max_chunk_size = 0x19;
+	}
+
 	// determine how many chunks there are
 	int data_len = data.size();
-	int num_chunks = int ((data_len + 0x7f) / 0x80 );
+	int num_chunks = int((data_len + max_chunk_size - 1) / max_chunk_size);
+
 
 
 	// split the data into chunks of maximum 0x80 bytes (still 8 bit bytes)
 	// and add a chunk sub-header if a multi-chunk message
 
 	for (int this_chunk=0; this_chunk <num_chunks; this_chunk++){
-		int chunk_len = min (0x80, data_len - (this_chunk * 0x80));
+		int chunk_len = min(max_chunk_size,
+				data_len - (this_chunk * max_chunk_size));
 		ByteVector data8;
 		if (num_chunks > 1){
 			// we need the chunk sub-header
@@ -47,7 +57,8 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		else{
 			data8 = {};
 		}
-		data8.insert(data8.end(),data.begin()+ (this_chunk * 0x80), data.begin() + (this_chunk * 0x80 + chunk_len));
+		data8.insert(data8.end(), data.begin() + (this_chunk * max_chunk_size),
+				data.begin() + (this_chunk * max_chunk_size + chunk_len));
 		split_data8.push_back(data8);
 	}
 
@@ -58,6 +69,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	// and then add bit8 and the 7-bit sequence to data7
 	for (auto chunk : split_data8){
 		int chunk_len = chunk.size();
+		//DEBUG_PRINTF("Chunk size 8bit: %d\n", chunk_len);
 		int num_seq = int ((chunk_len + 6) / 7);
 		ByteVector bytes7 = {};
 
@@ -81,10 +93,19 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		}
 		//DEBUG_PRINTLN("7-bit chunk:");
 		//SparkHelper::printByteVector(bytes7);
+		//DEBUG_PRINTF("Chunk size 7bit: %d\n", bytes7.size());
 		split_data7.push_back(bytes7);
 	}
 
 
+	int MAX_BLOCK_SIZE;
+	if (dir == DIR_TO_SPARK) {
+		MAX_BLOCK_SIZE = 0xAD;
+	} else {
+		MAX_BLOCK_SIZE = 0x6A;
+	}
+		
+	
 
 	// now we can create the final message with the message header and the chunk header
 	ByteVector block_header = { '\x01', '\xfe', '\x00', '\x00' };
@@ -104,30 +125,136 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	}
 	byte trailer = '\xf7';
 
-	for (auto chunk: split_data7){
-		int block_size = chunk.size() + 16 + 6 + 1;
+	std::vector<ByteVector> all_chunks;
 
-		byte checksum = calculate_checksum(chunk);
+	// build F0 01 chunks:
+	for (auto data : split_data7) {
+		byte checksum = calculate_checksum(data);
 
-		// Build header
-		ByteVector header = block_header;
-		header.insert(header.end(), block_header_direction.begin(),
-				block_header_direction.end());
-		header.push_back(block_size);
-		header.insert(header.end(), block_filler.begin(), block_filler.end());
-		header.insert(header.end(), chunk_header.begin(), chunk_header.end());
-		header.push_back(msg_num);
-		header.push_back(checksum);
-		header.push_back(cmd);
-		header.push_back(sub_cmd);
+		ByteVector complete_chunk = chunk_header;
+		complete_chunk.push_back(msg_num);
+		complete_chunk.push_back(checksum);
+		complete_chunk.push_back(cmd);
+		complete_chunk.push_back(sub_cmd);
+		complete_chunk.insert(complete_chunk.end(), data.begin(), data.end());
+		complete_chunk.push_back(trailer);
+		//DEBUG_PRINTLN("Pushing chunk");
+		all_chunks.push_back(complete_chunk);
 
-		ByteVector full_chunk = header;
-		full_chunk.insert(full_chunk.end(), chunk.begin(), chunk.end());
-		full_chunk.push_back(trailer);
-
-		final_message.push_back(full_chunk);
 	}
 
+	//Reverse order for iterating with pop
+	std::reverse(all_chunks.begin(), all_chunks.end());
+
+	int block_prefix_size = 16;
+	int max_data_size = MAX_BLOCK_SIZE - block_prefix_size;
+
+	int block_size = min(MAX_BLOCK_SIZE,
+			SparkHelper::dataVectorNumOfBytes(all_chunks) + block_prefix_size);
+
+	//create block
+	ByteVector current_block;
+	ByteVector data_remainder;
+
+	bool new_block = true;
+
+	// start filling with chunks and start new blocks if required
+	//DEBUG_PRINTF("All chunks size: %d\n", all_chunks.size());
+	while (all_chunks.size() > 0) {
+
+		if (new_block) {
+
+			//DEBUG_PRINTLN("Starting new block");
+			block_size = min(MAX_BLOCK_SIZE,
+					SparkHelper::dataVectorNumOfBytes(all_chunks)
+							+ (int) data_remainder.size() + block_prefix_size);
+
+			current_block = block_header;
+			current_block.insert(current_block.end(),
+					block_header_direction.begin(),
+					block_header_direction.end());
+			current_block.push_back(block_size);
+			current_block.insert(current_block.end(), block_filler.begin(),
+					block_filler.end());
+		}
+
+
+		ByteVector current_chunk = all_chunks.back();
+		all_chunks.pop_back();
+		//DEBUG_PRINTF("All chunks size after pop: %d\n", all_chunks.size());
+
+		//DEBUG_PRINTF("Size of current chunk: %d\n", current_chunk.size());
+
+		if (data_remainder.size() > 0) {
+			current_block.insert(current_block.end(), data_remainder.begin(),
+					data_remainder.end());
+			data_remainder.clear();
+		}
+
+		int remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
+				- current_chunk.size();
+		//DEBUG_PRINTF("Remaining MAX, BLOCK, CHUNK: %d, %d, %d\n",
+		//MAX_BLOCK_SIZE, current_block.size(), current_chunk.size());
+		int remaining_space = MAX_BLOCK_SIZE - current_block.size();
+
+		if (remaining_block_indicator > 0) {
+			//DEBUG_PRINTLN("Adding new chunk to block");
+			current_block.insert(current_block.end(), current_chunk.begin(),
+					current_chunk.end());
+			new_block = false;
+		}
+		if (remaining_block_indicator == 0) {
+			//DEBUG_PRINTLN("Pushing block, exact match");
+			current_block.insert(current_block.end(), current_chunk.begin(),
+					current_chunk.end());
+			final_message.push_back(current_block);
+			current_block.clear();
+			if (all_chunks.size() > 1) {
+				new_block = true;
+			}
+		}
+		if (remaining_block_indicator < 0) {
+			current_block.insert(current_block.end(), current_chunk.begin(),
+					current_chunk.begin() + remaining_space);
+			data_remainder.assign(current_chunk.begin() + remaining_space,
+					current_chunk.end());
+			//DEBUG_PRINTLN("Pushing block, remainder");
+			final_message.push_back(current_block);
+			current_block.clear();
+			new_block = true;
+		}
+
+	}
+	
+	if (data_remainder.size() > 0) {
+		// New header needs to be created as only remainder is left if flag is set here
+		if (new_block == true) {
+			//DEBUG_PRINTLN("Starting new block");
+			block_size = min(MAX_BLOCK_SIZE,
+					SparkHelper::dataVectorNumOfBytes(all_chunks)
+							+ (int) data_remainder.size() + block_prefix_size);
+
+			current_block = block_header;
+			current_block.insert(current_block.end(),
+					block_header_direction.begin(),
+					block_header_direction.end());
+			current_block.push_back(block_size);
+			current_block.insert(current_block.end(), block_filler.begin(),
+					block_filler.end());
+		}
+		current_block.insert(current_block.end(), data_remainder.begin(),
+				data_remainder.end());
+		data_remainder.clear();
+	}
+
+	if (current_block.size() > 0) {
+		//DEBUG_PRINTLN("Pushing last block");
+		final_message.push_back(current_block);
+		current_block.clear();
+	}
+	
+	DEBUG_PRINTF("Finished with creating message, size: %d\n",
+			final_message.size());
 	return final_message;
 
 }
@@ -185,11 +312,11 @@ void SparkMessage::add_float (float flt){
 	for(int i=3; i>=0; i--){
 		byte_pack.push_back(u.temp_array[i]);
 	}
-	DEBUG_PRINTF("Converting float %f to HEX: ", u.float_variable);
-	for (auto byte : byte_pack) {
-		DEBUG_PRINTF("%s", SparkHelper::intToHex(byte).c_str());
-	}
-	DEBUG_PRINTLN();
+	//DEBUG_PRINTF("Converting float %f to HEX: ", u.float_variable);
+	//for (auto byte : byte_pack) {
+	//	DEBUG_PRINTF("%s", SparkHelper::intToHex(byte).c_str());
+	//}
+	//DEBUG_PRINTLN();
 	add_bytes(byte_pack);
 }
 
@@ -306,22 +433,46 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	sub_cmd = '\x2A';
 
 	// TODO : Take checksums as input
-	ByteVector checksums = { 0x0D, 0x14, 0x50, 0x4C, 0x70, 0x5A, 0x58 };
+	ByteVector checksums = { 0x14, 0x50, 0x4C, 0x70, 0x5A, 0x58 };
 	//TODO take version string as input
 	start_message(cmd, sub_cmd);
-	add_bytes(checksums);
+	add_byte(0x94);
+	add_byte(0x5B);
+	add_byte(0x5B);
+	add_byte(0x5B);
+	add_byte(0x5B);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::create_preset (Preset preset_data){
-	cmd = '\x01';
+std::vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
+	cmd = '\x03';
+	sub_cmd = '\x10';
+
+	start_message(cmd, sub_cmd);
+	add_byte(0x00);
+	add_byte(0x00);
+	add_byte(0x00);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}
+
+std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
+		int direction, byte msg_num) {
+
+	if (direction == DIR_TO_SPARK) {
+		cmd = '\x01';
+	} else {
+		cmd = '\x03';
+	}
 	sub_cmd = '\x01';
 
-	int this_chunk = 0;
-
 	start_message (cmd, sub_cmd);
-	add_byte('\x00');
-	add_byte('\x7f');
+	if (direction == DIR_TO_SPARK) {
+		add_byte('\x00');
+		add_byte('\x7f');
+	} else {
+		add_byte('\x01');
+		add_byte('\x00');
+	}
 	add_long_string (preset_data.uuid);
 	add_string (preset_data.name);
 	add_string (preset_data.version);
@@ -348,9 +499,12 @@ std::vector<ByteVector> SparkMessage::create_preset (Preset preset_data){
 			add_float (curr_pedal_params[p].value);
 		}
 	}
-	add_byte ((byte)(preset_data.filler));
-	return end_message ();
+	byte checksum = calculate_checksum(data) ^ 0x7F;
+	add_byte(checksum);
+	return end_message(direction, msg_num);
+
 }
+
 
 // This prepares a message to send an acknowledgement to Spark App
 std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte sub_cmd) {
@@ -362,6 +516,8 @@ std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte sub_cmd) {
 	ack.push_back(0x00);
 	ack.push_back(0x04);
 	ack.push_back(sub_cmd);
+	ack.push_back(0x00);
+	ack.push_back(0x00);
 	ack.push_back(0xf7);
 
 	ack_cmd.push_back(ack);

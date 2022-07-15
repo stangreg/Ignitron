@@ -576,6 +576,10 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else if (_cmd == 0x02) {
 		DEBUG_PRINTLN("Reading request from Amp");
+		/*if (_sub_cmd == 0x38 || _sub_cmd == 0x10 ) {
+			DEBUG_PRINTLN("Reading HW preset");
+			read_hardware_preset();
+		 }*/
 	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
