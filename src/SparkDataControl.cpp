@@ -175,24 +175,14 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
-	if (retCode == MSG_PROCESS_RES_INITIAL && operationMode_ == SPARK_MODE_AMP) {
+	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
 
 		std::vector<ByteVector> msg;
 
-		DEBUG_PRINTLN("Found request!");
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
-		DEBUG_PRINTF("Message size: %d\n", currentMessage.size());
 
 		byte currentMessageNum = spark_ssr.lastMessageNum();
-		DEBUG_PRINTF("Message Number: %x\n", currentMessageNum);
 		byte sub_cmd = currentMessage.back().subcmd;
-		DEBUG_PRINTF("Message subcmd = %x\n", (byte )sub_cmd);
-
-
-		ByteVector msg_hw_checksum = { 0x01, 0xFE, 0x00, 0x00, 0x41, 0xFF, 0x1E,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0,
-				0x01, 0x03, 0x77, 0x03, 0x2A, 0x0D, 0x14, 0x50, 0x4C, 0x70,
-				0x5A, 0x58, 0xF7 };
 
 		switch (sub_cmd) {
 
@@ -209,9 +199,6 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		case 0x2A:
 			DEBUG_PRINTLN("Found request for hw checksum");
 			msg = spark_msg.send_hw_checksums(currentMessageNum);
-			// DEBUG TEST
-			msg = { };
-			bleControl.notifyClients(msg_hw_checksum);
 			break;
 		case 0x10:
 			DEBUG_PRINTLN("Found request for hw preset number");
@@ -219,10 +206,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 			break;
 		case 0x01:
 			DEBUG_PRINTLN("Found request for current preset");
-
 			msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK,
 					currentMessageNum);
-
 			break;
 		default:
 			break;

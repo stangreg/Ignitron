@@ -56,3 +56,5 @@ int SparkHelper::dataVectorNumOfBytes(std::vector<ByteVector> data) {
 	}
 	return count;
 }
+
+

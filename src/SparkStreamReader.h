@@ -34,7 +34,7 @@ using ByteVector = std::vector<byte>;
 
 #define MSG_PROCESS_RES_COMPLETE 1
 #define MSG_PROCESS_RES_INCOMPLETE 2
-#define MSG_PROCESS_RES_INITIAL 3
+#define MSG_PROCESS_RES_REQUEST 3
 
 class SparkStreamReader{
 	// Parser for Spark messages (from App or Amp)

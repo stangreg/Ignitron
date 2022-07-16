@@ -153,7 +153,7 @@ void SparkStreamReader::add_str(char* a_title, std::string a_str, char* nature) 
 
 
 void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
-	char string_add[200] ="";
+	char string_add[100] = "";
 	sprintf(string_add, "%d ", an_int);
 	raw += string_add;
 	sprintf(string_add, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
@@ -167,7 +167,8 @@ void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 
 
 void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
-	char string_add[200] = "";
+
+	char string_add[100] = "";
 	sprintf(string_add, "%2.4f ", a_float);
 	raw += string_add;
 	sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
@@ -183,7 +184,7 @@ void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
 }
 
 void SparkStreamReader::add_float_pure(float a_float, char* nature) {
-	char string_add[200] = "";
+	char string_add[100] = "";
 	sprintf(string_add, "%2.4f ", a_float);
 	raw += string_add;
 	sprintf(string_add, "%2.4f ", a_float);
@@ -193,7 +194,7 @@ void SparkStreamReader::add_float_pure(float a_float, char* nature) {
 }
 
 void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
-	char string_add[200] ="";
+	char string_add[100] = "";
 	sprintf(string_add, "%s ", a_bool ? "true" : "false");
 	raw += string_add;
 	sprintf(string_add, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
@@ -293,6 +294,8 @@ void SparkStreamReader::read_effect_onoff() {
 
 void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
+	DEBUG_PRINTF("Free memory before reading preset: %d\n",
+			xPortGetFreeHeapSize());
 	read_byte();
 	byte preset = read_byte();
 	//DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
@@ -315,8 +318,8 @@ void SparkStreamReader::read_preset() {
 	float bpm = read_float();
 	//DEBUG_PRINTF("Read BPM: %f\n", bpm);
 	currentSetting_.bpm = bpm;
-
 	// Build string representations
+	DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
 	start_str();
 	add_int ("PresetNumber", preset);
 	add_separator();
@@ -334,7 +337,7 @@ void SparkStreamReader::read_preset() {
 	add_float("BPM", bpm);
 	add_separator();
 	add_newline();
-
+	DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
 	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
 	//DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
@@ -357,7 +360,8 @@ void SparkStreamReader::read_preset() {
 		add_separator();
 		int num_p = read_byte() - char(0x90);
 		//DEBUG_PRINTF("  Number of Parameters: %d\n", num_p);
-
+		DEBUG_PRINTF("Free memory before parameters: %d\n",
+				xPortGetFreeHeapSize());
 		add_python("\"Parameters\":[");
 		// Read parameters of current pedal
 		currentPedal.parameters = {};
@@ -369,6 +373,8 @@ void SparkStreamReader::read_preset() {
 			byte spec = read_byte();
 			//DEBUG_PRINTF("    Parameter Special: %s\n",
 			//	SparkHelper::intToHex(spec));
+			DEBUG_PRINTF("Free memory before reading float: %d\n",
+					xPortGetFreeHeapSize());
 			float val = read_float();
 			//DEBUG_PRINTF("    Parameter Value: %f\n", val);
 			currentParameter.number = num;
@@ -382,6 +388,8 @@ void SparkStreamReader::read_preset() {
 				add_separator();
 			}
 			currentPedal.parameters.push_back(currentParameter);
+			DEBUG_PRINTF("Free memory after reading preset: %d\n",
+					xPortGetFreeHeapSize());
 		}
 		
 		add_python("]");
@@ -427,7 +435,7 @@ boolean SparkStreamReader::structure_data() {
 		int data_size = block.size();
 		//DEBUG_PRINTF("Read block size %d, %d\n", block_length, data_size);
 		if ( data_size != block_length) {
-			Serial.printf("Data is of size %d and reports %d\n", data_size, block_length );
+			DEBUG_PRINTF("Data is of size %d and reports %d\n", data_size, block_length );
 			Serial.println("Corrupt block:");
 			for (auto by : block){
 				Serial.print(SparkHelper::intToHex(by).c_str());
@@ -531,7 +539,6 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					DEBUG_PRINTLN("Copying old one");
 					message.push_back(chunk);
 				} // else
 			} // For all in 8-bit vector
@@ -717,7 +724,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				sizeof(direction));
 		if (msg_from_spark_comp == 0) {
 			if (blk_len < 0x6a) {
-				DEBUG_PRINTLN("Last message, shorter");
 				// if the message is smaller than the largest size possible for block, definitely the last block
 				msg_last_block = true;
 			}
@@ -726,7 +732,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				// this is from Spark so chunk header could be anywhere
 				// so search from the end
 				int pos = -1;
-				DEBUG_PRINTLN("Searching backwards for chunk header");
 				for (int i = blk.size() - 2; i >= 0; i--) {
 					if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
 						Serial.println("Found F001");
@@ -750,7 +755,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		if (msg_last_block) {
 			msg_last_block = false;
 			setMessage(response);
-			DEBUG_PRINTLN("Reading message");
 			read_message();
 			response.clear();
 			retValue = MSG_PROCESS_RES_COMPLETE;
@@ -763,7 +767,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// so notifications will be triggered
 
 	if(cmd == 0x02){
-		retValue = MSG_PROCESS_RES_INITIAL;
+		retValue = MSG_PROCESS_RES_REQUEST;
 	}
 	return retValue;
 }

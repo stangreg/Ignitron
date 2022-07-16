@@ -83,7 +83,6 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 	resultPreset.json = jsonString;
 	DEBUG_PRINTLN("JSON:");
 	DEBUG_PRINTLN(resultPreset.json.c_str());
-	DEBUG_PRINTLN(resultPreset.pedals[0].parameters[0].value);
 	return resultPreset;
 
 }
@@ -225,7 +224,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 		}
 	}
 	if(fileSystem.saveToFile(presetListFileName, filestr.c_str())){
-		Serial.printf("Successfully stored new preset to %d-%d", bnk, pre);
+		Serial.printf("Successfully stored new preset to %d-%d\n", bnk, pre);
 		initializePresetListFromFS();
 		return STORE_PRESET_OK;
 	}

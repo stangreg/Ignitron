@@ -253,8 +253,6 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		current_block.clear();
 	}
 	
-	DEBUG_PRINTF("Finished with creating message, size: %d\n",
-			final_message.size());
 	return final_message;
 
 }
@@ -437,10 +435,11 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	//TODO take version string as input
 	start_message(cmd, sub_cmd);
 	add_byte(0x94);
-	add_byte(0x5B);
-	add_byte(0x5B);
-	add_byte(0x5B);
-	add_byte(0x5B);
+	add_byte(0x50);
+	add_byte(0xCC);
+	add_byte(0xF0);
+	add_byte(0x5A);
+	add_byte(0x58);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -516,8 +515,10 @@ std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte sub_cmd) {
 	ack.push_back(0x00);
 	ack.push_back(0x04);
 	ack.push_back(sub_cmd);
-	ack.push_back(0x00);
-	ack.push_back(0x00);
+
+	//	ack.push_back(0x00);
+	//	ack.push_back(0x00);
+
 	ack.push_back(0xf7);
 
 	ack_cmd.push_back(ack);

@@ -42,6 +42,7 @@ public:
 	//static ByteVector bytes(int value);
 
 	static int dataVectorNumOfBytes(std::vector<ByteVector> data);
+
 };
 
 #endif
