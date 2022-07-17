@@ -151,16 +151,7 @@ public:
 	 * so that the Spark App can connect to Ignitron
 	 *
 	 */
-	void notifyClients(ByteVector msg);
-	/**
-	 * @brief  Sends a series of initial notifications to the Spark App during initiation 
-	 *
-	 * When the Spark App connects to Spark Amp (and Ignitron), it expects a number of special 
-	 * messages from Spark/Ignitron for a successful connection. This function cycles through 
-	 * three different messages to send to the App which are required for the connection
-	 *
-	 */
-	void sendInitialNotification();
+	void notifyClients(std::vector<ByteVector> msg);
 
 private:
 

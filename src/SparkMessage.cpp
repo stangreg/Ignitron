@@ -30,14 +30,20 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	int max_chunk_size;
 	if (dir == DIR_TO_SPARK) {
+		// maximum chunk size for messages to Spark Amp
 		max_chunk_size = 0x80;
 	} else {
+		// maximum chunk size for messages sent from Spark Amp to App
 		max_chunk_size = 0x19;
 	}
 
 	// determine how many chunks there are
 	int data_len = data.size();
-	int num_chunks = int((data_len + max_chunk_size - 1) / max_chunk_size);
+	// minimum is 1 chunk
+	int num_chunks = 1;
+	if (data_len > 0) {
+		num_chunks = int((data_len + max_chunk_size - 1) / max_chunk_size);
+	}
 
 
 
@@ -91,39 +97,39 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 			bytes7.push_back(bit8);
 			bytes7.insert(bytes7.end(), seq.begin(), seq.end());
 		}
-		//DEBUG_PRINTLN("7-bit chunk:");
-		//SparkHelper::printByteVector(bytes7);
-		//DEBUG_PRINTF("Chunk size 7bit: %d\n", bytes7.size());
 		split_data7.push_back(bytes7);
 	}
 
 
 	int MAX_BLOCK_SIZE;
 	if (dir == DIR_TO_SPARK) {
+		// Maximum block size for messages to Spark Amp
 		MAX_BLOCK_SIZE = 0xAD;
 	} else {
+		// Maximum block size for messages sent to Spark App
 		MAX_BLOCK_SIZE = 0x6A;
 	}
 		
 	
 
 	// now we can create the final message with the message header and the chunk header
-	ByteVector block_header = { '\x01', '\xfe', '\x00', '\x00' };
+	ByteVector block_header = { 0x01, 0xFE, 0x00, 0x00 };
 	ByteVector block_header_direction;
 	if (dir == DIR_TO_SPARK) {
 		block_header_direction = msg_to_spark;
 	} else {
 		block_header_direction = msg_from_spark;
 	}
-	ByteVector block_filler = {'\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00'};
-	ByteVector chunk_header = { '\xf0', '\x01' };
+	ByteVector block_filler = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00 };
+	ByteVector chunk_header = { 0xF0, 0x01 };
 	byte msg_num;
 	if (msg_number == 0) {
-		msg_num = '\x01';
+		msg_num = 0x01;
 	} else {
 		msg_num = (byte) msg_number;
 	}
-	byte trailer = '\xf7';
+	byte trailer = 0xF7;
 
 	std::vector<ByteVector> all_chunks;
 
@@ -138,7 +144,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		complete_chunk.push_back(sub_cmd);
 		complete_chunk.insert(complete_chunk.end(), data.begin(), data.end());
 		complete_chunk.push_back(trailer);
-		//DEBUG_PRINTLN("Pushing chunk");
+		
 		all_chunks.push_back(complete_chunk);
 
 	}
@@ -159,12 +165,10 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	bool new_block = true;
 
 	// start filling with chunks and start new blocks if required
-	//DEBUG_PRINTF("All chunks size: %d\n", all_chunks.size());
 	while (all_chunks.size() > 0) {
 
 		if (new_block) {
 
-			//DEBUG_PRINTLN("Starting new block");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 							+ (int) data_remainder.size() + block_prefix_size);
@@ -181,9 +185,6 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 		ByteVector current_chunk = all_chunks.back();
 		all_chunks.pop_back();
-		//DEBUG_PRINTF("All chunks size after pop: %d\n", all_chunks.size());
-
-		//DEBUG_PRINTF("Size of current chunk: %d\n", current_chunk.size());
 
 		if (data_remainder.size() > 0) {
 			current_block.insert(current_block.end(), data_remainder.begin(),
@@ -191,20 +192,19 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 			data_remainder.clear();
 		}
 
+		// Calculating if mext chunk fits into current block or if needs to be split
 		int remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
 				- current_chunk.size();
-		//DEBUG_PRINTF("Remaining MAX, BLOCK, CHUNK: %d, %d, %d\n",
-		//MAX_BLOCK_SIZE, current_block.size(), current_chunk.size());
 		int remaining_space = MAX_BLOCK_SIZE - current_block.size();
 
+		// Chunk fits and space is left
 		if (remaining_block_indicator > 0) {
-			//DEBUG_PRINTLN("Adding new chunk to block");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			new_block = false;
 		}
+		// Chunk fits exactly into the remaining space
 		if (remaining_block_indicator == 0) {
-			//DEBUG_PRINTLN("Pushing block, exact match");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			final_message.push_back(current_block);
@@ -213,23 +213,23 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 				new_block = true;
 			}
 		}
+		// Chunk does not fit, needs to be split between blocks
 		if (remaining_block_indicator < 0) {
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.begin() + remaining_space);
 			data_remainder.assign(current_chunk.begin() + remaining_space,
 					current_chunk.end());
-			//DEBUG_PRINTLN("Pushing block, remainder");
 			final_message.push_back(current_block);
 			current_block.clear();
 			new_block = true;
 		}
 
 	}
-	
+
+	// If there is a remainder after all chunks have been added, add to block
 	if (data_remainder.size() > 0) {
 		// New header needs to be created as only remainder is left if flag is set here
 		if (new_block == true) {
-			//DEBUG_PRINTLN("Starting new block");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 							+ (int) data_remainder.size() + block_prefix_size);
@@ -248,7 +248,6 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	}
 
 	if (current_block.size() > 0) {
-		//DEBUG_PRINTLN("Pushing last block");
 		final_message.push_back(current_block);
 		current_block.clear();
 	}
@@ -288,7 +287,7 @@ void SparkMessage::add_string(std::string pack_str){
 void SparkMessage::add_long_string(std::string pack_str){
 	int str_length = pack_str.size();
 	ByteVector byte_pack;
-	byte_pack.push_back(('\xd9'));
+	byte_pack.push_back((0xD9));
 	byte_pack.push_back((byte)str_length);
 	std::copy(pack_str.begin(), pack_str.end(), std::back_inserter<ByteVector>(byte_pack));
 	add_bytes(byte_pack);
@@ -321,10 +320,10 @@ void SparkMessage::add_float (float flt){
 void SparkMessage::add_onoff (boolean enable){
 	byte b;
 	if (enable == true){
-		b = '\xc3';
+		b = 0xC3;
 	}
 	else{
-		b = '\xc2';
+		b = 0xC2;
 	}
 	add_byte(b);
 }
@@ -355,8 +354,8 @@ std::vector<ByteVector> SparkMessage::get_current_preset(){
 }
 
 std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal, int param, float val){
-	cmd = '\x01';
-	sub_cmd = '\x04';
+	cmd = 0x01;
+	sub_cmd = 0x04;
 
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal);
@@ -367,8 +366,8 @@ std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal
 }
 
 std::vector<ByteVector> SparkMessage::change_effect (std::string pedal1, std::string pedal2){
-	cmd = '\x01';
-	sub_cmd = '\x06';
+	cmd = 0x01;
+	sub_cmd = 0x06;
 
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal1);
@@ -379,8 +378,8 @@ std::vector<ByteVector> SparkMessage::change_effect (std::string pedal1, std::st
 }
 
 std::vector<ByteVector> SparkMessage::change_hardware_preset (int preset_num){
-	cmd = '\x01';
-	sub_cmd = '\x38';
+	cmd = 0x01;
+	sub_cmd = 0x38;
 
 	start_message (cmd, sub_cmd);
 	add_byte((byte)0);
@@ -390,8 +389,8 @@ std::vector<ByteVector> SparkMessage::change_hardware_preset (int preset_num){
 }
 
 std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, boolean enable){
-	cmd = '\x01';
-	sub_cmd = '\x15';
+	cmd = 0x01;
+	sub_cmd = 0x15;
 
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal);
@@ -400,8 +399,8 @@ std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, bool
 }
 
 std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
-	cmd = '\x03';
-	sub_cmd = '\x23';
+	cmd = 0x03;
+	sub_cmd = 0x23;
 
 	start_message(cmd, sub_cmd);
 	add_prefixed_string("S999C999B999");
@@ -411,12 +410,12 @@ std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 }
 
 std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
-	cmd = '\x03';
-	sub_cmd = '\x2F';
+	cmd = 0x03;
+	sub_cmd = 0x2F;
 
 	//TODO take version string as input
 	start_message(cmd, sub_cmd);
-	//add_byte(0x11);
+
 	add_byte(0xCE);
 	//Version string 1.6.5.160
 	add_byte((byte) 1);
@@ -427,12 +426,9 @@ std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
 }
 
 std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
-	cmd = '\x03';
-	sub_cmd = '\x2A';
+	cmd = 0x03;
+	sub_cmd = 0x2A;
 
-	// TODO : Take checksums as input
-	ByteVector checksums = { 0x14, 0x50, 0x4C, 0x70, 0x5A, 0x58 };
-	//TODO take version string as input
 	start_message(cmd, sub_cmd);
 	add_byte(0x94);
 	add_byte(0x50);
@@ -444,8 +440,8 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 }
 
 std::vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
-	cmd = '\x03';
-	sub_cmd = '\x10';
+	cmd = 0x03;
+	sub_cmd = 0x10;
 
 	start_message(cmd, sub_cmd);
 	add_byte(0x00);
@@ -458,19 +454,19 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 		int direction, byte msg_num) {
 
 	if (direction == DIR_TO_SPARK) {
-		cmd = '\x01';
+		cmd = 0x01;
 	} else {
-		cmd = '\x03';
+		cmd = 0x03;
 	}
-	sub_cmd = '\x01';
+	sub_cmd = 0x01;
 
 	start_message (cmd, sub_cmd);
 	if (direction == DIR_TO_SPARK) {
-		add_byte('\x00');
-		add_byte('\x7f');
+		add_byte(0x00);
+		add_byte(0x7F);
 	} else {
-		add_byte('\x01');
-		add_byte('\x00');
+		add_byte(0x01);
+		add_byte(0x00);
 	}
 	add_long_string (preset_data.uuid);
 	add_string (preset_data.name);
@@ -505,24 +501,15 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 }
 
 
-// This prepares a message to send an acknowledgement to Spark App
-std::vector<ByteVector> SparkMessage::send_ack(byte seq, byte sub_cmd) {
-	std::vector<ByteVector> ack_cmd;
-	ack_cmd.clear();
-	ByteVector ack = { 0x01, 0xfe, 0x00, 0x00, 0x41, 0xff, 0x17, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x01 };
-	ack.push_back(seq);
-	ack.push_back(0x00);
-	ack.push_back(0x04);
-	ack.push_back(sub_cmd);
+// This prepares a message to send an acknowledgement
+std::vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd,
+		int dir) {
 
-	//	ack.push_back(0x00);
-	//	ack.push_back(0x00);
+	byte cmd = 0x04;
 
-	ack.push_back(0xf7);
+	start_message(cmd, sub_cmd);
+	return end_message(dir, msg_num);
 
-	ack_cmd.push_back(ack);
-	return ack_cmd;
 }
 
 byte SparkMessage::calculate_checksum(ByteVector chunk) {

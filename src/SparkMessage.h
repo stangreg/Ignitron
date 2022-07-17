@@ -65,7 +65,8 @@ public:
 	DIR_TO_SPARK, byte msg_num = 0x00);
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
-	std::vector<ByteVector> send_ack(byte seq, byte cmd);
+	std::vector<ByteVector> send_ack(byte seq, byte cmd, int direction =
+			DIR_TO_SPARK);
 
 	std::vector<ByteVector> send_serial_number(byte msg_number);
 	std::vector<ByteVector> send_firmware_version(byte msg_number);

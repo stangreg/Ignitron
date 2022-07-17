@@ -166,12 +166,17 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
-		ack_msg = spark_msg.send_ack(seq, sub_cmd);
+		if (operationMode_ == SPARK_MODE_AMP) {
+			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
+		} else {
+			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_TO_SPARK);
+		}
+
 		DEBUG_PRINTLN("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP) {
 			bleControl.writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
-			bleControl.notifyClients(ack_msg[0]);
+			bleControl.notifyClients(ack_msg);
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
@@ -212,11 +217,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		default:
 			break;
 		}
-		//TODO cleanup, move iteration to notifyClients
-		for (auto msg_item : msg) {
-			bleControl.notifyClients(msg_item);
-			delay(10);
-		}
+		bleControl.notifyClients(msg);
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
 		std::string msgStr = spark_ssr.getJson();
@@ -322,10 +323,6 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 		return true;
 	}
 	return false;
-}
-
-void SparkDataControl::triggerInitialBLENotifications() {
-	bleControl.sendInitialNotification();
 }
 
 void SparkDataControl::processPresetEdit(int presetNum) {
