@@ -103,6 +103,8 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 	std::stringstream stream(allPresetsAsText);
 	std::string line;
 	while (std::getline(stream, line)) {
+		line.erase(std::remove(line.begin(), line.end(), '\r' ), line.end());
+		line.erase(std::remove(line.begin(), line.end(), '\n' ), line.end());
 		std::string presetFilename = line;
 		// Lines starting with '-' and empty lines
 		// are ignored and can be used for comments in the file
