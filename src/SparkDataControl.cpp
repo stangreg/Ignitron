@@ -8,7 +8,7 @@
 #include "SparkDataControl.h"
 
 SparkBLEControl SparkDataControl::bleControl;
-SparkOTAServer SparkDataControl::otaServer;
+//SparkOTAServer SparkDataControl::otaServer;
 SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
@@ -55,7 +55,9 @@ void SparkDataControl::init(int opMode) {
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
-		bleControl.startServer();
+		bleControl.startBTClassic();
+		//bleControl.startServer();
+
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
@@ -64,11 +66,11 @@ void SparkDataControl::init(int opMode) {
 }
 
 void SparkDataControl::connectToWifi() {
-	if (otaServer.init()) {
+	/*if (otaServer.init()) {
 		isWifiConnected_ = true;
 	} else {
 		isWifiConnected_ = false;
-	}
+	 }*/
 }
 
 void SparkDataControl::switchOperationMode(int opMode) {
@@ -100,7 +102,25 @@ void SparkDataControl::checkForUpdates() {
 	}
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
-		otaServer.handleClient();
+//		otaServer.handleClient();
+		while (bleControl.byteAvailable()) {
+			byte inputByte = bleControl.readByte();
+			currentBTMsg.push_back(inputByte);
+			int msgSize = currentBTMsg.size();
+			if (msgSize > 0) {
+				if (currentBTMsg[msgSize - 1] == 0xF7) {
+					Serial.println();
+					Serial.println("Received a message");
+					SparkHelper::printByteVector(currentBTMsg);
+					Serial.println();
+					processSparkData(currentBTMsg);
+					//processSparkData(currentBTMsg);
+					//bleControl.sendInitialNotification();
+					currentBTMsg.clear();
+
+				}
+			}
+		}
 	}
 
 }
@@ -180,6 +200,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
+	DEBUG_PRINTF("Return code: %d\n", retCode);
 	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
 
 		std::vector<ByteVector> msg;
@@ -220,13 +241,18 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		bleControl.notifyClients(msg);
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
+		Serial.println("Receiving JSON");
+		Serial.println(ESP.getFreeHeap());
 		std::string msgStr = spark_ssr.getJson();
+		Serial.println("Received JSON");
 		if (msgStr.length() > 0) {
 			Serial.println("Message processed:");
 			Serial.println(msgStr.c_str());
 		}
 		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+			Serial.println("Message was preset");
 			presetEditMode_ = PRESET_EDIT_STORE;
+			Serial.println("Trying to build preset from JSON");
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
 			DEBUG_PRINTLN("received from app:");
 			DEBUG_PRINTLN(appReceivedPreset_.json.c_str());

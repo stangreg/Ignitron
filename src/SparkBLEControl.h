@@ -12,6 +12,7 @@
 #include <NimBLEDevice.h>
 #include <Arduino.h>
 #include <vector>
+#include "BluetoothSerial.h"
 
 #include "SparkDataControl.h"
 #include "Common.h"
@@ -153,6 +154,15 @@ public:
 	 */
 	void notifyClients(std::vector<ByteVector> msg);
 
+	bool byteAvailable() {
+		return serialBT.available();
+	}
+	byte readByte() {
+		return serialBT.read();
+	}
+
+	void startBTClassic();
+
 private:
 
 	/** Create a single global instance of the callback class to be used by all clients */
@@ -175,6 +185,8 @@ private:
 	void onDisconnect(NimBLEClient *pClient);
 
 	// Server mode functions
+	const String SPARK_BT_NAME = "Spark 40 Audio";
+	BluetoothSerial serialBT;
 	NimBLEServer *pServer = nullptr;
 	SparkDataControl *spark_dc;
 	void onWrite(NimBLECharacteristic *pCharacteristic);

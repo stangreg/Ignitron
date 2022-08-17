@@ -20,7 +20,8 @@
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
-#include "SparkOTAServer.h"
+//#include "SparkOTAServer.h"
+
 
 #include "SparkTypes.h"
 #include "Common.h"
@@ -69,7 +70,7 @@ public:
 	// Retrieves the current preset from Spark (required for HW presets)
 	bool getCurrentPresetFromSpark();
 	// Switch to a selected preset of the current bank
-	bool switchPreset(int pre, bool isInitial);
+	bool switchPreset(int pre, bool isInitial = false);
 	// Switch effect on/off
 	bool switchEffectOnOff(std::string fx_name, bool enable);
 	// get a preset from saved presets
@@ -137,7 +138,6 @@ public:
 	}
 
 	// Functions for Spark AMP (Server mode)
-	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
 	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
@@ -150,10 +150,11 @@ public:
 	void sendButtonPressAsKeyboard(uint8_t c);
 
 private:
+
 	static int operationMode_;
 
 	static SparkBLEControl bleControl;
-	static SparkOTAServer otaServer;
+	//static SparkOTAServer otaServer;
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
@@ -182,7 +183,9 @@ private:
 	static int presetBankToEdit_;
 	static int presetEditMode_;
 
+
 	static std::string responseMsg_;
+	ByteVector currentBTMsg;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();

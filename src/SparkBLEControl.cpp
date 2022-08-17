@@ -264,6 +264,8 @@ void SparkBLEControl::startServer() {
 	/** sets device name */
 	NimBLEDevice::init("Spark 40 BLE");
 
+	//startBTClassic();
+
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
 	NimBLEDevice::setSecurityAuth(
@@ -372,9 +374,11 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 
 	Serial.println(str.c_str());
 }
-;
+
 
 void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
+	// TESTING CLASSIC, COMMENTING BLE
+	/*
 	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 	if (pSvc) {
 		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
@@ -389,6 +393,19 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 			pChr->notify(true);
 		}
 	}
+	*/
+	Serial.println("Sending message");
+	
+	for (auto chunk : msg) {
+		for (auto by: chunk){
+			if (by < 16) {
+				Serial.print("0");
+			}
+			Serial.print(by, HEX);
+			serialBT.write(by);
+		}
+	}
+	Serial.println();
 }
 
 void SparkBLEControl::onConnect(NimBLEServer *pServer,
@@ -425,6 +442,12 @@ void SparkBLEControl::stopScan() {
 		Serial.print("Scan is not running");
 	}
 
+}
+
+void SparkBLEControl::startBTClassic() {
+	Serial.printf("Initializing BT Classic with name %s \n",
+			SPARK_BT_NAME.c_str());
+	serialBT.begin("Spark 40 Audio", false);
 }
 
 
