@@ -12,6 +12,7 @@
 #include <NimBLEDevice.h>
 #include <Arduino.h>
 #include <vector>
+#include <BluetoothSerial.h>
 
 #include "SparkDataControl.h"
 #include "Common.h"
@@ -21,6 +22,7 @@
 #define SPARK_BLE_SERVICE_UUID "FFC0"
 #define SPARK_BLE_WRITE_CHAR_UUID "FFC1"
 #define SPARK_BLE_NOTIF_CHAR_UUID "FFC2"
+
 
 using ByteVector = std::vector<byte>;
 class SparkDataControl;
@@ -153,12 +155,34 @@ public:
 	 */
 	void notifyClients(std::vector<ByteVector> msg);
 
+	void stopBLEServer();
+
+	void startBTSerial();
+	void stopBTSerial();
+
+	bool byteAvailable() {
+		if (btSerial != NULL) {
+			return btSerial->available();
+		} else
+			return false;
+	}
+	byte readByte() {
+		if (btSerial != NULL) {
+			return btSerial->read();
+		} else
+			return false;
+	}
+
 private:
 
 	/** Create a single global instance of the callback class to be used by all clients */
 	//static ClientCallbacks clientCB;
 	NimBLEAdvertisedDevice *advDevice;
 	NimBLEClient *pClient = nullptr;
+
+	BluetoothSerial *btSerial = nullptr;
+	std::string bt_name_ble = "Spark 40 BLE"; // Spark 40 BLE
+	std::string bt_name_serial = "Spark 40 Audio"; // Spark 40 Audio
 
 	bool isAmpConnected_ = false;
 	bool isConnectionFound_ = false;
@@ -176,6 +200,11 @@ private:
 
 	// Server mode functions
 	NimBLEServer *pServer = nullptr;
+	NimBLEService *pSparkService = nullptr;
+	NimBLECharacteristic *pSparkWriteCharacteristic = nullptr;
+	NimBLECharacteristic *pSparkNotificationCharacteristic = nullptr;
+	NimBLEAdvertising *pAdvertising = nullptr;
+
 	SparkDataControl *spark_dc;
 	void onWrite(NimBLECharacteristic *pCharacteristic);
 	void onSubscribe(NimBLECharacteristic *pCharacteristic,

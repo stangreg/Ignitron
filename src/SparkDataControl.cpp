@@ -7,8 +7,8 @@
 
 #include "SparkDataControl.h"
 
-SparkBLEControl SparkDataControl::bleControl;
-SparkOTAServer SparkDataControl::otaServer;
+SparkBLEControl *SparkDataControl::bleControl = nullptr;
+//SparkOTAServer SparkDataControl::otaServer;
 SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
@@ -31,13 +31,20 @@ std::string SparkDataControl::responseMsg_ = "";
 std::vector<ByteVector> SparkDataControl::ack_msg;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
+int SparkDataControl::currentBTMode = BT_MODE_SERIAL;
+
 
 SparkDataControl::SparkDataControl() {
 	//init();
+	bleControl = new SparkBLEControl(this);
 }
 
 SparkDataControl::~SparkDataControl() {
 	// TODO Auto-generated destructor stub
+	if (bleControl)
+		delete bleControl;
+	if (spark_display)
+		delete spark_display;
 }
 
 void SparkDataControl::init(int opMode) {
@@ -50,12 +57,16 @@ void SparkDataControl::init(int opMode) {
 		bleKeyboard.begin();
 		delay(1000);
 		bleKeyboard.end();
-		bleControl.initBLE(&notifyCB);
+		bleControl->initBLE(&notifyCB);
 
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
-		bleControl.startServer();
+		if (currentBTMode == BT_MODE_BLE) {
+			bleControl->startServer();
+		} else if (currentBTMode == BT_MODE_SERIAL) {
+			bleControl->startBTSerial();
+		}
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
@@ -64,11 +75,11 @@ void SparkDataControl::init(int opMode) {
 }
 
 void SparkDataControl::connectToWifi() {
-	if (otaServer.init()) {
+	/*if (otaServer.init()) {
 		isWifiConnected_ = true;
 	} else {
 		isWifiConnected_ = false;
-	}
+	 }*/
 }
 
 void SparkDataControl::switchOperationMode(int opMode) {
@@ -93,6 +104,9 @@ void SparkDataControl::checkForUpdates() {
 	}
 	// Check if active preset has been updated
 	// If so, update the preset variables
+	// TODO Check if we need to fix here if active preset name
+	// is updated in AMP mode sometimes
+
 	if (spark_ssr.isPresetUpdated()) {
 		activePreset_ = spark_ssr.currentSetting();
 		pendingPreset_ = activePreset_;
@@ -100,26 +114,56 @@ void SparkDataControl::checkForUpdates() {
 	}
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
-		otaServer.handleClient();
+		int currentTime = millis();
+		if (currentTime - lastUpdateCheck > 500) {
+			Serial.printf("Update check %d\n", currentTime);
+			lastUpdateCheck = currentTime;
+		}
+
+		//otaServer.handleClient();
+		while (bleControl && bleControl->byteAvailable()) {
+			Serial.println("BYTE receiving");
+			byte inputByte = bleControl->readByte();
+			//Serial.println("BYTE received");
+			currentBTMsg.push_back(inputByte);
+			int msgSize = currentBTMsg.size();
+			if (msgSize > 0) {
+				if (currentBTMsg[msgSize - 1] == 0xF7) {
+					DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap()); DEBUG_PRINTF("Max free Heap block: %d\n",
+							ESP.getMaxAllocHeap());
+
+					Serial.println();
+					Serial.println("Received a message");
+					SparkHelper::printByteVector (currentBTMsg);
+					Serial.println();
+					processSparkData(currentBTMsg);
+
+					currentBTMsg.clear();
+
+				}
+				delay(10);
+			}
+		}
+
 	}
 
 }
 
 void SparkDataControl::startBLEServer() {
-	bleControl.startServer();
+	bleControl->startServer();
 }
 
 bool SparkDataControl::checkBLEConnection() {
-	if (bleControl.isAmpConnected()) {
+	if (bleControl->isAmpConnected()) {
 		return true;
-	} else if (bleControl.isConnectionFound()) {
-		if (bleControl.connectToServer()) {
-			bleControl.subscribeToNotifications(&notifyCB);
+	} else if (bleControl->isConnectionFound()) {
+		if (bleControl->connectToServer()) {
+			bleControl->subscribeToNotifications(&notifyCB);
 			Serial.println("BLE connection to Spark established.");
 			return true;
 		} else {
 			Serial.println("Failed to connect, starting scan");
-			bleControl.startScan();
+			bleControl->startScan();
 			return false;
 		}
 	}
@@ -136,11 +180,11 @@ int SparkDataControl::getNumberOfBanks() {
 }
 
 bool SparkDataControl::isAmpConnected() {
-	return bleControl.isAmpConnected();
+	return bleControl->isAmpConnected();
 }
 
 bool SparkDataControl::isAppConnected() {
-	return bleControl.isAppConnected();
+	return bleControl->isAppConnected();
 }
 
 void SparkDataControl::notifyCB(
@@ -161,10 +205,11 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	DEBUG_PRINTLN("Received data:");
 	DEBUG_PRINTVECTOR(blk);
 	DEBUG_PRINTLN();
-
+	Serial.println("Parsing!");
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
+	Serial.println("After ACK");
 	if (ackNeeded) {
 		if (operationMode_ == SPARK_MODE_AMP) {
 			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
@@ -174,20 +219,24 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 		DEBUG_PRINTLN("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP) {
-			bleControl.writeBLE(ack_msg);
+			bleControl->writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
-			bleControl.notifyClients(ack_msg);
+			bleControl->notifyClients(ack_msg);
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
+	Serial.println(retCode);
 	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
 
 		std::vector<ByteVector> msg;
-
+		Serial.println("1");
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
-
+		Serial.println("2");
 		byte currentMessageNum = spark_ssr.lastMessageNum();
+		Serial.println("3");
 		byte sub_cmd = currentMessage.back().subcmd;
+		Serial.println("4");
+		Serial.println(sub_cmd);
 
 		switch (sub_cmd) {
 
@@ -217,7 +266,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		default:
 			break;
 		}
-		bleControl.notifyClients(msg);
+		Serial.println("5");
+		bleControl->notifyClients(msg);
+		Serial.println("6");
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
 		std::string msgStr = spark_ssr.getJson();
@@ -249,7 +300,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
 	DEBUG_PRINTLN("Getting current preset from Spark");
-	if (bleControl.writeBLE(current_msg)) {
+	if (bleControl->writeBLE(current_msg)) {
 		return true;
 	}
 	return false;
@@ -279,7 +330,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (bleControl.writeBLE(current_msg)
+				if (bleControl->writeBLE(current_msg)
 						&& getCurrentPresetFromSpark()) {
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
@@ -289,11 +340,11 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
 				current_msg = spark_msg.create_preset(pendingPreset_);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
-				if (bleControl.writeBLE(current_msg)) {
+				if (bleControl->writeBLE(current_msg)) {
 					// This is the final message with actually switches over to the
 					//previously sent preset
 					current_msg = spark_msg.change_hardware_preset(128);
-					if (bleControl.writeBLE(current_msg)) {
+					if (bleControl->writeBLE(current_msg)) {
 						retValue = true;
 					}
 				}
@@ -319,7 +370,7 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 		}
 	}
 	current_msg = spark_msg.turn_effect_onoff(fx_name, enable);
-	if (bleControl.writeBLE(current_msg)) {
+	if (bleControl->writeBLE(current_msg)) {
 		return true;
 	}
 	return false;
@@ -444,4 +495,39 @@ void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
 		Serial.println("Keyboard not connected");
 	}
 
+}
+
+void SparkDataControl::toggleBTMode() {
+	Serial.printf("Free HEAP: %d\n", ESP.getFreeHeap());
+	Serial.printf("Free PSRAM: %d\n", ESP.getFreePsram());
+
+	Serial.printf("Max HEAP object: %d\n", ESP.getMaxAllocHeap());
+	Serial.printf("Min HEAP so far: %d\n", ESP.getMinFreeHeap());
+	Serial.printf("Min PSRAM so far: %d\n", ESP.getMinFreePsram());
+
+	Serial.print("Switching Bluetooth mode to ");
+	if (currentBTMode == BT_MODE_BLE) {
+		Serial.println("SERIAL");
+		bleControl->stopBLEServer();
+		NimBLEDevice::deinit(true);
+		if (bleControl != NULL) {
+			bleControl = nullptr;
+		}
+		bleControl = new SparkBLEControl(this);
+		bleControl->startBTSerial();
+		currentBTMode = BT_MODE_SERIAL;
+	} else if (currentBTMode == BT_MODE_SERIAL) {
+		Serial.println("BLE");
+		//Serial.println("SERIAL AGAIN");
+		bleControl->stopBTSerial();
+		if (bleControl != NULL) {
+			delete bleControl;
+			bleControl = nullptr;
+		}
+		bleControl = new SparkBLEControl(this);
+		bleControl->startServer();
+		//bleControl->startBTSerial();
+
+		currentBTMode = BT_MODE_BLE;
+	}
 }
