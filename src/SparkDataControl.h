@@ -20,7 +20,7 @@
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
 #include "SparkStreamReader.h"
-#include "SparkOTAServer.h"
+//#include "SparkOTAServer.h"
 
 #include "SparkTypes.h"
 #include "Common.h"
@@ -36,6 +36,9 @@
 #define PRESET_EDIT_NONE 0
 #define PRESET_EDIT_STORE 1
 #define PRESET_EDIT_DELETE 2
+
+#define BT_MODE_BLE 1
+#define BT_MODE_SERIAL 2
 
 using ByteVector = std::vector<byte>;
 
@@ -145,6 +148,7 @@ public:
 	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
 	void resetPresetEditResponse();
 	void switchOperationMode(int opMode);
+	void toggleBTMode();
 
 	// Functions for Looper mode
 	void sendButtonPressAsKeyboard(uint8_t c);
@@ -152,8 +156,8 @@ public:
 private:
 	static int operationMode_;
 
-	static SparkBLEControl bleControl;
-	static SparkOTAServer otaServer;
+	static SparkBLEControl *bleControl;
+	//static SparkOTAServer otaServer;
 	static SparkStreamReader spark_ssr;
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
@@ -183,6 +187,11 @@ private:
 	static int presetEditMode_;
 
 	static std::string responseMsg_;
+
+	static int currentBTMode;
+	ByteVector currentBTMsg;
+
+	int lastUpdateCheck = 0;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();

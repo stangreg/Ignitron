@@ -83,7 +83,7 @@ bool SparkOTAServer::init() {
 	if (!MDNS.begin(host)) { //http://ignitron.local
 		Serial.println("Error setting up MDNS responder!");
 		while (1) {
-			delay(1000);
+			delay(500);
 		}
 	}
 	Serial.println("mDNS responder started");

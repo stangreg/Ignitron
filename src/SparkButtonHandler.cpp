@@ -345,6 +345,7 @@ int SparkButtonHandler::init(bool startup) {
 	}
 	if (operationMode == SPARK_MODE_AMP) {
 		btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
+		btn_bank_up.onPressFor(btnToggleBTMode, 1500);
 	}
 
 	return operationMode;
@@ -432,4 +433,26 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 		Serial.println(
 				"SparkDataControl not setup yet, not connected to Spark, or in AMP mode, ignoring button press.");
 	}
+}
+
+void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
+		BfButton::press_pattern_t pattern) {
+
+	if (spark_dc && operationMode == SPARK_MODE_AMP) {
+
+		if (pattern == BfButton::LONG_PRESS) {
+			int pressed_btn_gpio = btn->getID();
+			// Debug
+			DEBUG_PRINT("Button long pressed: ");DEBUG_PRINTLN(pressed_btn_gpio);
+			//Up preset
+			if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
+				spark_dc->toggleBTMode();
+			} // IF BANK UP BUTTON
+		} // LONG PRESS
+	} // IF spark_dc and in APP mode
+	else {
+		Serial.println(
+				"SparkDataControl not setup yet or in APP mode, ignoring button press.");
+	}
+
 }

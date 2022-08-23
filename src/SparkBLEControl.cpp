@@ -24,9 +24,16 @@ SparkBLEControl::SparkBLEControl(SparkDataControl *dc) {
 }
 
 SparkBLEControl::~SparkBLEControl() {
-	//if(advDevCB) delete advDevCB;
-	if (advDevice)
+	Serial.println("Deleting BLE objects");
+	if (advDevice) {
 		delete advDevice;
+		advDevice = nullptr;
+	}
+	if (btSerial) {
+		delete btSerial;
+		btSerial = nullptr;
+	}
+	
 }
 
 // Initializing BLE connection with NimBLE
@@ -272,9 +279,9 @@ void SparkBLEControl::startServer() {
 	pServer = NimBLEDevice::createServer();
 	pServer->setCallbacks(this);
 
-	NimBLEService *pSparkService = pServer->createService(
+	pSparkService = pServer->createService(
 	SPARK_BLE_SERVICE_UUID);
-	NimBLECharacteristic *pSparkWriteCharacteristic =
+	pSparkWriteCharacteristic =
 			pSparkService->createCharacteristic(
 			SPARK_BLE_WRITE_CHAR_UUID,
 					NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE
@@ -299,7 +306,7 @@ void SparkBLEControl::startServer() {
 	pSparkWriteCharacteristic->setValue(initialWriteValue);
 	pSparkWriteCharacteristic->setCallbacks(this);
 
-	NimBLECharacteristic *pSparkNotificationCharacteristic =
+	pSparkNotificationCharacteristic =
 			pSparkService->createCharacteristic(
 			SPARK_BLE_NOTIF_CHAR_UUID,
 					NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
@@ -323,7 +330,7 @@ void SparkBLEControl::startServer() {
 
 	/** Start the services when finished creating all Characteristics and Descriptors */
 	pSparkService->start();
-	NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
+	pAdvertising = NimBLEDevice::getAdvertising();
 
 	pAdvertising->addServiceUUID(pSparkService->getUUID());
 
@@ -375,18 +382,34 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 ;
 
 void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
-	NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
-	if (pSvc) {
-		NimBLECharacteristic *pChr = pSvc->getCharacteristic(
-		SPARK_BLE_NOTIF_CHAR_UUID);
-		if (pChr) {
-			for (auto block : msg) {
-				DEBUG_PRINTLN("Sending data:");
-				DEBUG_PRINTVECTOR(block);
-				DEBUG_PRINTLN();
-				pChr->setValue(&block.data()[0], block.size());
+	if (pServer) {
+		Serial.println("I think I have a BLE server!");
+		NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
+		if (pSvc) {
+			NimBLECharacteristic *pChr = pSvc->getCharacteristic(
+			SPARK_BLE_NOTIF_CHAR_UUID);
+			if (pChr) {
+				for (auto block : msg) {
+					DEBUG_PRINTLN("Sending data:"); DEBUG_PRINTVECTOR(block); DEBUG_PRINTLN();
+					pChr->setValue(&block.data()[0], block.size());
+				}
+				pChr->notify(true);
 			}
-			pChr->notify(true);
+		}
+	}
+
+	if (btSerial && btSerial->hasClient()) {
+		Serial.println("Sending message via BT Serial:");
+		for (auto chunk : msg) {
+			for (auto by : chunk) {
+				if (by < 16) {
+					DEBUG_PRINT("0");
+				} DEBUG_PRINT(by, HEX
+				);
+				btSerial->write(by);
+			}
+			Serial.println();
+			DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap());
 		}
 	}
 }
@@ -427,8 +450,32 @@ void SparkBLEControl::stopScan() {
 
 }
 
+void SparkBLEControl::startBTSerial() {
+	btSerial = new BluetoothSerial();
+	//btStart();
+	if (btSerial->begin(bt_name_serial.c_str(), false)) {
+		Serial.printf("Started BT Serial with name %s \n",
+				bt_name_serial.c_str());
+		btSerial->flush();
+	} else {
+		Serial.println("BT Serial start failed!");
+	}
+}
+
+void SparkBLEControl::stopBTSerial() {
+	// Stop Bluetooth Serial
+	btSerial->end();
+	delete btSerial;
+	btSerial = nullptr;
+	Serial.println("BT Serial stopped");
+}
 
 
+void SparkBLEControl::stopBLEServer() {
 
+	if (pServer) {
+		pServer->stopAdvertising();
+	}
 
+}
 

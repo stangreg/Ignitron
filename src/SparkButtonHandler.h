@@ -67,6 +67,8 @@ private:
 			BfButton::press_pattern_t pattern);
 	static void btnToggleLoopHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
+	static void btnToggleBTMode(BfButton *btn,
+			BfButton::press_pattern_t pattern);
 };
 
 #endif /* SPARKBUTTONHANDLER_H_ */

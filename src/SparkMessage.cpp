@@ -508,6 +508,10 @@ std::vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd,
 	byte cmd = 0x04;
 
 	start_message(cmd, sub_cmd);
+	if (sub_cmd == 0x70) {
+		add_byte(0x00);
+		add_byte(0x00);
+	}
 	return end_message(dir, msg_num);
 
 }
