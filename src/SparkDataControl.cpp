@@ -8,7 +8,6 @@
 #include "SparkDataControl.h"
 
 SparkBLEControl *SparkDataControl::bleControl = nullptr;
-//SparkOTAServer SparkDataControl::otaServer;
 SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
@@ -74,13 +73,6 @@ void SparkDataControl::init(int opMode) {
 
 }
 
-void SparkDataControl::connectToWifi() {
-	/*if (otaServer.init()) {
-		isWifiConnected_ = true;
-	} else {
-		isWifiConnected_ = false;
-	 }*/
-}
 
 void SparkDataControl::switchOperationMode(int opMode) {
 	operationMode_ = opMode;
@@ -114,17 +106,9 @@ void SparkDataControl::checkForUpdates() {
 	}
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
-		int currentTime = millis();
-		if (currentTime - lastUpdateCheck > 500) {
-			Serial.printf("Update check %d\n", currentTime);
-			lastUpdateCheck = currentTime;
-		}
 
-		//otaServer.handleClient();
 		while (bleControl && bleControl->byteAvailable()) {
-			Serial.println("BYTE receiving");
 			byte inputByte = bleControl->readByte();
-			//Serial.println("BYTE received");
 			currentBTMsg.push_back(inputByte);
 			int msgSize = currentBTMsg.size();
 			if (msgSize > 0) {
@@ -132,10 +116,10 @@ void SparkDataControl::checkForUpdates() {
 					DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap()); DEBUG_PRINTF("Max free Heap block: %d\n",
 							ESP.getMaxAllocHeap());
 
-					Serial.println();
-					Serial.println("Received a message");
-					SparkHelper::printByteVector (currentBTMsg);
-					Serial.println();
+					DEBUG_PRINTLN("Received a message");
+					DEBUG_PRINTVECTOR(currentBTMsg);
+					DEBUG_PRINTLN();
+					heap_caps_check_integrity_all(true) ;
 					processSparkData(currentBTMsg);
 
 					currentBTMsg.clear();
@@ -205,11 +189,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	DEBUG_PRINTLN("Received data:");
 	DEBUG_PRINTVECTOR(blk);
 	DEBUG_PRINTLN();
-	Serial.println("Parsing!");
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
-	Serial.println("After ACK");
 	if (ackNeeded) {
 		if (operationMode_ == SPARK_MODE_AMP) {
 			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
@@ -225,18 +207,12 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		}
 	}
 	int retCode = spark_ssr.processBlock(blk);
-	Serial.println(retCode);
 	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
 
 		std::vector<ByteVector> msg;
-		Serial.println("1");
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
-		Serial.println("2");
 		byte currentMessageNum = spark_ssr.lastMessageNum();
-		Serial.println("3");
 		byte sub_cmd = currentMessage.back().subcmd;
-		Serial.println("4");
-		Serial.println(sub_cmd);
 
 		switch (sub_cmd) {
 
@@ -266,9 +242,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		default:
 			break;
 		}
-		Serial.println("5");
+
 		bleControl->notifyClients(msg);
-		Serial.println("6");
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
 		std::string msgStr = spark_ssr.getJson();
@@ -498,19 +473,19 @@ void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
 }
 
 void SparkDataControl::toggleBTMode() {
-	Serial.printf("Free HEAP: %d\n", ESP.getFreeHeap());
-	Serial.printf("Free PSRAM: %d\n", ESP.getFreePsram());
+	DEBUG_PRINTF("Free HEAP: %d\n", ESP.getFreeHeap());
 
-	Serial.printf("Max HEAP object: %d\n", ESP.getMaxAllocHeap());
-	Serial.printf("Min HEAP so far: %d\n", ESP.getMinFreeHeap());
-	Serial.printf("Min PSRAM so far: %d\n", ESP.getMinFreePsram());
+	DEBUG_PRINTF("Max HEAP object: %d\n", ESP.getMaxAllocHeap());
+	DEBUG_PRINTF("Min HEAP so far: %d\n", ESP.getMinFreeHeap());
 
 	Serial.print("Switching Bluetooth mode to ");
 	if (currentBTMode == BT_MODE_BLE) {
 		Serial.println("SERIAL");
 		bleControl->stopBLEServer();
+		Serial.println("Deiniting");
 		NimBLEDevice::deinit(true);
 		if (bleControl != NULL) {
+			delete bleControl;
 			bleControl = nullptr;
 		}
 		bleControl = new SparkBLEControl(this);
@@ -521,7 +496,6 @@ void SparkDataControl::toggleBTMode() {
 		//Serial.println("SERIAL AGAIN");
 		bleControl->stopBTSerial();
 		if (bleControl != NULL) {
-			delete bleControl;
 			bleControl = nullptr;
 		}
 		bleControl = new SparkBLEControl(this);

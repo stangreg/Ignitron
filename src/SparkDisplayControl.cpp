@@ -240,12 +240,6 @@ void SparkDisplayControl::showConnection() {
 	if (isBTConnected) {
 		display.drawBitmap(xPos - 3, yPos, epd_bitmap_bt_logo, 15, 17, color);
 	}
-	// WiFi
-	if (isWifiConnected) {
-		display.drawBitmap(xPos, yPos + 17,
-				epd_bitmap_wi_fi, 9, 9,
-		color);
-	}
 
 }
 
@@ -266,7 +260,6 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		presetEditMode = spark_dc->presetEditMode();
 		isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
 		opMode = spark_dc->operationMode();
-	isWifiConnected = spark_dc->isWifiConnected();
 
 		showConnection();
 		showBankAndPresetNum();

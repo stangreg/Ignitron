@@ -51,7 +51,6 @@ private:
 	int selectedPresetNum = 1;
 	int opMode = 1;
 	bool isBTConnected = false;
-	bool isWifiConnected = false;
 
 	std::string primaryLineText;
 	const Preset* primaryLinePreset;
@@ -155,60 +154,12 @@ private:
 			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 			0xff, 0xff, 0xff, 0xff };
 
-	// 'wi-fi', 9x9px
-	const unsigned char epd_bitmap_wi_fi[18] PROGMEM = { 0x00, 0x00, 0x3e, 0x00,
-			0x63, 0x00, 0xdc, 0x80, 0x3e, 0x00, 0x22, 0x00, 0x0c, 0x00, 0x08,
-			0x00, 0x00, 0x00 };
-
 	// 'bluetooth_logo', 15x17px
 	const unsigned char epd_bitmap_bt_logo[36] PROGMEM = { 0x00, 0x00, 0x00,
 			0x00, 0x01, 0x00, 0x01, 0x80, 0x01, 0xc0, 0x09, 0x20, 0x07, 0x40,
 			0x03, 0xc0, 0x03, 0x80, 0x03, 0x80, 0x07, 0xc0, 0x0d, 0x20, 0x09,
 			0x60, 0x01, 0xc0, 0x01, 0x80, 0x01, 0x00, 0x00, 0x00 };
 
-	/*
-	 * //   WIFI filled
-	 /*| 8 4 2 1 8 4 2 1 8 4 2 1 8 4 2 1 |
-	 /*| . . . . . . . , . . . . . . . . |  0x00,0x00,
-	 /*| . . . . . . X X X X . . . . . . |  0x03,0xc0,
-	 /*| . . . . X X X X X X X X . . . . |  0x0f,0xf0,
-	 /*| . . . X X X X X X X X X X . . . |  0x1f,0xf8,
-	 /*| . . X X X . . , . . . X X X . . |  0x38,0x1c,
-	 /*| . X X X . . . , . . . . X X X . |  0x70,0x0e,
-	 /*| X X X . . . . X X . . . . X X X |  0xe1,0x87,
-	 /*| . X . . . X X X X X X . . . X . |  0x47,0xe2,
-	 /*| . . . . X X X X X X X X . . . . |  0x0f,0xf0,
-	 /*| . . . X X X . , . . X X X . . . |  0x1c,0x38,
-	 /*| . . . . X . . , . . . X . . . . |  0x08,0x10,
-	 /*| . . . . . . . X X . . . . . . . |  0x01,0x80,
-	 /*| . . . . . . X X X X . . . . . . |  0x03,0xc0,
-	 /*| . . . . . . X X X X . . . . . . |  0x03,0xc0,
-	 /*| . . . . . . . X X . . . . . . . |  0x01,0x80,
-	 *
-	 */
-
-	/*
-	 * //   No WIFI
-	 /*| 8 4 2 1 8 4 2 1 8 4 2 1 8 4 2 1 |
-	 /*| . . . . . . . , . . . . . . X X |  0x00,0x03,
-	 /*| . . . . . . X X X X . . . X X . |  0x03,0xc6,
-	 /*| . . . . X X X X X X X X X X . . |  0x0f,0xfc,
-	 /*| . . . X X X X X X X X X X . . . |  0x1f,0xf8,
-	 /*| . . X X X . . , . . X X X X . . |  0x38,0x3c,
-	 /*| . X X X . . . , . X X . X X X . |  0x70,0x6e,
-	 /*| X X X . . . . X X X . . . X X X |  0xe1,0xc7,
-	 /*| . X . . . X X X X X X . . . X . |  0x47,0xe2,
-	 /*| . . . . X X X X X X X X . . . . |  0x0f,0xf0,
-	 /*| . . . X X X X , . . X X X . . . |  0x1c,0x38,
-	 /*| . . . . X X . , . . . X . . . . |  0x0c,0x10,
-	 /*| . . . X X . . X X . . . . . . . |  0x19,0x80,
-	 /*| . . X X . . X X X X . . . . . . |  0x33,0xc0,
-	 /*| . X X . . . X X X X . . . . . . |  0x63,0xc0,
-	 /*| X X . . . . . X X . . . . . . . |  0xc1,0x80,
-	 *
-	 */
-
-	
 	
 };
 

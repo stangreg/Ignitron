@@ -64,9 +64,7 @@ void setup() {
 	spark_bh->setDataControl(spark_dc);
 	// Initializing control classes
 	spark_led = new SparkLEDControl(spark_dc);
-	if (operationMode == SPARK_MODE_AMP) {
-		spark_dc->connectToWifi();
-	}
+
 	Serial.println("Initialization done.");
 
 }

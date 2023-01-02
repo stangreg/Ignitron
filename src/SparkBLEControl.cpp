@@ -383,7 +383,6 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 
 void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 	if (pServer) {
-		Serial.println("I think I have a BLE server!");
 		NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) {
 			NimBLECharacteristic *pChr = pSvc->getCharacteristic(
@@ -399,7 +398,7 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 	}
 
 	if (btSerial && btSerial->hasClient()) {
-		Serial.println("Sending message via BT Serial:");
+		DEBUG_PRINTLN("Sending message via BT Serial:");
 		for (auto chunk : msg) {
 			for (auto by : chunk) {
 				if (by < 16) {
@@ -408,7 +407,7 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 				);
 				btSerial->write(by);
 			}
-			Serial.println();
+			DEBUG_PRINTLN();
 			DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap());
 		}
 	}
@@ -474,6 +473,7 @@ void SparkBLEControl::stopBTSerial() {
 void SparkBLEControl::stopBLEServer() {
 
 	if (pServer) {
+		Serial.println("Switching off BLE server");
 		pServer->stopAdvertising();
 	}
 

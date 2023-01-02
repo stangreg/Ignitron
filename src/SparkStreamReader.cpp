@@ -734,7 +734,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				int pos = -1;
 				for (int i = blk.size() - 2; i >= 0; i--) {
 					if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
-						Serial.println("Found F001");
 						pos = i;
 						break;
 					}
