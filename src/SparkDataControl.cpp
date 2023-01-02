@@ -100,9 +100,12 @@ void SparkDataControl::checkForUpdates() {
 	// is updated in AMP mode sometimes
 
 	if (spark_ssr.isPresetUpdated()) {
-		activePreset_ = spark_ssr.currentSetting();
-		pendingPreset_ = activePreset_;
-		spark_ssr.resetPresetUpdateFlag();
+		if (operationMode_ == SPARK_MODE_APP){
+			Serial.println("DEBUG: MAYBE HERE IS THE ISSUE!");
+			pendingPreset_  = spark_ssr.currentSetting();
+			activePreset_ = pendingPreset_;
+			spark_ssr.resetPresetUpdateFlag();
+		}
 	}
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
@@ -481,7 +484,7 @@ void SparkDataControl::toggleBTMode() {
 	Serial.print("Switching Bluetooth mode to ");
 	if (currentBTMode == BT_MODE_BLE) {
 		Serial.println("SERIAL");
-		bleControl->stopBLEServer();
+		//bleControl->stopBLEServer();
 		Serial.println("Deiniting");
 		NimBLEDevice::deinit(true);
 		if (bleControl != NULL) {

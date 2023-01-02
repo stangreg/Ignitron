@@ -11,14 +11,14 @@
 
 SparkBLEControl::SparkBLEControl() {
 	//advDevCB = new AdvertisedDeviceCallbacks();
-	advDevice = new NimBLEAdvertisedDevice();
+	advDevice = nullptr;
 	spark_dc = nullptr;
 
 }
 
 SparkBLEControl::SparkBLEControl(SparkDataControl *dc) {
 	//advDevCB = new AdvertisedDeviceCallbacks();
-	advDevice = new NimBLEAdvertisedDevice();
+	advDevice = nullptr;
 	spark_dc = dc;
 
 }
@@ -39,6 +39,7 @@ SparkBLEControl::~SparkBLEControl() {
 // Initializing BLE connection with NimBLE
 void SparkBLEControl::initBLE(notify_callback notifyCallback) {
 	//NimBLEDevice::init("");
+	advDevice = new NimBLEAdvertisedDevice();
 	notifyCB = notifyCallback;
 
 	/** Optional: set the transmit power, default is 3db */

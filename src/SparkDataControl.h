@@ -157,6 +157,7 @@ private:
 	static SparkDisplayControl *spark_display;
 
 	SparkBLEKeyboard bleKeyboard;
+	eSPIFFS fileSystem;
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
