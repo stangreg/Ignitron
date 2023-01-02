@@ -108,13 +108,10 @@ void SparkDataControl::checkForUpdates() {
 	// TODO Check if we need to fix here if active preset name
 	// is updated in AMP mode sometimes
 
-	if (spark_ssr.isPresetUpdated()) {
-		if (operationMode_ == SPARK_MODE_APP){
-			Serial.println("DEBUG: MAYBE HERE IS THE ISSUE!");
+	if (spark_ssr.isPresetUpdated() && operationMode_ == SPARK_MODE_APP){
 			pendingPreset_  = spark_ssr.currentSetting();
 			activePreset_ = pendingPreset_;
 			spark_ssr.resetPresetUpdateFlag();
-		}
 	}
 	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
