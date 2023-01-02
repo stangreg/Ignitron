@@ -254,22 +254,25 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 		bleControl->notifyClients(msg);
 	}
-	if (retCode == MSG_PROCESS_RES_COMPLETE && operationMode_ == SPARK_MODE_AMP) {
+	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();
 		if (msgStr.length() > 0) {
 			Serial.println("Message processed:");
 			Serial.println(msgStr.c_str());
 		}
-		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
-			presetEditMode_ = PRESET_EDIT_STORE;
-			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
-			DEBUG_PRINTLN("received from app:");
-			DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
-			spark_ssr.resetPresetUpdateFlag();
-			spark_ssr.resetPresetNumberUpdateFlag();
-			presetNumToEdit_ = 0;
+		if (operationMode_ == SPARK_MODE_AMP) {
+			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+				presetEditMode_ = PRESET_EDIT_STORE;
+				appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
+				DEBUG_PRINTLN("received from app:");
+				DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
+				spark_ssr.resetPresetUpdateFlag();
+				spark_ssr.resetPresetNumberUpdateFlag();
+				presetNumToEdit_ = 0;
+			}
 		}
 	}
+
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
 	// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
