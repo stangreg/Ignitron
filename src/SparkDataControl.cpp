@@ -30,7 +30,7 @@ std::string SparkDataControl::responseMsg_ = "";
 std::vector<ByteVector> SparkDataControl::ack_msg;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
-int SparkDataControl::currentBTMode = BT_MODE_SERIAL;
+int SparkDataControl::currentBTMode = BT_MODE_BLE;
 
 
 SparkDataControl::SparkDataControl() {
@@ -61,6 +61,15 @@ void SparkDataControl::init(int opMode) {
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
+		std::string currentBTModeFile;
+		fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
+
+		std::stringstream stream(currentBTModeFile);
+		std::string line;
+		while (std::getline(stream, line)) {
+			currentBTMode = stoi(line);
+		}
+
 		if (currentBTMode == BT_MODE_BLE) {
 			bleControl->startServer();
 		} else if (currentBTMode == BT_MODE_SERIAL) {
@@ -476,35 +485,17 @@ void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
 }
 
 void SparkDataControl::toggleBTMode() {
-	DEBUG_PRINTF("Free HEAP: %d\n", ESP.getFreeHeap());
-
-	DEBUG_PRINTF("Max HEAP object: %d\n", ESP.getMaxAllocHeap());
-	DEBUG_PRINTF("Min HEAP so far: %d\n", ESP.getMinFreeHeap());
 
 	Serial.print("Switching Bluetooth mode to ");
 	if (currentBTMode == BT_MODE_BLE) {
-		Serial.println("SERIAL");
-		//bleControl->stopBLEServer();
-		Serial.println("Deiniting");
-		NimBLEDevice::deinit(true);
-		if (bleControl != NULL) {
-			delete bleControl;
-			bleControl = nullptr;
-		}
-		bleControl = new SparkBLEControl(this);
-		bleControl->startBTSerial();
+		Serial.println("Serial");
 		currentBTMode = BT_MODE_SERIAL;
 	} else if (currentBTMode == BT_MODE_SERIAL) {
 		Serial.println("BLE");
-		//Serial.println("SERIAL AGAIN");
-		bleControl->stopBTSerial();
-		if (bleControl != NULL) {
-			bleControl = nullptr;
-		}
-		bleControl = new SparkBLEControl(this);
-		bleControl->startServer();
-		//bleControl->startBTSerial();
-
 		currentBTMode = BT_MODE_BLE;
 	}
+	// Save new mode to file
+	fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode);
+	Serial.println("Restarting in new BT mode");
+	ESP.restart();
 }
