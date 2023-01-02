@@ -20,23 +20,19 @@ The following board configuration has been setup for the specific board used:
 When configuring the Serial monitor, please make sure to select a baud rate of 115200, otherwise nothing will be visible.
 
 ### Libraries
-There is a number of custom libraries used on top of the standard ones to use with ESP32. 
+There is a number of custom libraries used on top of the standard ones to use with ESP32.
 
 |Library|Version|Comment| Source
 |---|---:|---|---|
-| Adafruit SSD1306 | 2.5.3 | Display control | Arduino IDE Library |
-| Adafruit_GFX_Library | 1.10.14 | Advanced display control | Arduino IDE Library |
+| Adafruit SSD1306 | 2.5.7 | Display control | Arduino IDE Library |
+| Adafruit_GFX_Library | 1.11.3 | Advanced display control | Arduino IDE Library |
 | ArduinoJson | 6.19.4 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | Effortless-SPIFFS | 2.3.0 | File system to manage the presets | Arduino IDE Library |
 | ESP32-BLE-Keyboard | 0.3.0 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
-| ESPmDNS | 1.0.0| mDNS used for the OTA web server | Arduino IDE Library |
 | FS | 1.0.0 | Basic File system library| Arduino IDE Library |
-| NimBLE-Arduino  | 1.3.1 | BLE library | Arduino IDE Library |
+| NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
 | RegExp  | 1.0.6 | Used for manipulate preset file names | Arduino IDE Library |
-| Update | 1.0.0 | OTA Update | Arduino IDE Library |
-| WebServer | 1.0.0 | Webserver for OTA updates | Arduino IDE Library |
-| WiFi | 1.2.7 | WiFi to enable OTA updates | Arduino IDE Library |
 
 ## Stucture of the code
 A (rudimentary and incomplete) doxygen documentation has been created [here](https://github.com/stangreg/Ignitron/blob/main/doxygen/html/index.html)
@@ -54,7 +50,7 @@ Class structure:
 | SparkLEDControl | Controls the LEDs depending on current status |
 | SparkMessage | Builds command messages to be sent to the Spark Amp via BLE |
 | SparkOTAServer | This is a (rudimentary) server to enable OTA firmware updates |
-| SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. | 
+| SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
 | SparkTypes | Container class to hold Preset and CommandData sructs |
 | Credentials.h.template | This is a template file, see below before building. |
@@ -66,9 +62,8 @@ After setting up the project in the IDE, the code should build with the standard
 To compile, add the switch "-D USE_NIMBLE" to the compile options.
 
 ## Installing Firmware and data files
-After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber. 
+After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.
 
-In case you don't like the default presets, you can delete the presets you don't want, and also need to change the file *PresetList.txt* accordingly. This file just contains the file names of the presets to use. Lines starting with "--" are ignored. 
+In case you don't like the default presets, you can delete the presets you don't want, and also need to change the file *PresetList.txt* accordingly. This file just contains the file names of the presets to use. Lines starting with "--" are ignored.
 
 **Note:** Please be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automaticalle rewritten, so custom commented lines will be removed.
-

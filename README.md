@@ -2,7 +2,7 @@
   <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_logo_large.png">
 </p>
 
-An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE. Also works as a control device for a Looper app on the mobile.
+An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE (iOS) and Bluetooth Serial (Android). Also works as a control device for a Looper app on the mobile.
 
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
@@ -11,7 +11,6 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * **Load new presets** via the Spark App (iOS only)
 * **Delete** stored presets
 * Control **Looper apps** (and other apps which support bluetooth keyboards)
-* Firmware can (rudimentarily) be updated via OTA Web interface.
 
 Adding new presets to **Ignitron** can easily be done as it can also act as a Spark Amp. Simply connect to **Ignitron** with your Spark app and load new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
@@ -24,11 +23,11 @@ In addition, the **built-in display** provides information on
 * selected preset name
 * operation mode (Preset, Manual/FX, Looper)
 * activated pedal types in the FX chain
-* show Bluetooth connection status to Spark Amp and Spark App and WiFi connection status
+* show Bluetooth connection status to Spark Amp and Spark App
 
 This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal) and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
 
-The following sections explain how to build and operate the pedal. 
+The following sections explain how to build and operate the pedal.
 
 # Building Ignitron
 Software: [click here](https://github.com/stangreg/Ignitron/blob/main/src/)
@@ -66,7 +65,7 @@ To enter **AMP mode**, hold the `Preset 1` button during startup.
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper mode**). You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Bank down` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In **Manual/FX mode**, the user has direct access to all effects of the selected preset.
-When **Looper mode** is activated, you can swtich between presets of the current selected preset bank and use the `Bank down`/`Bank up` buttons to control your Looper app, e.g. to record on two separate loops.
+When **Looper mode** is activated, you can switch between presets of the current selected preset bank and use the `Bank down`/`Bank up` buttons to control your Looper app, e.g. to record on two separate loops.
 
 Each switch controls a different FX pedal type:
 
@@ -117,11 +116,12 @@ Each switch controls a different FX pedal type:
 -----------------------------------------------------------------
 
 ## AMP mode
-In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted. In this mode, Ignitron's firmware can also be updated OTA via a web browser.
-
-**Note: With the current version of Ignitron, it is only possible to connect the iOS version of the Spark app with the pedal. The Android version of the app uses Bluetooth classic to connect to the amp which is currently not supported by Ignitron.**  
+In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted.
 
 ### Connecting the Spark app with **Ignitron**
+
+***Note:*** By default, Ignitron is configured to use BLE which only works with iOS. In order to connect an Android device, you need to switch to Serial Bluetooth. To do so, press and hold the `Bank Up` button when in AMP mode (after step 1. below). This will toggle the Bluetooth mode and restart **Ignitron**. After toggling the Bluetooth mode, start with step 1. below again. Ignitron persists the Bluetooth mode until changed.  
+
 1. Start **Ignitron** in AMP mode (hold `Preset 1` button during startup).
 2. Open the Spark App on the mobile
 3. For the first connection, make sure to have your real Spark Amp powered off to avoid the app connecting to it.
@@ -149,8 +149,9 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 |`Preset 2`  | Short         | Select preset 2                 | *Press twice to store received preset* |
 |`Preset 3`  | Short         | Select preset 3                 | *Press twice to store received preset* |
 |`Preset 4`  | Short         | Select preset 4                 | *Press twice to store received preset* |
-|`Bank down` | Long          | Unload preset                   | *Removes loaded preset*                         |
+|`Bank down` | Long          | Unload preset                   | *Removes loaded preset if present*                         |
 |`Preset 2`  | Long          | Restart **Ignitron**                  |        |
+
 
 ### Deleting a preset (only possible when no preset from the app is loaded)
 1. Start **Ignitron** in AMP mode (hold `Preset 1` button during startup).
@@ -295,7 +296,7 @@ Parameters marked with `Switch` can only have values of 0 or 1, others can have 
 | Reverb     | Plate Long         | bias.reverb       | Level                   | Damping                 | Dwell               | Time           | Low Cut      | High Cut    | Selects Reverb Type | 0.8                           |
 
 ##### Hendrix Tones
-**Note:** You can easily store tones using Hendrix gear on Ignitron. As the effects are licensed and purchased In-App, you need to connect your mobile Spark App to the Spark Amp after switching on the Spark Amp. When you then disconnect the Spark App and connect Ignitron afterwards you should be able to use presets using below gear. 
+**Note:** You can easily store tones using Hendrix gear on Ignitron. As the effects are licensed and purchased In-App, you need to connect your mobile Spark App to the Spark Amp after switching on the Spark Amp. When you then disconnect the Spark App and connect Ignitron afterwards you should be able to use presets using below gear.
 
 | Type       | App&nbsp;Name           | Technical&nbsp;Name    | Parameter&nbsp;0             | Parameter&nbsp;1             | Parameter&nbsp;2         | Parameter&nbsp;3    | Parameter&nbsp;4  | Parameter&nbsp;5 | Parameter&nbsp;6         | Extra&nbsp;Info                    |
 |------------|--------------------|-------------------|-------------------------|-------------------------|---------------------|----------------|--------------|-------------|---------------------|-------------------------------|
@@ -305,7 +306,3 @@ Parameters marked with `Switch` can only have values of 0 or 1, others can have 
 | Drive | J.H. Octave Fuzz           | JH.Octavia        | Level                  | Fuzz             |                     |                |              |             |                     |                               |
 | Drive | J.H. Fuzz Zone          | JH.FuzzTone          | Volume                    | Attack                    |                     |                |              |             |                     |                               |
 | Modulation/EQ | J.H. Legendary Vibe      | JH.VoodooVibeJr    | Speed                  | Sweep                    | Intensity        | Mix (Vibrato/Chorus)               |              |             |                     |                               |
-
-
-## OTA Updates
-When in AMP mode, the firmware can be updated Over-the-air by using a web interface. In order to enable this, you need to rename the file `Credentials.h.template` to `Credentials.h` and enter your WiFi SSID and password before compiling the code. Once installed manually for the first time, subsequent firmware versions  can be uploaded by opening a web browser and connecting to http://Ignitron.local and uploading the compiled *Ignitron.bin* file. The Ignitron should restart automatically after the upgrade finished successfully.
