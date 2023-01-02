@@ -180,6 +180,7 @@ private:
 	NimBLEAdvertisedDevice *advDevice;
 	NimBLEClient *pClient = nullptr;
 
+
 	BluetoothSerial *btSerial = nullptr;
 	std::string bt_name_ble = "Spark 40 BLE"; // Spark 40 BLE
 	std::string bt_name_serial = "Spark 40 Audio"; // Spark 40 Audio
