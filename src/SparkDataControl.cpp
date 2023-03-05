@@ -57,6 +57,7 @@ void SparkDataControl::init(int opMode) {
 		delay(1000);
 		bleKeyboard.end();
 		bleControl->initBLE(&notifyCB);
+		//bleKeyboard.start();
 
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
@@ -108,7 +109,7 @@ void SparkDataControl::checkForUpdates() {
 	// TODO Check if we need to fix here if active preset name
 	// is updated in AMP mode sometimes
 
-	if (spark_ssr.isPresetUpdated() && operationMode_ == SPARK_MODE_APP){
+	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
 			pendingPreset_  = spark_ssr.currentSetting();
 			activePreset_ = pendingPreset_;
 			spark_ssr.resetPresetUpdateFlag();
@@ -209,7 +210,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		}
 
 		DEBUG_PRINTLN("Sending acknowledgement");
-		if (operationMode_ == SPARK_MODE_APP) {
+		if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 			bleControl->writeBLE(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
 			bleControl->notifyClients(ack_msg);

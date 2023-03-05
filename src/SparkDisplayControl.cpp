@@ -246,7 +246,7 @@ void SparkDisplayControl::showConnection() {
 void SparkDisplayControl::update(bool isInitBoot) {
 
 	display.clearDisplay();
-	if ((opMode == SPARK_MODE_APP && isInitBoot)) {
+	if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) && isInitBoot) {
 		showInitialMessage();
 	} else {
 		display.setTextWrap(false);

@@ -45,13 +45,16 @@ void setup() {
 	spark_dc = new SparkDataControl();
 	spark_bh = new SparkButtonHandler(spark_dc);
 	operationMode = spark_bh->init();
-	if (operationMode == SPARK_MODE_APP) {
+	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
 		esp_base_mac_addr_set(&mac_keyboard[0]);
+	}
+
+	if (operationMode == SPARK_MODE_APP) {
 		Serial.println("======= Entering APP mode =======");
+	} else if (operationMode == SPARK_MODE_LOOPER) {
+		Serial.println("======= Entering Looper mode =======");
 	} else if (operationMode == SPARK_MODE_AMP) {
-		//uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x46 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
-		//esp_base_mac_addr_set(&mac_keyboard[0]);
 		Serial.println("======= Entering AMP mode =======");
 	}
 	// Setting operation mode before initializing
@@ -72,7 +75,7 @@ void setup() {
 void loop() {
 
 	// Methods to call only in APP mode
-	if (operationMode == SPARK_MODE_APP) {
+	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		while (!(spark_dc->checkBLEConnection())) {
 			spark_display->update(isInitBoot);
 			spark_bh->readButtons();
