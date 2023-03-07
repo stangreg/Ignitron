@@ -45,8 +45,8 @@ void setup() {
 	spark_bh = new SparkButtonHandler(&spark_dc);
 	operationMode = spark_bh->init();
 	if (operationMode == SPARK_MODE_APP) {
-		//uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
-		//esp_base_mac_addr_set(&mac_keyboard[0]);
+		uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
+		esp_base_mac_addr_set(&mac_keyboard[0]);
 	}
 
 	if (operationMode == SPARK_MODE_APP) {

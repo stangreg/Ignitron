@@ -65,7 +65,7 @@ To enter **AMP mode**, hold the `Preset 1` button during startup.
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper mode**). You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Bank down` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In **Manual/FX mode**, the user has direct access to all effects of the selected preset.
-When **Looper mode** is activated, you can switch between presets of the current selected preset bank and use the `Bank down`/`Bank up` buttons to control your Looper app, e.g. to record on two separate loops.
+When **Looper mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
 
 Each switch controls a different FX pedal type:
 
@@ -81,7 +81,7 @@ Each switch controls a different FX pedal type:
 |`Preset 2`  | Short         | Select preset 2 / Toggle Drive |
 |`Preset 3`  | Short         | Select preset 3 / Toggle Drive |
 |`Preset 4`  | Short         | Select preset 4 / Toggle Drive |
-|`Bank down` | Long          | Switch to Looper mode |
+|`Preset 4` | Long           | Switch to Looper mode |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
@@ -102,16 +102,29 @@ Each switch controls a different FX pedal type:
 #### Looper mode
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
-|`Bank down` | Short         | Toggle recording on Loop 1 (can be freely configured in app) |
-|`Bank up`   | Short         | Toggle recording on Loop 2 (can be freely configured in app) |
-|`Preset 1`  | Short         | Select preset 1    |
-|`Preset 2`  | Short         | Select preset 2    |
-|`Preset 3`  | Short         | Select preset 3    |
-|`Preset 4`  | Short         | Select preset 4    |
-|`Bank down` | Long          | Switch to Preset mode  |
+|`Preset 1`  | Short         | Sends character "A" (can be freely configured in app) |
+|`Preset 2`  | Short         | Sends character "B" (can be freely configured in app) |
+|`Preset 3`  | Short         | Sends character "C" (can be freely configured in app) |
+|`Preset 4`  | Short         | Sends character "D" (can be freely configured in app) |
+|`Bank down` | Short         | Sends character "E" (can be freely configured in app) |
+|`Bank up`   | Short         | Sends character "F" (can be freely configured in app) |
+|`Bank down` | Long          | Switch to previous preset (across banks)  |
+|`Bank up` | Long          | Switch to next preset (across banks)  |
+|`Preset 4` | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**     |
 
-***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the `Bank down`/`Bank up` buttons can be freely configured to any function offered.*
+***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the buttons can be freely configured to any function offered by the respective App.*
+
+Example Button setup:
+|Button      | Function           |
+|----------- | ------------------ |
+|`Preset 1`  | Record/overdub current track |
+|`Preset 2`  | Play/pause session |
+|`Preset 3`  | Delete current track (press twice) |
+|`Preset 4`  | Mute current track |
+|`Bank down` | Switch to previous track |
+|`Bank up`   | Switch to next track |
+
 
 -----------------------------------------------------------------
 
@@ -174,6 +187,7 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 |`Preset 4`  | Short         | Select preset 4          |        |
 |`Bank down` | Long          | Mark preset for deletion | *Pressing any other button in that state will cancel the deletion* |
 |`Bank down` | Long          | Delete marked preset     | *Only if preset was first marked for deletion* |
+|`Bank up` | Long          | Switch between BLE/Serial BT mode | *Ignitron will restart in new BT mode* |
 |`Preset 2`  | Long          | Restart **Ignitron**           |        |
 
 -------------------------------------------------------

@@ -141,6 +141,7 @@ public:
 	void resetPresetEditResponse();
 	void switchOperationMode(int opMode);
 	void toggleBTMode();
+	void restartESP();
 
 	// Functions for Looper mode
 	void sendButtonPressAsKeyboard(String c);
@@ -158,6 +159,7 @@ private:
 	eSPIFFS fileSystem;
 
 	std::string btModeFileName = "/BTMode.config";
+	std::string sparkModeFileName = "/SparkMode.config";
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
@@ -182,6 +184,8 @@ private:
 	static std::string responseMsg_;
 
 	static int currentBTMode;
+	static int sparkModeAmp;
+	static int sparkModeApp;
 	ByteVector currentBTMsg;
 
 	int lastUpdateCheck = 0;

@@ -69,12 +69,14 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 		DEBUG_PRINT("Button pressed: ");
 		DEBUG_PRINTLN(pressed_btn_gpio);
 
-		// Switching between FX in FX mode
-		if (buttonMode == SWITCH_MODE_FX) {
-			std::string fx_name;
-			boolean fx_isOn;
+		std::string fx_name;
+		boolean fx_isOn;
 
-			if (!activePreset->isEmpty) {
+
+		// Switching between FX in FX mode
+		switch (buttonMode) {
+		case SWITCH_MODE_FX:
+						if (!activePreset->isEmpty) {
 
 				switch (pressed_btn_gpio) {
 				case BUTTON_DRIVE_GPIO:
@@ -99,9 +101,10 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 						fx_isOn ? false : true);
 
 			}
-			// Preset mode
-		} else if (buttonMode == SWITCH_MODE_PRESET) {
+			// FX mode end
+			break;
 
+		case SWITCH_MODE_PRESET:
 			switch(pressed_btn_gpio) {
 			case BUTTON_PRESET1_GPIO:
 				selectedPresetNum = 1;
@@ -116,7 +119,17 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 				selectedPresetNum = 4;
 				break;
 			}
+
+			if (operationMode == SPARK_MODE_APP
+					|| operationMode == SPARK_MODE_LOOPER) {
+				spark_dc->switchPreset(selectedPresetNum, false);
+			} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
+				spark_dc->processPresetEdit(selectedPresetNum);
+			}
+			// PRESET mode end
+			break;
 		}
+
 	} else if (pattern == BfButton::LONG_PRESS) {
 		int pressed_btn_gpio = btn->getID();
 		// Debug
@@ -150,13 +163,11 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 			}
 			break;
 		}
-	}
 
-	if (operationMode == SPARK_MODE_APP
-			|| operationMode == SPARK_MODE_LOOPER) {
-		spark_dc->switchPreset(selectedPresetNum, false);
-	} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
-		spark_dc->processPresetEdit(selectedPresetNum);
+		if (operationMode == SPARK_MODE_APP
+				|| operationMode == SPARK_MODE_LOOPER) {
+			spark_dc->switchPreset(selectedPresetNum, false);
+		}
 	}
 
 }
@@ -338,10 +349,8 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 		// Debug
 		DEBUG_PRINT("Button long pressed: ");
 		DEBUG_PRINTLN(pressed_btn_gpio);
-		//RESET Sparky
-		Serial.println("!!! Restarting !!!");
 		if (pressed_btn_gpio == BUTTON_PRESET2_GPIO) {
-			ESP.restart();
+			spark_dc->restartESP();
 		}
 	}
 }
@@ -354,10 +363,10 @@ int SparkButtonHandler::init(bool startup) {
 		if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
 			operationMode = SPARK_MODE_AMP;
 		}
-		// Looper mode when Preset 3 is pressed during startup
-		else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
+		// Looper mode when Preset 3 is pressed during startup, not used
+		/*else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
 			operationMode = SPARK_MODE_LOOPER;
-		}
+		}*/
 		else { // default mode: APP
 			operationMode = SPARK_MODE_APP;
 		}
@@ -479,7 +488,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 					operationMode = SPARK_MODE_APP;
 					break;
 				} // SWITCH
-				  // Initialize button mapping
+				// Initialize button mapping
 				Serial.println("Initializing buttons again");
 				spark_dc->switchOperationMode(operationMode);
 				init(false);

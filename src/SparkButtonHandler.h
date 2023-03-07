@@ -32,7 +32,7 @@
 #define BUTTON_BANK_UP_GPIO 18
 #define BUTTON_COMP_GPIO 18
 
-#define LONG_BUTTON_PRESS_TIME 1500
+#define LONG_BUTTON_PRESS_TIME 1000
 
 class SparkButtonHandler {
 public:

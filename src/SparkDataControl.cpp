@@ -31,7 +31,8 @@ std::vector<ByteVector> SparkDataControl::ack_msg;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
 int SparkDataControl::currentBTMode = BT_MODE_BLE;
-
+int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
+int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -48,8 +49,25 @@ SparkDataControl::~SparkDataControl() {
 
 void SparkDataControl::init(int opMode) {
 	operationMode_ = opMode;
-	// Creating vector of presets
+
+	// TODO Store spark mode to stay in AMP mode when switching BT modes,
+	// but should still be possible to set mode during startup
+	std::string currentSparkModeFile;
+	std::string sparkModeInput;
+		// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
+
+	fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
+
+	std::stringstream stream(currentSparkModeFile);
+	std::string line;
+	while (std::getline(stream, line)) {
+		sparkModeInput = stoi(line);
+	}
+	if (sparkModeInput != "") {
+		operationMode_ = std::stoi(sparkModeInput);
+	}
+
 	if (operationMode_ == SPARK_MODE_APP) {
 		// initialize BLE
 		bleKeyboard.setName("Ignitron BLE");
@@ -258,10 +276,10 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();
-		if (msgStr.length() > 0) {
+		/*if (msgStr.length() > 0) {
 			Serial.println("Message processed:");
 			Serial.println(msgStr.c_str());
-		}
+		}*/
 		if (operationMode_ == SPARK_MODE_AMP) {
 			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 				presetEditMode_ = PRESET_EDIT_STORE;
@@ -498,6 +516,17 @@ void SparkDataControl::toggleBTMode() {
 	}
 	// Save new mode to file
 	fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode);
+	fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
 	Serial.println("Restarting in new BT mode");
+	ESP.restart();
+}
+
+void SparkDataControl::restartESP(){
+	//RESET Ignitron
+	Serial.println("!!! Restarting !!!");
+	bool fileExists = SPIFFS.exists(sparkModeFileName.c_str());
+	if(fileExists){
+		SPIFFS.remove(sparkModeFileName.c_str());
+	}
 	ESP.restart();
 }
