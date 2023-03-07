@@ -57,7 +57,6 @@ void SparkDataControl::init(int opMode) {
 		delay(1000);
 		bleKeyboard.end();
 		bleControl->initBLE(&notifyCB);
-		//bleKeyboard.start();
 
 	} else if (operationMode_ == SPARK_MODE_AMP) {
 		pendingBank_ = 1;
@@ -100,21 +99,22 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 }
 
 void SparkDataControl::checkForUpdates() {
+
+
 	if (spark_ssr.isPresetNumberUpdated()) {
 		spark_ssr.resetPresetNumberUpdateFlag();
 		getCurrentPresetFromSpark();
 	}
+
 	// Check if active preset has been updated
 	// If so, update the preset variables
 	// TODO Check if we need to fix here if active preset name
 	// is updated in AMP mode sometimes
-
 	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
 			pendingPreset_  = spark_ssr.currentSetting();
 			activePreset_ = pendingPreset_;
 			spark_ssr.resetPresetUpdateFlag();
 	}
-	// Checking if OTA server has been requested
 	if (operationMode_ == SPARK_MODE_AMP) {
 
 		while (bleControl && bleControl->byteAvailable()) {
@@ -150,7 +150,8 @@ void SparkDataControl::startBLEServer() {
 bool SparkDataControl::checkBLEConnection() {
 	if (bleControl->isAmpConnected()) {
 		return true;
-	} else if (bleControl->isConnectionFound()) {
+	}
+	if (bleControl->isConnectionFound()) {
 		if (bleControl->connectToServer()) {
 			bleControl->subscribeToNotifications(&notifyCB);
 			Serial.println("BLE connection to Spark established.");
@@ -474,10 +475,10 @@ void SparkDataControl::updateActiveWithPendingPreset() {
 	activePreset_ = pendingPreset_;
 }
 
-void SparkDataControl::sendButtonPressAsKeyboard(uint8_t c) {
+void SparkDataControl::sendButtonPressAsKeyboard(String str) {
 	if (bleKeyboard.isConnected()) {
-		Serial.printf("Sending button: %d\n", c);
-		bleKeyboard.write(c);
+		Serial.printf("Sending button: %s\n", str);
+		bleKeyboard.print(str);
 	}
 	else {
 		Serial.println("Keyboard not connected");

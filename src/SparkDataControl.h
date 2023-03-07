@@ -8,14 +8,12 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
-#define USE_NIMBLE
-
-
 
 #include <vector>
 #include <Arduino.h>
 #include "SparkBLEControl.h"
 #include "SparkBLEKeyboard.h"
+
 #include "SparkDisplayControl.h"
 #include "SparkMessage.h"
 #include "SparkPresetBuilder.h"
@@ -145,7 +143,7 @@ public:
 	void toggleBTMode();
 
 	// Functions for Looper mode
-	void sendButtonPressAsKeyboard(uint8_t c);
+	void sendButtonPressAsKeyboard(String c);
 
 private:
 	static int operationMode_;

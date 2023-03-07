@@ -115,43 +115,52 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 			case BUTTON_PRESET4_GPIO:
 				selectedPresetNum = 4;
 				break;
-			case BUTTON_BANK_DOWN_GPIO:
-				if (currentPresetNum == 1) {
-					selectedPresetNum = 4;
-					if (activeBank == 0) {
-						spark_dc->pendingBank() = spark_dc->numberOfBanks();
-					} else {
-						spark_dc->pendingBank()--;
-					}
-				} else {
-					selectedPresetNum = currentPresetNum - 1;
-				}
+			}
+		}
+	} else if (pattern == BfButton::LONG_PRESS) {
+		int pressed_btn_gpio = btn->getID();
+		// Debug
+		DEBUG_PRINT("Button long pressed: ");
+		DEBUG_PRINTLN(pressed_btn_gpio);
 
-				break;
-			case BUTTON_BANK_UP_GPIO:
-				if (currentPresetNum == 4) {
-					selectedPresetNum = 1;
-					if (activeBank == spark_dc->numberOfBanks()) {
-						spark_dc->pendingBank() = 0;
-					} else {
-						spark_dc->pendingBank()++;
-					}
+		switch (pressed_btn_gpio) {
+		case BUTTON_BANK_DOWN_GPIO:
+			if (currentPresetNum == 1) {
+				selectedPresetNum = 4;
+				if (activeBank == 0) {
+					spark_dc->pendingBank() = spark_dc->numberOfBanks();
 				} else {
-					selectedPresetNum = currentPresetNum + 1;
+					spark_dc->pendingBank()--;
 				}
+			} else {
+				selectedPresetNum = currentPresetNum - 1;
 			}
 
-			if (operationMode == SPARK_MODE_APP
-					|| operationMode == SPARK_MODE_LOOPER) {
-				spark_dc->switchPreset(selectedPresetNum, false);
-			} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
-				spark_dc->processPresetEdit(selectedPresetNum);
+			break;
+		case BUTTON_BANK_UP_GPIO:
+			if (currentPresetNum == 4) {
+				selectedPresetNum = 1;
+				if (activeBank == spark_dc->numberOfBanks()) {
+					spark_dc->pendingBank() = 0;
+				} else {
+					spark_dc->pendingBank()++;
+				}
+			} else {
+				selectedPresetNum = currentPresetNum + 1;
 			}
-
+			break;
 		}
 	}
 
+	if (operationMode == SPARK_MODE_APP
+			|| operationMode == SPARK_MODE_LOOPER) {
+		spark_dc->switchPreset(selectedPresetNum, false);
+	} else if (operationMode == SPARK_MODE_AMP) { // AMP mode
+		spark_dc->processPresetEdit(selectedPresetNum);
+	}
+
 }
+
 
 // Buttons to change the preset banks in preset mode and some other FX in FX mode
 void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
@@ -347,33 +356,32 @@ int SparkButtonHandler::init(bool startup) {
 		}
 		// Looper mode when Preset 3 is pressed during startup
 		else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
-		operationMode = SPARK_MODE_LOOPER;
-	 }
+			operationMode = SPARK_MODE_LOOPER;
+		}
 		else { // default mode: APP
 			operationMode = SPARK_MODE_APP;
 		}
 	}
 	Serial.printf("Operation mode: %d\n", operationMode);
 	// Long press handlers
-	btn_preset2.onPressFor(btnResetHandler, 1500);
+	// Reset Ignitron
+	btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
+	// Switch between APP and Looper mode
+	btn_preset4.onPressFor(btnToggleLoopHandler, LONG_BUTTON_PRESS_TIME);
 
+	// Mode specific button config
 	if (operationMode == SPARK_MODE_LOOPER) {
 		// Short press preset buttons: Looper functionality
 		btn_preset1.onPress(btnKeyboardHandler);
 		btn_preset2.onPress(btnKeyboardHandler);
 		btn_preset3.onPress(btnKeyboardHandler);
 		btn_preset4.onPress(btnKeyboardHandler);
+		btn_bank_down.onPress(btnKeyboardHandler);
+		btn_bank_up.onPress(btnKeyboardHandler);
 
-		// Long press bank buttons: Looper functionality
-		btn_bank_down.onPressFor(btnKeyboardHandler, 1000);
-		btn_bank_up.onPressFor(btnKeyboardHandler, 1000);
-		btn_preset4.onPressFor(btnToggleLoopHandler, 1000);
-
-		// Short press: switch Spark presets (will move across banks)
-		btn_bank_down.onPress(btnPresetHandler);
-		btn_bank_up.onPress(btnPresetHandler);
-
-
+		// Long press: switch Spark presets (will move across banks)
+		btn_bank_down.onPressFor(btnPresetHandler, LONG_BUTTON_PRESS_TIME);
+		btn_bank_up.onPressFor(btnPresetHandler, LONG_BUTTON_PRESS_TIME);
 
 	} else {
 		// Short press handlers
@@ -386,18 +394,18 @@ int SparkButtonHandler::init(bool startup) {
 		btn_bank_down.onPress(btnBankHandler);
 		btn_bank_up.onPress(btnBankHandler);
 
-		// Switch between APP and Looper mode
-		btn_preset4.onPressFor(btnToggleLoopHandler, 1000);
-
 	}
 
 	// Special buttons only available in certain modes
 	if (operationMode == SPARK_MODE_APP) {
-		btn_bank_up.onPressFor(btnSwitchModeHandler, 1500);
+		// Switch between FX / Preset mode
+		btn_bank_up.onPressFor(btnSwitchModeHandler, LONG_BUTTON_PRESS_TIME);
 	}
 	if (operationMode == SPARK_MODE_AMP) {
-		btn_bank_down.onPressFor(btnDeletePresetHandler, 1500);
-		btn_bank_up.onPressFor(btnToggleBTMode, 1500);
+		// Delete stored preset
+		btn_bank_down.onPressFor(btnDeletePresetHandler, LONG_BUTTON_PRESS_TIME);
+		// Switch between BT / BLE mode (only works once, then will cause crash)
+		btn_bank_up.onPressFor(btnToggleBTMode, LONG_BUTTON_PRESS_TIME);
 	}
 
 	return operationMode;
@@ -405,45 +413,36 @@ int SparkButtonHandler::init(bool startup) {
 
 void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		BfButton::press_pattern_t pattern) {
-	Serial.println("Looper handler");
+	String keyToSend;
+
 	if (pattern == BfButton::SINGLE_PRESS) {
 		int pressed_btn_gpio = btn->getID();
 		// Debug
 		DEBUG_PRINT("Button pressed: ");
 		DEBUG_PRINTLN(pressed_btn_gpio);
-
 		switch (pressed_btn_gpio) {
 		case BUTTON_PRESET1_GPIO:
-			spark_dc->sendButtonPressAsKeyboard('A');
+			keyToSend = "A";
 			break;
 		case BUTTON_PRESET2_GPIO:
-			Serial.println("Preset2 pressed");
-			spark_dc->sendButtonPressAsKeyboard('B');
+			keyToSend = "B";
 			break;
 		case BUTTON_PRESET3_GPIO:
-			spark_dc->sendButtonPressAsKeyboard('C');
+			keyToSend = "C";
 			break;
 		case BUTTON_PRESET4_GPIO:
-			spark_dc->sendButtonPressAsKeyboard('D');
+			keyToSend = "D";
+			break;
+		case BUTTON_BANK_DOWN_GPIO:
+			keyToSend = "E";
+			break;
+		case BUTTON_BANK_UP_GPIO:
+			keyToSend = "F";
 			break;
 		}
 
 	}
-	else if (pattern == BfButton::LONG_PRESS) {
-			int pressed_btn_gpio = btn->getID();
-			// Debug
-			DEBUG_PRINT("Button long pressed: ");
-			DEBUG_PRINTLN(pressed_btn_gpio);
-
-			switch (pressed_btn_gpio) {
-			case BUTTON_BANK_DOWN_GPIO:
-				spark_dc->sendButtonPressAsKeyboard('E');
-				break;
-			case BUTTON_BANK_UP_GPIO:
-				spark_dc->sendButtonPressAsKeyboard('F');
-				break;
-			}
-		}
+	spark_dc->sendButtonPressAsKeyboard(keyToSend);
 
 }
 
