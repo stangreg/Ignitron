@@ -19,7 +19,6 @@ SparkLEDControl::SparkLEDControl(SparkDataControl* dc) {
 }
 
 SparkLEDControl::~SparkLEDControl() {
-	// TODO Auto-generated destructor stub
 }
 
 void SparkLEDControl::init(){

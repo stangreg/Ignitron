@@ -27,7 +27,6 @@ SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
 	presetEditMode = PRESET_EDIT_NONE;
 }
 SparkDisplayControl::~SparkDisplayControl() {
-	// TODO Auto-generated destructor stub
 }
 
 void SparkDisplayControl::init(int mode) {

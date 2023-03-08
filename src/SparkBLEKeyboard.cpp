@@ -8,12 +8,9 @@
 #include "SparkBLEKeyboard.h"
 
 SparkBLEKeyboard::SparkBLEKeyboard() {
-	// TODO Auto-generated constructor stub
-
 }
 
 SparkBLEKeyboard::~SparkBLEKeyboard() {
-	// TODO Auto-generated destructor stub
 }
 
 void SparkBLEKeyboard::end() {

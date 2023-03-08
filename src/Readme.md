@@ -12,7 +12,7 @@ The following board configuration has been setup for the specific board used:
 - Board: ESP 32 (Node32s)
 - Upload protocol : Default
 - Port: *select a serial port from the dropdown*
-- Partition scheme: Minimal SPIFFS (Large APPS with OTA)
+- Partition scheme: No OTA (Large Apps) (or similar)
 - Flash frequency: 80 Mhz
 - Core Debug Level: None
 - Upload Speed: 921600
@@ -60,6 +60,12 @@ Class structure:
 After setting up the project in the IDE, the code should build with the standard tool chain.
 
 To compile, add the switch "-D USE_NIMBLE" to the compile options.
+
+**Note:** Ignitron will work as a bluetooth keyboard in Looper mode. This could lead to your mobile OS keyboard to disappear, which can ben annoying. In order to prevent this, in the file "BleKeyboard.cpp" (part of ESP-BLE-Keyboard library) change line
+`  USAGE(1),           0x06,` to
+`  USAGE(1),           0x07,` in "_hidReportDescriptor" array.
+
+THis will cause Ignitron to be treated like a keypad instead of a keyboard, which keeps your phone's keyboard active.
 
 ## Installing Firmware and data files
 After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.

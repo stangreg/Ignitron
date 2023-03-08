@@ -356,16 +356,10 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 }
 
 int SparkButtonHandler::checkBootOperationMode(){
-	//TODO when switching mode, button setup does not yet know which mode to use, therefore it assumes APP mode and does not config the buttons correctly
-	Serial.println("Initial button setup");
 	// AMP mode when Preset 1 is pressed during startup
 	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
 		operationMode = SPARK_MODE_AMP;
 	}
-	// Looper mode when Preset 3 is pressed during startup, not used
-	/*else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
-				operationMode = SPARK_MODE_LOOPER;
-			}*/
 	else { // default mode: APP
 		operationMode = SPARK_MODE_APP;
 	}
@@ -379,6 +373,7 @@ void SparkButtonHandler::configureButtons() {
 	operationMode = spark_dc->operationMode();
 	// Mode independent button config
 	// Long press handlers
+
 	// Reset Ignitron
 	btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
 	// Switch between APP and Looper mode

@@ -38,7 +38,6 @@ SparkBLEControl::~SparkBLEControl() {
 
 // Initializing BLE connection with NimBLE
 void SparkBLEControl::initBLE(notify_callback notifyCallback) {
-	// TODO Init only wiht true/false (AMP/APP mode)s
 	//NimBLEDevice::init("");
 	advDevice = new NimBLEAdvertisedDevice();
 	notifyCB = notifyCallback;

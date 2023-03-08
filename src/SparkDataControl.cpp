@@ -40,7 +40,6 @@ SparkDataControl::SparkDataControl() {
 }
 
 SparkDataControl::~SparkDataControl() {
-	// TODO Auto-generated destructor stub
 	if (bleControl)
 		delete bleControl;
 	if (spark_display)
@@ -50,8 +49,6 @@ SparkDataControl::~SparkDataControl() {
 int SparkDataControl::init(int opModeInput) {
 	operationMode_ = opModeInput;
 
-	// TODO Store spark mode to stay in AMP mode when switching BT modes,
-	// but should still be possible to set mode during startup
 	std::string currentSparkModeFile;
 	int sparkModeInput = 0;
 		// Creating vector of presets
@@ -134,8 +131,6 @@ void SparkDataControl::checkForUpdates() {
 
 	// Check if active preset has been updated
 	// If so, update the preset variables
-	// TODO Check if we need to fix here if active preset name
-	// is updated in AMP mode sometimes
 	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
 			pendingPreset_  = spark_ssr.currentSetting();
 			activePreset_ = pendingPreset_;
