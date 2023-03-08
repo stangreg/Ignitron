@@ -48,7 +48,7 @@ public:
 	SparkDataControl();
 	virtual ~SparkDataControl();
 
-	void init(int op_mode);
+	int init(int op_mode);
 	void setDisplayControl(SparkDisplayControl *display);
 	bool checkBLEConnection();
 	bool isAmpConnected();

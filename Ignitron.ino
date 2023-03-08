@@ -43,11 +43,12 @@ void setup() {
 	Serial.println("Initializing");
 	//spark_dc = new SparkDataControl();
 	spark_bh = new SparkButtonHandler(&spark_dc);
-	operationMode = spark_bh->init();
-	if (operationMode == SPARK_MODE_APP) {
-		uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
-		esp_base_mac_addr_set(&mac_keyboard[0]);
-	}
+	operationMode = spark_bh->checkBootOperationMode();
+
+	// Setting operation mode before initializing
+	operationMode = spark_dc.init(operationMode);
+	spark_bh->configureButtons();
+	Serial.printf("Operation mode: %d", operationMode);
 
 	if (operationMode == SPARK_MODE_APP) {
 		Serial.println("======= Entering APP mode =======");
@@ -57,8 +58,6 @@ void setup() {
 		Serial.println("======= Entering AMP mode =======");
 	}
 
-	// Setting operation mode before initializing
-	spark_dc.init(operationMode);
 
 	spark_display = new SparkDisplayControl(&spark_dc);
 	spark_dc.setDisplayControl(spark_display);

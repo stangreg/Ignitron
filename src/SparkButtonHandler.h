@@ -41,7 +41,8 @@ public:
 	virtual ~SparkButtonHandler();
 
 	void readButtons();
-	static int init(bool startup = true);
+	int checkBootOperationMode();
+	static void configureButtons();
 	void setDataControl(SparkDataControl *dc) {
 		spark_dc = dc;
 	}

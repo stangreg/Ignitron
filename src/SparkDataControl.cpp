@@ -47,13 +47,13 @@ SparkDataControl::~SparkDataControl() {
 		delete spark_display;
 }
 
-void SparkDataControl::init(int opMode) {
-	operationMode_ = opMode;
+int SparkDataControl::init(int opModeInput) {
+	operationMode_ = opModeInput;
 
 	// TODO Store spark mode to stay in AMP mode when switching BT modes,
 	// but should still be possible to set mode during startup
 	std::string currentSparkModeFile;
-	std::string sparkModeInput;
+	int sparkModeInput = 0;
 		// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
 
@@ -64,9 +64,14 @@ void SparkDataControl::init(int opMode) {
 	while (std::getline(stream, line)) {
 		sparkModeInput = stoi(line);
 	}
-	if (sparkModeInput != "") {
-		operationMode_ = std::stoi(sparkModeInput);
+	if (sparkModeInput != 0) {
+		operationMode_ = sparkModeInput;
+		//Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
 	}
+
+	uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
+	esp_base_mac_addr_set(&mac_keyboard[0]);
+
 
 	if (operationMode_ == SPARK_MODE_APP) {
 		// initialize BLE
@@ -97,6 +102,8 @@ void SparkDataControl::init(int opMode) {
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
 	}
+
+	return operationMode_;
 
 }
 

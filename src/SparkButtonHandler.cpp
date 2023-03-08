@@ -355,23 +355,28 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 	}
 }
 
-int SparkButtonHandler::init(bool startup) {
-
-	if (startup) {
-		Serial.println("Initial button setup");
-		// AMP mode when Preset 1 is pressed during startup
-		if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
-			operationMode = SPARK_MODE_AMP;
-		}
-		// Looper mode when Preset 3 is pressed during startup, not used
-		/*else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
-			operationMode = SPARK_MODE_LOOPER;
-		}*/
-		else { // default mode: APP
-			operationMode = SPARK_MODE_APP;
-		}
+int SparkButtonHandler::checkBootOperationMode(){
+	//TODO when switching mode, button setup does not yet know which mode to use, therefore it assumes APP mode and does not config the buttons correctly
+	Serial.println("Initial button setup");
+	// AMP mode when Preset 1 is pressed during startup
+	if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
+		operationMode = SPARK_MODE_AMP;
 	}
-	Serial.printf("Operation mode: %d\n", operationMode);
+	// Looper mode when Preset 3 is pressed during startup, not used
+	/*else if (digitalRead(BUTTON_PRESET3_GPIO) == HIGH) {
+				operationMode = SPARK_MODE_LOOPER;
+			}*/
+	else { // default mode: APP
+		operationMode = SPARK_MODE_APP;
+	}
+
+	Serial.printf("Operation mode (boot): %d\n", operationMode);
+	return operationMode;
+}
+
+void SparkButtonHandler::configureButtons() {
+
+	// Mode independent button config
 	// Long press handlers
 	// Reset Ignitron
 	btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -417,7 +422,7 @@ int SparkButtonHandler::init(bool startup) {
 		btn_bank_up.onPressFor(btnToggleBTMode, LONG_BUTTON_PRESS_TIME);
 	}
 
-	return operationMode;
+
 }
 
 void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
@@ -491,7 +496,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 				// Initialize button mapping
 				Serial.println("Initializing buttons again");
 				spark_dc->switchOperationMode(operationMode);
-				init(false);
+				configureButtons();
 
 			} // IF PRESET4 BUTTON
 		} // LONG PRESS
