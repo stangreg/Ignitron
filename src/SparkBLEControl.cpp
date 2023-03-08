@@ -39,7 +39,7 @@ SparkBLEControl::~SparkBLEControl() {
 // Initializing BLE connection with NimBLE
 void SparkBLEControl::initBLE(notify_callback notifyCallback) {
 	// TODO Init only wiht true/false (AMP/APP mode)s
-	NimBLEDevice::init("Spark BLE");
+	//NimBLEDevice::init("");
 	advDevice = new NimBLEAdvertisedDevice();
 	notifyCB = notifyCallback;
 
@@ -271,7 +271,7 @@ void SparkBLEControl::startServer() {
 	Serial.println("Starting NimBLE Server");
 
 	/** sets device name */
-	//NimBLEDevice::init(bt_name_ble);
+	NimBLEDevice::init(bt_name_ble);
 
 	/** Optional: set the transmit power, default is 3db */
 	NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
