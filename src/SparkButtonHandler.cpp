@@ -376,6 +376,7 @@ int SparkButtonHandler::checkBootOperationMode(){
 
 void SparkButtonHandler::configureButtons() {
 
+	operationMode = spark_dc->operationMode();
 	// Mode independent button config
 	// Long press handlers
 	// Reset Ignitron

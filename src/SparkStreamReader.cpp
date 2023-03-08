@@ -766,6 +766,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// so notifications will be triggered
 
 	if(cmd == 0x02){
+		Serial.println("Received init request!");
 		retValue = MSG_PROCESS_RES_REQUEST;
 	}
 	return retValue;

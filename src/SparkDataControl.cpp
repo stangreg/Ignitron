@@ -69,11 +69,12 @@ int SparkDataControl::init(int opModeInput) {
 		//Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
 	}
 
-	uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
-	esp_base_mac_addr_set(&mac_keyboard[0]);
-
 
 	if (operationMode_ == SPARK_MODE_APP) {
+		// Set MAC address for BLE keyboard
+		uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
+		esp_base_mac_addr_set(&mac_keyboard[0]);
+
 		// initialize BLE
 		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
