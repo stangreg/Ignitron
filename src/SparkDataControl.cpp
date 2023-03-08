@@ -283,10 +283,10 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();
-		/*if (msgStr.length() > 0) {
+		if (msgStr.length() > 0) {
 			Serial.println("Message processed:");
 			Serial.println(msgStr.c_str());
-		}*/
+		}
 		if (operationMode_ == SPARK_MODE_AMP) {
 			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 				presetEditMode_ = PRESET_EDIT_STORE;
