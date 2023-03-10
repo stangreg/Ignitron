@@ -70,6 +70,12 @@ private:
 			BfButton::press_pattern_t pattern);
 	static void btnToggleBTMode(BfButton *btn,
 			BfButton::press_pattern_t pattern);
+
+	static void configureLooperButtons();
+	static void configureAppButtons();
+	static void configureAmpButtons();
+	static void configureKeyboardButtons();
+
 };
 
 #endif /* SPARKBUTTONHANDLER_H_ */

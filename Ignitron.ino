@@ -50,14 +50,20 @@ void setup() {
 	spark_bh->configureButtons();
 	Serial.printf("Operation mode: %d", operationMode);
 
-	if (operationMode == SPARK_MODE_APP) {
+	switch (operationMode) {
+	case SPARK_MODE_APP:
 		Serial.println("======= Entering APP mode =======");
-	} else if (operationMode == SPARK_MODE_LOOPER) {
-		Serial.println("======= Entering Looper mode =======");
-	} else if (operationMode == SPARK_MODE_AMP) {
+		break;
+	case SPARK_MODE_AMP:
 		Serial.println("======= Entering AMP mode =======");
+		break;
+	case SPARK_MODE_LOOPER:
+		Serial.println("======= Entering Looper mode =======");
+		break;
+	case SPARK_MODE_KEYBOARD:
+		Serial.println("======= Entering Keyboard mode =======");
+		break;
 	}
-
 
 	spark_display = new SparkDisplayControl(&spark_dc);
 	spark_dc.setDisplayControl(spark_display);
@@ -95,13 +101,17 @@ void loop() {
 
 	}
 
-	// Check if presets have been updated
-	spark_dc.checkForUpdates();
+
+	// Check if presets have been updated (not needed in Keyboard mode)
+	if (operationMode != SPARK_MODE_KEYBOARD){
+		spark_dc.checkForUpdates();
+	}
 	// Reading button input
 	spark_bh->readButtons();
 	// Update LED status
 	spark_led->updateLEDs();
-	// Update display
-	spark_display->update();
-
+	// Update display (not required in Keyboard mode)
+	if (operationMode != SPARK_MODE_KEYBOARD){
+		spark_display->update();
+	}
 }

@@ -56,9 +56,12 @@ int SparkDataControl::init(int opModeInput) {
 
 	fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
 
-	std::stringstream stream(currentSparkModeFile);
+	std::stringstream sparkModeStream(currentSparkModeFile);
 	std::string line;
-	while (std::getline(stream, line)) {
+	std::string currentBTModeFile;
+	std::stringstream btModeStream(currentBTModeFile);
+
+	while (std::getline(sparkModeStream, line)) {
 		sparkModeInput = stoi(line);
 	}
 	if (sparkModeInput != 0) {
@@ -66,10 +69,13 @@ int SparkDataControl::init(int opModeInput) {
 		//Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
 	}
 
+	// Define MAC address required for keyboard
+	uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
 
-	if (operationMode_ == SPARK_MODE_APP) {
+
+	switch(operationMode_){
+	case SPARK_MODE_APP:
 		// Set MAC address for BLE keyboard
-		uint8_t mac_keyboard[] = { 0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36 }; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
 		esp_base_mac_addr_set(&mac_keyboard[0]);
 
 		// initialize BLE
@@ -78,16 +84,13 @@ int SparkDataControl::init(int opModeInput) {
 		delay(1000);
 		bleKeyboard.end();
 		bleControl->initBLE(&notifyCB);
-
-	} else if (operationMode_ == SPARK_MODE_AMP) {
+		break;
+	case SPARK_MODE_AMP:
 		pendingBank_ = 1;
 		activeBank_ = 1;
-		std::string currentBTModeFile;
 		fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
 
-		std::stringstream stream(currentBTModeFile);
-		std::string line;
-		while (std::getline(stream, line)) {
+		while (std::getline(btModeStream, line)) {
 			currentBTMode = stoi(line);
 		}
 
@@ -99,6 +102,15 @@ int SparkDataControl::init(int opModeInput) {
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
 		pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
 				pendingBank_);
+		break;
+	case SPARK_MODE_KEYBOARD:
+		// Set MAC address for BLE keyboard
+		esp_base_mac_addr_set(&mac_keyboard[0]);
+
+		// initialize BLE
+		bleKeyboard.setName("Ignitron BLE");
+		bleKeyboard.begin();
+		break;
 	}
 
 	return operationMode_;

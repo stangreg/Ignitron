@@ -57,13 +57,21 @@ void SparkDisplayControl::showInitialMessage() {
 	display.setTextSize(2);
 
 	std::string modeText;
-	if (opMode == SPARK_MODE_APP) {
+	switch(opMode){
+	case SPARK_MODE_APP:
 		modeText = "APP mode";
-	} else if (opMode == SPARK_MODE_AMP) {
+		break;
+	case SPARK_MODE_AMP:
 		modeText = "AMP mode";
-	} else if (opMode == SPARK_MODE_LOOPER) {
+		break;
+	case SPARK_MODE_LOOPER:
 		modeText = "LOOPER";
+		break;
+	case SPARK_MODE_KEYBOARD:
+		modeText = "KEYBOARD";
+		break;
 	}
+
 	drawCentreString(modeText.c_str(), display.width() / 2, 49);
 }
 

@@ -25,7 +25,7 @@ In addition, the **built-in display** provides information on
 * activated pedal types in the FX chain
 * show Bluetooth connection status to Spark Amp and Spark App
 
-This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal) and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
+This work was inspired by the [Sparkpal project](https://github.com/jamesguitar3/sparkpal), and the [Python Spark Parser project](https://github.com/paulhamsh/Spark-Parser) helped me to understand the messages being sent to and from the Spark Amp.
 
 The following sections explain how to build and operate the pedal.
 
@@ -46,6 +46,7 @@ Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
 ## Table of contents
 * [Operation modes](https://github.com/stangreg/SparkBLE#operation-modes)
 * [APP mode](https://github.com/stangreg/SparkBLE#app-mode)
+* [Keyboard mode](https://github.com/stangreg/SparkBLE#keyboard-mode)
 * [AMP mode](https://github.com/stangreg/SparkBLE#amp-mode)
   * [Storing a new preset](https://github.com/stangreg/SparkBLE#storing-a-new-preset-a-preset-from-the-app-needs-to-be-loaded)
   * [Deleting an existing preset](https://github.com/stangreg/SparkBLE#deleting-a-preset-only-possible-with-no-preset-from-the-app-loaded)
@@ -57,17 +58,19 @@ Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
 
 ## Operation modes
 **Ignitron** has two operation modes, **APP mode** and **AMP mode**.\
-In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets, toggle FX pedals, and even connect it to a Looper app on a mobile.
+In **APP mode** (default mode on startup), **Ignitron** connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets, toggle FX pedals, and even connect it to a Looper app on a mobile (providing 6 buttons to control a (looper) app).
+**Keyboard mode** is useful when Ignitron should act as a bluetooth keyboard control without controlling a Spark Amp. This prevides 2x6=12 buttons to control any supporting app (e.g., a looper app).
 **AMP mode** can be used to manage the presets stored on **Ignitron**, presets can be added from the app or be deleted from **Ignitron**.\
 To enter **AMP mode**, hold the `Preset 1` button during startup.
+To enter **Keyboard mode**, hold the `Preset 3` button during startup.
+
+Amp mode and Keyboard mode can best be started by holding them pressed while pressing and holding `Preset 2` button.
 
 ## APP mode
 In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper mode**). You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Bank down` button.
 When selecting **Preset mode**, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled.
 In **Manual/FX mode**, the user has direct access to all effects of the selected preset.
 When **Looper mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
-
-Each switch controls a different FX pedal type:
 
 
 ### Button commands in APP mode:
@@ -85,8 +88,6 @@ Each switch controls a different FX pedal type:
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
-
-
 #### Manual/FX mode
 |Button      | Press pattern | Function              |
 |----------- | :-----------: | --------------------- |
@@ -99,7 +100,7 @@ Each switch controls a different FX pedal type:
 |`Bank up`   | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
-#### Looper mode
+#### Looper mode (combined with Preset functionality)
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
 |`Preset 1`  | Short         | Sends character "A" (can be freely configured in app) |
@@ -113,7 +114,7 @@ Each switch controls a different FX pedal type:
 |`Preset 4` | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**     |
 
-***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the buttons can be freely configured to any function offered by the respective App.*
+***Note:*** *In Looper mode, Ignitron is connected to your mobile as a bluetooth keyboard. If supported by the respective app on the mobile, the buttons can be freely configured to any function offered by the respective App. You may need to manually connect to the Ignitron BLE keyboard in your Bluetooth settings after switching to Looper mode.*
 
 Example Button setup:
 |Button      | Function           |
@@ -125,8 +126,30 @@ Example Button setup:
 |`Bank down` | Switch to previous track |
 |`Bank up`   | Switch to next track |
 
+-----------------------------------------------
 
------------------------------------------------------------------
+## Keyboard mode
+This mode will turn the Ignitron into a Bluetooth LE keyboard. All buttons will act like keyboard presses, there is no functionality regarding Preset change or other Spark Amp related functions. Use this mode if you want to only use Ignitron as a looper (or other supporting app) control device. If you want to use looper control in combination with Spark Amp control, use the APP mode and use the Looper mode there (see above).
+
+In keyboard mode, the following keys will be sent to the connected device:
+
+|Button      | Press pattern | Function           |
+|----------- | :-----------: | ------------------ |
+|`Preset 1`  | Short         | Sends character "A" (can be freely configured in app) |
+|`Preset 2`  | Short         | Sends character "B" (can be freely configured in app) |
+|`Preset 3`  | Short         | Sends character "C" (can be freely configured in app) |
+|`Preset 4`  | Short         | Sends character "D" (can be freely configured in app) |
+|`Bank down` | Short         | Sends character "E" (can be freely configured in app) |
+|`Bank up`   | Short         | Sends character "F" (can be freely configured in app) |
+|`Preset 1`  | Long          | Sends character "1" (can be freely configured in app) |
+|`Preset 2`  | Long          | Sends character "2" (can be freely configured in app) |
+|`Preset 3`  | Long          | Sends character "3" (can be freely configured in app) |
+|`Preset 4`  | Long          | Sends character "4" (can be freely configured in app) |
+|`Bank down` | Long          | Sends character "5" (can be freely configured in app) |
+|`Bank up`   | Long          | Sends character "6" (can be freely configured in app) |
+
+
+-----------------------------------------------
 
 ## AMP mode
 In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on **Ignitron** and existing presets can be deleted.
