@@ -244,12 +244,3 @@ void SparkLEDControl::updateLED_AMP() {
 	}
 }
 
-void SparkLEDControl::updateLED_LOOPER() {
-	digitalWrite(LED_PRESET1_GPIO, HIGH);
-	digitalWrite(LED_PRESET2_GPIO, HIGH);
-	digitalWrite(LED_PRESET3_GPIO, HIGH);
-	digitalWrite(LED_PRESET4_GPIO, HIGH);
-	digitalWrite(LED_BANK_DOWN_GPIO, HIGH);
-	digitalWrite(LED_BANK_UP_GPIO, HIGH);
-
-}

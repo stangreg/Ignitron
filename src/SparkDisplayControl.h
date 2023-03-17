@@ -35,6 +35,9 @@ public:
 	virtual ~SparkDisplayControl();
 	void init(int mode);
 	void update(bool isInitBoot = false);
+	void setDataControl(SparkDataControl *dc) {
+			spark_dc = dc;
+	}
 
 
 private:

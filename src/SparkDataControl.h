@@ -58,7 +58,7 @@ public:
 	//static void onScanEnded(NimBLEScanResults results);
 
 	// Callback function when Spark notifies about a changed characteristic
-	static void notifyCB(NimBLERemoteCharacteristic *pRemoteCharacteristic,
+	static void bleNotificationCallback(NimBLERemoteCharacteristic *pRemoteCharacteristic,
 			uint8_t *pData, size_t length, bool isNotify);
 
 	// Check if a preset has been updated (via ack or from Spark)
@@ -145,7 +145,7 @@ public:
 	void resetPresetEditResponse();
 	void switchOperationMode(int opMode);
 	void toggleBTMode();
-	void restartESP();
+	void restartESP_ResetSparkMode();
 
 	// Functions for Looper mode
 	void sendButtonPressAsKeyboard(String c);

@@ -83,7 +83,7 @@ int SparkDataControl::init(int opModeInput) {
 		bleKeyboard.begin();
 		delay(1000);
 		bleKeyboard.end();
-		bleControl->initBLE(&notifyCB);
+		bleControl->initBLE(&bleNotificationCallback);
 		break;
 	case SPARK_MODE_AMP:
 		pendingBank_ = 1;
@@ -187,7 +187,7 @@ bool SparkDataControl::checkBLEConnection() {
 	}
 	if (bleControl->isConnectionFound()) {
 		if (bleControl->connectToServer()) {
-			bleControl->subscribeToNotifications(&notifyCB);
+			bleControl->subscribeToNotifications(&bleNotificationCallback);
 			Serial.println("BLE connection to Spark established.");
 			return true;
 		} else {
@@ -216,10 +216,10 @@ bool SparkDataControl::isAppConnected() {
 	return bleControl->isAppConnected();
 }
 
-void SparkDataControl::notifyCB(
+void SparkDataControl::bleNotificationCallback(
 		NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
 		size_t length, bool isNotify) {
-
+	//Triggered when data is received from Spark Amp in APP mode
 	// Transform data into ByteVetor and process
 	ByteVector chunk(&pData[0], &pData[length]);
 	processSparkData(chunk);
@@ -354,7 +354,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
 				if (bleControl->writeBLE(current_msg)
-						&& getCurrentPresetFromSpark()) {
+						 && getCurrentPresetFromSpark()) {
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
 					retValue = true;
@@ -537,11 +537,11 @@ void SparkDataControl::toggleBTMode() {
 	ESP.restart();
 }
 
-void SparkDataControl::restartESP(){
+void SparkDataControl::restartESP_ResetSparkMode(){
 	//RESET Ignitron
 	Serial.println("!!! Restarting !!!");
-	bool fileExists = SPIFFS.exists(sparkModeFileName.c_str());
-	if(fileExists){
+	bool sparkModeFileExists = SPIFFS.exists(sparkModeFileName.c_str());
+	if(sparkModeFileExists){
 		SPIFFS.remove(sparkModeFileName.c_str());
 	}
 	ESP.restart();

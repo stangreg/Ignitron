@@ -17,9 +17,9 @@ const std::string VERSION = "1.0";
 
 // Control classes
 SparkDataControl spark_dc;
-SparkButtonHandler *spark_bh;
-SparkLEDControl *spark_led;
-SparkDisplayControl *spark_display;
+SparkButtonHandler spark_bh;
+SparkLEDControl spark_led;
+SparkDisplayControl spark_display;
 
 // Check for initial boot
 bool isInitBoot;
@@ -42,12 +42,12 @@ void setup() {
 
 	Serial.println("Initializing");
 	//spark_dc = new SparkDataControl();
-	spark_bh = new SparkButtonHandler(&spark_dc);
-	operationMode = spark_bh->checkBootOperationMode();
+	spark_bh.setDataControl(&spark_dc);
+	operationMode = spark_bh.checkBootOperationMode();
 
 	// Setting operation mode before initializing
 	operationMode = spark_dc.init(operationMode);
-	spark_bh->configureButtons();
+	spark_bh.configureButtons();
 	Serial.printf("Operation mode: %d\n", operationMode);
 
 	switch (operationMode) {
@@ -65,13 +65,14 @@ void setup() {
 		break;
 	}
 
-	spark_display = new SparkDisplayControl(&spark_dc);
-	spark_dc.setDisplayControl(spark_display);
-	spark_display->init(operationMode);
+	//TODO Check if it is working
+	spark_display.setDataControl(&spark_dc);
+	spark_dc.setDisplayControl(&spark_display);
+	spark_display.init(operationMode);
 	// Assigning data control to buttons;
-	spark_bh->setDataControl(&spark_dc);
+	spark_bh.setDataControl(&spark_dc);
 	// Initializing control classes
-	spark_led = new SparkLEDControl(&spark_dc);
+	spark_led.setDataControl(&spark_dc);
 
 	Serial.println("Initialization done.");
 
@@ -82,8 +83,8 @@ void loop() {
 	// Methods to call only in APP mode
 	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		while (!(spark_dc.checkBLEConnection())) {
-			spark_display->update(isInitBoot);
-			spark_bh->readButtons();
+			spark_display.update(isInitBoot);
+			spark_bh.readButtons();
 		}
 
 		//After connection is established, continue.
@@ -93,12 +94,11 @@ void loop() {
 			spark_dc.switchPreset(1, true);
 			if (!(spark_dc.activePreset()->isEmpty)) {
 				isInitBoot = false;
-			} else {
-				delay(2000);
+			} else
+			{
+				delay(1000);
 			}
-
 		}
-
 	}
 
 
@@ -107,11 +107,11 @@ void loop() {
 		spark_dc.checkForUpdates();
 	}
 	// Reading button input
-	spark_bh->readButtons();
+	spark_bh.readButtons();
 	// Update LED status
-	spark_led->updateLEDs();
+	spark_led.updateLEDs();
 	// Update display (not required in Keyboard mode)
 	if (operationMode != SPARK_MODE_KEYBOARD){
-		spark_display->update();
+		spark_display.update();
 	}
 }

@@ -40,6 +40,9 @@ public:
 
 	void updateLEDs();
 	SparkDataControl* dataControl() {return spark_dc;}
+	void setDataControl(SparkDataControl *dc) {
+			spark_dc = dc;
+	}
 
 private:
 

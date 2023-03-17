@@ -350,7 +350,7 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 		DEBUG_PRINT("Button long pressed: ");
 		DEBUG_PRINTLN(pressed_btn_gpio);
 		if (pressed_btn_gpio == BUTTON_PRESET2_GPIO) {
-			spark_dc->restartESP();
+			spark_dc->restartESP_ResetSparkMode();
 		}
 	}
 }

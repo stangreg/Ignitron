@@ -232,7 +232,6 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 							return false;
 						}
 					} //For each block
-
 				}  // if can write
 			} // if pChr
 			else {
@@ -358,7 +357,6 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 			byteVector.push_back((byte) (rxValue[i]));
 		}
 	}
-
 	spark_dc->processSparkData(byteVector);
 
 }
