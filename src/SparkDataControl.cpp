@@ -30,7 +30,7 @@ std::string SparkDataControl::responseMsg_ = "";
 std::vector<ByteVector> SparkDataControl::ack_msg;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
-int SparkDataControl::currentBTMode = BT_MODE_BLE;
+int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 
@@ -59,7 +59,7 @@ int SparkDataControl::init(int opModeInput) {
 	std::stringstream sparkModeStream(currentSparkModeFile);
 	std::string line;
 	std::string currentBTModeFile;
-	std::stringstream btModeStream(currentBTModeFile);
+	std::stringstream btModeStream;
 
 	while (std::getline(sparkModeStream, line)) {
 		sparkModeInput = stoi(line);
@@ -89,14 +89,15 @@ int SparkDataControl::init(int opModeInput) {
 		pendingBank_ = 1;
 		activeBank_ = 1;
 		fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
+		btModeStream.str(currentBTModeFile);
 
 		while (std::getline(btModeStream, line)) {
-			currentBTMode = stoi(line);
+			currentBTMode_ = stoi(line);
 		}
 
-		if (currentBTMode == BT_MODE_BLE) {
+		if (currentBTMode_ == BT_MODE_BLE) {
 			bleControl->startServer();
-		} else if (currentBTMode == BT_MODE_SERIAL) {
+		} else if (currentBTMode_ == BT_MODE_SERIAL) {
 			bleControl->startBTSerial();
 		}
 		activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
@@ -522,15 +523,15 @@ void SparkDataControl::sendButtonPressAsKeyboard(String str) {
 void SparkDataControl::toggleBTMode() {
 
 	Serial.print("Switching Bluetooth mode to ");
-	if (currentBTMode == BT_MODE_BLE) {
+	if (currentBTMode_ == BT_MODE_BLE) {
 		Serial.println("Serial");
-		currentBTMode = BT_MODE_SERIAL;
-	} else if (currentBTMode == BT_MODE_SERIAL) {
+		currentBTMode_ = BT_MODE_SERIAL;
+	} else if (currentBTMode_ == BT_MODE_SERIAL) {
 		Serial.println("BLE");
-		currentBTMode = BT_MODE_BLE;
+		currentBTMode_ = BT_MODE_BLE;
 	}
 	// Save new mode to file
-	fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode);
+	fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode_);
 	fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
 	Serial.println("Restarting in new BT mode");
 	ESP.restart();

@@ -114,6 +114,9 @@ public:
 	int& operationMode() {
 		return operationMode_;
 	}
+	const int currentBTMode() const {
+		return currentBTMode_;
+	}
 	const int presetNumToEdit() const {
 		return presetNumToEdit_;
 	}
@@ -184,7 +187,7 @@ private:
 
 	static std::string responseMsg_;
 
-	static int currentBTMode;
+	static int currentBTMode_;
 	static int sparkModeAmp;
 	static int sparkModeApp;
 	ByteVector currentBTMsg;

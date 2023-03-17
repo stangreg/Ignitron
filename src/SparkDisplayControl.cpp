@@ -239,13 +239,30 @@ void SparkDisplayControl::showFX_SecondaryName() {
 
 void SparkDisplayControl::showConnection() {
 	// Display the Connection symbols
-	int xPos = (display.width() / 2.0) - 7;
-	int yPos = 1;
-	int radius = 4;
+	int xPosSymbol = (display.width() / 2.0) - 10;
+	int yPosSymbol = 9;
+	int symbolWidth = 15;
+	int symbolHeight = 17;
+
+	int xPosText = xPosSymbol;
+	int yPosText = 0;
+
 	uint16_t color = SSD1306_WHITE;
 	// Bluetooth
+	switch (currentBTMode) {
+	case BT_MODE_BLE:
+		currentBTModeText = "BLE";
+		break;
+	case BT_MODE_SERIAL:
+		currentBTModeText = "SRL";
+		break;
+	}
+	display.setTextSize(1);
+	display.setCursor(xPosText, yPosText);
+	display.print(currentBTModeText.c_str());
+
 	if (isBTConnected) {
-		display.drawBitmap(xPos - 3, yPos, epd_bitmap_bt_logo, 15, 17, color);
+		display.drawBitmap(xPosSymbol, yPosSymbol, epd_bitmap_bt_logo, symbolWidth, symbolHeight, color);
 	}
 
 }
@@ -267,10 +284,12 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		presetEditMode = spark_dc->presetEditMode();
 		isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
 		opMode = spark_dc->operationMode();
+		currentBTMode = spark_dc->currentBTMode();
 
 		showConnection();
 		showBankAndPresetNum();
 		showPresetName();
+		updateTextPositions();
 		showFX_SecondaryName();
 
 		// in FX mode (manual mode) invert display
@@ -279,7 +298,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
 		} else {
 			display.invertDisplay(false);
 		}
-		updateTextPositions();
+
 	}
 	display.display();
 }

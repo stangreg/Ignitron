@@ -48,7 +48,7 @@ void setup() {
 	// Setting operation mode before initializing
 	operationMode = spark_dc.init(operationMode);
 	spark_bh->configureButtons();
-	Serial.printf("Operation mode: %d", operationMode);
+	Serial.printf("Operation mode: %d\n", operationMode);
 
 	switch (operationMode) {
 	case SPARK_MODE_APP:

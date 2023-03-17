@@ -50,12 +50,14 @@ private:
 	int activePresetNum = 1;
 	int selectedPresetNum = 1;
 	int opMode = 1;
+	int currentBTMode = 0;
 	bool isBTConnected = false;
 
 	std::string primaryLineText;
 	const Preset* primaryLinePreset;
 	std::string secondaryLineText;
 	const Preset* secondaryLinePreset;
+	std::string currentBTModeText;
 
 	unsigned long previousMillis = 0;
 	int showMessageInterval = 2000;
