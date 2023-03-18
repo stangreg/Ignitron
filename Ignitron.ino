@@ -65,7 +65,6 @@ void setup() {
 		break;
 	}
 
-	//TODO Check if it is working
 	spark_display.setDataControl(&spark_dc);
 	spark_dc.setDisplayControl(&spark_display);
 	spark_display.init(operationMode);

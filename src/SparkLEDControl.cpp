@@ -10,6 +10,7 @@
 SparkLEDControl::SparkLEDControl() {
 	spark_dc = nullptr;
 	activePreset = nullptr;
+	init();
 }
 
 SparkLEDControl::SparkLEDControl(SparkDataControl* dc) {
@@ -22,6 +23,7 @@ SparkLEDControl::~SparkLEDControl() {
 }
 
 void SparkLEDControl::init(){
+
 	pinMode(LED_PRESET1_GPIO, OUTPUT);
 	pinMode(LED_PRESET2_GPIO, OUTPUT);
 	pinMode(LED_PRESET3_GPIO, OUTPUT);
@@ -35,7 +37,6 @@ void SparkLEDControl::init(){
 	digitalWrite(LED_PRESET4_GPIO, LOW);
 	digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 	digitalWrite(LED_BANK_UP_GPIO, LOW);
-
 
 }
 
