@@ -490,33 +490,6 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		DEBUG_PRINTLN(pressed_btn_gpio);
 		switch (pressed_btn_gpio) {
 		case BUTTON_PRESET1_GPIO:
-			keyToSend = "A";
-			break;
-		case BUTTON_PRESET2_GPIO:
-			keyToSend = "B";
-			break;
-		case BUTTON_PRESET3_GPIO:
-			keyToSend = "C";
-			break;
-		case BUTTON_PRESET4_GPIO:
-			keyToSend = "D";
-			break;
-		case BUTTON_BANK_DOWN_GPIO:
-			keyToSend = "E";
-			break;
-		case BUTTON_BANK_UP_GPIO:
-			keyToSend = "F";
-			break;
-		}
-	}
-
-	if (pattern == BfButton::LONG_PRESS) {
-		int pressed_btn_gpio = btn->getID();
-		// Debug
-		DEBUG_PRINT("Button long pressed: ");
-		DEBUG_PRINTLN(pressed_btn_gpio);
-		switch (pressed_btn_gpio) {
-		case BUTTON_PRESET1_GPIO:
 			keyToSend = "1";
 			break;
 		case BUTTON_PRESET2_GPIO:
@@ -533,6 +506,33 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 			break;
 		case BUTTON_BANK_UP_GPIO:
 			keyToSend = "6";
+			break;
+		}
+	}
+
+	if (pattern == BfButton::LONG_PRESS) {
+		int pressed_btn_gpio = btn->getID();
+		// Debug
+		DEBUG_PRINT("Button long pressed: ");
+		DEBUG_PRINTLN(pressed_btn_gpio);
+		switch (pressed_btn_gpio) {
+		case BUTTON_PRESET1_GPIO:
+			keyToSend = "A";
+			break;
+		case BUTTON_PRESET2_GPIO:
+			keyToSend = "B";
+			break;
+		case BUTTON_PRESET3_GPIO:
+			keyToSend = "C";
+			break;
+		case BUTTON_PRESET4_GPIO:
+			keyToSend = "D";
+			break;
+		case BUTTON_BANK_DOWN_GPIO:
+			keyToSend = "E";
+			break;
+		case BUTTON_BANK_UP_GPIO:
+			keyToSend = "F";
 			break;
 		}
 	}

@@ -135,18 +135,18 @@ In keyboard mode, the following keys will be sent to the connected device:
 
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
-|`Preset 1`  | Short         | Sends character "A" (can be freely configured in app) |
-|`Preset 2`  | Short         | Sends character "B" (can be freely configured in app) |
-|`Preset 3`  | Short         | Sends character "C" (can be freely configured in app) |
-|`Preset 4`  | Short         | Sends character "D" (can be freely configured in app) |
-|`Bank down` | Short         | Sends character "E" (can be freely configured in app) |
-|`Bank up`   | Short         | Sends character "F" (can be freely configured in app) |
-|`Preset 1`  | Long          | Sends character "1" (can be freely configured in app) |
-|`Preset 2`  | Long          | Sends character "2" (can be freely configured in app) |
-|`Preset 3`  | Long          | Sends character "3" (can be freely configured in app) |
-|`Preset 4`  | Long          | Sends character "4" (can be freely configured in app) |
-|`Bank down` | Long          | Sends character "5" (can be freely configured in app) |
-|`Bank up`   | Long          | Sends character "6" (can be freely configured in app) |
+|`Preset 1`  | Short         | Sends character "1" (can be freely configured in app) |
+|`Preset 2`  | Short         | Sends character "2" (can be freely configured in app) |
+|`Preset 3`  | Short         | Sends character "3" (can be freely configured in app) |
+|`Preset 4`  | Short         | Sends character "4" (can be freely configured in app) |
+|`Bank down` | Short         | Sends character "5" (can be freely configured in app) |
+|`Bank up`   | Short         | Sends character "6" (can be freely configured in app) |
+|`Preset 1`  | Long          | Sends character "A" (can be freely configured in app) |
+|`Preset 2`  | Long          | Sends character "B" (can be freely configured in app) |
+|`Preset 3`  | Long          | Sends character "C" (can be freely configured in app) |
+|`Preset 4`  | Long          | Sends character "D" (can be freely configured in app) |
+|`Bank down` | Long          | Sends character "E" (can be freely configured in app) |
+|`Bank up`   | Long          | Sends character "F" (can be freely configured in app) |
 
 
 -----------------------------------------------
