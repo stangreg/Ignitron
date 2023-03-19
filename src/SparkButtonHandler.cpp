@@ -22,6 +22,8 @@ BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BA
 		HIGH);
 int SparkButtonHandler::operationMode = 0;
 
+KeyboardMapping SparkButtonHandler::mapping;
+
 // Initialize SparkDataControl;
 SparkDataControl* SparkButtonHandler::spark_dc = nullptr;
 
@@ -481,7 +483,9 @@ void SparkButtonHandler::configureKeyboardButtons(){
 
 void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		BfButton::press_pattern_t pattern) {
-	String keyToSend;
+	std::string keyToSend;
+
+	// Button configuration is set in the SparkTypes.h file
 
 	if (pattern == BfButton::SINGLE_PRESS) {
 		int pressed_btn_gpio = btn->getID();
@@ -490,22 +494,22 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		DEBUG_PRINTLN(pressed_btn_gpio);
 		switch (pressed_btn_gpio) {
 		case BUTTON_PRESET1_GPIO:
-			keyToSend = "1";
+			keyToSend = mapping.keyboardShortPress[0];
 			break;
 		case BUTTON_PRESET2_GPIO:
-			keyToSend = "2";
+			keyToSend = mapping.keyboardShortPress[1];
 			break;
 		case BUTTON_PRESET3_GPIO:
-			keyToSend = "3";
+			keyToSend = mapping.keyboardShortPress[2];
 			break;
 		case BUTTON_PRESET4_GPIO:
-			keyToSend = "4";
+			keyToSend = mapping.keyboardShortPress[3];
 			break;
 		case BUTTON_BANK_DOWN_GPIO:
-			keyToSend = "5";
+			keyToSend = mapping.keyboardShortPress[4];
 			break;
 		case BUTTON_BANK_UP_GPIO:
-			keyToSend = "6";
+			keyToSend = mapping.keyboardShortPress[5];
 			break;
 		}
 	}
@@ -517,22 +521,22 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		DEBUG_PRINTLN(pressed_btn_gpio);
 		switch (pressed_btn_gpio) {
 		case BUTTON_PRESET1_GPIO:
-			keyToSend = "A";
+			keyToSend = mapping.keyboardLongPress[0];
 			break;
 		case BUTTON_PRESET2_GPIO:
-			keyToSend = "B";
+			keyToSend = mapping.keyboardLongPress[1];
 			break;
 		case BUTTON_PRESET3_GPIO:
-			keyToSend = "C";
+			keyToSend = mapping.keyboardLongPress[2];
 			break;
 		case BUTTON_PRESET4_GPIO:
-			keyToSend = "D";
+			keyToSend = mapping.keyboardLongPress[3];
 			break;
 		case BUTTON_BANK_DOWN_GPIO:
-			keyToSend = "E";
+			keyToSend = mapping.keyboardLongPress[4];
 			break;
 		case BUTTON_BANK_UP_GPIO:
-			keyToSend = "F";
+			keyToSend = mapping.keyboardLongPress[5];
 			break;
 		}
 	}

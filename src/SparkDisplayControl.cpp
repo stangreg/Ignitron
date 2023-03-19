@@ -36,6 +36,7 @@ void SparkDisplayControl::init(int mode) {
 		for (;;)
 			; // Loop forever
 	}
+	initKeyboardLayoutStrings();
 	// Clear the buffer
 	display.clearDisplay(); //No Adafruit splash
 	display.display();
@@ -45,10 +46,10 @@ void SparkDisplayControl::init(int mode) {
 
 	showInitialMessage();
 	display.display();
-	//if (opMode == SPARK_MODE_AMP) {
-		// Allow the initial screen to show for some time
-	//	delay(3000);
-	//}
+	if (opMode == SPARK_MODE_KEYBOARD) {
+		//Allow the initial screen to show for some time
+		delay(3000);
+	}
 }
 
 void SparkDisplayControl::showInitialMessage() {
@@ -72,7 +73,7 @@ void SparkDisplayControl::showInitialMessage() {
 		break;
 	}
 
-	drawCentreString(modeText.c_str(), display.width() / 2, 49);
+	drawCentreString(modeText.c_str(), 50);
 }
 
 void SparkDisplayControl::showBankAndPresetNum() {
@@ -85,7 +86,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
 	std::ostringstream selPresetStr;
 	selPresetStr << activePresetNum;
 
-	display.setCursor(display.width() - 48, 1);
+	display.setCursor(display.width() - 48, 0);
 
 	// Preset display
 	display.setTextSize(4);
@@ -116,7 +117,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
 		bankDisplay = "HW";
 	}
 
-	display.setCursor(1, 1);
+	display.setCursor(0, 0);
 	display.print(bankDisplay.c_str());
 
 }
@@ -182,6 +183,8 @@ void SparkDisplayControl::showPresetName() {
 void SparkDisplayControl::showFX_SecondaryName() {
 	// The last line shows either the FX setup (in APP mode)
 	// or the new received preset from the app (in AMP mode)
+	int secondaryLinePosY = 50;
+
 	secondaryLineText = "";
 	if (opMode == SPARK_MODE_AMP) {
 		//displayPreset = presetFromApp;
@@ -227,10 +230,10 @@ void SparkDisplayControl::showFX_SecondaryName() {
 	display.setTextColor(SSD1306_WHITE);
 	display.setTextSize(2);
 	if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
-		drawCentreString(secondaryLineText.c_str(), display.width() / 2, 49);
-		//display.setCursor(-6, 49);
+		drawCentreString(secondaryLineText.c_str(), secondaryLinePosY);
+
 	} else if (opMode == SPARK_MODE_AMP) {
-		display.setCursor(display_x2, 49);
+		display.setCursor(display_x2, secondaryLinePosY);
 		display.print(secondaryLineText.c_str());
 	}
 	
@@ -267,11 +270,110 @@ void SparkDisplayControl::showConnection() {
 
 }
 
+void SparkDisplayControl::showPressedKey(){
+
+	short int pressedButtonPosX = 20;
+	short int pressedButtonPosY = 0;
+
+	display.setTextColor(SSD1306_WHITE);
+	display.setTextSize(4);
+
+	display.setCursor(pressedButtonPosX, pressedButtonPosY);
+
+	unsigned long currentMillis = millis();
+	if (lastKeyboardButtonPressed != "" && showKeyboardPressedFlag == false) {
+		keyboardPressedTimestamp = millis();
+		showKeyboardPressedFlag = true;
+	}
+	if (showKeyboardPressedFlag) {
+		if (currentMillis - keyboardPressedTimestamp >= showKeyboardPressedInterval) {
+			// reset the show message flag to show preset data again
+			showKeyboardPressedFlag = false;
+			spark_dc->resetLastKeyboardButtonPressed();
+			lastKeyboardButtonPressed = "";
+		}
+	}
+
+	display.print(lastKeyboardButtonPressed.c_str());
+}
+
+void SparkDisplayControl::initKeyboardLayoutStrings(){
+
+	std::string spacerText = "  ";
+
+	lowerButtonsShort = mapping.keyboardShortPress[0]
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[1])
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[2])
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[3]);
+
+		upperButtonsShort = mapping.keyboardShortPress[4]
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[5]);
+
+		lowerButtonsLong = mapping.keyboardLongPress[0]
+										.append(spacerText)
+										.append(mapping.keyboardLongPress[1])
+										.append(spacerText)
+										.append(mapping.keyboardLongPress[2])
+										.append(spacerText)
+										.append(mapping.keyboardLongPress[3]);
+
+		upperButtonsLong = mapping.keyboardLongPress[4]
+										.append(spacerText)
+										.append(mapping.keyboardLongPress[5]);
+
+}
+
+void SparkDisplayControl::showKeyboardLayout(){
+
+	short int upperButtonsLongY = 1;
+	short int upperButtonsShortY = 17;
+
+	short int lowerButtonsLongY = 33;
+	short int lowerButtonsShortY = 50;
+
+	short int upperPositionOffset = -4;
+
+	short int displayMid = display.width()/2;
+
+	display.fillRect(0, 48, 128, 16, SSD1306_BLACK);
+
+	//Rectangle color for preset name
+	int rectColor;
+	int textColor;
+	int textColorInv;
+	// Show preset name inverted if it is not the currently selected one
+	rectColor = SSD1306_WHITE;
+	textColorInv = SSD1306_BLACK;
+	textColor = SSD1306_WHITE;
+
+	display.setTextColor(textColor);
+	display.setTextSize(2);
+
+	drawCentreString(lowerButtonsShort.c_str(), lowerButtonsShortY);
+	drawRightAlignedString(upperButtonsShort.c_str(), upperButtonsShortY, upperPositionOffset);
+
+	display.setTextColor(textColorInv);
+	display.fillRect(0, lowerButtonsLongY-1, 128, 16, rectColor);
+	drawCentreString(lowerButtonsLong.c_str(), lowerButtonsLongY);
+
+	display.fillRect(displayMid-upperPositionOffset, 0, displayMid+upperPositionOffset, 16, rectColor);
+	drawRightAlignedString(upperButtonsLong.c_str(), upperButtonsLongY, upperPositionOffset);
+
+}
+
 void SparkDisplayControl::update(bool isInitBoot) {
 
 	display.clearDisplay();
 	if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) && isInitBoot) {
 		showInitialMessage();
+	} else if (opMode == SPARK_MODE_KEYBOARD) {
+		lastKeyboardButtonPressed = spark_dc->lastKeyboardButtonPressed();
+		showPressedKey();
+		showKeyboardLayout();
 	} else {
 		display.setTextWrap(false);
 		activeBank = spark_dc->activeBank();
@@ -288,8 +390,8 @@ void SparkDisplayControl::update(bool isInitBoot) {
 
 		showConnection();
 		showBankAndPresetNum();
-		showPresetName();
 		updateTextPositions();
+		showPresetName();
 		showFX_SecondaryName();
 
 		// in FX mode (manual mode) invert display
@@ -351,12 +453,26 @@ void SparkDisplayControl::updateTextPositions() {
 	}
 }
 
-void SparkDisplayControl::drawCentreString(const char *buf, int x,
-		int y) {
+void SparkDisplayControl::drawCentreString(const char *buf,
+		int y, int offset) {
 	int16_t x1, y1;
 	uint16_t w, h;
+	int displayMid = display.width()/2;
+
+	display.getTextBounds(buf, displayMid, y, &x1, &y1, &w, &h); //calc width of new string
+	display.setCursor(displayMid - w / 2 + offset, y);
+	display.print(buf);
+}
+
+void SparkDisplayControl::drawRightAlignedString(const char *buf,
+		int y, int offset) {
+	int16_t x1, y1;
+	uint16_t w, h;
+	int x = 0;
+	int displayWidth = display.width();
+
 	display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
-	display.setCursor(x - w / 2, y);
+	display.setCursor(displayWidth - w + offset, y);
 	display.print(buf);
 }
 

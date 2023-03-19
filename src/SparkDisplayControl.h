@@ -55,12 +55,23 @@ private:
 	int opMode = 1;
 	int currentBTMode = 0;
 	bool isBTConnected = false;
+	KeyboardMapping mapping;
 
 	std::string primaryLineText;
 	const Preset* primaryLinePreset;
 	std::string secondaryLineText;
 	const Preset* secondaryLinePreset;
 	std::string currentBTModeText;
+
+	std::string lowerButtonsShort;
+	std::string lowerButtonsLong;
+	std::string upperButtonsShort;
+	std::string upperButtonsLong;
+
+	std::string lastKeyboardButtonPressed;
+	unsigned long keyboardPressedTimestamp = 0;
+	int showKeyboardPressedInterval = 500;
+	bool showKeyboardPressedFlag = false;
 
 	unsigned long previousMillis = 0;
 	int showMessageInterval = 2000;
@@ -83,7 +94,12 @@ private:
 	void showFX_SecondaryName();
 	void updateTextPositions();
 
-	void drawCentreString(const char *buf, int x, int y);
+	void showPressedKey();
+	void initKeyboardLayoutStrings();
+	void showKeyboardLayout();
+
+	void drawCentreString(const char *buf, int y, int offset = 0);
+	void drawRightAlignedString(const char *buf, int y, int offset = 0);
 	void drawInvertBitmapColor(int16_t x, int16_t y, const uint8_t *bitmap,
 			int16_t w, int16_t h, uint16_t color);
 

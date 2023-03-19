@@ -509,15 +509,20 @@ void SparkDataControl::updateActiveWithPendingPreset() {
 	activePreset_ = pendingPreset_;
 }
 
-void SparkDataControl::sendButtonPressAsKeyboard(String str) {
+void SparkDataControl::sendButtonPressAsKeyboard(std::string str) {
 	if (bleKeyboard.isConnected()) {
-		Serial.printf("Sending button: %s\n", str);
-		bleKeyboard.print(str);
+		Serial.printf("Sending button: %s\n", str.c_str());
+		bleKeyboard.print(str.c_str());
+		lastKeyboardButtonPressed_ = str;
 	}
 	else {
 		Serial.println("Keyboard not connected");
 	}
 
+}
+
+void SparkDataControl::resetLastKeyboardButtonPressed() {
+	lastKeyboardButtonPressed_ = "";
 }
 
 void SparkDataControl::toggleBTMode() {

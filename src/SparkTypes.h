@@ -28,6 +28,11 @@ using ByteVector = std::vector<byte>;
 #define DIR_TO_SPARK	0
 #define DIR_FROM_SPARK  1
 
+struct KeyboardMapping {
+	std::string keyboardShortPress[6] = {"1", "2", "3", "4", "5", "6"};
+	std::string keyboardLongPress[6] = {"A", "B", "C", "D", "E", "F"};
+};
+
 struct Parameter {
 
 	int number;

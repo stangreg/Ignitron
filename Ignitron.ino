@@ -110,7 +110,6 @@ void loop() {
 	// Update LED status
 	spark_led.updateLEDs();
 	// Update display (not required in Keyboard mode)
-	if (operationMode != SPARK_MODE_KEYBOARD){
-		spark_display.update();
-	}
+	spark_display.update();
+
 }

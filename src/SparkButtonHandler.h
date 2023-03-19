@@ -11,6 +11,8 @@
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
 #include "SparkDataControl.h"
 #include "Common.h"
+#include "SparkTypes.h"
+
 
 
 // GPIO Buttons/LEDs
@@ -57,6 +59,8 @@ private:
 	static BfButton btn_bank_down;
 	static SparkDataControl* spark_dc;
 	static int operationMode;
+
+	static KeyboardMapping mapping;
 	// BUTTON Handlers
 	static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
