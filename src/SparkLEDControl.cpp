@@ -57,13 +57,16 @@ void SparkLEDControl::updateLEDs() {
 			updateLED_APP_FXMode();
 		}
 	}
-		break;
+	break;
 
 	case SPARK_MODE_AMP:
 		updateLED_AMP();
 		break;
 	case SPARK_MODE_LOOPER:
 		updateLED_APP_PresetMode();
+		break;
+	case SPARK_MODE_KEYBOARD:
+		updateLED_KEYBOARD();
 		break;
 	}
 }
@@ -245,3 +248,47 @@ void SparkLEDControl::updateLED_AMP() {
 	}
 }
 
+void SparkLEDControl::updateLED_KEYBOARD(){
+
+	std::string pressedKey = spark_dc->lastKeyboardButtonPressed();
+	if ( pressedKey == "" ) {
+		allLedOff();
+		return;
+	}
+
+	int index = mapping.indexOfKey(pressedKey);
+
+	switch(index){
+	case 0:
+		digitalWrite(LED_PRESET1_GPIO, HIGH);
+		break;
+	case 1:
+		digitalWrite(LED_PRESET2_GPIO, HIGH);
+		break;
+	case 2:
+		digitalWrite(LED_PRESET3_GPIO, HIGH);
+		break;
+	case 3:
+		digitalWrite(LED_PRESET4_GPIO, HIGH);
+		break;
+	case 4:
+		digitalWrite(LED_BANK_DOWN_GPIO, HIGH);
+		break;
+	case 5:
+		digitalWrite(LED_BANK_UP_GPIO, HIGH);
+		break;
+	default:
+		allLedOff();
+		break;
+	}
+
+}
+
+void SparkLEDControl::allLedOff(){
+	digitalWrite(LED_PRESET1_GPIO, LOW);
+	digitalWrite(LED_PRESET2_GPIO, LOW);
+	digitalWrite(LED_PRESET3_GPIO, LOW);
+	digitalWrite(LED_PRESET4_GPIO, LOW);
+	digitalWrite(LED_BANK_DOWN_GPIO, LOW);
+	digitalWrite(LED_BANK_UP_GPIO, LOW);
+}

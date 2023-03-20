@@ -39,7 +39,7 @@ public:
 	virtual ~SparkLEDControl();
 
 	void updateLEDs();
-	SparkDataControl* dataControl() {return spark_dc;}
+	//SparkDataControl* dataControl() {return spark_dc;}
 	void setDataControl(SparkDataControl *dc) {
 			spark_dc = dc;
 	}
@@ -48,6 +48,7 @@ private:
 
 	void init();
 	SparkDataControl* spark_dc;
+	KeyboardMapping mapping;
 
 	int operationMode = SPARK_MODE_APP;
 	Preset *activePreset;
@@ -65,8 +66,9 @@ private:
 	void updateLED_APP_PresetMode();
 	void updateLED_APP_FXMode();
 	void updateLED_AMP();
-	void updateLED_LOOPER();
+	void updateLED_KEYBOARD();
 
+	void allLedOff();
 
 };
 

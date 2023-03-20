@@ -31,6 +31,37 @@ using ByteVector = std::vector<byte>;
 struct KeyboardMapping {
 	std::string keyboardShortPress[6] = {"1", "2", "3", "4", "5", "6"};
 	std::string keyboardLongPress[6] = {"A", "B", "C", "D", "E", "F"};
+
+
+	int indexOfKey(std::string key){
+
+		int sizeOfArrayShort = sizeof(keyboardShortPress)/sizeof(keyboardShortPress[0]);
+		int sizeOfArrayLong = sizeof(keyboardLongPress)/sizeof(keyboardLongPress[0]);
+
+		int index = indexOfValue(keyboardShortPress, sizeOfArrayShort, key);
+		// only if not found in first array, search second array
+		if (index == -1) {
+			index = indexOfValue(keyboardLongPress, sizeOfArrayLong, key);
+			return index;
+		} else {
+			return index;
+		}
+
+	}
+
+	private:
+	int indexOfValue(std::string* arr, int arrSize, std::string val){
+
+		for (int i = 0; i < arrSize; i++){
+			if (arr[i] == val) {
+				return i;
+			}
+		}
+
+		return -1;
+
+	}
+
 };
 
 struct Parameter {
