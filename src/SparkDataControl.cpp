@@ -81,7 +81,7 @@ int SparkDataControl::init(int opModeInput) {
 		// initialize BLE
 		bleKeyboard.setName("Ignitron BLE");
 		bleKeyboard.begin();
-		delay(1000);
+		//delay(2000);
 		bleKeyboard.end();
 		bleControl->initBLE(&bleNotificationCallback);
 		break;
