@@ -73,14 +73,13 @@ private:
 	Preset *activePreset;
 	int activePresetNum = 1;
 
-	int delayTimeMs = 100;
 	// For blinking mode
 	int ledState = LOW;             // ledState used to set the LED
 	// Generally, you should use "unsigned long" for variables that hold time
 	// The value will quickly become too large for an int to store
 	unsigned long previousMillis = 0;        // will store last time LED was updated
 	// constants won't change:
-	const long interval = 100; // interval at which to blink (milliseconds)
+	const long blinkInterval_ms = 200; // blinkInterval_ms at which to blink (milliseconds)
 
 	void updateLED_APP_PresetMode();
 	void updateLED_APP_FXMode();

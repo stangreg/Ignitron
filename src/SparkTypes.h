@@ -9,6 +9,7 @@
 #define SPARK_TYPES_H
 
 #include <vector>
+#include <array>
 #include <Arduino.h>
 #include "SparkHelper.h"
 #include "Common.h"
@@ -31,19 +32,16 @@ using ByteVector = std::vector<byte>;
 struct KeyboardMapping {
 
 	int mappingSize = 6;
-	std::string keyboardShortPress[6] = {"1", "2", "3", "4", "5", "6"};
-	std::string keyboardLongPress[6] = {"A", "B", "C", "D", "E", "F"};
+	std::vector<std::string> keyboardShortPress = {"1", "2", "3", "4", "5", "6"};
+	std::vector<std::string> keyboardLongPress = {"A", "B", "C", "D", "E", "F"};
 
 
 	int indexOfKey(std::string key){
 
-		int sizeOfArrayShort = sizeOfShortPressMapping();
-		int sizeOfArrayLong = sizeOfLongPressMapping();
-
-		int index = indexOfValue(keyboardShortPress, sizeOfArrayShort, key);
+		int index = indexOfValue(keyboardShortPress, key);
 		// only if not found in first array, search second array
 		if (index == -1) {
-			index = indexOfValue(keyboardLongPress, sizeOfArrayLong, key);
+			index = indexOfValue(keyboardLongPress, key);
 			return index;
 		} else {
 			return index;
@@ -51,14 +49,11 @@ struct KeyboardMapping {
 
 	}
 
-	int sizeOfShortPressMapping() { return sizeof(keyboardShortPress)/sizeof(keyboardShortPress[0]); }
-	int sizeOfLongPressMapping() { return sizeof(keyboardLongPress)/sizeof(keyboardLongPress[0]); }
-
 	private:
-	int indexOfValue(std::string* arr, int arrSize, std::string val){
+	int indexOfValue(std::vector<std::string> vec, std::string val){
 
-		for (int i = 0; i < arrSize; i++){
-			if (arr[i] == val) {
+		for (int i = 0; i < vec.size(); i++){
+			if (vec[i] == val) {
 				return i;
 			}
 		}

@@ -540,17 +540,21 @@ void SparkDataControl::toggleBTMode() {
 		fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode_);
 		fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
 		Serial.println("Restarting in new BT mode");
-		ESP.restart();
+		restartESP(false);
 	}
 }
 
-void SparkDataControl::restartESP_ResetSparkMode(){
+void SparkDataControl::restartESP(bool resetSparkMode){
 	//RESET Ignitron
-	Serial.println("!!! Restarting !!!");
-	bool sparkModeFileExists = SPIFFS.exists(sparkModeFileName.c_str());
-	if(sparkModeFileExists){
-		SPIFFS.remove(sparkModeFileName.c_str());
+	Serial.print("!!! Restarting !!! ");
+	if (resetSparkMode) {
+		Serial.print("Resetting Spark mode");
+		bool sparkModeFileExists = SPIFFS.exists(sparkModeFileName.c_str());
+		if(sparkModeFileExists){
+			SPIFFS.remove(sparkModeFileName.c_str());
+		}
 	}
+	Serial.println();
 	ESP.restart();
 }
 
@@ -629,6 +633,7 @@ bool SparkDataControl::toggleButtonMode(){
 		return false;
 	}
 
+	Serial.print("Switching to ");
 	switch (buttonMode_) {
 	case SWITCH_MODE_FX:
 		Serial.println("PRESET mode");
@@ -669,13 +674,12 @@ bool SparkDataControl::toggleLooperAppMode(){
 		newOperationMode = SPARK_MODE_APP;
 		break;
 	} // SWITCH
-	switchOperationMode(operationMode_);
+	switchOperationMode(newOperationMode);
 	return true;
 }
 
 bool SparkDataControl::handleDeletePreset(){
 
-	bool retCode = true;
 	if (operationMode_ != SPARK_MODE_AMP) {
 		Serial.println("Delete Preset: Not in AMP mode, doing nothing.");
 		return false;
