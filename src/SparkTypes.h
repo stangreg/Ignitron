@@ -29,14 +29,16 @@ using ByteVector = std::vector<byte>;
 #define DIR_FROM_SPARK  1
 
 struct KeyboardMapping {
+
+	int mappingSize = 6;
 	std::string keyboardShortPress[6] = {"1", "2", "3", "4", "5", "6"};
 	std::string keyboardLongPress[6] = {"A", "B", "C", "D", "E", "F"};
 
 
 	int indexOfKey(std::string key){
 
-		int sizeOfArrayShort = sizeof(keyboardShortPress)/sizeof(keyboardShortPress[0]);
-		int sizeOfArrayLong = sizeof(keyboardLongPress)/sizeof(keyboardLongPress[0]);
+		int sizeOfArrayShort = sizeOfShortPressMapping();
+		int sizeOfArrayLong = sizeOfLongPressMapping();
 
 		int index = indexOfValue(keyboardShortPress, sizeOfArrayShort, key);
 		// only if not found in first array, search second array
@@ -48,6 +50,9 @@ struct KeyboardMapping {
 		}
 
 	}
+
+	int sizeOfShortPressMapping() { return sizeof(keyboardShortPress)/sizeof(keyboardShortPress[0]); }
+	int sizeOfLongPressMapping() { return sizeof(keyboardLongPress)/sizeof(keyboardLongPress[0]); }
 
 	private:
 	int indexOfValue(std::string* arr, int arrSize, std::string val){

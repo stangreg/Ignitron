@@ -72,6 +72,11 @@ public:
 	bool switchPreset(int pre, bool isInitial);
 	// Switch effect on/off
 	bool switchEffectOnOff(std::string fx_name, bool enable);
+	bool toggleEffect(int fx_identifier);
+	bool toggleButtonMode();
+	bool toggleLooperAppMode();
+	bool handleDeletePreset();
+	bool processPresetSelect(int presetNum);
 	// get a preset from saved presets
 	Preset getPreset(int bank, int pre);
 	// return the number of banks in the preset list
@@ -151,6 +156,11 @@ public:
 	void toggleBTMode();
 	void restartESP_ResetSparkMode();
 
+	void increaseBank();
+	void decreaseBank();
+	bool increasePresetLooper();
+	bool decreasePresetLooper();
+
 	// Functions for Looper mode
 	void sendButtonPressAsKeyboard(std::string c);
 	void resetLastKeyboardButtonPressed();
@@ -203,6 +213,9 @@ private:
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();
 	void setPresetDeletionFlag();
+	void updatePendingBankStatus();
+
+	bool processAction();
 
 };
 

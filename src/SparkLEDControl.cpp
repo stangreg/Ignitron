@@ -31,12 +31,7 @@ void SparkLEDControl::init(){
 	pinMode(LED_BANK_DOWN_GPIO, OUTPUT);
 	pinMode(LED_BANK_UP_GPIO, OUTPUT);
 
-	digitalWrite(LED_PRESET1_GPIO, LOW);
-	digitalWrite(LED_PRESET2_GPIO, LOW);
-	digitalWrite(LED_PRESET3_GPIO, LOW);
-	digitalWrite(LED_PRESET4_GPIO, LOW);
-	digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-	digitalWrite(LED_BANK_UP_GPIO, LOW);
+	allLedOff();
 
 }
 
@@ -47,6 +42,8 @@ void SparkLEDControl::updateLEDs() {
 	activePresetNum = spark_dc->activePresetNum();
 
 	switch (operationMode) {
+
+	case SPARK_MODE_LOOPER:
 	case SPARK_MODE_APP: {
 		int buttonMode = spark_dc->buttonMode();
 		// Show only active preset LED
@@ -62,9 +59,6 @@ void SparkLEDControl::updateLEDs() {
 	case SPARK_MODE_AMP:
 		updateLED_AMP();
 		break;
-	case SPARK_MODE_LOOPER:
-		updateLED_APP_PresetMode();
-		break;
 	case SPARK_MODE_KEYBOARD:
 		updateLED_KEYBOARD();
 		break;
@@ -72,179 +66,59 @@ void SparkLEDControl::updateLEDs() {
 }
 
 void SparkLEDControl::updateLED_APP_PresetMode() {
-	switch (activePresetNum) {
-	case 1:
-		digitalWrite(LED_PRESET1_GPIO, HIGH);
-		digitalWrite(LED_PRESET2_GPIO, LOW);
-		digitalWrite(LED_PRESET3_GPIO, LOW);
-		digitalWrite(LED_PRESET4_GPIO, LOW);
-		digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-		digitalWrite(LED_BANK_UP_GPIO, LOW);
-		break;
-	case 2:
-		digitalWrite(LED_PRESET1_GPIO, LOW);
-		digitalWrite(LED_PRESET2_GPIO, HIGH);
-		digitalWrite(LED_PRESET3_GPIO, LOW);
-		digitalWrite(LED_PRESET4_GPIO, LOW);
-		digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-		digitalWrite(LED_BANK_UP_GPIO, LOW);
-		break;
-	case 3:
-		digitalWrite(LED_PRESET1_GPIO, LOW);
-		digitalWrite(LED_PRESET2_GPIO, LOW);
-		digitalWrite(LED_PRESET3_GPIO, HIGH);
-		digitalWrite(LED_PRESET4_GPIO, LOW);
-		digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-		digitalWrite(LED_BANK_UP_GPIO, LOW);
-		break;
-	case 4:
-		digitalWrite(LED_PRESET1_GPIO, LOW);
-		digitalWrite(LED_PRESET2_GPIO, LOW);
-		digitalWrite(LED_PRESET3_GPIO, LOW);
-		digitalWrite(LED_PRESET4_GPIO, HIGH);
-		digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-		digitalWrite(LED_BANK_UP_GPIO, LOW);
-		break;
-	}
+	allLedOff();
+	switchLED(activePresetNum, true);
 }
 
 void SparkLEDControl::updateLED_APP_FXMode() {
 	if (!activePreset->isEmpty) {
 
 		Pedal fx_noisegate = activePreset->pedals[FX_NOISEGATE];
-		if (fx_noisegate.isOn) {
-			digitalWrite(LED_NOISEGATE_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_NOISEGATE_GPIO, LOW);
-		}
+		switch(LED_NOISEGATE_NUM, fx_noisegate.isOn);
 
 		Pedal fx_comp = activePreset->pedals[FX_COMP];
-		if (fx_comp.isOn) {
-			digitalWrite(LED_COMP_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_COMP_GPIO, LOW);
-		}
+		switch(LED_COMP_NUM, fx_comp.isOn);
 
-		Pedal fx_dist = activePreset->pedals[FX_DRIVE];
-		if (fx_dist.isOn) {
-			digitalWrite(LED_DRIVE_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_DRIVE_GPIO, LOW);
-		}
+		Pedal fx_drive = activePreset->pedals[FX_DRIVE];
+		switch(LED_DRIVE_NUM, fx_drive.isOn);
 
 		Pedal fx_mod = activePreset->pedals[FX_MOD];
-		if (fx_mod.isOn) {
-			digitalWrite(LED_MOD_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_MOD_GPIO, LOW);
-		}
+		switch(LED_MOD_NUM, fx_mod.isOn);
 
 		Pedal fx_delay = activePreset->pedals[FX_DELAY];
-		if (fx_delay.isOn) {
-			digitalWrite(LED_DELAY_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_DELAY_GPIO, LOW);
-		}
+		switch(LED_DELAY_NUM, fx_delay.isOn);
 
 		Pedal fx_reverb = activePreset->pedals[FX_REVERB];
-		if (fx_reverb.isOn) {
-			digitalWrite(LED_REVERB_GPIO, HIGH);
-		} else {
-			digitalWrite(LED_REVERB_GPIO, LOW);
-		}
+		switch(LED_REVERB_NUM, fx_reverb.isOn);
+
 	}
 }
 
 void SparkLEDControl::updateLED_AMP() {
 	unsigned long currentMillis = millis();
-	int led_gpio = 0;
 
 	int presetNumToEdit = spark_dc->presetNumToEdit();
 	const int presetEditMode = spark_dc->presetEditMode();
 
 	if (presetEditMode != PRESET_EDIT_NONE) {
-		switch (presetNumToEdit) {
-		case 1:
-			led_gpio = LED_PRESET1_GPIO;
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			break;
-		case 2:
-			led_gpio = LED_PRESET2_GPIO;
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			break;
-		case 3:
-			led_gpio = LED_PRESET3_GPIO;
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			break;
-		case 4:
-			led_gpio = LED_PRESET4_GPIO;
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			break;
-		default:
-			digitalWrite(LED_PRESET1_GPIO, HIGH);
-			digitalWrite(LED_PRESET2_GPIO, HIGH);
-			digitalWrite(LED_PRESET3_GPIO, HIGH);
-			digitalWrite(LED_PRESET4_GPIO, HIGH);
-			break;
-		}
+
 		if (currentMillis - previousMillis >= interval) {
 			// save the last time you blinked the LED
 			previousMillis = currentMillis;
 
+			allLedOff();
 			// if the LED is off turn it on and vice-versa:
 			if (ledState == LOW) {
 				ledState = HIGH;
+				switchLED(presetNumToEdit, true);
 			} else {
 				ledState = LOW;
 			}
-			// set the LED with the ledState of the variable:
-			digitalWrite(led_gpio, ledState);
 		}
 
 	} else {
-		switch (activePresetNum) {
-		case 1:
-			digitalWrite(LED_PRESET1_GPIO, HIGH);
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-			digitalWrite(LED_BANK_UP_GPIO, LOW);
-			break;
-		case 2:
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET2_GPIO, HIGH);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-			digitalWrite(LED_BANK_UP_GPIO, LOW);
-			break;
-		case 3:
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, HIGH);
-			digitalWrite(LED_PRESET4_GPIO, LOW);
-			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-			digitalWrite(LED_BANK_UP_GPIO, LOW);
-			break;
-		case 4:
-			digitalWrite(LED_PRESET1_GPIO, LOW);
-			digitalWrite(LED_PRESET2_GPIO, LOW);
-			digitalWrite(LED_PRESET3_GPIO, LOW);
-			digitalWrite(LED_PRESET4_GPIO, HIGH);
-			digitalWrite(LED_BANK_DOWN_GPIO, LOW);
-			digitalWrite(LED_BANK_UP_GPIO, LOW);
-			break;
-
-		}
+		allLedOff();
+		switchLED(activePresetNum, true);
 	}
 }
 
@@ -256,31 +130,9 @@ void SparkLEDControl::updateLED_KEYBOARD(){
 		return;
 	}
 
-	int index = mapping.indexOfKey(pressedKey);
-
-	switch(index){
-	case 0:
-		digitalWrite(LED_PRESET1_GPIO, HIGH);
-		break;
-	case 1:
-		digitalWrite(LED_PRESET2_GPIO, HIGH);
-		break;
-	case 2:
-		digitalWrite(LED_PRESET3_GPIO, HIGH);
-		break;
-	case 3:
-		digitalWrite(LED_PRESET4_GPIO, HIGH);
-		break;
-	case 4:
-		digitalWrite(LED_BANK_DOWN_GPIO, HIGH);
-		break;
-	case 5:
-		digitalWrite(LED_BANK_UP_GPIO, HIGH);
-		break;
-	default:
-		allLedOff();
-		break;
-	}
+	// Map index of pressed key from 1 to 6
+	int index = mapping.indexOfKey(pressedKey)+1;
+	switchLED(index, HIGH);
 
 }
 
@@ -291,4 +143,28 @@ void SparkLEDControl::allLedOff(){
 	digitalWrite(LED_PRESET4_GPIO, LOW);
 	digitalWrite(LED_BANK_DOWN_GPIO, LOW);
 	digitalWrite(LED_BANK_UP_GPIO, LOW);
+}
+
+void SparkLEDControl::switchLED(int num, bool on){
+	int STATE = on ? HIGH : LOW;
+	switch(num){
+	case 1:
+		digitalWrite(LED_PRESET1_GPIO, STATE);
+		break;
+	case 2:
+		digitalWrite(LED_PRESET2_GPIO, STATE);
+		break;
+	case 3:
+		digitalWrite(LED_PRESET3_GPIO, STATE);
+		break;
+	case 4:
+		digitalWrite(LED_PRESET4_GPIO, STATE);
+		break;
+	case 5:
+		digitalWrite(LED_BANK_DOWN_GPIO, STATE);
+		break;
+	case 6:
+		digitalWrite(LED_BANK_UP_GPIO, STATE);
+		break;
+	}
 }

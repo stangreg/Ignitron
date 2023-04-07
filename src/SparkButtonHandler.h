@@ -63,6 +63,7 @@ private:
 	static KeyboardMapping mapping;
 	// BUTTON Handlers
 	static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
+	static void btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
@@ -70,10 +71,14 @@ private:
 			BfButton::press_pattern_t pattern);
 	static void btnKeyboardHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
+
 	static void btnToggleLoopHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
 	static void btnToggleBTMode(BfButton *btn,
 			BfButton::press_pattern_t pattern);
+
+	static int getButtonNumber(int btn_gpio);
+	static int getFXIndex(int btn_gpio);
 
 	static void configureLooperButtons();
 	static void configureAppButtons();

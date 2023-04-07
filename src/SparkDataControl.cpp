@@ -527,19 +527,21 @@ void SparkDataControl::resetLastKeyboardButtonPressed() {
 
 void SparkDataControl::toggleBTMode() {
 
-	Serial.print("Switching Bluetooth mode to ");
-	if (currentBTMode_ == BT_MODE_BLE) {
-		Serial.println("Serial");
-		currentBTMode_ = BT_MODE_SERIAL;
-	} else if (currentBTMode_ == BT_MODE_SERIAL) {
-		Serial.println("BLE");
-		currentBTMode_ = BT_MODE_BLE;
+	if (operationMode_ == SPARK_MODE_AMP){
+		Serial.print("Switching Bluetooth mode to ");
+		if (currentBTMode_ == BT_MODE_BLE) {
+			Serial.println("Serial");
+			currentBTMode_ = BT_MODE_SERIAL;
+		} else if (currentBTMode_ == BT_MODE_SERIAL) {
+			Serial.println("BLE");
+			currentBTMode_ = BT_MODE_BLE;
+		}
+		// Save new mode to file
+		fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode_);
+		fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
+		Serial.println("Restarting in new BT mode");
+		ESP.restart();
 	}
-	// Save new mode to file
-	fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode_);
-	fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
-	Serial.println("Restarting in new BT mode");
-	ESP.restart();
 }
 
 void SparkDataControl::restartESP_ResetSparkMode(){
@@ -550,4 +552,199 @@ void SparkDataControl::restartESP_ResetSparkMode(){
 		SPIFFS.remove(sparkModeFileName.c_str());
 	}
 	ESP.restart();
+}
+
+void SparkDataControl::increaseBank(){
+
+	if (!processAction()) { return; }
+
+	// Cycle around if at the end
+	if (pendingBank_ == numberOfBanks()) {
+		pendingBank_ = 0;
+	} else {
+		pendingBank_++;
+	}
+	if (operationMode_ == SPARK_MODE_AMP && pendingBank_ == 0) {
+		pendingBank_ = std::min(1, numberOfBanks());
+	}
+	updatePendingBankStatus();
+}
+
+void SparkDataControl::decreaseBank(){
+
+	if (!processAction()) { return; }
+
+	// Cycle around if at the start
+	if (pendingBank_ == 0) {
+		pendingBank_ = numberOfBanks();
+	} else {
+		pendingBank_--;
+	} // else
+	// Don't go to bank 0 in AMP mode
+	if (operationMode_ == SPARK_MODE_AMP && pendingBank_ == 0) {
+		pendingBank_ = numberOfBanks();
+	}
+	updatePendingBankStatus();
+
+}
+
+void SparkDataControl::updatePendingBankStatus(){
+	// Mark selected bank as the pending Bank to mark in display.
+	// The device is configured so that it does not immediately
+	// switch presets when a bank is changed, it does so only when
+	// the preset button is pushed afterwards
+	if (pendingBank_ != 0) {
+		updatePendingPreset(pendingBank_);
+	}
+	if (operationMode_ == SPARK_MODE_AMP) {
+		activeBank_ = pendingBank_;
+		updateActiveWithPendingPreset();
+		if (presetEditMode_ == PRESET_EDIT_DELETE) {
+			resetPresetEdit(true, true);
+		} else if (presetEditMode_ == PRESET_EDIT_STORE) {
+			resetPresetEdit(false, false);
+		}
+	}
+
+}
+
+bool SparkDataControl::toggleEffect(int fx_identifier){
+	if (!processAction() || operationMode_ == SPARK_MODE_AMP) {
+		Serial.println("Not connected to Spark Amp or in AMP mode, doing nothing.");
+		return false;
+	}
+	if (!activePreset_.isEmpty) {
+		std::string fx_name = activePreset_.pedals[fx_identifier].name;
+		bool fx_isOn = activePreset_.pedals[fx_identifier].isOn;
+
+		return switchEffectOnOff(fx_name, fx_isOn ? false : true);
+	}
+}
+
+bool SparkDataControl::toggleButtonMode(){
+
+	if (!processAction() || operationMode_ == SPARK_MODE_AMP ) {
+		Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
+		return false;
+	}
+
+	switch (buttonMode_) {
+	case SWITCH_MODE_FX:
+		Serial.println("PRESET mode");
+		buttonMode_ = SWITCH_MODE_PRESET;
+		break;
+	case SWITCH_MODE_PRESET:
+		Serial.println("FX mode");
+		buttonMode_ = SWITCH_MODE_FX;
+		updatePendingWithActive();
+		break;
+	default:
+		Serial.println("Unexpected mode. Defaulting to PRESET mode");
+		buttonMode_ = SWITCH_MODE_PRESET;
+		break;
+	} // SWITCH
+}
+
+bool SparkDataControl::toggleLooperAppMode(){
+
+	if (operationMode_ == SPARK_MODE_AMP || !processAction()) {
+		Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
+		return false;
+	}
+	int newOperationMode;
+	Serial.print("Switching to ");
+	switch (operationMode_) {
+	case SPARK_MODE_APP:
+		Serial.println("LOOPER mode");
+		newOperationMode = SPARK_MODE_LOOPER;
+		break;
+	case SPARK_MODE_LOOPER:
+		Serial.println("APP mode");
+		newOperationMode = SPARK_MODE_APP;
+		break;
+	default:
+		Serial.println("Unexpected mode. Defaulting to APP mode");
+		newOperationMode = SPARK_MODE_APP;
+		break;
+	} // SWITCH
+	switchOperationMode(operationMode_);
+	return true;
+}
+
+bool SparkDataControl::handleDeletePreset(){
+
+	bool retCode = true;
+	if (operationMode_ != SPARK_MODE_AMP) {
+		Serial.println("Delete Preset: Not in AMP mode, doing nothing.");
+		return false;
+	}
+
+	if (presetEditMode() == PRESET_EDIT_STORE) {
+		resetPresetEdit(true, true);
+	}
+	else {
+		processPresetEdit();
+	}
+	return true;
+}
+
+bool SparkDataControl::processAction(){
+
+	if (operationMode_ == SPARK_MODE_AMP) {
+		return true;
+	}
+	return isAmpConnected();
+
+}
+
+bool SparkDataControl::processPresetSelect(int presetNum){
+
+	if (!processAction()) {
+		Serial.println("Action not meeting requirements, ignoring.");
+		return false;
+	}
+
+	if (operationMode_ == SPARK_MODE_APP
+			|| operationMode_ == SPARK_MODE_LOOPER) {
+		switchPreset(presetNum, false);
+	} else if (operationMode_ == SPARK_MODE_AMP) { // AMP mode
+		processPresetEdit(presetNum);
+	}
+	return true;
+}
+
+bool SparkDataControl::increasePresetLooper(){
+
+	if(!processAction()) {
+		Serial.println("Spark Amp not connected, doing nothing.");
+		return false;
+	}
+
+	int selectedPresetNum;
+	if (activePresetNum_ == 4) {
+		selectedPresetNum = 1;
+		if (activeBank_ == numberOfBanks()) {
+			pendingBank_ = 0;
+		} else {
+			pendingBank_++;
+		}
+	} else {
+		selectedPresetNum = activePresetNum_ + 1;
+	}
+	switchPreset(selectedPresetNum, false);
+}
+
+bool SparkDataControl::decreasePresetLooper(){
+	int selectedPresetNum;
+	if (activePresetNum_== 1) {
+		selectedPresetNum = 4;
+		if (activeBank_ == 0) {
+			pendingBank_ = numberOfBanks();
+		} else {
+			pendingBank_--;
+		}
+	} else {
+		selectedPresetNum = activePresetNum_ - 1;
+	}
+	switchPreset(selectedPresetNum, false);
 }
