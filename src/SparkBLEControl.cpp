@@ -7,6 +7,8 @@
 
 #include "SparkBLEControl.h"
 
+bool SparkBLEControl::isAppConnectedSerial_ = false;
+
 //ClientCallbacks SparkBLEControl::clientCB;
 
 SparkBLEControl::SparkBLEControl() {
@@ -448,8 +450,20 @@ void SparkBLEControl::stopScan() {
 
 }
 
+void SparkBLEControl::serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
+  if(event == ESP_SPP_SRV_OPEN_EVT){
+    Serial.println("Client Connected");
+    isAppConnectedSerial_ = true;
+  }
+  if(event == ESP_SPP_CLOSE_EVT ){
+      Serial.println("Client disconnected");
+      isAppConnectedSerial_ = false;
+    }
+}
+
 void SparkBLEControl::startBTSerial() {
 	btSerial = new BluetoothSerial();
+	btSerial->register_callback(serialCallback);
 	//btStart();
 	if (btSerial->begin(bt_name_serial.c_str(), false)) {
 		Serial.printf("Started BT Serial with name %s \n",

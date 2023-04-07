@@ -71,7 +71,7 @@ public:
 	 * @return TRUE if connected
 	 */
 	const bool isAppConnected() const {
-		return isAppConnected_;
+		return isAppConnected_ || isAppConnectedSerial_;
 	}
 	/**
 	 * @brief  Initiates connection to the Spark Amp
@@ -189,6 +189,7 @@ private:
 	bool isConnectionFound_ = false;
 	// isClientConnected will be set when a client is connected to ESP in AMP mode
 	bool isAppConnected_ = false;
+	static bool isAppConnectedSerial_;
 	notify_callback notifyCB;
 
 	uint32_t scanTime = 0; /** 0 = scan forever */
@@ -212,6 +213,8 @@ private:
 			ble_gap_conn_desc *desc, uint16_t subValue);
 	void onConnect(NimBLEServer *pServer_, ble_gap_conn_desc *desc);
 	void onDisconnect(NimBLEServer *pServer_);
+
+	static void serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);
 
 	int notificationCount = 0;
 };
