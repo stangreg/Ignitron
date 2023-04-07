@@ -257,9 +257,9 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 		std::vector<ByteVector> msg;
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
 		byte currentMessageNum = spark_ssr.lastMessageNum();
-		byte sub_cmd = currentMessage.back().subcmd;
+		byte sub_cmd_ = currentMessage.back().subcmd;
 
-		switch (sub_cmd) {
+		switch (sub_cmd_) {
 
 		case 0x23:
 			DEBUG_PRINTLN("Found request for serial number");
@@ -619,6 +619,7 @@ bool SparkDataControl::toggleEffect(int fx_identifier){
 
 		return switchEffectOnOff(fx_name, fx_isOn ? false : true);
 	}
+	return false;
 }
 
 bool SparkDataControl::toggleButtonMode(){
@@ -643,6 +644,7 @@ bool SparkDataControl::toggleButtonMode(){
 		buttonMode_ = SWITCH_MODE_PRESET;
 		break;
 	} // SWITCH
+	return true;
 }
 
 bool SparkDataControl::toggleLooperAppMode(){
@@ -715,8 +717,8 @@ bool SparkDataControl::processPresetSelect(int presetNum){
 
 bool SparkDataControl::increasePresetLooper(){
 
-	if(!processAction()) {
-		Serial.println("Spark Amp not connected, doing nothing.");
+	if (!processAction() || operationMode_ != SPARK_MODE_LOOPER) {
+		Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
 		return false;
 	}
 
@@ -731,10 +733,16 @@ bool SparkDataControl::increasePresetLooper(){
 	} else {
 		selectedPresetNum = activePresetNum_ + 1;
 	}
-	switchPreset(selectedPresetNum, false);
+	return switchPreset(selectedPresetNum, false);
 }
 
 bool SparkDataControl::decreasePresetLooper(){
+
+	if (!processAction() || operationMode_ != SPARK_MODE_LOOPER) {
+		Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
+		return false;
+	}
+
 	int selectedPresetNum;
 	if (activePresetNum_== 1) {
 		selectedPresetNum = 4;
@@ -746,5 +754,5 @@ bool SparkDataControl::decreasePresetLooper(){
 	} else {
 		selectedPresetNum = activePresetNum_ - 1;
 	}
-	switchPreset(selectedPresetNum, false);
+	return switchPreset(selectedPresetNum, false);
 }

@@ -412,7 +412,7 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 	}
 }
 
-void SparkBLEControl::onConnect(NimBLEServer *pServer,
+void SparkBLEControl::onConnect(NimBLEServer *pServer_,
 		ble_gap_conn_desc *desc) {
 	isAppConnected_ = true;
 	Serial.println("Multi-connect support: start advertising");
@@ -420,7 +420,7 @@ void SparkBLEControl::onConnect(NimBLEServer *pServer,
 	NimBLEDevice::startAdvertising();
 }
 
-void SparkBLEControl::onDisconnect(NimBLEServer *pServer) {
+void SparkBLEControl::onDisconnect(NimBLEServer *pServer_) {
 	Serial.println("Client disconnected");
 	isAppConnected_ = false;
 	notificationCount = 0;
@@ -429,13 +429,13 @@ void SparkBLEControl::onDisconnect(NimBLEServer *pServer) {
 }
 ;
 
-void SparkBLEControl::onDisconnect(NimBLEClient *pClient) {
+void SparkBLEControl::onDisconnect(NimBLEClient *pClient_) {
 	isAmpConnected_ = false;
 	isConnectionFound_ = false;
 	if (!(NimBLEDevice::getScan()->isScanning())) {
 		startScan();
 	}
-	NimBLEClientCallbacks::onDisconnect(pClient);
+	NimBLEClientCallbacks::onDisconnect(pClient_);
 }
 
 void SparkBLEControl::stopScan() {

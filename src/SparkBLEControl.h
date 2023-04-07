@@ -197,7 +197,7 @@ private:
 	static void scanEndedCB(NimBLEScanResults results);
 	void onResult(NimBLEAdvertisedDevice *advertisedDevice);
 	void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
-	void onDisconnect(NimBLEClient *pClient);
+	void onDisconnect(NimBLEClient *pClient_);
 
 	// Server mode functions
 	NimBLEServer *pServer = nullptr;
@@ -210,8 +210,8 @@ private:
 	void onWrite(NimBLECharacteristic *pCharacteristic);
 	void onSubscribe(NimBLECharacteristic *pCharacteristic,
 			ble_gap_conn_desc *desc, uint16_t subValue);
-	void onConnect(NimBLEServer *pServer, ble_gap_conn_desc *desc);
-	void onDisconnect(NimBLEServer *pServer);
+	void onConnect(NimBLEServer *pServer_, ble_gap_conn_desc *desc);
+	void onDisconnect(NimBLEServer *pServer_);
 
 	int notificationCount = 0;
 };

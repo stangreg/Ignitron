@@ -118,7 +118,7 @@ public:
 	//Constructors
 	SparkStreamReader();
 	// setting the messag so it can be structured and interpreted
-	void setMessage(std::vector<ByteVector> msg);
+	void setMessage(std::vector<ByteVector> msg_);
 	std::string getJson();
 
 	// Preset related methods to make information public

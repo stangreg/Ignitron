@@ -74,22 +74,22 @@ void SparkLEDControl::updateLED_APP_FXMode() {
 	if (!activePreset->isEmpty) {
 
 		Pedal fx_noisegate = activePreset->pedals[FX_NOISEGATE];
-		switch(LED_NOISEGATE_NUM, fx_noisegate.isOn);
+		switchLED(LED_NOISEGATE_NUM, fx_noisegate.isOn);
 
 		Pedal fx_comp = activePreset->pedals[FX_COMP];
-		switch(LED_COMP_NUM, fx_comp.isOn);
+		switchLED(LED_COMP_NUM, fx_comp.isOn);
 
 		Pedal fx_drive = activePreset->pedals[FX_DRIVE];
-		switch(LED_DRIVE_NUM, fx_drive.isOn);
+		switchLED(LED_DRIVE_NUM, fx_drive.isOn);
 
 		Pedal fx_mod = activePreset->pedals[FX_MOD];
-		switch(LED_MOD_NUM, fx_mod.isOn);
+		switchLED(LED_MOD_NUM, fx_mod.isOn);
 
 		Pedal fx_delay = activePreset->pedals[FX_DELAY];
-		switch(LED_DELAY_NUM, fx_delay.isOn);
+		switchLED(LED_DELAY_NUM, fx_delay.isOn);
 
 		Pedal fx_reverb = activePreset->pedals[FX_REVERB];
-		switch(LED_REVERB_NUM, fx_reverb.isOn);
+		switchLED(LED_REVERB_NUM, fx_reverb.isOn);
 
 	}
 }

@@ -38,7 +38,7 @@ private:
 	const ByteVector msg_to_spark = { '\x53', '\xfe' };
 
 
-	void start_message (byte cmd, byte sub_cmd);
+	void start_message (byte cmd_, byte sub_cmd_);
 	std::vector<ByteVector> end_message(int dir = DIR_TO_SPARK,
 			byte msg_number = 0x00);
 	//ByteVector end_message();
@@ -65,7 +65,7 @@ public:
 	DIR_TO_SPARK, byte msg_num = 0x00);
 	std::vector<ByteVector> get_current_preset_num();
 	std::vector<ByteVector> get_current_preset();
-	std::vector<ByteVector> send_ack(byte seq, byte cmd, int direction =
+	std::vector<ByteVector> send_ack(byte seq, byte cmd_, int direction =
 			DIR_TO_SPARK);
 
 	std::vector<ByteVector> send_serial_number(byte msg_number);

@@ -19,8 +19,8 @@ std::string SparkStreamReader::getJson(){
 	return json;
 }
 
-void SparkStreamReader::setMessage(std::vector<ByteVector> msg){
-	unstructured_data = msg;
+void SparkStreamReader::setMessage(std::vector<ByteVector> msg_){
+	unstructured_data = msg_;
 	message.clear();
 }
 
@@ -514,10 +514,10 @@ boolean SparkStreamReader::structure_data() {
 			message.clear();
 			ByteVector concat_data;
 			concat_data.clear();
-			for (CmdData chunk : chunk_8bit) {
-				this_cmd     = chunk.cmd;
-				this_sub_cmd = chunk.subcmd;
-				ByteVector this_data = chunk.data;
+			for (CmdData chunkData : chunk_8bit) {
+				this_cmd     = chunkData.cmd;
+				this_sub_cmd = chunkData.subcmd;
+				ByteVector this_data = chunkData.data;
 				if ((this_cmd == 1 || this_cmd == 3) && this_sub_cmd == 1) {
 					//DEBUG_PRINTLN("Multi message");
 					//found a multi-message
@@ -539,7 +539,7 @@ boolean SparkStreamReader::structure_data() {
 				}
 				else {
 					// copy old one
-					message.push_back(chunk);
+					message.push_back(chunkData);
 				} // else
 			} // For all in 8-bit vector
 		} // for all chunks
@@ -772,10 +772,10 @@ int SparkStreamReader::processBlock(ByteVector blk){
 }
 
 void SparkStreamReader::interpret_data() {
-	for (auto msg : message) {
-		int this_cmd = msg.cmd;
-		int this_sub_cmd = msg.subcmd;
-		ByteVector this_data = msg.data;
+	for (auto msgData : message) {
+		int this_cmd = msgData.cmd;
+		int this_sub_cmd = msgData.subcmd;
+		ByteVector this_data = msgData.data;
 
 		set_interpreter(this_data);
 		run_interpreter(this_cmd, this_sub_cmd);

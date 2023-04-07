@@ -134,15 +134,15 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	std::vector<ByteVector> all_chunks;
 
 	// build F0 01 chunks:
-	for (auto data : split_data7) {
-		byte checksum = calculate_checksum(data);
+	for (auto data7bit : split_data7) {
+		byte checksum = calculate_checksum(data7bit);
 
 		ByteVector complete_chunk = chunk_header;
 		complete_chunk.push_back(msg_num);
 		complete_chunk.push_back(checksum);
 		complete_chunk.push_back(cmd);
 		complete_chunk.push_back(sub_cmd);
-		complete_chunk.insert(complete_chunk.end(), data.begin(), data.end());
+		complete_chunk.insert(complete_chunk.end(), data7bit.begin(), data7bit.end());
 		complete_chunk.push_back(trailer);
 		
 		all_chunks.push_back(complete_chunk);
@@ -502,13 +502,13 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 
 
 // This prepares a message to send an acknowledgement
-std::vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd,
+std::vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
 		int dir) {
 
-	byte cmd = 0x04;
+	byte cmd_ = 0x04;
 
-	start_message(cmd, sub_cmd);
-	if (sub_cmd == 0x70) {
+	start_message(cmd_, sub_cmd_);
+	if (sub_cmd_ == 0x70) {
 		add_byte(0x00);
 		add_byte(0x00);
 	}

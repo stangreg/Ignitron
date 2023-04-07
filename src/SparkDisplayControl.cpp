@@ -17,7 +17,7 @@ SparkDisplayControl::SparkDisplayControl() :
 }
 
 SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
-	Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+	//Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 	spark_dc = dc;
 	presetFromApp = nullptr;
 	secondaryLinePreset = nullptr;
