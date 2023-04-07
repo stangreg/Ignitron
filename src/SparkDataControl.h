@@ -154,7 +154,6 @@ public:
 	void resetPresetEditResponse();
 	void switchOperationMode(int opMode);
 	void toggleBTMode();
-	void restartESP_ResetSparkMode();
 
 	void increaseBank();
 	void decreaseBank();
@@ -164,6 +163,8 @@ public:
 	// Functions for Looper mode
 	void sendButtonPressAsKeyboard(std::string c);
 	void resetLastKeyboardButtonPressed();
+
+	void restartESP(bool resetSparkMode=false);
 
 private:
 	static int operationMode_;

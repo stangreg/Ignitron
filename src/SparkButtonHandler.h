@@ -58,7 +58,6 @@ private:
 	static BfButton btn_bank_up;
 	static BfButton btn_bank_down;
 	static SparkDataControl* spark_dc;
-	static int operationMode;
 
 	static KeyboardMapping mapping;
 	// BUTTON Handlers
@@ -67,6 +66,7 @@ private:
 	static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
+	static void btnToggleFXHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnResetHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
 	static void btnKeyboardHandler(BfButton *btn,
@@ -81,7 +81,8 @@ private:
 	static int getFXIndex(int btn_gpio);
 
 	static void configureLooperButtons();
-	static void configureAppButtons();
+	static void configureAppButtonsPreset();
+	static void configureAppButtonsFX();
 	static void configureAmpButtons();
 	static void configureKeyboardButtons();
 

@@ -71,7 +71,7 @@ public:
 	 * @return TRUE if connected
 	 */
 	const bool isAppConnected() const {
-		return isAppConnected_ || isAppConnectedSerial_;
+		return isAppConnectedBLE_ || isAppConnectedSerial_;
 	}
 	/**
 	 * @brief  Initiates connection to the Spark Amp
@@ -188,7 +188,7 @@ private:
 	bool isAmpConnected_ = false;
 	bool isConnectionFound_ = false;
 	// isClientConnected will be set when a client is connected to ESP in AMP mode
-	bool isAppConnected_ = false;
+	bool isAppConnectedBLE_ = false;
 	static bool isAppConnectedSerial_;
 	notify_callback notifyCB;
 

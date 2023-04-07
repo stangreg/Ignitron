@@ -102,7 +102,13 @@ void SparkLEDControl::updateLED_AMP() {
 
 	if (presetEditMode != PRESET_EDIT_NONE) {
 
-		if (currentMillis - previousMillis >= interval) {
+		if (presetNumToEdit == 0) {
+			switchLED(1, true);
+			switchLED(2, true);
+			switchLED(3, true);
+			switchLED(4, true);
+		}
+		else if (currentMillis - previousMillis >= blinkInterval_ms) {
 			// save the last time you blinked the LED
 			previousMillis = currentMillis;
 

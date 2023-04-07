@@ -416,7 +416,7 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 
 void SparkBLEControl::onConnect(NimBLEServer *pServer_,
 		ble_gap_conn_desc *desc) {
-	isAppConnected_ = true;
+	isAppConnectedBLE_ = true;
 	Serial.println("Multi-connect support: start advertising");
 	//	pServer->updateConnParams(desc->conn_handle, 40, 80, 5, 51);
 	NimBLEDevice::startAdvertising();
@@ -424,7 +424,7 @@ void SparkBLEControl::onConnect(NimBLEServer *pServer_,
 
 void SparkBLEControl::onDisconnect(NimBLEServer *pServer_) {
 	Serial.println("Client disconnected");
-	isAppConnected_ = false;
+	isAppConnectedBLE_ = false;
 	notificationCount = 0;
 	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
