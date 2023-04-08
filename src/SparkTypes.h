@@ -11,20 +11,12 @@
 #include <vector>
 #include <array>
 #include <Arduino.h>
+#include "Config_Definitions.h"
 #include "SparkHelper.h"
-#include "Common.h"
 
 
 using ByteVector = std::vector<byte>;
 
-// Positions of FX types in Preset struct
-#define FX_NOISEGATE 	0
-#define FX_COMP  	 	1
-#define FX_DRIVE 		2
-#define FX_AMP 			3
-#define FX_MOD 			4
-#define FX_DELAY 		5
-#define FX_REVERB 		6
 
 #define DIR_TO_SPARK	0
 #define DIR_FROM_SPARK  1

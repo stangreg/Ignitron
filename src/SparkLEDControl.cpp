@@ -72,25 +72,11 @@ void SparkLEDControl::updateLED_APP_PresetMode() {
 
 void SparkLEDControl::updateLED_APP_FXMode() {
 	if (!activePreset->isEmpty) {
-
-		Pedal fx_noisegate = activePreset->pedals[FX_NOISEGATE];
-		switchLED(LED_NOISEGATE_NUM, fx_noisegate.isOn);
-
-		Pedal fx_comp = activePreset->pedals[FX_COMP];
-		switchLED(LED_COMP_NUM, fx_comp.isOn);
-
-		Pedal fx_drive = activePreset->pedals[FX_DRIVE];
-		switchLED(LED_DRIVE_NUM, fx_drive.isOn);
-
-		Pedal fx_mod = activePreset->pedals[FX_MOD];
-		switchLED(LED_MOD_NUM, fx_mod.isOn);
-
-		Pedal fx_delay = activePreset->pedals[FX_DELAY];
-		switchLED(LED_DELAY_NUM, fx_delay.isOn);
-
-		Pedal fx_reverb = activePreset->pedals[FX_REVERB];
-		switchLED(LED_REVERB_NUM, fx_reverb.isOn);
-
+		for (int btn_number = 1; btn_number <= 6; btn_number++) {
+			int fxIndex = SparkHelper::getFXIndexFromButtonNumber(btn_number);
+			Pedal current_fx = activePreset->pedals[fxIndex];
+			switchLED(btn_number, current_fx.isOn);
+		}
 	}
 }
 
@@ -103,10 +89,9 @@ void SparkLEDControl::updateLED_AMP() {
 	if (presetEditMode != PRESET_EDIT_NONE) {
 
 		if (presetNumToEdit == 0) {
-			switchLED(1, true);
-			switchLED(2, true);
-			switchLED(3, true);
-			switchLED(4, true);
+			for (int i = 1; i <= 4; i++) {
+				switchLED(i, true);
+			}
 		}
 		else if (currentMillis - previousMillis >= blinkInterval_ms) {
 			// save the last time you blinked the LED
@@ -153,24 +138,6 @@ void SparkLEDControl::allLedOff(){
 
 void SparkLEDControl::switchLED(int num, bool on){
 	int STATE = on ? HIGH : LOW;
-	switch(num){
-	case 1:
-		digitalWrite(LED_PRESET1_GPIO, STATE);
-		break;
-	case 2:
-		digitalWrite(LED_PRESET2_GPIO, STATE);
-		break;
-	case 3:
-		digitalWrite(LED_PRESET3_GPIO, STATE);
-		break;
-	case 4:
-		digitalWrite(LED_PRESET4_GPIO, STATE);
-		break;
-	case 5:
-		digitalWrite(LED_BANK_DOWN_GPIO, STATE);
-		break;
-	case 6:
-		digitalWrite(LED_BANK_UP_GPIO, STATE);
-		break;
-	}
+	int ledGpio = SparkHelper::getLedGpio(num);
+	digitalWrite(ledGpio, STATE);
 }

@@ -10,10 +10,10 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
+#include "Config_Definitions.h"
 
 #include "SparkDataControl.h"
 #include "SparkTypes.h"
-#include "Common.h"
 
 
 // OLED Screen config

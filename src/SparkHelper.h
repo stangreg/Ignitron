@@ -14,7 +14,7 @@
 #include <sstream>
 
 #include <Arduino.h>
-#include "Common.h"
+#include "Config_Definitions.h"
 
 
 using ByteVector = std::vector<byte>;
@@ -43,6 +43,10 @@ public:
 
 	static int dataVectorNumOfBytes(std::vector<ByteVector> data);
 
+	static int getButtonNumber(int btn_gpio);
+	static int getFXIndexFromBtnGpio(int btn_gpio);
+	static int getLedGpio(int btn_number);
+	static int getFXIndexFromButtonNumber(int btn_number);
 };
 
 #endif

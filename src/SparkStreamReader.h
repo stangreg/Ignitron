@@ -12,9 +12,9 @@
 #include <vector>
 #include <string>
 
+#include "Config_Definitions.h"
 #include "SparkHelper.h"
 #include "SparkTypes.h"
-#include "Common.h"
 
 
 using ByteVector = std::vector<byte>;

@@ -13,9 +13,9 @@
 #include <Arduino.h>
 #include <vector>
 #include <BluetoothSerial.h>
+#include "Config_Definitions.h"
 
 #include "SparkDataControl.h"
-#include "Common.h"
 
 
 // Service and characteristics UUIDs of Spark Amp
