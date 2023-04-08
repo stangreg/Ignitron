@@ -211,7 +211,7 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 	std::string keyToSend;
 
 	// Button configuration is set in the SparkTypes.h file
-	int buttonIndex = getButtonNumber(pressed_btn_gpio);
+	int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
 	std::vector<std::string> keyMap;
 
 	switch (pattern) {
@@ -307,7 +307,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 	DEBUG_PRINTLN(pressed_btn_gpio);
 
 	// Change selected preset
-	selectedPresetNum = getButtonNumber(pressed_btn_gpio);
+	selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
 	spark_dc->processPresetSelect(selectedPresetNum);
 
 }
@@ -397,59 +397,9 @@ void SparkButtonHandler::btnToggleFXHandler(BfButton *btn, BfButton::press_patte
 	DEBUG_PRINTLN(pressed_btn_gpio);
 	int fxIndex;
 
-	fxIndex = getFXIndex(pressed_btn_gpio);
+	fxIndex = SparkHelper::getFXIndexFromBtnGpio(pressed_btn_gpio);
 	spark_dc->toggleEffect(fxIndex);
 }
 
 
-int SparkButtonHandler::getButtonNumber(int btn_gpio){
 
-	switch (btn_gpio) {
-	case BUTTON_PRESET1_GPIO:
-		return 1;
-		break;
-	case BUTTON_PRESET2_GPIO:
-		return 2;
-		break;
-	case BUTTON_PRESET3_GPIO:
-		return 3;
-		break;
-	case BUTTON_PRESET4_GPIO:
-		return 4;
-		break;
-	case BUTTON_BANK_DOWN_GPIO:
-		return 5;
-		break;
-	case BUTTON_BANK_UP_GPIO:
-		return 6;
-		break;
-	default:
-		return -1;
-	}
-}
-
-int SparkButtonHandler::getFXIndex(int btn_gpio){
-	switch (btn_gpio) {
-	case BUTTON_NOISEGATE_GPIO:
-		return 0;
-		break;
-	case BUTTON_COMP_GPIO:
-		return 1;
-		break;
-	case BUTTON_DRIVE_GPIO:
-		return 2;
-		break;
-	case BUTTON_MOD_GPIO:
-		return 4;
-		break;
-	case BUTTON_DELAY_GPIO:
-		return 5;
-		break;
-	case BUTTON_REVERB_GPIO:
-		return 6;
-		break;
-	default:
-		return -1;
-	}
-
-}

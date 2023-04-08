@@ -57,4 +57,103 @@ int SparkHelper::dataVectorNumOfBytes(std::vector<ByteVector> data) {
 	return count;
 }
 
+int SparkHelper::getButtonNumber(int btn_gpio){
 
+	switch (btn_gpio) {
+	case BUTTON_PRESET1_GPIO:
+		return PRESET1_NUM;
+		break;
+	case BUTTON_PRESET2_GPIO:
+		return PRESET2_NUM;
+		break;
+	case BUTTON_PRESET3_GPIO:
+		return PRESET3_NUM;
+		break;
+	case BUTTON_PRESET4_GPIO:
+		return PRESET4_NUM;
+		break;
+	case BUTTON_BANK_DOWN_GPIO:
+		return BANK_DOWN_NUM;
+		break;
+	case BUTTON_BANK_UP_GPIO:
+		return BANK_UP_NUM;
+		break;
+	default:
+		return -1;
+	}
+}
+
+int SparkHelper::getFXIndexFromBtnGpio(int btn_gpio){
+	switch (btn_gpio) {
+	case BUTTON_NOISEGATE_GPIO:
+		return INDEX_FX_NOISEGATE;
+		break;
+	case BUTTON_COMP_GPIO:
+		return INDEX_FX_COMP;
+		break;
+	case BUTTON_DRIVE_GPIO:
+		return INDEX_FX_DRIVE;
+		break;
+	case BUTTON_MOD_GPIO:
+		return INDEX_FX_MOD;
+		break;
+	case BUTTON_DELAY_GPIO:
+		return INDEX_FX_DELAY;
+		break;
+	case BUTTON_REVERB_GPIO:
+		return INDEX_FX_REVERB;
+		break;
+	default:
+		return -1;
+	}
+
+}
+
+int SparkHelper::getLedGpio(int btn_number){
+	switch(btn_number) {
+	case 1:
+		return LED_PRESET1_GPIO;
+		break;
+	case 2:
+		return LED_PRESET2_GPIO;
+		break;
+	case 3:
+		return LED_PRESET3_GPIO;
+		break;
+	case 4:
+		return LED_PRESET4_GPIO;
+		break;
+	case 5:
+		return LED_BANK_DOWN_GPIO;
+		break;
+	case 6:
+		return LED_BANK_UP_GPIO;
+		break;
+	default:
+		return -1;
+	}
+
+}
+
+int SparkHelper::getFXIndexFromButtonNumber(int btn_number){
+	switch (btn_number) {
+	case NOISEGATE_NUM:
+		return INDEX_FX_NOISEGATE;
+		break;
+	case COMP_NUM:
+		return INDEX_FX_COMP;
+		break;
+	case DRIVE_NUM:
+		return INDEX_FX_DRIVE;
+		break;
+	case MOD_NUM:
+		return INDEX_FX_MOD;
+		break;
+	case DELAY_NUM:
+		return INDEX_FX_DELAY;
+		break;
+	case REVERB_NUM:
+		return INDEX_FX_REVERB;
+		break;
+	}
+}

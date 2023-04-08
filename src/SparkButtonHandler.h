@@ -9,32 +9,10 @@
 #define SPARKBUTTONHANDLER_H_
 
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
+#include "Config_Definitions.h"
 #include "SparkDataControl.h"
-#include "Common.h"
 #include "SparkTypes.h"
 
-
-
-// GPIO Buttons/LEDs
-#define BUTTON_PRESET1_GPIO 25
-#define BUTTON_DRIVE_GPIO 25
-
-#define BUTTON_PRESET2_GPIO 26
-#define BUTTON_MOD_GPIO 26
-
-#define BUTTON_PRESET3_GPIO 32
-#define BUTTON_DELAY_GPIO 32
-
-#define BUTTON_PRESET4_GPIO 33
-#define BUTTON_REVERB_GPIO 33
-
-#define BUTTON_BANK_DOWN_GPIO 19
-#define BUTTON_NOISEGATE_GPIO 19
-
-#define BUTTON_BANK_UP_GPIO 18
-#define BUTTON_COMP_GPIO 18
-
-#define LONG_BUTTON_PRESS_TIME 1000
 
 class SparkButtonHandler {
 public:
@@ -77,8 +55,7 @@ private:
 	static void btnToggleBTMode(BfButton *btn,
 			BfButton::press_pattern_t pattern);
 
-	static int getButtonNumber(int btn_gpio);
-	static int getFXIndex(int btn_gpio);
+
 
 	static void configureLooperButtons();
 	static void configureAppButtonsPreset();

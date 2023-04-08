@@ -15,10 +15,10 @@
 #include <algorithm>
 #include <regex>
 
+#include "Config_Definitions.h"
 
 #include "SparkHelper.h"
 #include "SparkTypes.h"
-#include "Common.h"
 
 #define PRESETS_PER_BANK 4
 

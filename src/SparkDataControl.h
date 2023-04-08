@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <Arduino.h>
+#include "Config_Definitions.h"
 #include "SparkBLEControl.h"
 #include "SparkBLEKeyboard.h"
 
@@ -20,23 +21,11 @@
 #include "SparkStreamReader.h"
 
 #include "SparkTypes.h"
-#include "Common.h"
 
-
-#define SWITCH_MODE_FX 1
-#define SWITCH_MODE_PRESET 2
-
-#define SPARK_MODE_APP 1
-#define SPARK_MODE_AMP 2
-#define SPARK_MODE_LOOPER 3
-#define SPARK_MODE_KEYBOARD 4
 
 #define PRESET_EDIT_NONE 0
 #define PRESET_EDIT_STORE 1
 #define PRESET_EDIT_DELETE 2
-
-#define BT_MODE_BLE 1
-#define BT_MODE_SERIAL 2
 
 using ByteVector = std::vector<byte>;
 
