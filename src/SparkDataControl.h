@@ -167,8 +167,8 @@ private:
 	SparkBLEKeyboard bleKeyboard;
 	eSPIFFS fileSystem;
 
-	std::string btModeFileName = "/BTMode.config";
-	std::string sparkModeFileName = "/SparkMode.config";
+	std::string btModeFileName = "/config/BTMode.config";
+	std::string sparkModeFileName = "/config/SparkMode.config";
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;

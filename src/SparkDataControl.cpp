@@ -169,7 +169,6 @@ void SparkDataControl::checkForUpdates() {
 					currentBTMsg.clear();
 
 				}
-				delay(10);
 			}
 		}
 
