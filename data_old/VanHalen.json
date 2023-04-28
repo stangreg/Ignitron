@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "12F5923F-9302-44E9-ADA7-4206C187B770", 
+"Name": "Van Halen", "Version": "0.7", "Description": "ain't talking about love", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.0871, 0.2481]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.8279, 0.4837]}, 
+{"Name": "Booster", "IsOn": false, "Parameters":[0.7670]}, 
+{"Name": "Rectifier", "IsOn": true, "Parameters":[0.4829, 0.6858, 0.4381, 0.3142, 0.6730]}, 
+{"Name": "Phaser", "IsOn": true, "Parameters":[0.0262, 0.1505]}, 
+{"Name": "DelayRe201", "IsOn": true, "Parameters":[0.3030, 0.1247, 0.6659, 0.8589, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2857, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000]}],
+"Filler": "5F"
+}

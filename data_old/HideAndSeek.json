@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"50A3B945-1A86-4E06-B10B-550E3226DDF2",
+"Name":"Hide and Seek" , "Version":"0.7", "Description":"Description for Alternative Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5000,1.0000] },
+  { "Name":"BlueComp",  "IsOn": false,  "Parameters":[0.5907,0.6653,0.3051,0.6441] },
+  { "Name":"Booster",   "IsOn": true,   "Parameters":[0.6685] },
+  { "Name":"Bogner",  "IsOn": true,   "Parameters":[0.6558,0.6266,0.6407,0.3516,0.3386] },
+  { "Name":"MiniVibe",  "IsOn": false,  "Parameters":[0.0471,0.1172] },
+  { "Name":"DelayMultiHead",  "IsOn": true,   "Parameters":[0.7067,0.6442,0.5644,0.6500,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.4485,0.4059,0.5662,0.6487,0.3025,0.1807,0.3000] } ],
+"Filler":"45"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "AF57EED6-0081-4F1C-AB76-DAE3D23E4001",
+"Name": "Iron Maiden", "Version": "0.7", "Description": "Seventh Son", "Icon": "icon.png", "BPM": 120.0000,
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.0000, 0.0000]},
+{"Name": "LA2AComp", "IsOn": false, "Parameters":[0.0000, 0.7126, 0.7248]},
+{"Name": "DistortionTS9", "IsOn": true, "Parameters":[0.5823, 0.4852, 0.5869]},
+{"Name": "OverDrivenJM45", "IsOn": true, "Parameters":[0.7920, 0.6000, 0.3848, 0.2693, 0.6225]},
+{"Name": "Tremolo", "IsOn": false, "Parameters":[0.4541, 0.6999, 0.5962]},
+{"Name": "DelayMono", "IsOn": false, "Parameters":[0.3818, 0.3983, 0.7363, 0.6000, 0.0000]},
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2857, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000]}],
+"Filler": "71"
+}

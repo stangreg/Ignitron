@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"0A354C09-45B2-4676-B2A7-DEF66C18DB1A",
+"Name":"Ghost Dance Macabre Mart" , "Version":"0.7", "Description":"", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.4182,0.1758,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.8428,0.8298] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.0000,0.4957,0.6699,0.0000] },
+{ "Name":"SwitchAxeLead",   "IsOn": true,   "Parameters":[0.6534,0.8352,0.6948,0.7248,0.5130] },
+{ "Name":"Phaser",  "IsOn": false,  "Parameters":[0.3181,1.0000,0.0000,0.0000] },
+{ "Name":"VintageDelay",  "IsOn": false,  "Parameters":[0.3649,0.4009,0.4430,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5995,0.3049,0.4179,0.8716,0.9385,0.2278,0.0000,1.0000] }  ],
+"Filler":"FD"
+}

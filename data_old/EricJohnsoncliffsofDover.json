@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "879F0356-A255-4925-B890-5FD6CB5B8819", 
+"Name": "Eric Johnson-cliffs of Dover", "Version": "0.7", "Description": "use single coils or neck-humbucker. don't use bridge hum. ", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.4241, 0.0000]}, 
+{"Name": "LA2AComp", "IsOn": false, "Parameters":[0.0000, 0.7126, 0.7248]}, 
+{"Name": "DistortionTS9", "IsOn": true, "Parameters":[0.7195, 0.1172, 1.0000]}, 
+{"Name": "Plexi", "IsOn": true, "Parameters":[0.8227, 0.4418, 0.6383, 0.5199, 0.3543]}, 
+{"Name": "Tremolo", "IsOn": false, "Parameters":[0.4541, 0.6999, 0.5962]}, 
+{"Name": "DelayMono", "IsOn": true, "Parameters":[0.1191, 0.3669, 0.4962, 0.6000, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.3357, 0.6438, 0.5208, 0.2813, 0.4695, 0.4555, 0.6000]}],
+"Filler": "30"
+}

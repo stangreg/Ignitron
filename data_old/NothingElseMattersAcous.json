@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"DB434C3C-18E9-4AD1-BAE6-28142BA1028E",
+"Name":"Nothing Else Matters Acoustic" , "Version":"0.7", "Description":"", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.4705,0.0000,1.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.2608,0.6685,0.3489,0.4075] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.5675] },
+  { "Name":"FatAcousticV2",   "IsOn": true,   "Parameters":[0.7953,0.7008,0.4488,0.3701,0.3622] },
+  { "Name":"Cloner",  "IsOn": true,   "Parameters":[0.2915,0.0000] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.2283,0.2117,0.3344,0.4000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.7228,0.3714,0.5964,0.3607,0.6429,0.3393,0.4000] } ],
+"Filler":"08"
+}

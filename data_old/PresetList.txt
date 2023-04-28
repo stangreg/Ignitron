@@ -1,0 +1,112 @@
+-- Bank 1 
+SweetChildOfMine.json
+SlashV2.json
+SlashAFD.json
+SlashDontCry.json
+-- Bank 2 
+NovemberRainSolo.json
+ParadiseCity.json
+KnockingOnHeaven.json
+GunsNRoses.json
+-- Bank 3 
+RockDistortion.json
+RageNowInTheFire.json
+ComfortablyNumbSolo.json
+StairwayToHeavenSolo.json
+-- Bank 4 
+BohemianRhapsody.json
+EricJohnsoncliffsofDover.json
+FinalCountdown.json
+AcDc.json
+-- Bank 5 
+TremontiAlternative.json
+TremontiClean.json
+FooFighters.json
+FooFightersEverlong.json
+-- Bank 6 
+EnterSandman.json
+NothingElseMatters.json
+NothingElseMattersAcous.json
+PapaResortLastResort.json
+-- Bank 7 
+HateToSay.json
+RedHotChiliPeppers.json
+AliceCooper.json
+EddieVanHalen.json
+-- Bank 8 
+Rush.json
+SantanaBlackMagicWoman.json
+SunshineOfMyLove.json
+SatrianiSatchBoogie.json
+-- Bank 9 
+ToolClean.json
+VintageCreamyLarson.json
+WizoQuadrat.json
+Wizo.json
+-- Bank 10 
+JethroTull.json
+VoodooKidWah.json
+BrownSoundLarson.json
+MasterOfPuppets.json
+-- Bank 11 
+Megadeth.json
+Gilmour.json
+GhostDanceMacabreMart.json
+GtrHeroLarson.json
+-- Bank 12 
+CrazyTrain.json
+IronMaiden.json
+BangBang.json
+CleanForBallads.json
+-- Bank 13 
+OrangeAD30Arpeggio.json
+ModernVintageClean.json
+PerfectCleanLarson.json
+Oasis.json
+-- Bank 14 
+DookieSoundGreenDay.json
+ThroatyLarson.json
+LynyrdSkynyrd.json
+Hendrix.json
+-- Bank 15 
+EnglFireball.json
+-- Bank 16 
+Anastasia.json
+Gilmour.json
+The1975.json
+HouseoftheRisingSonJusti.json
+-- Bank 17 
+DireStraits.json
+SultansOfSwingKnopfler.json
+SultansOfSwing2.json
+TornadoOfSouls.json
+-- Bank 18 
+AintTalkinBoutLoveLARSON.json
+VanHalen.json
+SpookyMelody.json
+NothingElseMattersMetall.json
+-- Bank 19 
+SilverShip.json
+SweetMemory.json
+DancingInTheRoom.json
+RoyalCrown.json
+-- Bank 20 
+WoodenBridge.json
+StoneBreaker.json
+CountryRoad.json
+BluesArk.json
+-- Bank 21 
+ModernStone.json
+CrazyCrue.json
+DarkSoul.json
+BritishAccent.json
+-- Bank 22 
+IronHammer.json
+MillenialLead.json
+HeavyAxe.json
+DualTrain.json
+-- Bank 23 
+SpookyMelody.json
+FuzzyJam.json
+AngryMonkey.json
+HideAndSeek.json

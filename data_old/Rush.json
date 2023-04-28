@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"664C8FE8-E3BC-4046-9ED0-812B2B470BCC",
+"Name":"Rush" , "Version":"0.7", "Description":"Rush limelight", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.6440,0.0000,0.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.9812,0.6409] },
+  { "Name":"GuitarMuff",  "IsOn": true,   "Parameters":[0.5100,1.0000,0.2003] },
+  { "Name":"BE101",   "IsOn": true,   "Parameters":[0.5921,1.0000,0.7562,0.1932,0.8347] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.2613,0.2797,0.7458,0.5678] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.0351,0.1038,0.0247,0.7200,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000] } ],
+"Filler":"4C"
+}

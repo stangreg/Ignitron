@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"0498BFC5-5EDD-4C0F-A93D-89CA89F86CC1",
+"Name":"Tool Clean" , "Version":"0.7", "Description":"Tool's trippy clean tones. Use neck pickup.", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1246,1.0000] },
+  { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.5538,0.4938,0.6280] },
+  { "Name":"AC Boost",  "IsOn": true,   "Parameters":[0.3780,0.7201,0.5076,0.6291,1.0000] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.2729,0.2000,0.2941,0.4977] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"1A"
+}

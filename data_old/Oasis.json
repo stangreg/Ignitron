@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"0FA9488A-9773-4985-88BB-1C3672A2F658",
+"Name":"Oasis" , "Version":"0.7", "Description":"4-Metal", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.0329,0.0000,1.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.5624,0.4904,0.4213,0.4811] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.3306] },
+  { "Name":"AC Boost",  "IsOn": true,   "Parameters":[0.3095,0.6818,0.2820,0.5938,0.3351] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayRe201",  "IsOn": false,  "Parameters":[0.2654,0.3793,0.2945,0.5995,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2528,0.3714,0.5964,0.3607,0.6429,0.3393,0.4000] } ],
+"Filler":"DE"
+}

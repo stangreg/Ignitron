@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"B6D2754C-D3E3-4EF2-8FF0-BCB74E5152B9",
+"Name":"Vintage Creamy — LARSON" , "Version":"0.7", "Description":"Rhythm tones with fuzz ", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": false,  "Parameters":[0.2182,0.0649] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.4863,0.5253,0.4931,0.6441] },
+  { "Name":"Fuzz",  "IsOn": true,   "Parameters":[0.2723,0.6666] },
+  { "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.6523,0.3619,0.6335,0.8841,0.6570] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.1020,0.4348,0.1073,1.0000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.3593,0.5067,0.4179,0.3008,0.6023,0.5941,0.0000] } ],
+"Filler":"24"
+}

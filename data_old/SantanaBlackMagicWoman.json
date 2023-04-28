@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"9A32B803-DFB7-4E93-AB5B-EDC48A866DBF",
+"Name":"Santana-Black Magic Woman" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3152,0.5012,0.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.5034,0.4944,0.5232,0.7583] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.4386,0.7417,0.5959] },
+  { "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.6523,0.6063,0.4409,0.2441,0.6570] },
+  { "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.4016,0.1815,0.7458,0.7780] },
+  { "Name":"DelayRe201",  "IsOn": false,  "Parameters":[0.0978,0.0000,0.4852,0.3696,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5612,0.5067,0.4179,0.3008,0.6023,0.5941,0.0000] } ],
+"Filler":"26"
+}

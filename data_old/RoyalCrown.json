@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"D8757D67-98EA-4888-86E5-5F1FD96A30C3",
+"Name":"Royal Crown" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2112,0.5710,0.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.1720,0.5382] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.7031,0.2781,0.6898] },
+  { "Name":"ADClean",   "IsOn": true,   "Parameters":[0.6771,0.5011,0.3828,0.5859,0.8122] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.5200,0.4022,0.2406,0.7406] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1737,0.2331,0.4936,0.6000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.6888,0.3929,0.4611,0.6937,0.4882,0.4664,0.3000] } ],
+"Filler":"A2"
+}

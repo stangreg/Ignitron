@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"CDE99591-C05D-4AE0-9E34-EC4A81F3F84F",
+"Name":"Sweet Memory" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": false,  "Parameters":[0.0993,0.5710,0.0000] },
+  { "Name":"BlueComp",  "IsOn": false,  "Parameters":[0.4305,0.6633,0.3550,0.5570] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.0580,0.7417,0.5959] },
+  { "Name":"94MatchDCV2",   "IsOn": true,   "Parameters":[0.5289,0.5009,0.2462,0.4171,0.7823] },
+  { "Name":"Flanger",   "IsOn": false,  "Parameters":[0.4138,0.6630,0.6552] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.0978,0.3122,0.4852,0.3696,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5612,0.5067,0.4179,0.3008,0.6023,0.5941,0.0000] } ],
+"Filler":"EB"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"C6CC85D6-A6F5-4302-AFF6-0060D996A3B1",
+"Name":"Sweet Child Of Mine" , "Version":"0.7", "Description":"Slash", "Icon":"icon.png", "BPM": 180.0000,
+"Pedals": [
+{ "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3083,0.4663] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.4053,0.3247,0.4773] },
+{ "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.7321,0.8549,0.6433,0.3079,0.8200] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.2645,0.2742,0.2940,0.6000,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"48"
+}

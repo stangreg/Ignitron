@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "CBAC6F2A-24C9-4195-947A-913D00F3930E", 
+"Name": "Sultans Of Swing2", "Version": "0.7", "Description": "", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.0555, 0.0000, 1.0000]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.5000, 0.5000]}, 
+{"Name": "Booster", "IsOn": true, "Parameters":[0.7670]}, 
+{"Name": "Twin", "IsOn": true, "Parameters":[0.6479, 0.7624, 1.0000, 1.0000, 1.0000]}, 
+{"Name": "Tremolo", "IsOn": true, "Parameters":[0.0213, 1.0000, 0.2055]}, 
+{"Name": "DelayMono", "IsOn": false, "Parameters":[0.0640, 0.2152, 0.6918, 0.7000, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2857, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000, 1.0000]}],
+"Filler": "B4"
+}

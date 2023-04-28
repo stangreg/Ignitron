@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "93A12EBD-5FE4-4707-BABE-AD0234873017", 
+"Name": " Dire Straits", "Version": "0.7", "Description": "VN Dist ", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": false, "Parameters":[0.2182, 0.0649, 0.0000]}, 
+{"Name": "LA2AComp", "IsOn": true, "Parameters":[0.0000, 0.7126, 0.7248]}, 
+{"Name": "Booster", "IsOn": false, "Parameters":[0.7670]}, 
+{"Name": "ADClean", "IsOn": true, "Parameters":[0.7428, 0.5704, 0.3746, 0.3412, 1.0000]}, 
+{"Name": "Flanger", "IsOn": true, "Parameters":[0.4839, 0.4942, 0.6852]}, 
+{"Name": "VintageDelay", "IsOn": true, "Parameters":[0.6640, 0.1889, 0.3450, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2857, 0.4084, 0.2895, 0.3883, 0.5821, 0.6500, 0.2000, 1.0000]}],
+"Filler": "B7"
+}

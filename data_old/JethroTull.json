@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"32A0C07C-2275-4D62-8A2E-1A214C4D535D",
+"Name":"Jethro Tull " , "Version":"0.7", "Description":"3-HighGain", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.0625,0.0000,1.0000] },
+  { "Name":"Compressor",  "IsOn": true,   "Parameters":[0.4298,0.7127] },
+  { "Name":"DistortionTS9",   "IsOn": false,  "Parameters":[0.1202,0.3808,0.5103] },
+  { "Name":"Plexi",   "IsOn": true,   "Parameters":[0.7025,0.6197,0.4280,0.3466,0.4472] },
+  { "Name":"Tremolator",  "IsOn": true,   "Parameters":[0.1927,0.2578,0.0000] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.0558,0.1586,0.5119,0.2000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.1564,0.6438,0.7270,0.1753,0.4695,0.4310,0.6000] } ],
+"Filler":"3F"
+}

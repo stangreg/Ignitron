@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"2E2928B5-D87E-4346-B58F-145B88C581BE",
+"Name":"Blues Ark" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1279,0.3132,0.0000] },
+  { "Name":"LA2AComp",  "IsOn": true,   "Parameters":[0.0000,0.8325,0.3041] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.5705,0.5497,0.7064] },
+  { "Name":"Twin",  "IsOn": true,   "Parameters":[0.6795,0.3717,0.5937,0.6767,0.4792] },
+  { "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.3771,0.3101,0.5106,0.4554] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1737,0.2392,0.5212,0.6068,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3255,0.3929,0.4611,0.1005,0.4882,0.4664,0.3000] } ],
+"Filler":"A3"
+}

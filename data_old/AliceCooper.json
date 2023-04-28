@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"7AC8A9F7-F9BB-4C4F-BE8C-79B34DDA188A",
+"Name":"Alice Cooper (No more Mr)" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1045,0.2325,0.0000] },
+  { "Name":"Compressor",  "IsOn": false,  "Parameters":[0.6830,0.3273] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.3550,0.3146,0.5545] },
+  { "Name":"YJM100",  "IsOn": true,   "Parameters":[0.4010,0.7505,1.0000,0.8661,0.7208] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.0236,0.1723,0.7458,0.7509] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.0711,0.0394,0.2858,0.5375,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[1.0000,0.0000,0.5024,0.7460,0.6976,0.0266,0.1000] } ],
+"Filler":"33"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"37EA47FD-A1AA-4751-B8DD-9E1E12FC81F4",
+"Name":"FINAL MASTER OF PUPPETS TONE" , "Version":"0.7", "Description":"ruch", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3993,0.1533,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.2182,0.6347,0.8088,0.0000] },
+{ "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.8218,0.9048,0.0000,0.8299,0.7680] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": false,  "Parameters":[0.3593,0.5067,0.4179,0.3008,0.6023,0.5941,0.0000,0.0000] }  ],
+"Filler":"65"
+}

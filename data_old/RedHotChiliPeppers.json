@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"3ACFA00A-6850-462A-84CF-F18DFA6517B7",
+"Name":"Red Hot Chili Peppers2" , "Version":"0.7", "Description":"Under The Bridge", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[1.0000,1.0000] },
+{ "Name":"Compressor",  "IsOn": true,   "Parameters":[0.2765,0.7282] },
+{ "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+{ "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.4250,0.7000,0.8196,0.6000,0.8732] },
+{ "Name":"Flanger",   "IsOn": true,   "Parameters":[0.3465,0.0803,0.0859] },
+{ "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000] } ],
+"Filler":"33"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"F3C1118B-68DC-4E89-848E-2A52D886C654",
+"Name":"Nothing else matters" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 132.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.0550,0.1153,1.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.4931,0.7032,0.1863,0.7289] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.7700] },
+  { "Name":"ADClean",   "IsOn": true,   "Parameters":[0.6771,0.5704,0.5316,0.3412,0.6800] },
+  { "Name":"Flanger",   "IsOn": true,   "Parameters":[0.4138,0.6630,0.6552] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.0573,0.3983,0.7363,0.6000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.8355,0.5652,0.6467,0.6669,0.4882,0.2164,0.3000] } ],
+"Filler":"32"
+}

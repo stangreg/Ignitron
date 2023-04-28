@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"82C5B8E8-7889-4302-AC19-74DF543872E1",
+"Name":"Millenial Lead" , "Version":"0.7", "Description":"Description for Metal Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2097,0.0648] },
+  { "Name":"BlueComp",  "IsOn": false,  "Parameters":[0.3921,0.6653,0.4523,0.5972] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.0461,0.3576,0.7700] },
+  { "Name":"BE101",   "IsOn": true,   "Parameters":[0.5880,0.3431,0.4758,0.3942,0.8754] },
+  { "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.7613,0.1324,0.4912,0.5678] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1618,0.1805,0.5001,0.6000,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.0951,0.6603,0.6929,0.2853,0.5000,0.5000,0.3000] } ],
+"Filler":"01"
+}

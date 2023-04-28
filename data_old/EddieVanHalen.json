@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"917795E8-BE33-4FBB-AB5A-8DDD77273F78",
+"Name":"Eddie Van Halen" , "Version":"0.7", "Description":"As close to Ed as you can get I believe ", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.4926,0.5122] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.6000,0.5675,0.5750,0.7679] },
+  { "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+  { "Name":"EVH",   "IsOn": true,   "Parameters":[0.6000,0.6202,0.6375,0.6000,0.6208] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[0.3063,0.1063,0.6521,1.0000] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.4165,0.1625,0.4902,0.4000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"B1"
+}

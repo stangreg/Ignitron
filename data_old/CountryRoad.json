@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"55D60EB5-1735-4746-B0C4-16C53D8CA203",
+"Name":"Country road" , "Version":"0.7", "Description":"Description for Blues Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2830,0.3042] },
+  { "Name":"Compressor",  "IsOn": false,  "Parameters":[0.4611,0.6089] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.2007,0.2161,0.5836] },
+  { "Name":"AC Boost",  "IsOn": true,   "Parameters":[0.7078,0.5911,0.3836,0.5328,0.1951] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayRe201",  "IsOn": false,  "Parameters":[0.3315,0.3490,0.6723,0.4531,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.6228,0.1500,0.5000,0.6214,0.3699,0.3500,0.1000] } ],
+"Filler":"57"
+}

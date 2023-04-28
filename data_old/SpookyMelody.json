@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "94109418-E7D9-4B99-83F7-DDB11CA5847D", 
+"Name": "Spooky Melody", "Version": "0.7", "Description": "Description for Alternative Preset 1", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.5000, 1.0000]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.3517, 0.3542]}, 
+{"Name": "DistortionTS9", "IsOn": false, "Parameters":[0.2722, 0.6424, 0.5959]}, 
+{"Name": "Twin", "IsOn": true, "Parameters":[0.6134, 0.4894, 0.4532, 0.5051, 0.5800]}, 
+{"Name": "UniVibe", "IsOn": true, "Parameters":[0.6366, 0.0000, 0.4938]}, 
+{"Name": "DelayEchoFilt", "IsOn": true, "Parameters":[0.2319, 0.5550, 0.5291, 0.3088, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.9630, 0.2321, 0.1764, 0.2248, 0.2282, 0.3571, 0.5000]}],
+"Filler": "19"
+}

@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"A3601E1D-8018-42A8-9A19-9B6F0DAB6F46",
+"Name":"Angry Monkey" , "Version":"0.7", "Description":"Description for Alternative Preset 1", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.5000,1.0000] },
+  { "Name":"BlueComp",  "IsOn": true,   "Parameters":[0.3898,0.6653,0.3051,0.6441] },
+  { "Name":"GuitarMuff",  "IsOn": true,   "Parameters":[0.6194,0.6921,0.8057] },
+  { "Name":"94MatchDCV2",   "IsOn": true,   "Parameters":[0.5124,0.5580,0.4156,0.4385,0.3512] },
+  { "Name":"Flanger",   "IsOn": true,   "Parameters":[1.0000,0.3385,0.2459] },
+  { "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.0967,0.1012,0.3957,0.3200,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.5543,0.3089,0.2377,0.7384,0.2651,0.2768,0.4000] } ],
+"Filler":"E3"
+}

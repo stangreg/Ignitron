@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"EB6E51F4-D60F-49E8-9CD1-40C2962A8B38",
+"Name":"Ac Dc" , "Version":"0.7", "Description":"ACDc - Back in Black", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{ "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2696,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"Booster",   "IsOn": false,  "Parameters":[0.7670] },
+{ "Name":"Plexi",   "IsOn": true,   "Parameters":[0.7081,0.8643,0.8812,0.6000,0.8003] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000] } ],
+"Filler":"51"
+}

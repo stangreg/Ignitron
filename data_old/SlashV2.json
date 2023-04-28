@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"5E503B28-F993-4B3E-B5EB-88442651FF6D",
+"Name":"Slash v2" , "Version":"0.7", "Description":"4-Metal", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1603,0.0000,1.0000] },
+{ "Name":"Compressor",  "IsOn": true,   "Parameters":[0.6492,0.2405] },
+{ "Name":"Overdrive",   "IsOn": true,   "Parameters":[0.7032,0.7542,0.5629] },
+{ "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.6523,0.5988,0.6002,0.3983,1.0000] },
+{ "Name":"Phaser",  "IsOn": false,  "Parameters":[0.3365,0.6096,0.0000,0.0000] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.0719,0.1236,0.3665,0.3000,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.3357,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000] } ],
+"Filler":"15"
+}

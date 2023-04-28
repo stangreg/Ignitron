@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"5849EDDD-AE93-4632-B85B-3A2686881BBD",
+"Name":"Slash Don't Cry solo" , "Version":"0.7", "Description":"1959 SLP + TS808 Slash like", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2066,0.1408,1.0000] },
+{ "Name":"LA2AComp",  "IsOn": true,   "Parameters":[0.0000,0.8699,0.7248] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[1.0000,0.7640,1.0000,0.0000] },
+{ "Name":"Plexi",   "IsOn": true,   "Parameters":[1.0000,0.6911,0.6525,0.5173,0.8442] },
+{ "Name":"Tremolo",   "IsOn": true,   "Parameters":[0.3657,0.2358,0.5962] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.1555,0.4499,0.3793,0.6000,1.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000,1.0000] }  ],
+"Filler":"C1"
+}

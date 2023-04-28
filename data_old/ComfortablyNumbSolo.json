@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"8DAF5A37-D48B-4EF3-9E1E-6A4FFE3DDDCE",
+"Name":"Comfortably Numb solo" , "Version":"0.7", "Description":"David Gilmour", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{ "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.2999,0.3776] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"ProCoRat",  "IsOn": true,   "Parameters":[0.5525,0.6890,0.6621] },
+{ "Name":"OverDrivenLuxVerb",   "IsOn": true,   "Parameters":[0.8664,0.8625,0.5632,0.7429,0.6303] },
+{ "Name":"Flanger",   "IsOn": true,   "Parameters":[0.2504,0.1801,0.1530] },
+{ "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.2674,0.3033,0.0000,0.6924,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"2B"
+}

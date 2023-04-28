@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"26D19176-2730-458E-8D8B-2566B6D10E52",
+"Name":"November Rain solo" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.0931,0.6417,1.0000] },
+{ "Name":"Compressor",  "IsOn": false,  "Parameters":[0.3335,0.9991] },
+{ "Name":"GuitarMuff",  "IsOn": true,   "Parameters":[0.6083,0.0000,0.6987] },
+{ "Name":"Plexi",   "IsOn": true,   "Parameters":[0.6281,0.7680,0.5776,0.0709,0.4094] },
+{ "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.3771,0.5678,0.2161,0.2500] },
+{ "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.3176,0.0806,0.8119,0.3747,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.0738,0.6438,0.5208,0.2813,0.4695,0.4555,0.6000,1.0000] }  ],
+"Filler":"A0"
+}

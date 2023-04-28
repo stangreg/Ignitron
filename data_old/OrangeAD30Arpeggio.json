@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"A4ABFF0E-4BE4-4CA6-815A-98F8CDBCE5B4",
+"Name":"orange AD30 arpeggio" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1383,0.2246,1.0000] },
+  { "Name":"LA2AComp",  "IsOn": true,   "Parameters":[1.0000,0.6203,0.5240] },
+  { "Name":"Booster",   "IsOn": true,   "Parameters":[0.5398] },
+  { "Name":"ADClean",   "IsOn": true,   "Parameters":[0.5797,1.0000,0.5316,0.3412,1.0000] },
+  { "Name":"ChorusAnalog",  "IsOn": true,   "Parameters":[1.0000,0.2797,0.4098,0.3092] },
+  { "Name":"VintageDelay",  "IsOn": true,   "Parameters":[0.6705,0.4327,0.1330,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": false,  "Parameters":[1.0000,0.1805,0.5786,0.6786,0.6249,0.3571,0.5000,0.0000] }  ],
+"Filler":"5B"
+}

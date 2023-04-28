@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "28FA7A0E-8685-4194-977C-AE1F912B38DC", 
+"Name": "House of the Rising Son - Justin Johnson", "Version": "0.7", "Description": "1-Clean", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.3438, 0.3314, 1.0000]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.3335, 0.9991]}, 
+{"Name": "Booster", "IsOn": false, "Parameters":[0.5591]}, 
+{"Name": "RolandJC120", "IsOn": true, "Parameters":[0.7085, 0.3541, 0.3319, 0.5341, 0.8483]}, 
+{"Name": "Tremolo", "IsOn": true, "Parameters":[0.4541, 0.6999, 0.5962]}, 
+{"Name": "DelayMono", "IsOn": false, "Parameters":[0.1560, 0.2331, 0.4905, 0.6068, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.2311, 0.3293, 0.4387, 0.6937, 0.4768, 0.4810, 0.3000, 1.0000]}],
+"Filler": "4C"
+}

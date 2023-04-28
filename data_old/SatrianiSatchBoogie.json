@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"052211F7-1F8E-4C96-9F6D-4BF4F3807CD7",
+"Name":"Joe Satriani - Satch Boogie" , "Version":"0.7", "Description":"Always with me always with you", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.4501,0.2065] },
+  { "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.2599,0.6172,0.9480] },
+  { "Name":"Rectifier",   "IsOn": true,   "Parameters":[0.7713,0.7000,0.9312,0.9328,0.5052] },
+  { "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+  { "Name":"DelayMono",   "IsOn": false,  "Parameters":[0.3818,0.3983,0.7363,0.6000,0.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"F1"
+}

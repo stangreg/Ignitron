@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"BFCFC107-6E80-4F26-8549-F44638856241",
+"Name":"Crazy Crue" , "Version":"0.7", "Description":"1-Clean", "Icon":"icon.png", "BPM": 120.0000,
+"Pedals": [
+  { "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.1045,0.2325,0.0000] },
+  { "Name":"Compressor",  "IsOn": false,  "Parameters":[0.6830,0.3273] },
+  { "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.3550,0.3146,0.5545] },
+  { "Name":"YJM100",  "IsOn": true,   "Parameters":[0.5626,0.4853,0.3170,0.2505,0.5769] },
+  { "Name":"ChorusAnalog",  "IsOn": false,  "Parameters":[0.1274,0.1723,0.7458,0.7509] },
+  { "Name":"DelayRe201",  "IsOn": true,   "Parameters":[0.0711,0.2232,0.2858,0.5375,1.0000] },
+  { "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.1474,0.5067,0.4179,0.2682,0.6023,0.5941,0.0000] } ],
+"Filler":"CC"
+}

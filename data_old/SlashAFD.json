@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID":"E476C555-23B8-437F-B870-727E3B3F4E6B",
+"Name":"Slash AFD" , "Version":"0.7", "Description":"Welcome to the jungle intro delay", "Icon":"icon.png", "BPM": 123.0000,
+"Pedals": [
+{  "Name":"bias.noisegate",  "IsOn": true,   "Parameters":[0.3083,0.4663] },
+{ "Name":"LA2AComp",  "IsOn": false,  "Parameters":[0.0000,0.7126,0.7248] },
+{ "Name":"DistortionTS9",   "IsOn": true,   "Parameters":[0.5147,0.7775,0.4799] },
+{ "Name":"OverDrivenJM45",  "IsOn": true,   "Parameters":[0.7321,0.8549,0.6433,0.3079,0.8200] },
+{ "Name":"Tremolo",   "IsOn": false,  "Parameters":[0.4541,0.6999,0.5962] },
+{ "Name":"DelayMono",   "IsOn": true,   "Parameters":[0.5129,0.5336,0.5646,0.6000,0.0000] },
+{ "Name":"bias.reverb",   "IsOn": true,   "Parameters":[0.2857,0.4084,0.2895,0.3883,0.5821,0.6500,0.2000] } ],
+"Filler":"6C"
+}

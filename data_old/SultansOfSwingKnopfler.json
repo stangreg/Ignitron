@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "0C35A9BE-DF92-4CDC-B8DC-6BA2BB623E61", 
+"Name": "Sultans Of Swing / Knopfler", "Version": "0.7", "Description": "1-Clean", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.1201, 0.3314, 1.0000]}, 
+{"Name": "Compressor", "IsOn": false, "Parameters":[0.3335, 0.9991]}, 
+{"Name": "Booster", "IsOn": true, "Parameters":[0.3445]}, 
+{"Name": "OverDrivenLuxVerb", "IsOn": true, "Parameters":[0.2969, 0.2304, 0.2840, 0.3829, 0.8264]}, 
+{"Name": "ChorusAnalog", "IsOn": false, "Parameters":[0.0939, 0.2797, 0.7458, 0.5678]}, 
+{"Name": "DelayRe201", "IsOn": false, "Parameters":[0.1913, 0.5975, 0.7797, 0.0000, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": false, "Parameters":[0.4810, 0.2030, 0.3152, 0.3607, 0.6429, 0.3393, 0.4000, 0.0000]}],
+"Filler": "D4"
+}
