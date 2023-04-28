@@ -360,6 +360,12 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				}
 			} else {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
+
+				if (pendingPreset_.isEmpty) {
+					Serial.println("Emtpy preset, skipping further processing");
+					return false;
+				}
+
 				current_msg = spark_msg.create_preset(pendingPreset_);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
 				if (bleControl->writeBLE(current_msg)) {

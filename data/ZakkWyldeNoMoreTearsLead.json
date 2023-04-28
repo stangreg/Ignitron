@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "ABEBFB3E-1F41-40AA-B2CE-22B461358EF6", 
+"Name": "Zakk Wylde - No More Tears Lead", "Version": "0.7", "Description": "", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.0625, 0.0000, 1.0000]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.4298, 0.7127]}, 
+{"Name": "Overdrive", "IsOn": true, "Parameters":[0.5394, 0.7342, 0.6615]}, 
+{"Name": "BE101", "IsOn": true, "Parameters":[0.6889, 0.9274, 0.3939, 0.7644, 0.6932]}, 
+{"Name": "ChorusAnalog", "IsOn": true, "Parameters":[0.4746, 0.2797, 0.3843, 0.8140]}, 
+{"Name": "DelayMono", "IsOn": true, "Parameters":[0.2006, 0.1586, 0.5119, 0.3000, 1.0000]}, 
+{"Name": "bias.reverb", "IsOn": false, "Parameters":[0.1564, 0.6438, 0.7270, 0.1753, 0.4695, 0.4310, 0.6000, 1.0000]}],
+"Filler": "56"
+}

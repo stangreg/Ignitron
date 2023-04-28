@@ -1,0 +1,12 @@
+{"PresetNumber": 127, "UUID": "6B8EED8A-7B57-476E-8587-7FA3E8133305", 
+"Name": "12 str acou strumming.CN1", "Version": "0.7", "Description": "12 strings strumming acoustic Guitar simulation ", "Icon": "icon.png", "BPM": 120.0000, 
+"Pedals": [
+{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.1044, 0.5000]}, 
+{"Name": "Compressor", "IsOn": true, "Parameters":[0.6511, 0.0496]}, 
+{"Name": "Booster", "IsOn": false, "Parameters":[0.7670]}, 
+{"Name": "AcousticAmpV2", "IsOn": true, "Parameters":[0.6783, 0.6197, 0.5388, 0.4138, 0.8025]}, 
+{"Name": "ChorusAnalog", "IsOn": true, "Parameters":[0.5039, 0.2000, 0.7000, 1.0000]}, 
+{"Name": "DelayRe201", "IsOn": true, "Parameters":[0.0958, 0.1437, 0.6713, 0.5038, 0.0000]}, 
+{"Name": "bias.reverb", "IsOn": false, "Parameters":[0.3593, 0.5067, 0.4179, 0.3008, 0.6023, 0.5941, 0.0000]}],
+"Filler": "43"
+}

@@ -46,66 +46,62 @@ Wizo.json
 -- Bank 10 
 JethroTull.json
 VoodooKidWah.json
-BrownSoundLarson.json
 MasterOfPuppets.json
--- Bank 11 
 Megadeth.json
-Gilmour.json
+-- Bank 11 
 GhostDanceMacabreMart.json
-GtrHeroLarson.json
--- Bank 12 
 CrazyTrain.json
 IronMaiden.json
 BangBang.json
+-- Bank 12 
 CleanForBallads.json
--- Bank 13 
 OrangeAD30Arpeggio.json
 ModernVintageClean.json
 PerfectCleanLarson.json
+-- Bank 13 
 Oasis.json
--- Bank 14 
 DookieSoundGreenDay.json
-ThroatyLarson.json
 LynyrdSkynyrd.json
 Hendrix.json
--- Bank 15 
+-- Bank 14 
 EnglFireball.json
--- Bank 16 
 Anastasia.json
-Gilmour.json
 The1975.json
+-- Bank 15 
 HouseoftheRisingSonJusti.json
--- Bank 17 
 DireStraits.json
 SultansOfSwingKnopfler.json
 SultansOfSwing2.json
+-- Bank 16 
 TornadoOfSouls.json
--- Bank 18 
 AintTalkinBoutLoveLARSON.json
 VanHalen.json
+-- Bank 17 
 SpookyMelody.json
 NothingElseMattersMetall.json
--- Bank 19 
+ZakkWyldeNoMoreTearsLead.json
+12stracoustrummingCN1.json
+-- Bank 18 
 SilverShip.json
 SweetMemory.json
 DancingInTheRoom.json
 RoyalCrown.json
--- Bank 20 
+-- Bank 19 
 WoodenBridge.json
 StoneBreaker.json
 CountryRoad.json
 BluesArk.json
--- Bank 21 
+-- Bank 20 
 ModernStone.json
 CrazyCrue.json
 DarkSoul.json
 BritishAccent.json
--- Bank 22 
+-- Bank 21 
 IronHammer.json
 MillenialLead.json
 HeavyAxe.json
 DualTrain.json
--- Bank 23 
+-- Bank 22 
 SpookyMelody.json
 FuzzyJam.json
 AngryMonkey.json
