@@ -16,15 +16,17 @@ SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
 
-int SparkDataControl::activeBank_ = 0;
-int SparkDataControl::pendingBank_ = 0;
+//TODO change back to 0 (both)?
+int SparkDataControl::activeBank_ = 2;
+int SparkDataControl::pendingBank_ = 2;
 Preset SparkDataControl::appReceivedPreset_;
 int SparkDataControl::presetEditMode_ = PRESET_EDIT_NONE;
 
 int SparkDataControl::presetNumToEdit_ = 0;
 int SparkDataControl::presetBankToEdit_ = 0;
 
-int SparkDataControl::activePresetNum_ = 1;
+//TODO change back to 1?
+int SparkDataControl::activePresetNum_ = 3;
 std::string SparkDataControl::responseMsg_ = "";
 
 std::vector<ByteVector> SparkDataControl::ack_msg;

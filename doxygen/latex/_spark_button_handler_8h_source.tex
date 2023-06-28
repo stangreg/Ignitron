@@ -1,0 +1,78 @@
+\hypertarget{_spark_button_handler_8h_source}{}\doxysection{Spark\+Button\+Handler.\+h}
+\mbox{\hyperlink{_spark_button_handler_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkButtonHandler.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 23.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARKBUTTONHANDLER\_H\_}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARKBUTTONHANDLER\_H\_}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <BfButton.h>} \textcolor{comment}{//https://github.com/mickey9801/ButtonFever}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_data_control_8h}{SparkDataControl.h}}"{}}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{comment}{// GPIO Buttons/LEDs}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#define BUTTON\_PRESET1\_GPIO 25}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#define BUTTON\_DRIVE\_GPIO 25}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define BUTTON\_PRESET2\_GPIO 26}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define BUTTON\_MOD\_GPIO 26}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define BUTTON\_PRESET3\_GPIO 32}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define BUTTON\_DELAY\_GPIO 32}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define BUTTON\_PRESET4\_GPIO 33}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define BUTTON\_REVERB\_GPIO 33}}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define BUTTON\_BANK\_DOWN\_GPIO 19}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#define BUTTON\_NOISEGATE\_GPIO 19}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define BUTTON\_BANK\_UP\_GPIO 18}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define BUTTON\_COMP\_GPIO 18}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_button_handler}{SparkButtonHandler}} \{}
+\DoxyCodeLine{36 \textcolor{keyword}{public}:}
+\DoxyCodeLine{37     \mbox{\hyperlink{class_spark_button_handler_ae38be4097b5b226fa5bc690755e2800c}{SparkButtonHandler}}();}
+\DoxyCodeLine{38     \mbox{\hyperlink{class_spark_button_handler_ae38be4097b5b226fa5bc690755e2800c}{SparkButtonHandler}}(\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* dc);}
+\DoxyCodeLine{39     \textcolor{keyword}{virtual} \mbox{\hyperlink{class_spark_button_handler_a2def05501d94239b1dc187bb635a857e}{\string~SparkButtonHandler}}();}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_button_handler_a66e702e5db0015df4a7d15092eb9eeae}{readButtons}}();}
+\DoxyCodeLine{42     \textcolor{keyword}{static} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_button_handler_a209a2db6e86a54cb9602fa9d43a87925}{init}}(\textcolor{keywordtype}{bool} startup = \textcolor{keyword}{true});}
+\DoxyCodeLine{43     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* \mbox{\hyperlink{class_spark_button_handler_abc6a16dba1a3c5f9af1260328e82f411}{dataControl}}() \{}
+\DoxyCodeLine{44         \textcolor{keywordflow}{return} spark\_dc;}
+\DoxyCodeLine{45     \}}
+\DoxyCodeLine{46     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_button_handler_a013fc2512c7a25d850d989354fac6694}{setDataControl}}(\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}} *dc) \{}
+\DoxyCodeLine{47         spark\_dc = dc;}
+\DoxyCodeLine{48     \}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50 \textcolor{keyword}{private}:}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{52     \textcolor{keyword}{static} BfButton btn\_preset1;}
+\DoxyCodeLine{53     \textcolor{keyword}{static} BfButton btn\_preset2;}
+\DoxyCodeLine{54     \textcolor{keyword}{static} BfButton btn\_preset3;}
+\DoxyCodeLine{55     \textcolor{keyword}{static} BfButton btn\_preset4;}
+\DoxyCodeLine{56     \textcolor{keyword}{static} BfButton btn\_bank\_up;}
+\DoxyCodeLine{57     \textcolor{keyword}{static} BfButton btn\_bank\_down;}
+\DoxyCodeLine{58     \textcolor{keyword}{static} \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* spark\_dc;}
+\DoxyCodeLine{59     \textcolor{keyword}{static} \textcolor{keywordtype}{int} operationMode;}
+\DoxyCodeLine{60     \textcolor{comment}{// BUTTON Handlers}}
+\DoxyCodeLine{61     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnPresetHandler(BfButton *btn, BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{62     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnBankHandler(BfButton *btn, BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{63     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnSwitchModeHandler(BfButton *btn, BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{64     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnDeletePresetHandler(BfButton *btn, BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{65     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnResetHandler(BfButton *btn,}
+\DoxyCodeLine{66             BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{67     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnKeyboardHandler(BfButton *btn,}
+\DoxyCodeLine{68             BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{69     \textcolor{keyword}{static} \textcolor{keywordtype}{void} btnToggleLoopHandler(BfButton *btn,}
+\DoxyCodeLine{70             BfButton::press\_pattern\_t pattern);}
+\DoxyCodeLine{71 \};}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{73 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SPARKBUTTONHANDLER\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

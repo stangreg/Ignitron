@@ -391,9 +391,10 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 			if (pChr) {
 				for (auto block : msg) {
 					DEBUG_PRINTLN("Sending data:"); DEBUG_PRINTVECTOR(block); DEBUG_PRINTLN();
-					pChr->setValue(&block.data()[0], block.size());
+		S			pChr->setValue(&block.data()[0], block.size());
 				}
 				pChr->notify(true);
+				//delay(20);
 			}
 		}
 	}

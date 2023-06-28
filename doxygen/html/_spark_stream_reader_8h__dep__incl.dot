@@ -1,0 +1,30 @@
+digraph "SparkStreamReader.h"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="SparkStreamReader.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="SparkDataControl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_data_control_8h.html",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="SparkBLEControl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_b_l_e_control_8h.html",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="SparkBLEControl.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_b_l_e_control_8cpp.html",tooltip=" "];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="SparkButtonHandler.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_button_handler_8h.html",tooltip=" "];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="SparkButtonHandler.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_button_handler_8cpp.html",tooltip=" "];
+  Node2 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="SparkDataControl.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_data_control_8cpp.html",tooltip=" "];
+  Node2 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="SparkDisplayControl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_display_control_8h.html",tooltip=" "];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="SparkDisplayControl.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_display_control_8cpp.html",tooltip=" "];
+  Node2 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="SparkLEDControl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_l_e_d_control_8h.html",tooltip=" "];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="SparkLEDControl.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_l_e_d_control_8cpp.html",tooltip=" "];
+  Node1 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="SparkStreamReader.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_stream_reader_8cpp.html",tooltip=" "];
+}

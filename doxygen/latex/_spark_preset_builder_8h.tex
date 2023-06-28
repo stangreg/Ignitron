@@ -1,0 +1,123 @@
+\hypertarget{_spark_preset_builder_8h}{}\doxysection{Spark\+Preset\+Builder.\+h File Reference}
+\label{_spark_preset_builder_8h}\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+{\ttfamily \#include $<$Arduino.\+h$>$}\newline
+{\ttfamily \#include $<$Arduino\+JSON.\+h$>$}\newline
+{\ttfamily \#include $<$FS.\+h$>$}\newline
+{\ttfamily \#include $<$Effortless\+\_\+\+SPIFFS.\+h$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$regex$>$}\newline
+{\ttfamily \#include \char`\"{}Spark\+Helper.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Types.\+h\char`\"{}}\newline
+Include dependency graph for Spark\+Preset\+Builder.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_preset_builder_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_preset_builder_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_spark_preset_builder}{Spark\+Preset\+Builder}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a7a546f85765d0467aa0de231d7e93209}{PRESETS\+\_\+\+PER\+\_\+\+BANK}}~4
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a009b3023060f939af90f09cdaf27c57d}{STORE\+\_\+\+PRESET\+\_\+\+OK}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a6fba5f2a95c19f87a60256cdab0cd213}{STORE\+\_\+\+PRESET\+\_\+\+FILE\+\_\+\+EXISTS}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_afb79a8bf2f7742155aa4812f3bd0954c}{STORE\+\_\+\+PRESET\+\_\+\+ERROR\+\_\+\+OPEN}}~3
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a3bc2f74487ab113b09e721001461d6ba}{STORE\+\_\+\+PRESET\+\_\+\+UNKNOWN\+\_\+\+ERROR}}~4
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a3d780f0bf4661cab607a60621ac4b6e0}{DELETE\+\_\+\+PRESET\+\_\+\+OK}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_acc34fa33d686fbcd007c01b75237eb9a}{DELETE\+\_\+\+PRESET\+\_\+\+FILE\+\_\+\+NOT\+\_\+\+EXIST}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_a771430d898e86661c051bd524e36a050}{DELETE\+\_\+\+PRESET\+\_\+\+ERROR\+\_\+\+OPEN}}~3
+\item 
+\#define \mbox{\hyperlink{_spark_preset_builder_8h_ad1dd58e3d081633ad68f2cf179302c84}{DELETE\+\_\+\+PRESET\+\_\+\+UNKNOWN\+\_\+\+ERROR}}~4
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{_spark_preset_builder_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} = std\+::vector$<$ byte $>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_spark_preset_builder_8h_a771430d898e86661c051bd524e36a050}\label{_spark_preset_builder_8h_a771430d898e86661c051bd524e36a050}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!DELETE\_PRESET\_ERROR\_OPEN@{DELETE\_PRESET\_ERROR\_OPEN}}
+\index{DELETE\_PRESET\_ERROR\_OPEN@{DELETE\_PRESET\_ERROR\_OPEN}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{DELETE\_PRESET\_ERROR\_OPEN}{DELETE\_PRESET\_ERROR\_OPEN}}
+{\footnotesize\ttfamily \#define DELETE\+\_\+\+PRESET\+\_\+\+ERROR\+\_\+\+OPEN~3}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_acc34fa33d686fbcd007c01b75237eb9a}\label{_spark_preset_builder_8h_acc34fa33d686fbcd007c01b75237eb9a}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!DELETE\_PRESET\_FILE\_NOT\_EXIST@{DELETE\_PRESET\_FILE\_NOT\_EXIST}}
+\index{DELETE\_PRESET\_FILE\_NOT\_EXIST@{DELETE\_PRESET\_FILE\_NOT\_EXIST}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{DELETE\_PRESET\_FILE\_NOT\_EXIST}{DELETE\_PRESET\_FILE\_NOT\_EXIST}}
+{\footnotesize\ttfamily \#define DELETE\+\_\+\+PRESET\+\_\+\+FILE\+\_\+\+NOT\+\_\+\+EXIST~2}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_a3d780f0bf4661cab607a60621ac4b6e0}\label{_spark_preset_builder_8h_a3d780f0bf4661cab607a60621ac4b6e0}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!DELETE\_PRESET\_OK@{DELETE\_PRESET\_OK}}
+\index{DELETE\_PRESET\_OK@{DELETE\_PRESET\_OK}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{DELETE\_PRESET\_OK}{DELETE\_PRESET\_OK}}
+{\footnotesize\ttfamily \#define DELETE\+\_\+\+PRESET\+\_\+\+OK~1}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_ad1dd58e3d081633ad68f2cf179302c84}\label{_spark_preset_builder_8h_ad1dd58e3d081633ad68f2cf179302c84}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!DELETE\_PRESET\_UNKNOWN\_ERROR@{DELETE\_PRESET\_UNKNOWN\_ERROR}}
+\index{DELETE\_PRESET\_UNKNOWN\_ERROR@{DELETE\_PRESET\_UNKNOWN\_ERROR}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{DELETE\_PRESET\_UNKNOWN\_ERROR}{DELETE\_PRESET\_UNKNOWN\_ERROR}}
+{\footnotesize\ttfamily \#define DELETE\+\_\+\+PRESET\+\_\+\+UNKNOWN\+\_\+\+ERROR~4}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_a7a546f85765d0467aa0de231d7e93209}\label{_spark_preset_builder_8h_a7a546f85765d0467aa0de231d7e93209}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!PRESETS\_PER\_BANK@{PRESETS\_PER\_BANK}}
+\index{PRESETS\_PER\_BANK@{PRESETS\_PER\_BANK}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{PRESETS\_PER\_BANK}{PRESETS\_PER\_BANK}}
+{\footnotesize\ttfamily \#define PRESETS\+\_\+\+PER\+\_\+\+BANK~4}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_afb79a8bf2f7742155aa4812f3bd0954c}\label{_spark_preset_builder_8h_afb79a8bf2f7742155aa4812f3bd0954c}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!STORE\_PRESET\_ERROR\_OPEN@{STORE\_PRESET\_ERROR\_OPEN}}
+\index{STORE\_PRESET\_ERROR\_OPEN@{STORE\_PRESET\_ERROR\_OPEN}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{STORE\_PRESET\_ERROR\_OPEN}{STORE\_PRESET\_ERROR\_OPEN}}
+{\footnotesize\ttfamily \#define STORE\+\_\+\+PRESET\+\_\+\+ERROR\+\_\+\+OPEN~3}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_a6fba5f2a95c19f87a60256cdab0cd213}\label{_spark_preset_builder_8h_a6fba5f2a95c19f87a60256cdab0cd213}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!STORE\_PRESET\_FILE\_EXISTS@{STORE\_PRESET\_FILE\_EXISTS}}
+\index{STORE\_PRESET\_FILE\_EXISTS@{STORE\_PRESET\_FILE\_EXISTS}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{STORE\_PRESET\_FILE\_EXISTS}{STORE\_PRESET\_FILE\_EXISTS}}
+{\footnotesize\ttfamily \#define STORE\+\_\+\+PRESET\+\_\+\+FILE\+\_\+\+EXISTS~2}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_a009b3023060f939af90f09cdaf27c57d}\label{_spark_preset_builder_8h_a009b3023060f939af90f09cdaf27c57d}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!STORE\_PRESET\_OK@{STORE\_PRESET\_OK}}
+\index{STORE\_PRESET\_OK@{STORE\_PRESET\_OK}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{STORE\_PRESET\_OK}{STORE\_PRESET\_OK}}
+{\footnotesize\ttfamily \#define STORE\+\_\+\+PRESET\+\_\+\+OK~1}
+
+\mbox{\Hypertarget{_spark_preset_builder_8h_a3bc2f74487ab113b09e721001461d6ba}\label{_spark_preset_builder_8h_a3bc2f74487ab113b09e721001461d6ba}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!STORE\_PRESET\_UNKNOWN\_ERROR@{STORE\_PRESET\_UNKNOWN\_ERROR}}
+\index{STORE\_PRESET\_UNKNOWN\_ERROR@{STORE\_PRESET\_UNKNOWN\_ERROR}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{STORE\_PRESET\_UNKNOWN\_ERROR}{STORE\_PRESET\_UNKNOWN\_ERROR}}
+{\footnotesize\ttfamily \#define STORE\+\_\+\+PRESET\+\_\+\+UNKNOWN\+\_\+\+ERROR~4}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{_spark_preset_builder_8h_a9ca15c3f786d188fb82ec188300346f3}\label{_spark_preset_builder_8h_a9ca15c3f786d188fb82ec188300346f3}} 
+\index{SparkPresetBuilder.h@{SparkPresetBuilder.h}!ByteVector@{ByteVector}}
+\index{ByteVector@{ByteVector}!SparkPresetBuilder.h@{SparkPresetBuilder.h}}
+\doxysubsubsection{\texorpdfstring{ByteVector}{ByteVector}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} =  std\+::vector$<$byte$>$}
+

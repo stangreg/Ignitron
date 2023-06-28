@@ -1,0 +1,48 @@
+\hypertarget{_spark_helper_8h_source}{}\doxysection{Spark\+Helper.\+h}
+\mbox{\hyperlink{_spark_helper_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.cpp}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARK\_HELPER\_H }\textcolor{comment}{// include guard}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARK\_HELPER\_H}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <array>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <iomanip>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <sstream>}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_helper}{SparkHelper}}\{}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{keyword}{private}:}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{keyword}{public}:}
+\DoxyCodeLine{26     \textcolor{comment}{// Convert a string to a ByteVector}}
+\DoxyCodeLine{27     \textcolor{comment}{//static ByteVector HexToBytes(const std::string\& hex);}}
+\DoxyCodeLine{28     \textcolor{comment}{// Convert a string hex item to a byte}}
+\DoxyCodeLine{29     \textcolor{keyword}{static} \textcolor{keywordtype}{byte} \mbox{\hyperlink{class_spark_helper_afbcf3db6de5f232b65ec011425081324}{HexToByte}}(\textcolor{keyword}{const} std::string\& hex);}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31     \textcolor{comment}{// Convert a byte array to a string}}
+\DoxyCodeLine{32     \textcolor{comment}{//static std::string hexStr(byte *data, int len);}}
+\DoxyCodeLine{33     \textcolor{comment}{// convert a byte to a string hex representation}}
+\DoxyCodeLine{34     \textcolor{keyword}{static} std::string \mbox{\hyperlink{class_spark_helper_a10457870016df00a1fdb733aff3f3c1a}{intToHex}}(\textcolor{keywordtype}{byte} by);}
+\DoxyCodeLine{35     \textcolor{comment}{// print a vector of byte vectors;}}
+\DoxyCodeLine{36     \textcolor{keyword}{static} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_helper_a01b2bef3da48745b0c2ae7027734c892}{printDataAsHexString}}(std::vector<ByteVector>data);}
+\DoxyCodeLine{37     \textcolor{comment}{// Print a byte vector}}
+\DoxyCodeLine{38     \textcolor{keyword}{static} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_helper_aacb8cac8a4957cc0479ec039e6b22214}{printByteVector}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} vec);}
+\DoxyCodeLine{39     \textcolor{comment}{// get a byteVector from int value}}
+\DoxyCodeLine{40     \textcolor{comment}{//static ByteVector bytes(int value);}}
+\DoxyCodeLine{41 \};}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

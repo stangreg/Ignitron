@@ -417,11 +417,11 @@ std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
 	start_message(cmd, sub_cmd);
 
 	add_byte(0xCE);
-	//Version string 1.6.5.160
+	//Version string 1.7.5.182 (old: 1.6.5.160 (160-128))
 	add_byte((byte) 1);
-	add_byte((byte) 6);
+	add_byte((byte) 7);
 	add_byte((byte) 5);
-	add_byte((byte) 160 - 128);
+	add_byte((byte) 182);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 

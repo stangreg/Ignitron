@@ -1,0 +1,68 @@
+\hypertarget{_spark_message_8h_source}{}\doxysection{Spark\+Message.\+h}
+\mbox{\hyperlink{_spark_message_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.cpp}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARK\_MESSAGE\_H }\textcolor{comment}{// include guard}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARK\_MESSAGE\_H}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <array>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <iomanip>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <sstream>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_helper_8h}{SparkHelper.h}}"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_types_8h}{SparkTypes.h}}"{}}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_message}{SparkMessage}}\{}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{keyword}{private}:}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26     \textcolor{keywordtype}{byte} cmd;}
+\DoxyCodeLine{27     \textcolor{keywordtype}{byte} sub\_cmd;}
+\DoxyCodeLine{28     \textcolor{comment}{// data types to be confirmed}}
+\DoxyCodeLine{29     std::vector<ByteVector> split\_data8;}
+\DoxyCodeLine{30     std::vector<ByteVector> split\_data7;}
+\DoxyCodeLine{31     \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} data;}
+\DoxyCodeLine{32     std::vector<ByteVector> final\_message;}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35     \textcolor{keywordtype}{void} start\_message (\textcolor{keywordtype}{byte} cmd, \textcolor{keywordtype}{byte} sub\_cmd);}
+\DoxyCodeLine{36     std::vector<ByteVector> end\_message();}
+\DoxyCodeLine{37     \textcolor{comment}{//ByteVector end\_message();}}
+\DoxyCodeLine{38     \textcolor{keywordtype}{void} add\_bytes(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} bytes\_8);}
+\DoxyCodeLine{39     \textcolor{keywordtype}{void} add\_byte(\textcolor{keywordtype}{byte} by);}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41     \textcolor{keywordtype}{void} add\_string(std::string pack\_str);}
+\DoxyCodeLine{42     \textcolor{keywordtype}{void} add\_long\_string(std::string pack\_str);}
+\DoxyCodeLine{43     \textcolor{keywordtype}{void} add\_prefixed\_string(std::string pack\_str);}
+\DoxyCodeLine{44     \textcolor{keywordtype}{void} add\_float (\textcolor{keywordtype}{float} flt);}
+\DoxyCodeLine{45     \textcolor{keywordtype}{void} add\_onoff (\textcolor{keywordtype}{boolean} onoff);}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{keyword}{public}:}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     \mbox{\hyperlink{class_spark_message_ad0e0ef76d13d454e0644b298b027d1a8}{SparkMessage}}();}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51     \textcolor{comment}{// Command messages to send to Spark}}
+\DoxyCodeLine{52     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a32b23a97399f0c6f0cc8e273ce316f52}{change\_effect\_parameter}} (std::string pedal, \textcolor{keywordtype}{int} param, \textcolor{keywordtype}{float} val);}
+\DoxyCodeLine{53     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a96a8f97953b37dbd3c32e9500be318fc}{change\_effect}} (std::string pedal1, std::string pedal2);}
+\DoxyCodeLine{54     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_ac72e78fcbc75dff0420a3639b172b76c}{change\_hardware\_preset}} (\textcolor{keywordtype}{int} preset\_num);}
+\DoxyCodeLine{55     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a117d425cc97913bea224fb89484dc96f}{turn\_effect\_onoff}} (std::string pedal, \textcolor{keywordtype}{boolean} enable);}
+\DoxyCodeLine{56     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_ae788f77fa75c0a8f926bb8cec95ec415}{create\_preset}} (\mbox{\hyperlink{struct_preset}{Preset}} preset\_data);}
+\DoxyCodeLine{57     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a1dbef4adadef2cbbb70b67f448630500}{get\_current\_preset\_num}}();}
+\DoxyCodeLine{58     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a0c7f3b2d2269cd2d15d254ec890aa18f}{get\_current\_preset}}();}
+\DoxyCodeLine{59     std::vector<ByteVector> \mbox{\hyperlink{class_spark_message_a3a211b462eaaf975588fed8eb91c6146}{send\_ack}}(\textcolor{keywordtype}{byte} seq, \textcolor{keywordtype}{byte} cmd);}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \};}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

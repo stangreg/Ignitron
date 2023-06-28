@@ -1,0 +1,112 @@
+\hypertarget{_spark_stream_reader_8h}{}\doxysection{Spark\+Stream\+Reader.\+h File Reference}
+\label{_spark_stream_reader_8h}\index{SparkStreamReader.h@{SparkStreamReader.h}}
+{\ttfamily \#include $<$tuple$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include \char`\"{}Spark\+Helper.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Types.\+h\char`\"{}}\newline
+Include dependency graph for Spark\+Stream\+Reader.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_stream_reader_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_stream_reader_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_spark_stream_reader}{Spark\+Stream\+Reader}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_a11c4b899b308c85700a41e9418cff2dc}{MSG\+\_\+\+TYPE\+\_\+\+PRESET}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_ab2de54beab2df2fb20f40b5abe9b0858}{MSG\+\_\+\+TYPE\+\_\+\+HWPRESET}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_a465e673a4ee9479d6d7f8eb2d405b0a0}{MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+ONOFF}}~3
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_a1aa532561fe27585c9e91556a2efb3ec}{MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+CHANGE}}~4
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_a3c1b5769fc9ce51b16d0a4c90747d73e}{MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+PARAM}}~5
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_ab7c5c536ba081fba7ee36cfb875443b5}{MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+COMPLETE}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_ab40e10f29c7603c3d16f108a9af71aaa}{MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+INCOMPLETE}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_stream_reader_8h_a20b5fb17efde7663cc5b95b0ffa2865e}{MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+INITIAL}}~3
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{_spark_stream_reader_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} = std\+::vector$<$ byte $>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_spark_stream_reader_8h_ab7c5c536ba081fba7ee36cfb875443b5}\label{_spark_stream_reader_8h_ab7c5c536ba081fba7ee36cfb875443b5}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_PROCESS\_RES\_COMPLETE@{MSG\_PROCESS\_RES\_COMPLETE}}
+\index{MSG\_PROCESS\_RES\_COMPLETE@{MSG\_PROCESS\_RES\_COMPLETE}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_PROCESS\_RES\_COMPLETE}{MSG\_PROCESS\_RES\_COMPLETE}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+COMPLETE~1}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_ab40e10f29c7603c3d16f108a9af71aaa}\label{_spark_stream_reader_8h_ab40e10f29c7603c3d16f108a9af71aaa}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_PROCESS\_RES\_INCOMPLETE@{MSG\_PROCESS\_RES\_INCOMPLETE}}
+\index{MSG\_PROCESS\_RES\_INCOMPLETE@{MSG\_PROCESS\_RES\_INCOMPLETE}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_PROCESS\_RES\_INCOMPLETE}{MSG\_PROCESS\_RES\_INCOMPLETE}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+INCOMPLETE~2}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_a20b5fb17efde7663cc5b95b0ffa2865e}\label{_spark_stream_reader_8h_a20b5fb17efde7663cc5b95b0ffa2865e}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_PROCESS\_RES\_INITIAL@{MSG\_PROCESS\_RES\_INITIAL}}
+\index{MSG\_PROCESS\_RES\_INITIAL@{MSG\_PROCESS\_RES\_INITIAL}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_PROCESS\_RES\_INITIAL}{MSG\_PROCESS\_RES\_INITIAL}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+PROCESS\+\_\+\+RES\+\_\+\+INITIAL~3}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_a1aa532561fe27585c9e91556a2efb3ec}\label{_spark_stream_reader_8h_a1aa532561fe27585c9e91556a2efb3ec}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_TYPE\_FX\_CHANGE@{MSG\_TYPE\_FX\_CHANGE}}
+\index{MSG\_TYPE\_FX\_CHANGE@{MSG\_TYPE\_FX\_CHANGE}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_TYPE\_FX\_CHANGE}{MSG\_TYPE\_FX\_CHANGE}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+CHANGE~4}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_a465e673a4ee9479d6d7f8eb2d405b0a0}\label{_spark_stream_reader_8h_a465e673a4ee9479d6d7f8eb2d405b0a0}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_TYPE\_FX\_ONOFF@{MSG\_TYPE\_FX\_ONOFF}}
+\index{MSG\_TYPE\_FX\_ONOFF@{MSG\_TYPE\_FX\_ONOFF}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_TYPE\_FX\_ONOFF}{MSG\_TYPE\_FX\_ONOFF}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+ONOFF~3}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_a3c1b5769fc9ce51b16d0a4c90747d73e}\label{_spark_stream_reader_8h_a3c1b5769fc9ce51b16d0a4c90747d73e}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_TYPE\_FX\_PARAM@{MSG\_TYPE\_FX\_PARAM}}
+\index{MSG\_TYPE\_FX\_PARAM@{MSG\_TYPE\_FX\_PARAM}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_TYPE\_FX\_PARAM}{MSG\_TYPE\_FX\_PARAM}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+TYPE\+\_\+\+FX\+\_\+\+PARAM~5}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_ab2de54beab2df2fb20f40b5abe9b0858}\label{_spark_stream_reader_8h_ab2de54beab2df2fb20f40b5abe9b0858}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_TYPE\_HWPRESET@{MSG\_TYPE\_HWPRESET}}
+\index{MSG\_TYPE\_HWPRESET@{MSG\_TYPE\_HWPRESET}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_TYPE\_HWPRESET}{MSG\_TYPE\_HWPRESET}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+TYPE\+\_\+\+HWPRESET~2}
+
+\mbox{\Hypertarget{_spark_stream_reader_8h_a11c4b899b308c85700a41e9418cff2dc}\label{_spark_stream_reader_8h_a11c4b899b308c85700a41e9418cff2dc}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!MSG\_TYPE\_PRESET@{MSG\_TYPE\_PRESET}}
+\index{MSG\_TYPE\_PRESET@{MSG\_TYPE\_PRESET}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{MSG\_TYPE\_PRESET}{MSG\_TYPE\_PRESET}}
+{\footnotesize\ttfamily \#define MSG\+\_\+\+TYPE\+\_\+\+PRESET~1}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{_spark_stream_reader_8h_a9ca15c3f786d188fb82ec188300346f3}\label{_spark_stream_reader_8h_a9ca15c3f786d188fb82ec188300346f3}} 
+\index{SparkStreamReader.h@{SparkStreamReader.h}!ByteVector@{ByteVector}}
+\index{ByteVector@{ByteVector}!SparkStreamReader.h@{SparkStreamReader.h}}
+\doxysubsubsection{\texorpdfstring{ByteVector}{ByteVector}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} =  std\+::vector$<$byte$>$}
+

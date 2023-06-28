@@ -1,0 +1,134 @@
+\hypertarget{_spark_stream_reader_8h_source}{}\doxysection{Spark\+Stream\+Reader.\+h}
+\mbox{\hyperlink{_spark_stream_reader_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.cpp}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARK\_STREAM\_READER\_H }\textcolor{comment}{// include guard}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARK\_STREAM\_READER\_H}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <tuple>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_helper_8h}{SparkHelper.h}}"{}}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_types_8h}{SparkTypes.h}}"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define MSG\_TYPE\_PRESET 1}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define MSG\_TYPE\_HWPRESET 2}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define MSG\_TYPE\_FX\_ONOFF 3}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define MSG\_TYPE\_FX\_CHANGE 4}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define MSG\_TYPE\_FX\_PARAM 5}}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define MSG\_PROCESS\_RES\_COMPLETE 1}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#define MSG\_PROCESS\_RES\_INCOMPLETE 2}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#define MSG\_PROCESS\_RES\_INITIAL 3}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_stream_reader}{SparkStreamReader}}\{}
+\DoxyCodeLine{32     \textcolor{comment}{// Parser for Spark messages (from App or Amp)}}
+\DoxyCodeLine{33     \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 \textcolor{keyword}{private}:}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37     \textcolor{comment}{// String representations of processed data}}
+\DoxyCodeLine{38     std::string raw;}
+\DoxyCodeLine{39     std::string text;}
+\DoxyCodeLine{40     std::string indent;}
+\DoxyCodeLine{41     std::string json;}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43     \textcolor{comment}{// Vector containing struct of cmd, sub\_cmd, and payload}}
+\DoxyCodeLine{44     std::vector<CmdData> message = \{ \};}
+\DoxyCodeLine{45     \textcolor{comment}{// Unstructured input data, needs to go through structure\_data first}}
+\DoxyCodeLine{46     std::vector<ByteVector> unstructured\_data = \{\};}
+\DoxyCodeLine{47 }
+\DoxyCodeLine{48     \textcolor{comment}{// payload of a CmdData object to be interpreted. msg\_pos is pointing at the next byte to read}}
+\DoxyCodeLine{49     \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} msg;}
+\DoxyCodeLine{50     \textcolor{keywordtype}{int} msg\_pos;}
+\DoxyCodeLine{51     \textcolor{comment}{// indicator if a block received is the last one}}
+\DoxyCodeLine{52     \textcolor{keywordtype}{bool} msg\_last\_block = \textcolor{keyword}{false};}
+\DoxyCodeLine{53     std::vector<ByteVector> response;}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56     \textcolor{comment}{// In case a preset was received from Spark, it is saved here. Can then be read by main program}}
+\DoxyCodeLine{57     \mbox{\hyperlink{struct_preset}{Preset}} currentSetting\_;}
+\DoxyCodeLine{58     \textcolor{comment}{// Preset number. Can be retrieved by main program in case it has been updated by Spark Amp.}}
+\DoxyCodeLine{59     \textcolor{keywordtype}{int} currentPresetNumber\_ = 0;}
+\DoxyCodeLine{60     \textcolor{comment}{//Flags to indicate that either preset or presetNumber have been updated}}
+\DoxyCodeLine{61     \textcolor{keywordtype}{boolean} isPresetUpdated\_ = \textcolor{keyword}{false};}
+\DoxyCodeLine{62     \textcolor{keywordtype}{boolean} isPresetNumberUpdated\_ = \textcolor{keyword}{false};}
+\DoxyCodeLine{63     \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} acknowledgements;}
+\DoxyCodeLine{64     \textcolor{keywordtype}{int} last\_message\_type\_ = 0;}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66     \textcolor{comment}{// Functions to process calls based on identified cmd/sub\_cmd.}}
+\DoxyCodeLine{67     \textcolor{keywordtype}{void} read\_effect\_parameter();}
+\DoxyCodeLine{68     \textcolor{keywordtype}{void} read\_effect();}
+\DoxyCodeLine{69     \textcolor{keywordtype}{void} read\_effect\_onoff();}
+\DoxyCodeLine{70     \textcolor{keywordtype}{void} read\_hardware\_preset();}
+\DoxyCodeLine{71     \textcolor{keywordtype}{void} read\_store\_hardware\_preset();}
+\DoxyCodeLine{72     \textcolor{keywordtype}{void} read\_preset();}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75     \textcolor{comment}{// Functions to structure and process input data (high level)}}
+\DoxyCodeLine{76     std::vector<CmdData> read\_message();}
+\DoxyCodeLine{77     \textcolor{keywordtype}{boolean} structure\_data();}
+\DoxyCodeLine{78     \textcolor{keywordtype}{void} interpret\_data();}
+\DoxyCodeLine{79     \textcolor{keywordtype}{void} set\_interpreter (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} \_msg);}
+\DoxyCodeLine{80     \textcolor{keywordtype}{int} run\_interpreter (\textcolor{keywordtype}{byte} \_cmd, \textcolor{keywordtype}{byte} \_sub\_cmd);}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82     \textcolor{comment}{// Low level functions to read single elements from structured payload}}
+\DoxyCodeLine{83     \textcolor{keywordtype}{byte} read\_byte();}
+\DoxyCodeLine{84     std::string read\_prefixed\_string();}
+\DoxyCodeLine{85     std::string read\_string();}
+\DoxyCodeLine{86     \textcolor{keywordtype}{float} read\_float ();}
+\DoxyCodeLine{87     \textcolor{keywordtype}{boolean} read\_onoff();}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{89     \textcolor{comment}{// Functions to create string representations of processed data}}
+\DoxyCodeLine{90     \textcolor{keywordtype}{void} start\_str();}
+\DoxyCodeLine{91     \textcolor{keywordtype}{void} end\_str();}
+\DoxyCodeLine{92     \textcolor{keywordtype}{void} add\_indent();}
+\DoxyCodeLine{93     \textcolor{keywordtype}{void} del\_indent();}
+\DoxyCodeLine{94     \textcolor{keywordtype}{void} add\_separator();}
+\DoxyCodeLine{95     \textcolor{keywordtype}{void} add\_newline();}
+\DoxyCodeLine{96     \textcolor{keywordtype}{void} add\_python(\textcolor{keywordtype}{char}* python\_str);}
+\DoxyCodeLine{97     \textcolor{keywordtype}{void} add\_str(\textcolor{keywordtype}{char}* a\_title, std::string a\_str, \textcolor{keywordtype}{char}* nature = \textcolor{stringliteral}{"{}all"{}});}
+\DoxyCodeLine{98     \textcolor{keywordtype}{void} add\_int(\textcolor{keywordtype}{char}* a\_title, \textcolor{keywordtype}{int} an\_int, \textcolor{keywordtype}{char}* nature = \textcolor{stringliteral}{"{}all"{}});}
+\DoxyCodeLine{99     \textcolor{keywordtype}{void} add\_float(\textcolor{keywordtype}{char}* a\_title, \textcolor{keywordtype}{float} a\_float, \textcolor{keywordtype}{char}* nature = \textcolor{stringliteral}{"{}all"{}});}
+\DoxyCodeLine{100     \textcolor{keywordtype}{void} add\_float\_pure(\textcolor{keywordtype}{float} a\_float, \textcolor{keywordtype}{char}* nature = \textcolor{stringliteral}{"{}all"{}});}
+\DoxyCodeLine{101     \textcolor{keywordtype}{void} add\_bool(\textcolor{keywordtype}{char}* a\_title, \textcolor{keywordtype}{boolean} a\_bool, \textcolor{keywordtype}{char}* nature = \textcolor{stringliteral}{"{}all"{}});}
+\DoxyCodeLine{102 }
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105 }
+\DoxyCodeLine{106 \textcolor{keyword}{public}:}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108     \textcolor{comment}{//Constructors}}
+\DoxyCodeLine{109     \mbox{\hyperlink{class_spark_stream_reader_a1290a3bb251eed56e8a42e9500fdf5b4}{SparkStreamReader}}();}
+\DoxyCodeLine{110     \textcolor{comment}{// setting the messag so it can be structured and interpreted}}
+\DoxyCodeLine{111     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_stream_reader_ad42704e156783c2cef19cad16f0e2f79}{setMessage}}(std::vector<ByteVector> msg);}
+\DoxyCodeLine{112     std::string \mbox{\hyperlink{class_spark_stream_reader_a543ea78e11135fe1d0652c11643e0014}{getJson}}();}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114     \textcolor{comment}{// Preset related methods to make information public}}
+\DoxyCodeLine{115     \textcolor{keyword}{const} \mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_stream_reader_a8201b663b72e3f5c48eb4ddcda446300}{currentSetting}}()\textcolor{keyword}{ const }\{\textcolor{keywordflow}{return} currentSetting\_;\}}
+\DoxyCodeLine{116     \textcolor{keyword}{const} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_stream_reader_a7ee9009cfc87d80e1611f9267be31e3b}{currentPresetNumber}}()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} currentPresetNumber\_;\}}
+\DoxyCodeLine{117     \textcolor{keyword}{const} \textcolor{keywordtype}{boolean} \mbox{\hyperlink{class_spark_stream_reader_a9b87fd59d0979252551a6b61656bd5ab}{isPresetNumberUpdated}}()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} isPresetNumberUpdated\_;\}}
+\DoxyCodeLine{118     \textcolor{keyword}{const} \textcolor{keywordtype}{boolean} \mbox{\hyperlink{class_spark_stream_reader_a093d76ab3748d433a7a3f7b68cd7153b}{isPresetUpdated}}()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} isPresetUpdated\_;\}}
+\DoxyCodeLine{119     \textcolor{keyword}{const} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_stream_reader_ad277dc6f43c9e04abb7722f4f3fd408d}{lastMessageType}}()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} last\_message\_type\_;\}}
+\DoxyCodeLine{120 }
+\DoxyCodeLine{121     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_stream_reader_a6852bb79e7223f74d813642ae29f240e}{resetPresetNumberUpdateFlag}}();}
+\DoxyCodeLine{122     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_stream_reader_ad8b15282931519e3f442c70bc7deba36}{resetPresetUpdateFlag}}();}
+\DoxyCodeLine{123     std::tuple<boolean, byte, byte> \mbox{\hyperlink{class_spark_stream_reader_aeddd0c5feb554b3230cec1c27370e2b1}{needsAck}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} block);}
+\DoxyCodeLine{124     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_stream_reader_af72216f849b8f73f409f70524331332d}{processBlock}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} block);}
+\DoxyCodeLine{125     \textcolor{keywordtype}{byte} \mbox{\hyperlink{class_spark_stream_reader_a8da2fda86560e46c4779872e4d6388fe}{getLastAckAndEmpty}}();}
+\DoxyCodeLine{126 }
+\DoxyCodeLine{127 \};}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129 \textcolor{preprocessor}{\#endif }}
+
+\end{DoxyCode}

@@ -1,0 +1,58 @@
+digraph "SparkDataControl.h"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="SparkDataControl.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node2 [label="vector",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node3 [label="Arduino.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid"];
+  Node4 [label="SparkBLEControl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_b_l_e_control_8h.html",tooltip=" "];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid"];
+  Node5 [label="NimBLEDevice.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node4 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node4 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node4 -> Node1 [color="midnightblue",fontsize="10",style="solid"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid"];
+  Node6 [label="SparkMessage.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_message_8h.html",tooltip=" "];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid"];
+  Node7 [label="array",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node6 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node6 -> Node8 [color="midnightblue",fontsize="10",style="solid"];
+  Node8 [label="iomanip",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node6 -> Node9 [color="midnightblue",fontsize="10",style="solid"];
+  Node9 [label="sstream",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node6 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node6 -> Node10 [color="midnightblue",fontsize="10",style="solid"];
+  Node10 [label="SparkHelper.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_helper_8h.html",tooltip=" "];
+  Node10 -> Node7 [color="midnightblue",fontsize="10",style="solid"];
+  Node10 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node10 -> Node8 [color="midnightblue",fontsize="10",style="solid"];
+  Node10 -> Node9 [color="midnightblue",fontsize="10",style="solid"];
+  Node10 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node6 -> Node11 [color="midnightblue",fontsize="10",style="solid"];
+  Node11 [label="SparkTypes.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_types_8h.html",tooltip=" "];
+  Node11 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node11 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node11 -> Node10 [color="midnightblue",fontsize="10",style="solid"];
+  Node1 -> Node12 [color="midnightblue",fontsize="10",style="solid"];
+  Node12 [label="SparkPresetBuilder.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_preset_builder_8h.html",tooltip=" "];
+  Node12 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid"];
+  Node13 [label="Arduino_JSON.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node12 -> Node14 [color="midnightblue",fontsize="10",style="solid"];
+  Node14 [label="FS.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node12 -> Node15 [color="midnightblue",fontsize="10",style="solid"];
+  Node15 [label="Effortless_SPIFFS.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node12 -> Node10 [color="midnightblue",fontsize="10",style="solid"];
+  Node12 -> Node11 [color="midnightblue",fontsize="10",style="solid"];
+  Node1 -> Node16 [color="midnightblue",fontsize="10",style="solid"];
+  Node16 [label="SparkStreamReader.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_spark_stream_reader_8h.html",tooltip=" "];
+  Node16 -> Node17 [color="midnightblue",fontsize="10",style="solid"];
+  Node17 [label="tuple",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node16 -> Node10 [color="midnightblue",fontsize="10",style="solid"];
+  Node16 -> Node11 [color="midnightblue",fontsize="10",style="solid"];
+  Node1 -> Node11 [color="midnightblue",fontsize="10",style="solid"];
+}

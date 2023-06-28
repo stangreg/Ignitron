@@ -1,0 +1,125 @@
+\hypertarget{class_spark_stream_reader}{}\doxysection{Spark\+Stream\+Reader Class Reference}
+\label{class_spark_stream_reader}\index{SparkStreamReader@{SparkStreamReader}}
+
+
+{\ttfamily \#include $<$Spark\+Stream\+Reader.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spark_stream_reader_a1290a3bb251eed56e8a42e9500fdf5b4}{Spark\+Stream\+Reader}} ()
+\item 
+void \mbox{\hyperlink{class_spark_stream_reader_ad42704e156783c2cef19cad16f0e2f79}{set\+Message}} (std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$ msg)
+\item 
+std\+::string \mbox{\hyperlink{class_spark_stream_reader_a543ea78e11135fe1d0652c11643e0014}{get\+Json}} ()
+\item 
+const \mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_stream_reader_a8201b663b72e3f5c48eb4ddcda446300}{current\+Setting}} () const
+\item 
+const int \mbox{\hyperlink{class_spark_stream_reader_a7ee9009cfc87d80e1611f9267be31e3b}{current\+Preset\+Number}} () const
+\item 
+const boolean \mbox{\hyperlink{class_spark_stream_reader_a9b87fd59d0979252551a6b61656bd5ab}{is\+Preset\+Number\+Updated}} () const
+\item 
+const boolean \mbox{\hyperlink{class_spark_stream_reader_a093d76ab3748d433a7a3f7b68cd7153b}{is\+Preset\+Updated}} () const
+\item 
+const int \mbox{\hyperlink{class_spark_stream_reader_ad277dc6f43c9e04abb7722f4f3fd408d}{last\+Message\+Type}} () const
+\item 
+void \mbox{\hyperlink{class_spark_stream_reader_a6852bb79e7223f74d813642ae29f240e}{reset\+Preset\+Number\+Update\+Flag}} ()
+\item 
+void \mbox{\hyperlink{class_spark_stream_reader_ad8b15282931519e3f442c70bc7deba36}{reset\+Preset\+Update\+Flag}} ()
+\item 
+std\+::tuple$<$ boolean, byte, byte $>$ \mbox{\hyperlink{class_spark_stream_reader_aeddd0c5feb554b3230cec1c27370e2b1}{needs\+Ack}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} block)
+\item 
+int \mbox{\hyperlink{class_spark_stream_reader_af72216f849b8f73f409f70524331332d}{process\+Block}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} block)
+\item 
+byte \mbox{\hyperlink{class_spark_stream_reader_a8da2fda86560e46c4779872e4d6388fe}{get\+Last\+Ack\+And\+Empty}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_spark_stream_reader_a1290a3bb251eed56e8a42e9500fdf5b4}\label{class_spark_stream_reader_a1290a3bb251eed56e8a42e9500fdf5b4}} 
+\index{SparkStreamReader@{SparkStreamReader}!SparkStreamReader@{SparkStreamReader}}
+\index{SparkStreamReader@{SparkStreamReader}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{SparkStreamReader()}{SparkStreamReader()}}
+{\footnotesize\ttfamily Spark\+Stream\+Reader\+::\+Spark\+Stream\+Reader (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_spark_stream_reader_a7ee9009cfc87d80e1611f9267be31e3b}\label{class_spark_stream_reader_a7ee9009cfc87d80e1611f9267be31e3b}} 
+\index{SparkStreamReader@{SparkStreamReader}!currentPresetNumber@{currentPresetNumber}}
+\index{currentPresetNumber@{currentPresetNumber}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{currentPresetNumber()}{currentPresetNumber()}}
+{\footnotesize\ttfamily const int Spark\+Stream\+Reader\+::current\+Preset\+Number (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a8201b663b72e3f5c48eb4ddcda446300}\label{class_spark_stream_reader_a8201b663b72e3f5c48eb4ddcda446300}} 
+\index{SparkStreamReader@{SparkStreamReader}!currentSetting@{currentSetting}}
+\index{currentSetting@{currentSetting}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{currentSetting()}{currentSetting()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_preset}{Preset}} Spark\+Stream\+Reader\+::current\+Setting (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a543ea78e11135fe1d0652c11643e0014}\label{class_spark_stream_reader_a543ea78e11135fe1d0652c11643e0014}} 
+\index{SparkStreamReader@{SparkStreamReader}!getJson@{getJson}}
+\index{getJson@{getJson}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{getJson()}{getJson()}}
+{\footnotesize\ttfamily std\+::string Spark\+Stream\+Reader\+::get\+Json (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a8da2fda86560e46c4779872e4d6388fe}\label{class_spark_stream_reader_a8da2fda86560e46c4779872e4d6388fe}} 
+\index{SparkStreamReader@{SparkStreamReader}!getLastAckAndEmpty@{getLastAckAndEmpty}}
+\index{getLastAckAndEmpty@{getLastAckAndEmpty}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{getLastAckAndEmpty()}{getLastAckAndEmpty()}}
+{\footnotesize\ttfamily byte Spark\+Stream\+Reader\+::get\+Last\+Ack\+And\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a9b87fd59d0979252551a6b61656bd5ab}\label{class_spark_stream_reader_a9b87fd59d0979252551a6b61656bd5ab}} 
+\index{SparkStreamReader@{SparkStreamReader}!isPresetNumberUpdated@{isPresetNumberUpdated}}
+\index{isPresetNumberUpdated@{isPresetNumberUpdated}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{isPresetNumberUpdated()}{isPresetNumberUpdated()}}
+{\footnotesize\ttfamily const boolean Spark\+Stream\+Reader\+::is\+Preset\+Number\+Updated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a093d76ab3748d433a7a3f7b68cd7153b}\label{class_spark_stream_reader_a093d76ab3748d433a7a3f7b68cd7153b}} 
+\index{SparkStreamReader@{SparkStreamReader}!isPresetUpdated@{isPresetUpdated}}
+\index{isPresetUpdated@{isPresetUpdated}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{isPresetUpdated()}{isPresetUpdated()}}
+{\footnotesize\ttfamily const boolean Spark\+Stream\+Reader\+::is\+Preset\+Updated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_stream_reader_ad277dc6f43c9e04abb7722f4f3fd408d}\label{class_spark_stream_reader_ad277dc6f43c9e04abb7722f4f3fd408d}} 
+\index{SparkStreamReader@{SparkStreamReader}!lastMessageType@{lastMessageType}}
+\index{lastMessageType@{lastMessageType}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{lastMessageType()}{lastMessageType()}}
+{\footnotesize\ttfamily const int Spark\+Stream\+Reader\+::last\+Message\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_spark_stream_reader_aeddd0c5feb554b3230cec1c27370e2b1}\label{class_spark_stream_reader_aeddd0c5feb554b3230cec1c27370e2b1}} 
+\index{SparkStreamReader@{SparkStreamReader}!needsAck@{needsAck}}
+\index{needsAck@{needsAck}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{needsAck()}{needsAck()}}
+{\footnotesize\ttfamily std\+::tuple$<$ bool, byte, byte $>$ Spark\+Stream\+Reader\+::needs\+Ack (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{block }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_af72216f849b8f73f409f70524331332d}\label{class_spark_stream_reader_af72216f849b8f73f409f70524331332d}} 
+\index{SparkStreamReader@{SparkStreamReader}!processBlock@{processBlock}}
+\index{processBlock@{processBlock}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{processBlock()}{processBlock()}}
+{\footnotesize\ttfamily int Spark\+Stream\+Reader\+::process\+Block (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{block }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_a6852bb79e7223f74d813642ae29f240e}\label{class_spark_stream_reader_a6852bb79e7223f74d813642ae29f240e}} 
+\index{SparkStreamReader@{SparkStreamReader}!resetPresetNumberUpdateFlag@{resetPresetNumberUpdateFlag}}
+\index{resetPresetNumberUpdateFlag@{resetPresetNumberUpdateFlag}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{resetPresetNumberUpdateFlag()}{resetPresetNumberUpdateFlag()}}
+{\footnotesize\ttfamily void Spark\+Stream\+Reader\+::reset\+Preset\+Number\+Update\+Flag (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_ad8b15282931519e3f442c70bc7deba36}\label{class_spark_stream_reader_ad8b15282931519e3f442c70bc7deba36}} 
+\index{SparkStreamReader@{SparkStreamReader}!resetPresetUpdateFlag@{resetPresetUpdateFlag}}
+\index{resetPresetUpdateFlag@{resetPresetUpdateFlag}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{resetPresetUpdateFlag()}{resetPresetUpdateFlag()}}
+{\footnotesize\ttfamily void Spark\+Stream\+Reader\+::reset\+Preset\+Update\+Flag (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_stream_reader_ad42704e156783c2cef19cad16f0e2f79}\label{class_spark_stream_reader_ad42704e156783c2cef19cad16f0e2f79}} 
+\index{SparkStreamReader@{SparkStreamReader}!setMessage@{setMessage}}
+\index{setMessage@{setMessage}!SparkStreamReader@{SparkStreamReader}}
+\doxysubsubsection{\texorpdfstring{setMessage()}{setMessage()}}
+{\footnotesize\ttfamily void Spark\+Stream\+Reader\+::set\+Message (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$}]{msg }\end{DoxyParamCaption})}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_spark_stream_reader_8h}{Spark\+Stream\+Reader.\+h}}\item 
+\mbox{\hyperlink{_spark_stream_reader_8cpp}{Spark\+Stream\+Reader.\+cpp}}\end{DoxyCompactItemize}
