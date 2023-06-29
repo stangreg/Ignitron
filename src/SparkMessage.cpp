@@ -430,10 +430,18 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	sub_cmd = 0x2A;
 
 	start_message(cmd, sub_cmd);
-	add_byte(0x94);
-	add_byte(0x50);
-	add_byte(0xCC);
-	add_byte(0xF0);
+	/*add_byte(0x94);
+		add_byte(0x50);
+		add_byte(0xCC);
+		add_byte(0xF0);
+		add_byte(0x5A);
+		add_byte(0x58);
+	*/
+	//0D 147D 4C07 5A58
+	add_byte(0x14);
+	add_byte(0x7D);
+	add_byte(0x4C);
+	add_byte(0x07);
 	add_byte(0x5A);
 	add_byte(0x58);
 	return end_message(DIR_FROM_SPARK, msg_number);
