@@ -144,6 +144,7 @@ public:
 	void switchOperationMode(int opMode);
 	void toggleBTMode();
 
+	void setBank(int i);
 	void increaseBank();
 	void decreaseBank();
 	bool increasePresetLooper();

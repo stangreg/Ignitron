@@ -566,6 +566,12 @@ void SparkDataControl::restartESP(bool resetSparkMode){
 	ESP.restart();
 }
 
+void SparkDataControl::setBank(int i){
+	if (i > presetBuilder.getNumberOfBanks() || i < 0) return;
+	activeBank_ = pendingBank_ = i;
+
+}
+
 void SparkDataControl::increaseBank(){
 
 	if (!processAction()) { return; }
