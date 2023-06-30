@@ -266,8 +266,9 @@ void SparkMessage::add_byte(byte by){
 	data.push_back(by);
 }
 
-void SparkMessage::add_prefixed_string(std::string pack_str){
-	int str_length = pack_str.size();
+void SparkMessage::add_prefixed_string(std::string pack_str, int length_override){
+	int str_length = length_override;
+	if (str_length == 0) str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((byte)str_length);
 	byte_pack.push_back((byte)(str_length + 0xa0));
@@ -403,9 +404,11 @@ std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 	sub_cmd = 0x23;
 
 	start_message(cmd, sub_cmd);
-	add_prefixed_string("S999C999B999");
-	add_byte(0x01);
-	add_byte(0x77);
+	std::string serial_num = "S999C999B999";
+	// Spark App seems to send the F7 byte as part of the string in addition to the final F7 byte,
+	// so we need to have a flexible add_prefixed_string method to increase lenght information by one
+	add_prefixed_string(serial_num, serial_num.length()+1);
+	add_byte(0xF7);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -417,11 +420,11 @@ std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
 	start_message(cmd, sub_cmd);
 
 	add_byte(0xCE);
-	//Version string 1.6.5.160
+	//Version string 1.7.5.182 (old: 1.6.5.160 (160-128))
 	add_byte((byte) 1);
-	add_byte((byte) 6);
+	add_byte((byte) 7);
 	add_byte((byte) 5);
-	add_byte((byte) 160 - 128);
+	add_byte((byte) 182);
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -430,10 +433,18 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	sub_cmd = 0x2A;
 
 	start_message(cmd, sub_cmd);
+	/*add_byte(0x94);
+		add_byte(0x50);
+		add_byte(0xCC);
+		add_byte(0xF0);
+		add_byte(0x5A);
+		add_byte(0x58);
+	*/
+	//0D 147D 4C07 5A58
 	add_byte(0x94);
-	add_byte(0x50);
+	add_byte(0x7D);
 	add_byte(0xCC);
-	add_byte(0xF0);
+	add_byte(0x87);
 	add_byte(0x5A);
 	add_byte(0x58);
 	return end_message(DIR_FROM_SPARK, msg_number);

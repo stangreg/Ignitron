@@ -1,0 +1,98 @@
+\hypertarget{_spark_b_l_e_control_8h_source}{}\doxysection{Spark\+BLEControl.\+h}
+\mbox{\hyperlink{_spark_b_l_e_control_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkBLEControl.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARKBLECONTROL\_H\_}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARKBLECONTROL\_H\_}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <NimBLEDevice.h>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <BleKeyboard.h>}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_data_control_8h}{SparkDataControl.h}}"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{comment}{// Service and characteristics UUIDs of Spark Amp}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define SPARK\_BLE\_SERVICE\_UUID "{}FFC0"{}}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define SPARK\_BLE\_WRITE\_CHAR\_UUID "{}FFC1"{}}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define SPARK\_BLE\_NOTIF\_CHAR\_UUID "{}FFC2"{}}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{24 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}};}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{comment}{// Forward declaration of Callbacks classes, does nothing special, only default actions}}
+\DoxyCodeLine{27 \textcolor{comment}{//class ClientCallbacks: public NimBLEClientCallbacks \{\};}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_b_l_e_control}{SparkBLEControl}}: \textcolor{keyword}{public} NimBLEAdvertisedDeviceCallbacks,}
+\DoxyCodeLine{30         NimBLECharacteristicCallbacks,}
+\DoxyCodeLine{31         NimBLEServerCallbacks,}
+\DoxyCodeLine{32         NimBLEClientCallbacks \{}
+\DoxyCodeLine{33 \textcolor{keyword}{public}:}
+\DoxyCodeLine{34     \mbox{\hyperlink{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}{SparkBLEControl}}();}
+\DoxyCodeLine{35     \mbox{\hyperlink{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}{SparkBLEControl}}(\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}} *dc);}
+\DoxyCodeLine{36     \textcolor{keyword}{virtual} \mbox{\hyperlink{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}{\string~SparkBLEControl}}();}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{47     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}{isConnectionFound}}()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{48         \textcolor{keywordflow}{return} isConnectionFound\_;}
+\DoxyCodeLine{49     \}}
+\DoxyCodeLine{58     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a8283cf9af54fc2de8091c9bd312ce071}{isAmpConnected}}()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{59         \textcolor{keywordflow}{return} isAmpConnected\_;}
+\DoxyCodeLine{60     \}}
+\DoxyCodeLine{69     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a9fd96121fe34606f8486a7e80c1b0300}{isAppConnected}}()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{70         \textcolor{keywordflow}{return} isAppConnected\_;}
+\DoxyCodeLine{71     \}}
+\DoxyCodeLine{81     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}{connectToServer}}();}
+\DoxyCodeLine{92     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}{subscribeToNotifications}}(notify\_callback notifyCallback = \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{104     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}{writeBLE}}(std::vector<ByteVector> cmd, \textcolor{keywordtype}{bool} response = \textcolor{keyword}{false});}
+\DoxyCodeLine{114     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_a89d606d37709461b313a4c8cf2cb84d3}{initBLE}}(notify\_callback notifyCallback = \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{121     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_a48401d0946f87c7e226c4eb70dce9c5c}{startScan}}();}
+\DoxyCodeLine{127     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_spark_b_l_e_control_a08fe5e999b760004093c2df10a426134}{isScanning}}()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{128         \textcolor{keywordflow}{return} NimBLEDevice::getScan()-\/>isScanning();}
+\DoxyCodeLine{129     \}}
+\DoxyCodeLine{136     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_aa279f646c79f5735b4caaa74c665e264}{stopScan}}();}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{144     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}{startServer}}();}
+\DoxyCodeLine{152     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}{notifyClients}}(\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} msg);}
+\DoxyCodeLine{161     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}{sendInitialNotification}}();}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163 \textcolor{keyword}{private}:}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{166     \textcolor{comment}{//static ClientCallbacks clientCB;}}
+\DoxyCodeLine{167     NimBLEAdvertisedDevice *advDevice;}
+\DoxyCodeLine{168     NimBLEClient *pClient = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{169 }
+\DoxyCodeLine{170     \textcolor{keywordtype}{bool} isAmpConnected\_ = \textcolor{keyword}{false};}
+\DoxyCodeLine{171     \textcolor{keywordtype}{bool} isConnectionFound\_ = \textcolor{keyword}{false};}
+\DoxyCodeLine{172     \textcolor{comment}{// isClientConnected will be set when a client is connected to ESP in AMP mode}}
+\DoxyCodeLine{173     \textcolor{keywordtype}{bool} isAppConnected\_ = \textcolor{keyword}{false};}
+\DoxyCodeLine{174     notify\_callback notifyCB;}
+\DoxyCodeLine{175 }
+\DoxyCodeLine{176     uint32\_t scanTime = 0; }
+\DoxyCodeLine{177     \textcolor{keyword}{const} uint8\_t notificationOn[2] = \{ 0x1, 0x0 \};}
+\DoxyCodeLine{178 }
+\DoxyCodeLine{179     \textcolor{keyword}{static} \textcolor{keywordtype}{void} scanEndedCB(NimBLEScanResults results);}
+\DoxyCodeLine{180     \textcolor{keywordtype}{void} onResult(NimBLEAdvertisedDevice *advertisedDevice);}
+\DoxyCodeLine{181     \textcolor{keywordtype}{void} setAdvertisedDevice(NimBLEAdvertisedDevice *device);}
+\DoxyCodeLine{182     \textcolor{keywordtype}{void} onDisconnect(NimBLEClient *pClient);}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{184     \textcolor{comment}{// Server mode functions}}
+\DoxyCodeLine{185     NimBLEServer *pServer = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{186     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}} *spark\_dc;}
+\DoxyCodeLine{187     \textcolor{keywordtype}{void} onWrite(NimBLECharacteristic *pCharacteristic);}
+\DoxyCodeLine{188     \textcolor{keywordtype}{void} onSubscribe(NimBLECharacteristic *pCharacteristic,}
+\DoxyCodeLine{189             ble\_gap\_conn\_desc *desc, uint16\_t subValue);}
+\DoxyCodeLine{190     \textcolor{keywordtype}{void} onConnect(NimBLEServer *pServer);}
+\DoxyCodeLine{191     \textcolor{keywordtype}{void} onDisconnect(NimBLEServer *pServer);}
+\DoxyCodeLine{192 }
+\DoxyCodeLine{193     \textcolor{keywordtype}{int} notificationCount = 0;}
+\DoxyCodeLine{194 \};}
+\DoxyCodeLine{195 }
+\DoxyCodeLine{196 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SPARKBLECONTROL\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

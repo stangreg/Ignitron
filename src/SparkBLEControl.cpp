@@ -390,10 +390,14 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 			SPARK_BLE_NOTIF_CHAR_UUID);
 			if (pChr) {
 				for (auto block : msg) {
-					DEBUG_PRINTLN("Sending data:"); DEBUG_PRINTVECTOR(block); DEBUG_PRINTLN();
+					DEBUG_PRINTLN("Sending data:");
+					DEBUG_PRINTVECTOR(block);
+					DEBUG_PRINTLN();
 					pChr->setValue(&block.data()[0], block.size());
+					pChr->notify();
 				}
-				pChr->notify(true);
+				DEBUG_PRINTLN("Clients notified.");
+
 			}
 		}
 	}

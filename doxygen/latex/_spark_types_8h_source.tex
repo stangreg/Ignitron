@@ -1,0 +1,86 @@
+\hypertarget{_spark_types_8h_source}{}\doxysection{Spark\+Types.\+h}
+\mbox{\hyperlink{_spark_types_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.cpp}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARK\_TYPES\_H}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARK\_TYPES\_H}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_helper_8h}{SparkHelper.h}}"{}}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{comment}{// Positions of FX types in Preset struct}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define FX\_NOISEGATE    0}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define FX\_COMP         1}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define FX\_DRIVE        2}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define FX\_AMP          3}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define FX\_MOD          4}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define FX\_DELAY        5}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define FX\_REVERB       6}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_parameter}{Parameter}} \{}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_parameter_a3f45df38e695254f5de5295d0224458b}{number}};}
+\DoxyCodeLine{29     std::string \mbox{\hyperlink{struct_parameter_ac9dc11fd9d69f9d5d5dcec722dec93ef}{special}};}
+\DoxyCodeLine{30     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_parameter_a600fbf5505f6846a37b27f806ea4abf0}{value}};}
+\DoxyCodeLine{31 \};}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_pedal}{Pedal}} \{}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35     std::string \mbox{\hyperlink{struct_pedal_a91134fd83450ff31e80d3ea262240d5b}{name}};}
+\DoxyCodeLine{36     \textcolor{keywordtype}{boolean} \mbox{\hyperlink{struct_pedal_a5fd385a56e030ebde1eafd2ad8d1fc51}{isOn}};}
+\DoxyCodeLine{37     std::vector<Parameter> \mbox{\hyperlink{struct_pedal_a34be59ca1463a6c1e0c3900eb2e117e5}{parameters}};}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39 \};}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_preset}{Preset}} \{}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43     \textcolor{keywordtype}{boolean} \mbox{\hyperlink{struct_preset_a99cb597bf2a059d3b40be770574d4679}{isEmpty}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{44     \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_preset_a3fc5f5ff9b0b0812c43ab1189b11a9ce}{numberOfPedals}} = 7;}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     std::string \mbox{\hyperlink{struct_preset_aa99925e1aaa5731e868cea43e7d7ea3e}{json}};}
+\DoxyCodeLine{47     \textcolor{comment}{// Raw and text might not be filled (when read from the stored presets).}}
+\DoxyCodeLine{48     std::string \mbox{\hyperlink{struct_preset_a3f20646950000d36cc3e1180435946a7}{raw}};}
+\DoxyCodeLine{49     std::string \mbox{\hyperlink{struct_preset_a43d312197ab97a2933d018200b7d3dfa}{text}};}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_preset_a9ce0ceeefb7fdb12360fb63449126d84}{presetNumber}};}
+\DoxyCodeLine{52     std::string \mbox{\hyperlink{struct_preset_afb1eb2e2f1e13019f077c0cec32b0cba}{uuid}};}
+\DoxyCodeLine{53     std::string \mbox{\hyperlink{struct_preset_a32643ed384b8a95b2a4216b32ce51c47}{name}};}
+\DoxyCodeLine{54     std::string \mbox{\hyperlink{struct_preset_a0a7f071ea54dfb4d944b13ac63b1e1b2}{version}};}
+\DoxyCodeLine{55     std::string \mbox{\hyperlink{struct_preset_a8a29114697fb2afae83cbd72d107ea91}{description}};}
+\DoxyCodeLine{56     std::string \mbox{\hyperlink{struct_preset_a3098c47c1518e37fcff15229cb23e557}{icon}};}
+\DoxyCodeLine{57     \textcolor{keywordtype}{float} \mbox{\hyperlink{struct_preset_a9d74a3b3fba2cbc49ebc570e9830418a}{bpm}};}
+\DoxyCodeLine{58     std::vector<Pedal> \mbox{\hyperlink{struct_preset_a9c3695fd1facdaa283d0e1e6f33abc1e}{pedals}};}
+\DoxyCodeLine{59     \textcolor{keywordtype}{byte} \mbox{\hyperlink{struct_preset_aff3a9df920df724400a4c1b4d8f7d558}{filler}};}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \};}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_cmd_data}{CmdData}} \{}
+\DoxyCodeLine{64     \textcolor{keywordtype}{byte} \mbox{\hyperlink{struct_cmd_data_afc2334db1800ded7e23bf2d88c1c7b6b}{cmd}};}
+\DoxyCodeLine{65     \textcolor{keywordtype}{byte} \mbox{\hyperlink{struct_cmd_data_aa91564c2b992486ee06149faeb82aa66}{subcmd}};}
+\DoxyCodeLine{66     \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} \mbox{\hyperlink{struct_cmd_data_a8623a877dd94b079b79d3452cccb8698}{data}};}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68     std::string \mbox{\hyperlink{struct_cmd_data_ac77bfbd69cd9dd1ce68b6eeb7a979e66}{toString}}() \{}
+\DoxyCodeLine{69         std::string cmdStr;}
+\DoxyCodeLine{70         cmdStr = \textcolor{stringliteral}{"{}["{}} + \mbox{\hyperlink{class_spark_helper_a10457870016df00a1fdb733aff3f3c1a}{SparkHelper::intToHex}}(\mbox{\hyperlink{struct_cmd_data_afc2334db1800ded7e23bf2d88c1c7b6b}{cmd}}) + \textcolor{stringliteral}{"{}], ["{}}}
+\DoxyCodeLine{71                 + \mbox{\hyperlink{class_spark_helper_a10457870016df00a1fdb733aff3f3c1a}{SparkHelper::intToHex}}(\mbox{\hyperlink{struct_cmd_data_aa91564c2b992486ee06149faeb82aa66}{subcmd}}) + \textcolor{stringliteral}{"{}], ["{}};}
+\DoxyCodeLine{72         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{byte} by : \mbox{\hyperlink{struct_cmd_data_a8623a877dd94b079b79d3452cccb8698}{data}}) \{}
+\DoxyCodeLine{73             cmdStr += \mbox{\hyperlink{class_spark_helper_a10457870016df00a1fdb733aff3f3c1a}{SparkHelper::intToHex}}(by).c\_str();}
+\DoxyCodeLine{74         \}}
+\DoxyCodeLine{75         cmdStr += \textcolor{stringliteral}{"{}]"{}};}
+\DoxyCodeLine{76         \textcolor{keywordflow}{return} cmdStr;}
+\DoxyCodeLine{77     \}}
+\DoxyCodeLine{78 \};}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

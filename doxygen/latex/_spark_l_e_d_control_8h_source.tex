@@ -1,0 +1,73 @@
+\hypertarget{_spark_l_e_d_control_8h_source}{}\doxysection{Spark\+LEDControl.\+h}
+\mbox{\hyperlink{_spark_l_e_d_control_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkLEDControl.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 23.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARKLEDCONTROL\_H\_}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARKLEDCONTROL\_H\_}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_data_control_8h}{SparkDataControl.h}}"{}}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{comment}{// GPIOs}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#define LED\_PRESET1\_GPIO 27}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#define LED\_DRIVE\_GPIO 27}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define LED\_PRESET2\_GPIO 13}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define LED\_MOD\_GPIO 13}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define LED\_PRESET3\_GPIO 16}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define LED\_DELAY\_GPIO 16}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define LED\_PRESET4\_GPIO 14}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define LED\_REVERB\_GPIO 14}}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define LED\_BANK\_DOWN\_GPIO 23}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#define LED\_NOISEGATE\_GPIO 23}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define LED\_BANK\_UP\_GPIO 17}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define LED\_COMP\_GPIO 17}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_l_e_d_control}{SparkLEDControl}} \{}
+\DoxyCodeLine{34 \textcolor{keyword}{public}:}
+\DoxyCodeLine{35     \mbox{\hyperlink{class_spark_l_e_d_control_aab0e9c18aef52309a5d597c8f01dc7d3}{SparkLEDControl}}();}
+\DoxyCodeLine{36     \mbox{\hyperlink{class_spark_l_e_d_control_aab0e9c18aef52309a5d597c8f01dc7d3}{SparkLEDControl}}(\mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* dc);}
+\DoxyCodeLine{37     \textcolor{keyword}{virtual} \mbox{\hyperlink{class_spark_l_e_d_control_a5c5f1963ddd6c32afc09e752b3b30f36}{\string~SparkLEDControl}}();}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_l_e_d_control_ac0f07b1b5cb031c0e8e7bb7aa9ffa412}{updateLEDs}}();}
+\DoxyCodeLine{40     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* \mbox{\hyperlink{class_spark_l_e_d_control_a67d70570307c319210c6b852178b4e07}{dataControl}}() \{\textcolor{keywordflow}{return} spark\_dc;\}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42 \textcolor{keyword}{private}:}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{44     \textcolor{keywordtype}{void} init();}
+\DoxyCodeLine{45     \mbox{\hyperlink{class_spark_data_control}{SparkDataControl}}* spark\_dc;}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47     \textcolor{keywordtype}{int} operationMode = \mbox{\hyperlink{_spark_data_control_8h_abfbaf64c5f7b9514711bb85d94c99ad9}{SPARK\_MODE\_APP}};}
+\DoxyCodeLine{48     \mbox{\hyperlink{struct_preset}{Preset}} *activePreset;}
+\DoxyCodeLine{49     \textcolor{keywordtype}{int} activePresetNum = 1;}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51     \textcolor{keywordtype}{int} delayTimeMs = 100;}
+\DoxyCodeLine{52     \textcolor{comment}{// For blinking mode}}
+\DoxyCodeLine{53     \textcolor{keywordtype}{int} ledState = LOW;             \textcolor{comment}{// ledState used to set the LED}}
+\DoxyCodeLine{54     \textcolor{comment}{// Generally, you should use "{}unsigned long"{} for variables that hold time}}
+\DoxyCodeLine{55     \textcolor{comment}{// The value will quickly become too large for an int to store}}
+\DoxyCodeLine{56     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} previousMillis = 0;        \textcolor{comment}{// will store last time LED was updated}}
+\DoxyCodeLine{57     \textcolor{comment}{// constants won't change:}}
+\DoxyCodeLine{58     \textcolor{keyword}{const} \textcolor{keywordtype}{long} interval = 100; \textcolor{comment}{// interval at which to blink (milliseconds)}}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60     \textcolor{keywordtype}{void} updateLED\_APP\_PresetMode();}
+\DoxyCodeLine{61     \textcolor{keywordtype}{void} updateLED\_APP\_FXMode();}
+\DoxyCodeLine{62     \textcolor{keywordtype}{void} updateLED\_AMP();}
+\DoxyCodeLine{63     \textcolor{keywordtype}{void} updateLED\_LOOPER();}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66 \};}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{68 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SPARKLEDCONTROL\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

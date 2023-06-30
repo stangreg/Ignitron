@@ -1,0 +1,77 @@
+\hypertarget{class_spark_preset_builder}{}\doxysection{Spark\+Preset\+Builder Class Reference}
+\label{class_spark_preset_builder}\index{SparkPresetBuilder@{SparkPresetBuilder}}
+
+
+{\ttfamily \#include $<$Spark\+Preset\+Builder.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spark_preset_builder_a5fdb43aa34592822701ff11acfc41324}{Spark\+Preset\+Builder}} ()
+\item 
+void \mbox{\hyperlink{class_spark_preset_builder_ae7392c0aa6d5c5771ff1d355419650b3}{initialize\+Preset\+List\+From\+FS}} ()
+\item 
+\mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_preset_builder_a5f307ea20b870204bb4cefa344d72204}{get\+Preset}} (int bank, int preset)
+\item 
+int \mbox{\hyperlink{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}{get\+Number\+Of\+Banks}} ()
+\item 
+\mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_preset_builder_a4483b9e18c504c4fddae98d3b79851bf}{get\+Preset\+From\+Json}} (char $\ast$json)
+\item 
+int \mbox{\hyperlink{class_spark_preset_builder_a20476bc94dd7351cfb74041d032fd41a}{store\+Preset}} (\mbox{\hyperlink{struct_preset}{Preset}} new\+Preset, int bnk, int pre)
+\item 
+int \mbox{\hyperlink{class_spark_preset_builder_aef37f0c203d67a80b5ab6ada556b28ae}{delete\+Preset}} (int bnk, int pre)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_spark_preset_builder_a5fdb43aa34592822701ff11acfc41324}\label{class_spark_preset_builder_a5fdb43aa34592822701ff11acfc41324}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!SparkPresetBuilder@{SparkPresetBuilder}}
+\index{SparkPresetBuilder@{SparkPresetBuilder}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{SparkPresetBuilder()}{SparkPresetBuilder()}}
+{\footnotesize\ttfamily Spark\+Preset\+Builder\+::\+Spark\+Preset\+Builder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_spark_preset_builder_aef37f0c203d67a80b5ab6ada556b28ae}\label{class_spark_preset_builder_aef37f0c203d67a80b5ab6ada556b28ae}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!deletePreset@{deletePreset}}
+\index{deletePreset@{deletePreset}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{deletePreset()}{deletePreset()}}
+{\footnotesize\ttfamily int Spark\+Preset\+Builder\+::delete\+Preset (\begin{DoxyParamCaption}\item[{int}]{bnk,  }\item[{int}]{pre }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}\label{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!getNumberOfBanks@{getNumberOfBanks}}
+\index{getNumberOfBanks@{getNumberOfBanks}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{getNumberOfBanks()}{getNumberOfBanks()}}
+{\footnotesize\ttfamily int Spark\+Preset\+Builder\+::get\+Number\+Of\+Banks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_preset_builder_a5f307ea20b870204bb4cefa344d72204}\label{class_spark_preset_builder_a5f307ea20b870204bb4cefa344d72204}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!getPreset@{getPreset}}
+\index{getPreset@{getPreset}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{getPreset()}{getPreset()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} Spark\+Preset\+Builder\+::get\+Preset (\begin{DoxyParamCaption}\item[{int}]{bank,  }\item[{int}]{preset }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_preset_builder_a4483b9e18c504c4fddae98d3b79851bf}\label{class_spark_preset_builder_a4483b9e18c504c4fddae98d3b79851bf}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!getPresetFromJson@{getPresetFromJson}}
+\index{getPresetFromJson@{getPresetFromJson}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{getPresetFromJson()}{getPresetFromJson()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} Spark\+Preset\+Builder\+::get\+Preset\+From\+Json (\begin{DoxyParamCaption}\item[{char $\ast$}]{json }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_preset_builder_ae7392c0aa6d5c5771ff1d355419650b3}\label{class_spark_preset_builder_ae7392c0aa6d5c5771ff1d355419650b3}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!initializePresetListFromFS@{initializePresetListFromFS}}
+\index{initializePresetListFromFS@{initializePresetListFromFS}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{initializePresetListFromFS()}{initializePresetListFromFS()}}
+{\footnotesize\ttfamily void Spark\+Preset\+Builder\+::initialize\+Preset\+List\+From\+FS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_preset_builder_a20476bc94dd7351cfb74041d032fd41a}\label{class_spark_preset_builder_a20476bc94dd7351cfb74041d032fd41a}} 
+\index{SparkPresetBuilder@{SparkPresetBuilder}!storePreset@{storePreset}}
+\index{storePreset@{storePreset}!SparkPresetBuilder@{SparkPresetBuilder}}
+\doxysubsubsection{\texorpdfstring{storePreset()}{storePreset()}}
+{\footnotesize\ttfamily int Spark\+Preset\+Builder\+::store\+Preset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_preset}{Preset}}}]{new\+Preset,  }\item[{int}]{bnk,  }\item[{int}]{pre }\end{DoxyParamCaption})}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_spark_preset_builder_8h}{Spark\+Preset\+Builder.\+h}}\item 
+\mbox{\hyperlink{_spark_preset_builder_8cpp}{Spark\+Preset\+Builder.\+cpp}}\end{DoxyCompactItemize}

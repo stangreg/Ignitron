@@ -1,0 +1,116 @@
+\hypertarget{_spark_data_control_8h}{}\doxysection{Spark\+Data\+Control.\+h File Reference}
+\label{_spark_data_control_8h}\index{SparkDataControl.h@{SparkDataControl.h}}
+{\ttfamily \#include $<$Ble\+Keyboard.\+h$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$Arduino.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}Spark\+BLEControl.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Message.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Preset\+Builder.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Stream\+Reader.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Types.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Spark\+Display\+Control.\+h\char`\"{}}\newline
+Include dependency graph for Spark\+Data\+Control.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_data_control_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_spark_data_control_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_a2a86e469b71247ce9564150d6b68087a}{SWITCH\+\_\+\+MODE\+\_\+\+FX}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_ad30fa9e91c4e6beefb55f4bb172e7698}{SWITCH\+\_\+\+MODE\+\_\+\+PRESET}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_abfbaf64c5f7b9514711bb85d94c99ad9}{SPARK\+\_\+\+MODE\+\_\+\+APP}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_af83dea5c6504bb9ed40e50456e10ecf6}{SPARK\+\_\+\+MODE\+\_\+\+AMP}}~2
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_aaff4755cf52d0051f891a39c7e3e91ac}{SPARK\+\_\+\+MODE\+\_\+\+LOOPER}}~3
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_af9d5d20e2cc01aff14896fcbed61bc76}{PRESET\+\_\+\+EDIT\+\_\+\+NONE}}~0
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_a93a253a61058c31df69fb4634058e1fb}{PRESET\+\_\+\+EDIT\+\_\+\+STORE}}~1
+\item 
+\#define \mbox{\hyperlink{_spark_data_control_8h_af1ad467a1e6ac0cbf688289894fe8f9c}{PRESET\+\_\+\+EDIT\+\_\+\+DELETE}}~2
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{_spark_data_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} = std\+::vector$<$ byte $>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_spark_data_control_8h_af1ad467a1e6ac0cbf688289894fe8f9c}\label{_spark_data_control_8h_af1ad467a1e6ac0cbf688289894fe8f9c}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!PRESET\_EDIT\_DELETE@{PRESET\_EDIT\_DELETE}}
+\index{PRESET\_EDIT\_DELETE@{PRESET\_EDIT\_DELETE}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{PRESET\_EDIT\_DELETE}{PRESET\_EDIT\_DELETE}}
+{\footnotesize\ttfamily \#define PRESET\+\_\+\+EDIT\+\_\+\+DELETE~2}
+
+\mbox{\Hypertarget{_spark_data_control_8h_af9d5d20e2cc01aff14896fcbed61bc76}\label{_spark_data_control_8h_af9d5d20e2cc01aff14896fcbed61bc76}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!PRESET\_EDIT\_NONE@{PRESET\_EDIT\_NONE}}
+\index{PRESET\_EDIT\_NONE@{PRESET\_EDIT\_NONE}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{PRESET\_EDIT\_NONE}{PRESET\_EDIT\_NONE}}
+{\footnotesize\ttfamily \#define PRESET\+\_\+\+EDIT\+\_\+\+NONE~0}
+
+\mbox{\Hypertarget{_spark_data_control_8h_a93a253a61058c31df69fb4634058e1fb}\label{_spark_data_control_8h_a93a253a61058c31df69fb4634058e1fb}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!PRESET\_EDIT\_STORE@{PRESET\_EDIT\_STORE}}
+\index{PRESET\_EDIT\_STORE@{PRESET\_EDIT\_STORE}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{PRESET\_EDIT\_STORE}{PRESET\_EDIT\_STORE}}
+{\footnotesize\ttfamily \#define PRESET\+\_\+\+EDIT\+\_\+\+STORE~1}
+
+\mbox{\Hypertarget{_spark_data_control_8h_af83dea5c6504bb9ed40e50456e10ecf6}\label{_spark_data_control_8h_af83dea5c6504bb9ed40e50456e10ecf6}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!SPARK\_MODE\_AMP@{SPARK\_MODE\_AMP}}
+\index{SPARK\_MODE\_AMP@{SPARK\_MODE\_AMP}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{SPARK\_MODE\_AMP}{SPARK\_MODE\_AMP}}
+{\footnotesize\ttfamily \#define SPARK\+\_\+\+MODE\+\_\+\+AMP~2}
+
+\mbox{\Hypertarget{_spark_data_control_8h_abfbaf64c5f7b9514711bb85d94c99ad9}\label{_spark_data_control_8h_abfbaf64c5f7b9514711bb85d94c99ad9}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!SPARK\_MODE\_APP@{SPARK\_MODE\_APP}}
+\index{SPARK\_MODE\_APP@{SPARK\_MODE\_APP}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{SPARK\_MODE\_APP}{SPARK\_MODE\_APP}}
+{\footnotesize\ttfamily \#define SPARK\+\_\+\+MODE\+\_\+\+APP~1}
+
+\mbox{\Hypertarget{_spark_data_control_8h_aaff4755cf52d0051f891a39c7e3e91ac}\label{_spark_data_control_8h_aaff4755cf52d0051f891a39c7e3e91ac}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!SPARK\_MODE\_LOOPER@{SPARK\_MODE\_LOOPER}}
+\index{SPARK\_MODE\_LOOPER@{SPARK\_MODE\_LOOPER}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{SPARK\_MODE\_LOOPER}{SPARK\_MODE\_LOOPER}}
+{\footnotesize\ttfamily \#define SPARK\+\_\+\+MODE\+\_\+\+LOOPER~3}
+
+\mbox{\Hypertarget{_spark_data_control_8h_a2a86e469b71247ce9564150d6b68087a}\label{_spark_data_control_8h_a2a86e469b71247ce9564150d6b68087a}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!SWITCH\_MODE\_FX@{SWITCH\_MODE\_FX}}
+\index{SWITCH\_MODE\_FX@{SWITCH\_MODE\_FX}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{SWITCH\_MODE\_FX}{SWITCH\_MODE\_FX}}
+{\footnotesize\ttfamily \#define SWITCH\+\_\+\+MODE\+\_\+\+FX~1}
+
+\mbox{\Hypertarget{_spark_data_control_8h_ad30fa9e91c4e6beefb55f4bb172e7698}\label{_spark_data_control_8h_ad30fa9e91c4e6beefb55f4bb172e7698}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!SWITCH\_MODE\_PRESET@{SWITCH\_MODE\_PRESET}}
+\index{SWITCH\_MODE\_PRESET@{SWITCH\_MODE\_PRESET}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{SWITCH\_MODE\_PRESET}{SWITCH\_MODE\_PRESET}}
+{\footnotesize\ttfamily \#define SWITCH\+\_\+\+MODE\+\_\+\+PRESET~2}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{_spark_data_control_8h_a9ca15c3f786d188fb82ec188300346f3}\label{_spark_data_control_8h_a9ca15c3f786d188fb82ec188300346f3}} 
+\index{SparkDataControl.h@{SparkDataControl.h}!ByteVector@{ByteVector}}
+\index{ByteVector@{ByteVector}!SparkDataControl.h@{SparkDataControl.h}}
+\doxysubsubsection{\texorpdfstring{ByteVector}{ByteVector}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} =  std\+::vector$<$byte$>$}
+

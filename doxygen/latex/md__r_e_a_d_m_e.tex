@@ -1,0 +1,279 @@
+
+
+ 
+
+An ESP32 based foot pedal to communicate with the Spark Amp and App via Bluetooth LE.
+
+{\bfseries{Ignitron}} gives you full control over your Spark Amp\+:
+\begin{DoxyItemize}
+\item Switch between the four {\bfseries{hardware presets}}
+\item Switch between {\bfseries{custom saved presets}} organized in banks
+\item {\bfseries{Activate / Deactivate effects}} for the selected preset
+\item {\bfseries{Load new presets}} via the Spark App
+\item {\bfseries{Delete}} stored presets
+\end{DoxyItemize}
+
+Adding new presets to {\bfseries{Ignitron}} can easily be done as it can also act as a Spark Amp. Simply connect to {\bfseries{Ignitron}} with your Spark app and load new presets directly from Tone\+Cloud (or your downloaded presets) to {\bfseries{Ignitron}}.
+
+One big advantage of {\bfseries{Ignitron}} is that it communicates with your Spark Amp using the {\bfseries{Bluetooth LE}} protocol. This means you can still connect your mobile with your Spark Amp as an audio speaker and play along your favorite songs while you control your effects.
+
+The current active preset and effects are indicated via LEDs.\textbackslash{} In addition, the {\bfseries{built-\/in display}} provides information on
+\begin{DoxyItemize}
+\item selected bank and preset number
+\item selected preset name
+\item activated pedal types in the FX chain
+\item connection status to Spark Amp and Spark App
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md0}{}\doxysubsection{Table of contents}\label{md__r_e_a_d_m_e_autotoc_md0}
+
+\begin{DoxyItemize}
+\item \href{https://github.com/stangreg/SparkBLE\#operation-modes}{\texttt{ Operation modes}}
+\item \href{https://github.com/stangreg/SparkBLE\#app-mode}{\texttt{ APP mode}}
+\item \href{https://github.com/stangreg/SparkBLE\#amp-mode}{\texttt{ AMP mode}}
+\begin{DoxyItemize}
+\item \href{https://github.com/stangreg/SparkBLE\#storing-a-new-preset-a-preset-from-the-app-needs-to-be-loaded}{\texttt{ Storing a new preset}}
+\item \href{https://github.com/stangreg/SparkBLE\#deleting-a-preset-only-possible-with-no-preset-from-the-app-loaded}{\texttt{ Deleting an existing preset}}
+\item \href{https://github.com/stangreg/SparkBLE\#manually-creating-presets}{\texttt{ Manually creating presets}}
+\begin{DoxyItemize}
+\item \href{https://github.com/stangreg/SparkBLE\#preset-format}{\texttt{ Preset format}}
+\item \href{https://github.com/stangreg/SparkBLE\#fx-parameter-reference}{\texttt{ FX parameter reference}}
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysubsection{Operation modes}\label{md__r_e_a_d_m_e_autotoc_md1}
+{\bfseries{Ignitron}} has two operation modes, {\bfseries{APP mode}} and {\bfseries{AMP mode}}.\textbackslash{} In {\bfseries{APP mode}} (default mode on startup), {\bfseries{Ignitron}} connects to a Spark Amp and behaves like the Spark App towards the Spark Amp. It can then be used to switch between saved presets and/or toggle FX swtiches. {\bfseries{AMP mode}} can be used to manage the presets stored on {\bfseries{Ignitron}}, presets can be added from the app or be deleted from {\bfseries{Ignitron}}.\textbackslash{} To enter {\bfseries{AMP mode}}, hold the {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1} button during startup.\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysubsection{APP mode}\label{md__r_e_a_d_m_e_autotoc_md2}
+In APP mode, the foot switches can be used to either switch between pre-\/saved presets ({\bfseries{\mbox{\hyperlink{struct_preset}{Preset}} mode}}) or to control all single effects in the selected preset ({\bfseries{FX mode}}). You can easily toggle between these modes by long pressing the {\ttfamily Bank-\/\+Up} button. When selecting {\bfseries{\mbox{\hyperlink{struct_preset}{Preset}} mode}}, four buttons are used to select presets the other two buttons are used to navigate through different preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be enabled and disabled. In {\bfseries{FX mode}}, the user has direct access to all effects of the selected preset. Each switch controls a different FX pedal type\+:\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysubsubsection{Button commands in APP mode\+:}\label{md__r_e_a_d_m_e_autotoc_md3}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxyparagraph{Preset mode}\label{md__r_e_a_d_m_e_autotoc_md4}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function    }\\\cline{1-3}
+\endhead
+{\ttfamily Bank down}   &\PBS\centering Short   &Navigate bank up    \\\cline{1-3}
+{\ttfamily Bank up}   &\PBS\centering Short   &Navigate bank down    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1}   &\PBS\centering Short   &Select preset 1    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Short   &Select preset 2    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 3}   &\PBS\centering Short   &Select preset 3    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 4}   &\PBS\centering Short   &Select preset 4    \\\cline{1-3}
+{\ttfamily Bank up}   &\PBS\centering Long   &Switch to FX mode    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Long   &Restart {\bfseries{Ignitron}}   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxyparagraph{FX mode}\label{md__r_e_a_d_m_e_autotoc_md5}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function    }\\\cline{1-3}
+\endhead
+{\ttfamily Bank down}   &\PBS\centering Short   &Noise Gate    \\\cline{1-3}
+{\ttfamily Bank up}   &\PBS\centering Short   &Compressor    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1}   &\PBS\centering Short   &Drive    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Short   &Modulation    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 3}   &\PBS\centering Short   &Delay    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 4}   &\PBS\centering Short   &Reverb    \\\cline{1-3}
+{\ttfamily Bank up}   &\PBS\centering Long   &Switch to \mbox{\hyperlink{struct_preset}{Preset}} mode    \\\cline{1-3}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Long   &Restart {\bfseries{Ignitron}}   \\\cline{1-3}
+\end{longtabu}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md7}{}\doxysubsection{AMP mode}\label{md__r_e_a_d_m_e_autotoc_md7}
+In AMP mode, {\bfseries{Ignitron}} acts like a Spark AMP and can communicate with the Spark app running on a mobile. New presets can be stored on {\bfseries{Ignitron}} and existing presets can be deleted.\hypertarget{md__r_e_a_d_m_e_autotoc_md8}{}\doxysubsubsection{Connecting the Spark app with $<$strong$>$\+Ignitron$<$/strong$>$}\label{md__r_e_a_d_m_e_autotoc_md8}
+
+\begin{DoxyEnumerate}
+\item Start {\bfseries{Ignitron}} in AMP mode (hold {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1} button during startup).
+\item Open the Spark App on the mobile
+\item For the first connection, make sure to have your real Spark Amp powered off to avoid the app conneting to it.
+\item Hit the connect button in the app (or the + button in the connection overview)
+\item Once the connection is established, you can give the connection a name in the app so you can distinguish from your regular Spark Amp connection.
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md9}{}\doxysubsubsection{Storing a new preset (a preset from the app needs to be loaded)}\label{md__r_e_a_d_m_e_autotoc_md9}
+
+\begin{DoxyEnumerate}
+\item Start {\bfseries{Ignitron}} in AMP mode (hold \mbox{\hyperlink{struct_preset}{Preset}} 1 button during startup).
+\item Connect the Spark App with {\bfseries{Ignitron}} (see above)
+\item Select a preset in the app (either saved in the app or from the Tone\+Cloud).
+\item The preset name should appear in the bottom line of the display
+\item The {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}}}/{\ttfamily Bank} buttons on {\bfseries{Ignitron}} can be used to navigate to the desired preset position.
+\item Press the {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}}} button to mark the position for storing
+\item The LED of the selected preset position should start blinking
+\item Hit the same {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}}} button a second time to confirm storage (Hitting any other {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}}}/{\ttfamily Bank} button will revert the state back to navigating)
+\item The preset will be saved to the selected position, other presets will be pushed back
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md10}{}\doxyparagraph{Button commands (case\+: preset has been received from Spark app)}\label{md__r_e_a_d_m_e_autotoc_md10}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Remark    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Remark    }\\\cline{1-4}
+\endhead
+{\ttfamily Bank down}   &\PBS\centering Short   &Navigate bank up   &\\\cline{1-4}
+{\ttfamily Bank up}   &\PBS\centering Short   &Navigate bank down   &\\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1}   &\PBS\centering Short   &Select preset 1   &{\itshape Press twice to store received preset}    \\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Short   &Select preset 2   &{\itshape Press twice to store received preset}    \\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 3}   &\PBS\centering Short   &Select preset 3   &{\itshape Press twice to store received preset}    \\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 4}   &\PBS\centering Short   &Select preset 4   &{\itshape Press twice to store received preset}    \\\cline{1-4}
+{\ttfamily Bank down}   &\PBS\centering Long   &Unload preset   &{\itshape Removes loaded preset}    \\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Long   &Restart {\bfseries{Ignitron}}   &\\\cline{1-4}
+\end{longtabu}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md11}{}\doxysubsubsection{Deleting a preset (only possible when no preset from the app is loaded)}\label{md__r_e_a_d_m_e_autotoc_md11}
+
+\begin{DoxyEnumerate}
+\item Start {\bfseries{Ignitron}} in AMP mode (hold {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1} button during startup).
+\item Use the {\ttfamily \mbox{\hyperlink{struct_preset}{Preset}}}/{\ttfamily Bank} buttons on {\bfseries{Ignitron}} to navigate to the desired preset position
+\item {\bfseries{Long press}} the {\ttfamily Bank Down} button to mark the selected preset for deletion
+\item The LED of the selected preset should start blinking
+\item In the display you should see a prompt if deletion should be executed
+\item If you want to cancel the deletion, simply short press any other button
+\item Otherwise, {\bfseries{long press}} the {\ttfamily Bank Down} button again to confirm deletion. (Hitting any other button will cancel the deletion and return back to navigation)
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md12}{}\doxyparagraph{Button commands (case\+: no preset has been received, slot is empty)}\label{md__r_e_a_d_m_e_autotoc_md12}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Remark    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Button   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Press pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Function   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Remark    }\\\cline{1-4}
+\endhead
+{\ttfamily Bank down}   &\PBS\centering Short   &Navigate bank up   &\\\cline{1-4}
+{\ttfamily Bank up}   &\PBS\centering Short   &Navigate bank down   &\\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 1}   &\PBS\centering Short   &Select preset 1   &\\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Short   &Select preset 2   &\\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 3}   &\PBS\centering Short   &Select preset 3   &\\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 4}   &\PBS\centering Short   &Select preset 4   &\\\cline{1-4}
+{\ttfamily Bank down}   &\PBS\centering Long   &Mark preset for deletion   &{\itshape Pressing any other button in that state will cancel the deletion}    \\\cline{1-4}
+{\ttfamily Bank down}   &\PBS\centering Long   &Delete marked preset   &{\itshape Only if preset was first marked for deletion}    \\\cline{1-4}
+{\ttfamily \mbox{\hyperlink{struct_preset}{Preset}} 2}   &\PBS\centering Long   &Restart {\bfseries{Ignitron}}   &\\\cline{1-4}
+\end{longtabu}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md14}{}\doxysubsubsection{Manually creating presets}\label{md__r_e_a_d_m_e_autotoc_md14}
+{\itshape This method is only recommended if a preset cannot be transferred via the Spark app or if the preset files have been received/generated in a different way.}
+\begin{DoxyEnumerate}
+\item Create a {\bfseries{preset file}} in JSON format as shown above
+\item Make sure the {\bfseries{file name}} does not exceed 31 characters (including the {\ttfamily .json} suffix)
+\item Put the file name into the {\bfseries{data folder}}
+\item Insert the file name (including the {\ttfamily .json} suffix) to the desired prefix location in the {\ttfamily Preset\+List.\+txt} file
+\item {\itshape Place the Preset\+List.\+txt file into the data folder (if not already there)}
+\item {\bfseries{Upload the data folder}} to {\bfseries{Ignitron}} via the Arduino IDE (or other tools)
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_autotoc_md15}{}\doxyparagraph{Preset format}\label{md__r_e_a_d_m_e_autotoc_md15}
+{\bfseries{Ignitron}} stores presets in a JSON format using the SPIFFS file system. Each preset is stored in a separate file and presets are organized in a separate text file called \textquotesingle{}Preset\+List.\+txt\textquotesingle{}. This list simply stored the file names of the presets, the order defines the way the banks are filled. An example preset file would look like this\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{"{}PresetNumber"{}: 127, "{}UUID"{}:"{}DEFBB271-\/B3EE-\/4C7E-\/A623-\/2E5CA53B6DDA"{},}
+\DoxyCodeLine{"{}Name"{}:"{}Studio Session"{} , "{}Version"{}:"{}0.7"{}, "{}Description"{}:"{}Description for Acoustic Preset 1"{}, "{}Icon"{}:"{}icon.png"{}, "{}BPM"{}: 120.0000,}
+\DoxyCodeLine{"{}Pedals"{}: [}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}bias.noisegate"{},  "{}IsOn"{}: false,  "{}Parameters"{}:[0.5000,0.3467] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}BBEOpticalComp"{},  "{}IsOn"{}: true,   "{}Parameters"{}:[0.7583,0.2585,0.0000] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}DistortionTS9"{},   "{}IsOn"{}: false,  "{}Parameters"{}:[0.1396,0.4073,0.6898] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}Acoustic"{},  "{}IsOn"{}: true,   "{}Parameters"{}:[0.6398,0.3851,0.3834,0.5994,0.5195] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}ChorusAnalog"{},  "{}IsOn"{}: true,   "{}Parameters"{}:[0.8417,0.2275,0.9359,0.3513] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}DelayMono"{},   "{}IsOn"{}: false,  "{}Parameters"{}:[0.2240,0.2112,0.4909,0.6000,1.0000] \},}
+\DoxyCodeLine{  \{ "{}Name"{}:"{}bias.reverb"{},   "{}IsOn"{}: true,   "{}Parameters"{}:[0.7228,0.3262,0.2758,0.3607,0.3439,0.4860,0.4000] \} ],}
+\DoxyCodeLine{"{}Filler"{}:"{}23"{}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+As a guidance which effect and amp names can be used and in which order the parameters of each effect have to be given, please refer to\hypertarget{md__r_e_a_d_m_e_autotoc_md16}{}\doxyparagraph{FX parameter reference}\label{md__r_e_a_d_m_e_autotoc_md16}
+In order to know which effects are available with paramters, see below table. This data can be used to build own presets in JSON format (see above). Parameters marked with {\ttfamily Switch} can only have values of 0 or 1.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{11}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ App~Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Technical~Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~0   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~1   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~2   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~3   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~4   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~5   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~6   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Extra~Info    }\\\cline{1-11}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ App~Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Technical~Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~0   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~1   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~2   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~3   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~4   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~5   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \mbox{\hyperlink{struct_parameter}{Parameter}}~6   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Extra~Info    }\\\cline{1-11}
+\endhead
+Noise Gate   &Noise Gate   &bias.\+noisegate   &Threshold   &Decay   &&&&&&\\\cline{1-11}
+Compressor   &LA Comp   &LA2\+AComp   &Limit/\+Compress {\ttfamily Switch}   &Gain   &Peak Reduction   &&&&&\\\cline{1-11}
+Compressor   &Sustain Comp   &Blue\+Comp   &Level   &Tone   &Attack   &Sustain   &&&&\\\cline{1-11}
+Compressor   &Red Comp   &Compressor   &Output   &Sensitivity   &&&&&&\\\cline{1-11}
+Compressor   &Bass Comp   &Bass\+Comp   &Comp   &Gain   &&&&&&\\\cline{1-11}
+Compressor   &Optical Comp   &BBEOptical\+Comp   &Volume   &Comp   &Pad {\ttfamily Switch}   &&&&&\\\cline{1-11}
+Drive   &Booster   &Booster   &Gain   &&&&&&&\\\cline{1-11}
+Drive   &Clone Drive   &Klon\+Centaur\+Silver   &Output   &Treble   &Gain   &&&&&\\\cline{1-11}
+Drive   &Tube Drive   &Distortion\+TS9   &Overdrive   &Tone   &Level   &&&&&\\\cline{1-11}
+Drive   &Over Drive   &Overdrive   &Level   &Tone   &Drive   &&&&&\\\cline{1-11}
+Drive   &Fuzz Face   &Fuzz   &Volume   &Fuzz   &&&&&&\\\cline{1-11}
+Drive   &Black Op   &Pro\+Co\+Rat   &Distortion   &Filter   &Volume   &&&&&\\\cline{1-11}
+Drive   &Bass Muff   &Bass\+Big\+Muff   &Volume   &Tone   &Sustain   &&&&&\\\cline{1-11}
+Drive   &Guitar Muff   &Guitar\+Muff   &Volume   &Tone   &Sustain   &&&&&\\\cline{1-11}
+Drive   &Bassmaster   &Maestro\+Bassmaster   &Brass Volume   &Sensitivity   &Bass Volume   &&&&&\\\cline{1-11}
+Drive   &SAB Driver   &SABDriver   &Volume   &Tone   &Drive   &LP/\+HP {\ttfamily Switch}   &&&&\\\cline{1-11}
+Amp   &Silver 120   &Roland\+JC120   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Black Duo   &Twin   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &AD Clean   &ADClean   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Match DC   &94Match\+DCV2   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &ODS 50   &ODS50\+CN   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Blues Boy   &Blues\+Jr\+Tweed   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Tweed Bass   &Bassman   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &AC Boost   &AC Boost   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Checkmate   &Checkmate   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Two Stone SP50   &Two\+Stone\+SP50   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &American Deluxe   &Deluxe65   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Plexiglas   &Plexi   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &JM45   &Over\+Driven\+JM45   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Lux Verb   &Over\+Driven\+Lux\+Verb   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &RB 101   &Bogner   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &British 30   &Orange\+AD30   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &American High Gain   &American\+High\+Gain   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &SLO 100   &SLO100   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &YJM100   &YJM100   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Treadplate   &Rectifier   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Insane   &EVH   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Insane 6508   &6505Plus   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Switch\+Axe   &Switch\+Axe\+Lead   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Rocker V   &Invader   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &BE 101   &BE101   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Pure Acoustic   &Acoustic   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Fishboy   &Acoustic\+Amp\+V2   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Jumbo   &Fat\+Acoustic\+V2   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Flat Acoustic   &Flat\+Acoustic   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &RB-\/800   &GK800   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Sunny 3000   &Sunny3000   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &W600   &W600   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Amp   &Hammer 500   &Hammer500   &Gain   &Treble   &Middle   &Bass   &Volume   &&&\\\cline{1-11}
+Modulation   &Tremolo   &Tremolo   &Speed   &Depth   &Level   &&&&&\\\cline{1-11}
+Modulation   &Chorus   &Chorus\+Analog   &E.\+Level   &Rate   &Depth   &Tone   &&&&\\\cline{1-11}
+Modulation   &Flanger   &Flanger   &Rate   &Mix   &Depth   &&&&&\\\cline{1-11}
+Modulation   &Phaser   &Phaser   &Speed   &Intensity   &&&&&&\\\cline{1-11}
+Modulation   &Vibrato   &Vibrato01   &Speed   &Depth   &&&&&&\\\cline{1-11}
+Modulation   &Uni\+Vibe   &Uni\+Vibe   &Speed   &Vibrato/\+Chorus {\ttfamily Switch}   &Intensity   &&&&&\\\cline{1-11}
+Modulation   &Cloner Chorus   &Cloner   &Rate   &Depth {\ttfamily Switch}   &&&&&&\\\cline{1-11}
+Modulation   &Classic Vibe   &Mini\+Vibe   &Speed   &Intensity   &&&&&&\\\cline{1-11}
+Modulation   &Tremolator   &Tremolator   &Depth   &Speed   &BPM On/\+Off {\ttfamily Switch}   &&&&&\\\cline{1-11}
+Modulation   &Tremolo Square   &Tremolo\+Square   &Speed   &Depth   &Level   &&&&&\\\cline{1-11}
+Modulation   &Guitar EQ   &Guitar\+EQ6   &Level   &100   &200   &400   &800   &1.\+6k   &3.\+2k   &\\\cline{1-11}
+Modulation   &Bass EQ   &Bass\+EQ6   &Level   &50   &120   &400   &800   &4.\+5k   &10k   &\\\cline{1-11}
+Delay   &Digital Delay   &Delay\+Mono   &E.\+Level   &Feedback   &Delay\+Time   &Mode   &BPM {\ttfamily Switch}   &&&Modes\+: 0.\+3 (50ms) -\/ 0.\+4 (200ms) -\/ 0.\+6 (500ms) -\/ 0.\+72 (1s)    \\\cline{1-11}
+Delay   &Echo Filt   &Delay\+Echo\+Filt   &Delay   &Feedback   &Level   &Tone   &BPM {\ttfamily Switch}   &&&\\\cline{1-11}
+Delay   &Vintage Delay   &Vintage\+Delay   &Repeat Rate   &Intensity   &Echo   &BPM {\ttfamily Switch}   &&&&\\\cline{1-11}
+Delay   &Reverse Delay   &Delay\+Reverse   &Mix   &Decay   &Filter   &Time   &BPM {\ttfamily Switch}   &&&\\\cline{1-11}
+Delay   &Multi Head   &Delay\+Multi\+Head   &Repeat Rate   &Intensity   &Echo Volume   &Mode Selector   &BPM {\ttfamily Switch}   &&&Modes\+: 0 (Head 1) -\/ 0.\+35 (Head 2) -\/ 0.\+65 (Head 3) -\/ 0.\+95 (Head 4)    \\\cline{1-11}
+Delay   &Echo Tape   &Delay\+Re201   &Sustain   &Volume   &Tone   &Short/\+Long   &&&&\\\cline{1-11}
+Reverb   &Room Studio A   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+0    \\\cline{1-11}
+Reverb   &Room Studio B   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+1    \\\cline{1-11}
+Reverb   &Chamber   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+2    \\\cline{1-11}
+Reverb   &Hall Natural   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+3    \\\cline{1-11}
+Reverb   &Hall Medium   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+4    \\\cline{1-11}
+Reverb   &Hall Ambient   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+5    \\\cline{1-11}
+Reverb   &Plate Short   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+6    \\\cline{1-11}
+Reverb   &Plate Rich   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+7    \\\cline{1-11}
+Reverb   &Plate Long   &bias.\+reverb   &Level   &Damping   &Dwell   &Time   &Low Cut   &High Cut   &Selects Reverb Type   &0.\+8   \\\cline{1-11}
+\end{longtabu}

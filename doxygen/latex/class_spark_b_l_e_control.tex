@@ -1,0 +1,307 @@
+\hypertarget{class_spark_b_l_e_control}{}\doxysection{Spark\+BLEControl Class Reference}
+\label{class_spark_b_l_e_control}\index{SparkBLEControl@{SparkBLEControl}}
+
+
+{\ttfamily \#include $<$Spark\+BLEControl.\+h$>$}
+
+
+
+Inheritance diagram for Spark\+BLEControl\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_spark_b_l_e_control__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Spark\+BLEControl\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_spark_b_l_e_control__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}{Spark\+BLEControl}} ()
+\item 
+\mbox{\hyperlink{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}{Spark\+BLEControl}} (\mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}} $\ast$dc)
+\item 
+virtual \mbox{\hyperlink{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}{$\sim$\+Spark\+BLEControl}} ()
+\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}{is\+Connection\+Found}} () const
+\begin{DoxyCompactList}\small\item\em Checks if a Spark amp has been found to connect. \end{DoxyCompactList}\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a8283cf9af54fc2de8091c9bd312ce071}{is\+Amp\+Connected}} () const
+\begin{DoxyCompactList}\small\item\em To check if Ignitron is connected to the Spark Amp. \end{DoxyCompactList}\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a9fd96121fe34606f8486a7e80c1b0300}{is\+App\+Connected}} () const
+\begin{DoxyCompactList}\small\item\em To check if the Spark App is connected to Ignitron. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}{connect\+To\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Initiates connection to the Spark Amp. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}{subscribe\+To\+Notifications}} (notify\+\_\+callback notify\+Callback=nullptr)
+\begin{DoxyCompactList}\small\item\em Subscribe to notifications from Spark Amp. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}{write\+BLE}} (std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$ cmd, bool response=false)
+\begin{DoxyCompactList}\small\item\em Send messages via BLE to Spark Amp or App. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a89d606d37709461b313a4c8cf2cb84d3}{init\+BLE}} (notify\+\_\+callback notify\+Callback=nullptr)
+\begin{DoxyCompactList}\small\item\em Initializes Ignitron BLE as client to connect to the Spark Amp. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a48401d0946f87c7e226c4eb70dce9c5c}{start\+Scan}} ()
+\begin{DoxyCompactList}\small\item\em Starts a scan for servers to connect to. \end{DoxyCompactList}\item 
+const bool \mbox{\hyperlink{class_spark_b_l_e_control_a08fe5e999b760004093c2df10a426134}{is\+Scanning}} () const
+\begin{DoxyCompactList}\small\item\em Checks if a scan is currently running. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_aa279f646c79f5735b4caaa74c665e264}{stop\+Scan}} ()
+\begin{DoxyCompactList}\small\item\em Stops a running scan. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}{start\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Starts Ignitron BLE as server. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}{notify\+Clients}} (\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} msg)
+\begin{DoxyCompactList}\small\item\em Notifies Spark App for any new messages. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}{send\+Initial\+Notification}} ()
+\begin{DoxyCompactList}\small\item\em Sends a series of initial notifications to the Spark App during initiation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}\label{class_spark_b_l_e_control_a1dfa4b0f9bb204e2545ec49eea2dc877}} 
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{SparkBLEControl()}{SparkBLEControl()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::\+Spark\+BLEControl (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}\label{class_spark_b_l_e_control_a7c32f203a842855d086acc4c7d888fb0}} 
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\index{SparkBLEControl@{SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{SparkBLEControl()}{SparkBLEControl()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::\+Spark\+BLEControl (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}} $\ast$}]{dc }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}\label{class_spark_b_l_e_control_a146f9ca774939f3890003f32aa0ac9d9}} 
+\index{SparkBLEControl@{SparkBLEControl}!````~SparkBLEControl@{$\sim$SparkBLEControl}}
+\index{````~SparkBLEControl@{$\sim$SparkBLEControl}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{$\sim$SparkBLEControl()}{~SparkBLEControl()}}
+{\footnotesize\ttfamily Spark\+BLEControl\+::$\sim$\+Spark\+BLEControl (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}\label{class_spark_b_l_e_control_a8064d2e4673a20cb21c5c8970339b3ad}} 
+\index{SparkBLEControl@{SparkBLEControl}!connectToServer@{connectToServer}}
+\index{connectToServer@{connectToServer}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{connectToServer()}{connectToServer()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::connect\+To\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initiates connection to the Spark Amp. 
+
+After a connection has been found, this function can be used to establish a connection to the Spark Amp
+
+\begin{DoxyReturn}{Returns}
+TRUE if connection was successful 
+\end{DoxyReturn}
+Check if we have a client we should reuse first
+
+Special case when we already know this device, we send false as the second argument in connect() to prevent refreshing the service database. This saves considerable time and power.
+
+We don\textquotesingle{}t already have a client that knows this device, we will check for a client that is disconnected that we can use.
+
+No client to reuse? Create a new one.
+
+Set initial connection parameters\+: These settings are 15ms interval, 0 latency, 120ms timout. These settings are safe for 3 clients to connect reliably, can go faster if you have less connections. Timeout should be a multiple of the interval, minimum is 100ms. Min interval\+: 12 $\ast$ 1.\+25ms = 15, Max interval\+: 12 $\ast$ 1.\+25ms = 15, 0 latency, 51 $\ast$ 10ms = 510ms timeout
+
+Set how long we are willing to wait for the connection to complete (seconds), default is 30.
+
+Created a client but failed to connect, don\textquotesingle{}t need to keep it as it has no data\mbox{\Hypertarget{class_spark_b_l_e_control_a89d606d37709461b313a4c8cf2cb84d3}\label{class_spark_b_l_e_control_a89d606d37709461b313a4c8cf2cb84d3}} 
+\index{SparkBLEControl@{SparkBLEControl}!initBLE@{initBLE}}
+\index{initBLE@{initBLE}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{initBLE()}{initBLE()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::init\+BLE (\begin{DoxyParamCaption}\item[{notify\+\_\+callback}]{notify\+Callback = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Initializes Ignitron BLE as client to connect to the Spark Amp. 
+
+Sets up the BLE connection and initiates a scan for the Spark Amp. When servers have been found, the notify\+Callback function is called back.
+
+
+\begin{DoxyParams}{Parameters}
+{\em notify\+Callback} & function called back when servers are found \\
+\hline
+\end{DoxyParams}
+Optional\+: set the transmit power, default is 3db
+
++9db
+
+create new scan
+
+create a callback that gets called when advertisers are found
+
+Set scan interval (how often) and window (how long) in milliseconds
+
+Active scan will gather scan response data from advertisers but will use more energy from both devices
+
+Start scanning for advertisers for the scan time specified (in seconds) 0 = forever Optional callback for when scanning stops.\mbox{\Hypertarget{class_spark_b_l_e_control_a8283cf9af54fc2de8091c9bd312ce071}\label{class_spark_b_l_e_control_a8283cf9af54fc2de8091c9bd312ce071}} 
+\index{SparkBLEControl@{SparkBLEControl}!isAmpConnected@{isAmpConnected}}
+\index{isAmpConnected@{isAmpConnected}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isAmpConnected()}{isAmpConnected()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+Amp\+Connected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+To check if Ignitron is connected to the Spark Amp. 
+
+This is used in a loop to check if the connection to the Spark Amp is active
+
+\begin{DoxyReturn}{Returns}
+TRUE if connected 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a9fd96121fe34606f8486a7e80c1b0300}\label{class_spark_b_l_e_control_a9fd96121fe34606f8486a7e80c1b0300}} 
+\index{SparkBLEControl@{SparkBLEControl}!isAppConnected@{isAppConnected}}
+\index{isAppConnected@{isAppConnected}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isAppConnected()}{isAppConnected()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+App\+Connected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+To check if the Spark App is connected to Ignitron. 
+
+This is used in a loop to check if the connection to the Spark App is active
+
+\begin{DoxyReturn}{Returns}
+TRUE if connected 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}\label{class_spark_b_l_e_control_a5cb06df732fb1dd7bb74fb8d22be3c46}} 
+\index{SparkBLEControl@{SparkBLEControl}!isConnectionFound@{isConnectionFound}}
+\index{isConnectionFound@{isConnectionFound}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isConnectionFound()}{isConnectionFound()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+Connection\+Found (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if a Spark amp has been found to connect. 
+
+When scanning for devices in APP mode, this function can be used to check if a Spark Amp has been found to connect
+
+\begin{DoxyReturn}{Returns}
+TRUE if found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a08fe5e999b760004093c2df10a426134}\label{class_spark_b_l_e_control_a08fe5e999b760004093c2df10a426134}} 
+\index{SparkBLEControl@{SparkBLEControl}!isScanning@{isScanning}}
+\index{isScanning@{isScanning}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{isScanning()}{isScanning()}}
+{\footnotesize\ttfamily const bool Spark\+BLEControl\+::is\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks if a scan is currently running. 
+
+\begin{DoxyReturn}{Returns}
+TRUE if scan is running 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}\label{class_spark_b_l_e_control_a064664de844bab60230ee276c3502ab1}} 
+\index{SparkBLEControl@{SparkBLEControl}!notifyClients@{notifyClients}}
+\index{notifyClients@{notifyClients}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{notifyClients()}{notifyClients()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::notify\+Clients (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}}}]{msg }\end{DoxyParamCaption})}
+
+
+
+Notifies Spark App for any new messages. 
+
+This is used to notify Spark App mainly during the initiation of a connection so that the Spark App can connect to Ignitron \mbox{\Hypertarget{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}\label{class_spark_b_l_e_control_adaa43d506b8c9203d1a1772fed16aeea}} 
+\index{SparkBLEControl@{SparkBLEControl}!sendInitialNotification@{sendInitialNotification}}
+\index{sendInitialNotification@{sendInitialNotification}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{sendInitialNotification()}{sendInitialNotification()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::send\+Initial\+Notification (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Sends a series of initial notifications to the Spark App during initiation. 
+
+When the Spark App connects to Spark Amp (and Ignitron), it expects a number of special messages from Spark/\+Ignitron for a successful connection. This function cycles through three different messages to send to the App which are required for the connection \mbox{\Hypertarget{class_spark_b_l_e_control_a48401d0946f87c7e226c4eb70dce9c5c}\label{class_spark_b_l_e_control_a48401d0946f87c7e226c4eb70dce9c5c}} 
+\index{SparkBLEControl@{SparkBLEControl}!startScan@{startScan}}
+\index{startScan@{startScan}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{startScan()}{startScan()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::start\+Scan (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Starts a scan for servers to connect to. 
+
+Initiates a scan for servers. To be called when not connected to a server \mbox{\Hypertarget{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}\label{class_spark_b_l_e_control_a062a5d911df989d81806312968850b5d}} 
+\index{SparkBLEControl@{SparkBLEControl}!startServer@{startServer}}
+\index{startServer@{startServer}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{startServer()}{startServer()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::start\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Starts Ignitron BLE as server. 
+
+This enables the Spark App to connect to Ignitron to send presets. sets device name
+
+Optional\+: set the transmit power, default is 3db
+
++9db
+
+Start the services when finished creating all Characteristics and Descriptors
+
+Add the services to the advertisment data
+
+If your device is battery powered you may consider setting scan response to false as it will extend battery life at the expense of less data sent.\mbox{\Hypertarget{class_spark_b_l_e_control_aa279f646c79f5735b4caaa74c665e264}\label{class_spark_b_l_e_control_aa279f646c79f5735b4caaa74c665e264}} 
+\index{SparkBLEControl@{SparkBLEControl}!stopScan@{stopScan}}
+\index{stopScan@{stopScan}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{stopScan()}{stopScan()}}
+{\footnotesize\ttfamily void Spark\+BLEControl\+::stop\+Scan (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Stops a running scan. 
+
+Stops a scan for servers. Has to be called before establishing a connection to a server \mbox{\Hypertarget{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}\label{class_spark_b_l_e_control_a432b0b9efc5c94340ef76c95f2e5b89e}} 
+\index{SparkBLEControl@{SparkBLEControl}!subscribeToNotifications@{subscribeToNotifications}}
+\index{subscribeToNotifications@{subscribeToNotifications}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{subscribeToNotifications()}{subscribeToNotifications()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::subscribe\+To\+Notifications (\begin{DoxyParamCaption}\item[{notify\+\_\+callback}]{notify\+Callback = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Subscribe to notifications from Spark Amp. 
+
+This is called by \mbox{\hyperlink{class_spark_data_control}{Spark\+Data\+Control}} so it gets notified when the Spark Amp returns messages to Ignitron
+
+
+\begin{DoxyParams}{Parameters}
+{\em notify\+Callback} & Function to be called when notifications are received\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+TRUE if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}\label{class_spark_b_l_e_control_aff9085c1d7216700f4aa726db79a063a}} 
+\index{SparkBLEControl@{SparkBLEControl}!writeBLE@{writeBLE}}
+\index{writeBLE@{writeBLE}!SparkBLEControl@{SparkBLEControl}}
+\doxysubsubsection{\texorpdfstring{writeBLE()}{writeBLE()}}
+{\footnotesize\ttfamily bool Spark\+BLEControl\+::write\+BLE (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{Byte\+Vector}} $>$}]{cmd,  }\item[{bool}]{response = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Send messages via BLE to Spark Amp or App. 
+
+Send messages/commands/acknowledgements to the Spark Amp and App This will trigger a change in the Spark Amp setting.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd} & vector of byte vectors containing the messages. Each byte vector is a chunk to be sent to Spark Amp/\+App \\
+\hline
+{\em response} & indicate if a response is expected. Always false in this case\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+TRUE if successful 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_spark_b_l_e_control_8h}{Spark\+BLEControl.\+h}}\item 
+\mbox{\hyperlink{_spark_b_l_e_control_8cpp}{Spark\+BLEControl.\+cpp}}\end{DoxyCompactItemize}

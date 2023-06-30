@@ -24,6 +24,7 @@ int SparkDataControl::presetEditMode_ = PRESET_EDIT_NONE;
 int SparkDataControl::presetNumToEdit_ = 0;
 int SparkDataControl::presetBankToEdit_ = 0;
 
+
 int SparkDataControl::activePresetNum_ = 1;
 std::string SparkDataControl::responseMsg_ = "";
 
@@ -284,10 +285,12 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 					currentMessageNum);
 			break;
 		default:
+			DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
 			break;
 		}
 
 		bleControl->notifyClients(msg);
+
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();

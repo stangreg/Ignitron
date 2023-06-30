@@ -1,0 +1,62 @@
+\hypertarget{_spark_preset_builder_8h_source}{}\doxysection{Spark\+Preset\+Builder.\+h}
+\mbox{\hyperlink{_spark_preset_builder_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * SparkDataControl.cpp}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ *  Created on: 19.08.2021}}
+\DoxyCodeLine{5 \textcolor{comment}{ *      Author: stangreg}}
+\DoxyCodeLine{6 \textcolor{comment}{ */}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef SPARK\_PRESET\_BUILDER\_H }\textcolor{comment}{// include guard}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define SPARK\_PRESET\_BUILDER\_H}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <Arduino.h>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <ArduinoJSON.h>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <FS.h>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <Effortless\_SPIFFS.h>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <algorithm>}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <regex>}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_helper_8h}{SparkHelper.h}}"{}}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{_spark_types_8h}{SparkTypes.h}}"{}}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define PRESETS\_PER\_BANK 4}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define STORE\_PRESET\_OK 1}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define STORE\_PRESET\_FILE\_EXISTS 2}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define STORE\_PRESET\_ERROR\_OPEN 3}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define STORE\_PRESET\_UNKNOWN\_ERROR 4}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#define DELETE\_PRESET\_OK 1}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define DELETE\_PRESET\_FILE\_NOT\_EXIST 2}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define DELETE\_PRESET\_ERROR\_OPEN 3}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define DELETE\_PRESET\_UNKNOWN\_ERROR 4}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 \textcolor{keyword}{using} \mbox{\hyperlink{_spark_b_l_e_control_8h_a9ca15c3f786d188fb82ec188300346f3}{ByteVector}} = std::vector<byte>;}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{keyword}{class }\mbox{\hyperlink{class_spark_preset_builder}{SparkPresetBuilder}}\{}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39 \textcolor{keyword}{private}:}
+\DoxyCodeLine{40     std::vector<std::vector<std::string>> presetBanksNames;}
+\DoxyCodeLine{41     eSPIFFS fileSystem;}
+\DoxyCodeLine{42     \textcolor{keyword}{const} \textcolor{keywordtype}{char}* presetListFileName = \textcolor{stringliteral}{"{}/PresetList.txt"{}};}
+\DoxyCodeLine{43     \textcolor{keywordtype}{bool} deletePresetFile(\textcolor{keywordtype}{int} bnk, \textcolor{keywordtype}{int} pre);}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45 \textcolor{keyword}{public}:}
+\DoxyCodeLine{46     \mbox{\hyperlink{class_spark_preset_builder_a5fdb43aa34592822701ff11acfc41324}{SparkPresetBuilder}}();}
+\DoxyCodeLine{47     \textcolor{comment}{//std::string getJsonFromPreset(preset pset);}}
+\DoxyCodeLine{48     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_spark_preset_builder_ae7392c0aa6d5c5771ff1d355419650b3}{initializePresetListFromFS}}();}
+\DoxyCodeLine{49     \mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_preset_builder_a5f307ea20b870204bb4cefa344d72204}{getPreset}}(\textcolor{keywordtype}{int} bank, \textcolor{keywordtype}{int} preset);}
+\DoxyCodeLine{50     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_preset_builder_acaa4c5f69850a454b77c9f0e584cd84c}{getNumberOfBanks}}();}
+\DoxyCodeLine{51     \mbox{\hyperlink{struct_preset}{Preset}} \mbox{\hyperlink{class_spark_preset_builder_a4483b9e18c504c4fddae98d3b79851bf}{getPresetFromJson}}(\textcolor{keywordtype}{char}* json);}
+\DoxyCodeLine{52     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_preset_builder_a20476bc94dd7351cfb74041d032fd41a}{storePreset}}(\mbox{\hyperlink{struct_preset}{Preset}} newPreset, \textcolor{keywordtype}{int} bnk, \textcolor{keywordtype}{int} pre);}
+\DoxyCodeLine{53     \textcolor{keywordtype}{int} \mbox{\hyperlink{class_spark_preset_builder_aef37f0c203d67a80b5ab6ada556b28ae}{deletePreset}}(\textcolor{keywordtype}{int} bnk, \textcolor{keywordtype}{int} pre);}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55 \};}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
