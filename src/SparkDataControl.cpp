@@ -253,9 +253,6 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	}
 	int retCode = spark_ssr.processBlock(blk);
 	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
-		//DEBUGGING; remove if not working
-		bool sendAdditionalAck = false;
-
 
 		std::vector<ByteVector> msg;
 		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
@@ -286,19 +283,14 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 			DEBUG_PRINTLN("Found request for current preset");
 			msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK,
 					currentMessageNum);
-			// DEBUGGING, needs to be removed if not working!
-			sendAdditionalAck = true;
 			break;
 		default:
+			DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
 			break;
 		}
 
 		bleControl->notifyClients(msg);
-		if(sendAdditionalAck){
-			msg = spark_msg.send_ack(currentMessageNum+1, 01, DIR_FROM_SPARK);
-			bleControl->notifyClients(msg);
-			sendAdditionalAck = false;
-		}
+
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();

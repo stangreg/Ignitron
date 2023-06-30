@@ -47,7 +47,7 @@ private:
 
 	void add_string(std::string pack_str);
 	void add_long_string(std::string pack_str);
-	void add_prefixed_string(std::string pack_str);
+	void add_prefixed_string(std::string pack_str, int length_override = 0);
 	void add_float (float flt);
 	void add_onoff (boolean onoff);
 	byte calculate_checksum(ByteVector chunk);

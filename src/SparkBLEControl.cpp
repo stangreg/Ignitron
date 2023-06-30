@@ -396,7 +396,7 @@ void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
 					pChr->setValue(&block.data()[0], block.size());
 					pChr->notify();
 				}
-				DEBUG_PRINTLN("Notified clients.");
+				DEBUG_PRINTLN("Clients notified.");
 
 			}
 		}
