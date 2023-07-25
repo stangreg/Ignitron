@@ -63,7 +63,7 @@ int SparkDataControl::init(int opModeInput) {
 	std::stringstream btModeStream;
 
 	while (std::getline(sparkModeStream, line)) {
-		sparkModeInput = stoi(line);
+		sparkModeInput = (int)(line[0]-'0'); // was: stoi(line);
 	}
 	if (sparkModeInput != 0) {
 		operationMode_ = sparkModeInput;
@@ -93,7 +93,7 @@ int SparkDataControl::init(int opModeInput) {
 		btModeStream.str(currentBTModeFile);
 
 		while (std::getline(btModeStream, line)) {
-			currentBTMode_ = stoi(line);
+			currentBTMode_ = (int)(line[0]-'0'); // was: stoi(line);
 		}
 
 		if (currentBTMode_ == BT_MODE_BLE) {
