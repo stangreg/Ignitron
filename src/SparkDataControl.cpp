@@ -355,10 +355,11 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (bleControl->writeBLE(current_msg)
-						 && getCurrentPresetFromSpark()) {
+				if (bleControl->writeBLE(current_msg)){
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
+					delay(250);
+					getCurrentPresetFromSpark();
 					retValue = true;
 				}
 			} else {

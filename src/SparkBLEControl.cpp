@@ -244,7 +244,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 		else {
 			Serial.printf("%s service not found.\n", SPARK_BLE_SERVICE_UUID);
 		}
-		DEBUG_PRINTLN("Done with this command!");
+		DEBUG_PRINTLN("Done writing to BLE.");
 		return true;
 	} else {
 		isAmpConnected_ = false;
