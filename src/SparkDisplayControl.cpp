@@ -166,6 +166,7 @@ void SparkDisplayControl::showPresetName() {
 		if (pendingBank != 0 && activeBank != pendingBank) {
 			primaryLinePreset = pendingPreset;
 			primaryLineText = primaryLinePreset->name;
+
 			// if the bank is the HW one and is not the active one
 			// show only a generic name as we don't know the HW preset name upfront
 		} else if (pendingBank == 0 && activeBank != pendingBank) {
@@ -175,6 +176,17 @@ void SparkDisplayControl::showPresetName() {
 		} else {
 			primaryLinePreset = activePreset;
 			primaryLineText = primaryLinePreset->name;
+		}
+		// Reset scroll timer
+		if (primaryLineText != previous_text1){
+			text_row_1_timestamp = millis();
+			previous_text1 = primaryLineText;
+			display_x1 = 0;
+		}
+		//double the preset text for scrolling if longer than threshold
+		// if text is too long and will be scrolled, double to "wrap around"
+		if(primaryLineText.length() > text_scroll_limit){
+			primaryLineText = primaryLineText + text_filler + primaryLineText;
 		}
 	}
 	display.print(primaryLineText.c_str());
@@ -190,10 +202,20 @@ void SparkDisplayControl::showFX_SecondaryName() {
 		//displayPreset = presetFromApp;
 		if (!(presetFromApp->isEmpty)) {
 			secondaryLineText = presetFromApp->name;
+			// Reset scroll timer
+			if (secondaryLineText != previous_text2){
+				text_row_2_timestamp = millis();
+				previous_text2 = secondaryLineText;
+				display_x2 = 0;
+			}
 		} else if (presetEditMode == PRESET_EDIT_DELETE) {
 			secondaryLineText = "DELETE ?";
 		} else {
 			secondaryLineText = "Select preset";
+		}
+		// if text is too long and will be scrolled, double to "wrap around"
+		if (secondaryLineText.length() > text_scroll_limit){
+			secondaryLineText = secondaryLineText + text_filler + secondaryLineText;
 		}
 	} else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
 		// Build string to show active FX
@@ -407,48 +429,44 @@ void SparkDisplayControl::update(bool isInitBoot) {
 
 void SparkDisplayControl::updateTextPositions() {
 	//This is for the primary preset name line
-	display_minX1 = DISPLAY_MIN_X_FACTOR * primaryLineText.length()
-			+ display.width();
-	if (primaryLineText.length() <= 12) {
+	display_minX1 = DISPLAY_MIN_X_FACTOR * ((primaryLineText.length() - text_filler.length())/2.0 + text_filler.length());
+	if (primaryLineText.length() <= text_scroll_limit) {
 		display_x1 = 0;
 	}
 	// long preset names are scrolled right to left and back
 	else {
-		display_x1 += display_scroll_num1;
-		if (display_x1 < display_minX1 || display_x1 > 1) {
-			// the two ifs are required in case the preset name length is
-			// longer than the previous one and has scrolled already too far
+		if (millis() - text_row_1_timestamp > text_scroll_delay){
+			display_x1 -= display_scroll_num1;
 			if (display_x1 < display_minX1) {
-				display_x1 = display_minX1;
+				// the two ifs are required in case the preset name length is
+				// longer than the previous one and has scrolled already too far
+				if (display_x1 < display_minX1) {
+					display_x1 = display_minX1;
+				}
+				// Reset text
+				display_x1 = 0;
+				text_row_1_timestamp = millis();
 			}
-			if (display_x1 > 1) {
-				display_x1 = 1;
-			}
-			// Invert scrolling direction and scroll
-			display_scroll_num1 = -display_scroll_num1;
-			display_x1 += display_scroll_num1;
 		}
 	}
 
 	// This is for the secondary FX display line (show preset name in AMP mode)
-	display_minX2 = DISPLAY_MIN_X_FACTOR * secondaryLineText.length()
-			+ display.width();
-	if (secondaryLineText.length() <= 12) {
+	display_minX2 = DISPLAY_MIN_X_FACTOR * ((secondaryLineText.length() - text_filler.length())/2.0 + text_filler.length());
+	if (secondaryLineText.length() <= text_scroll_limit) {
 		display_x2 = 0;
 	} else {
-		display_x2 += display_scroll_num2;
-		if (display_x2 < display_minX2 || display_x2 > 1) {
-			// the two ifs are required in case the preset name length is
-			// longer than the previous one and has scrolled already too far
+		if (millis() - text_row_2_timestamp > text_scroll_delay){
+			display_x2 -= display_scroll_num2;
 			if (display_x2 < display_minX2) {
-				display_x2 = display_minX2;
+				// the two ifs are required in case the preset name length is
+				// longer than the previous one and has scrolled already too far
+				if (display_x2 < display_minX2) {
+					display_x2 = display_minX2;
+				}
+				// Reset text
+				display_x2 = 0;
+				text_row_2_timestamp = millis();
 			}
-			if (display_x2 > 1) {
-				display_x2 = 1;
-			}
-			// Invert scrolling direction and scroll
-			display_scroll_num2 = -display_scroll_num2;
-			display_x2 += display_scroll_num2;
 		}
 	}
 }
