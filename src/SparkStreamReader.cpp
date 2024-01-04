@@ -691,6 +691,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 
 	if ( (blk.size() < 22) || (blk[0] != 0x01 || blk[1] != 0xFE)){
 		DEBUG_PRINTLN("Incorrect block format or block too short, ignoring.");
+		return retValue;
 	}
 
 	int blk_len = blk[6];
