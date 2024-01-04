@@ -578,7 +578,8 @@ void SparkDataControl::increaseBank(){
 
 	// Cycle around if at the end
 	if (pendingBank_ == numberOfBanks()) {
-		pendingBank_ = 0;
+		// Changed to 1 for test with Spark Mini TODO Clean up before merging into MAIN!!
+		pendingBank_ = std::min(1, numberOfBanks());
 	} else {
 		pendingBank_++;
 	}
@@ -591,13 +592,11 @@ void SparkDataControl::increaseBank(){
 void SparkDataControl::decreaseBank(){
 
 	if (!processAction()) { return; }
-
-	// Cycle around if at the start
-	if (pendingBank_ == 0) {
+	pendingBank_--;
+	// Cycle around if at the start (only test for Spark MINI TODO clean up before merging into main!!)
+	if (operationMode_ == SPARK_MODE_APP && pendingBank_ == 0) {
 		pendingBank_ = numberOfBanks();
-	} else {
-		pendingBank_--;
-	} // else
+	}
 	// Don't go to bank 0 in AMP mode
 	if (operationMode_ == SPARK_MODE_AMP && pendingBank_ == 0) {
 		pendingBank_ = numberOfBanks();

@@ -667,12 +667,14 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the previous one.
 	if (!(blk[0] == '\x01' && blk[1] == '\xFE')){ // check if block needs to be appended to earlier block
-		ByteVector lastChunk = response.back();
-		response.pop_back();
-		for (auto by: blk){
-			lastChunk.push_back(by);
+		if (response.size() > 0){
+			ByteVector lastChunk = response.back();
+			response.pop_back();
+			for (auto by: blk){
+				lastChunk.push_back(by);
+			}
+			blk = lastChunk;
 		}
-		blk = lastChunk;
 	}
 
 	// Process:
@@ -686,6 +688,10 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// else read on.
 	// Then pass everything to StreamReader
 	response.push_back(blk);
+
+	if ( (blk.size() < 22) || (blk[0] != 0x01 || blk[1] != 0xFE)){
+		DEBUG_PRINTLN("Incorrect block format or block too short, ignoring.");
+	}
 
 	int blk_len = blk[6];
 	byte direction[2] = { blk[4], blk[5] };
