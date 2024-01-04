@@ -616,7 +616,7 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			DEBUG_PRINTVECTOR(msg);DEBUG_PRINTLN();
 		}
 	}
-	else if (_cmd == 0x04) {
+	else if (_cmd == 0x04 || _cmd == 0x05 ) {
 		acknowledgements.push_back(_sub_cmd);
 		DEBUG_PRINTF("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
 	}
