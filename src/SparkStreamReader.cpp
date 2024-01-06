@@ -451,20 +451,19 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 		//DEBUG_PRINTLN("Sizes match");
 		ByteVector chunk;
 		if(processHeader){
+			//Cut away header
 			chunk.assign(block.begin() + 16, block.end());
 		}
 		else {
-			chunk = block;
+			chunk.assign(block.begin(), block.end());
 		}
 		//DEBUG_PRINTF("Assigned block of size %d", chunk.size());
 
-		block_content = chunk;
-		/*
 		for (auto chunk_byte : chunk) {
 			//DEBUG_PRINT(SparkHelper::intToHex(chunk_byte).c_str());
 			block_content.push_back(chunk_byte);
 		} // FOR chunk_byte
-		*/
+
 		//DEBUG_PRINTLN("Pushed chunk bytes to block content");
 	} // FOR block
 	  //DEBUG_PRINTLN("...Processed");
