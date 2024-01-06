@@ -80,11 +80,20 @@ private:
 	//DISPLAY variables x1 for the first line, x2 for the second line
 	int display_x1 = 0;
 	int display_minX1 = DISPLAY_MIN_X_FACTOR * 10;
-	int display_scroll_num1 = -1; // scroll speed, make more negative to speed up the scroll
+	int display_scroll_num1 = 1; // scroll speed, make bigger to speed up the scroll
 
 	int display_x2 = 0;
 	int display_minX2 = DISPLAY_MIN_X_FACTOR * 10;
-	int display_scroll_num2 = -1; // scroll speed, make more negative to speed up the scroll
+	int display_scroll_num2 = 1; // scroll speed, make bigger to speed up the scroll
+
+	int text_scroll_limit = 11;
+
+	int text_row_1_timestamp = 0;
+	int text_row_2_timestamp = 0;
+	int text_scroll_delay = 3500;
+	std::string text_filler = "   ";
+	std::string previous_text1 = "";
+	std::string previous_text2 = "";
 
 	SparkDataControl* dataControl() {return spark_dc;}
 	void showInitialMessage();

@@ -25,14 +25,14 @@ There is a number of custom libraries used on top of the standard ones to use wi
 |Library|Version|Comment| Source
 |---|---:|---|---|
 | Adafruit SSD1306 | 2.5.7 | Display control | Arduino IDE Library |
-| Adafruit_GFX_Library | 1.11.3 | Advanced display control | Arduino IDE Library |
-| ArduinoJson | 6.19.4 | JSON document parsing | Arduino IDE Library |
+| Adafruit BusIO | 1.14.5 | Bus IO | Arduino IDE Library |
+| Adafruit_GFX_Library | 1.11.7 | Advanced display control | Arduino IDE Library |
+| ArduinoJson | 6.21.3 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | Effortless-SPIFFS | 2.3.0 | File system to manage the presets | Arduino IDE Library |
 | ESP32-BLE-Keyboard | 0.3.0 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
 | FS | 1.0.0 | Basic File system library| Arduino IDE Library |
 | NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
-| RegExp  | 1.0.6 | Used for manipulate preset file names | Arduino IDE Library |
 
 ## Stucture of the code
 A (rudimentary and incomplete) doxygen documentation has been created [here](https://github.com/stangreg/Ignitron/blob/main/doxygen/html/index.html)
@@ -49,27 +49,27 @@ Class structure:
 | SparkHelper | Few helper functions for byte manipulation |
 | SparkLEDControl | Controls the LEDs depending on current status |
 | SparkMessage | Builds command messages to be sent to the Spark Amp via BLE |
-| SparkOTAServer | This is a (rudimentary) server to enable OTA firmware updates |
 | SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
 | SparkTypes | Container class to hold Preset and CommandData sructs |
-| Credentials.h.template | This is a template file, see below before building. |
 
 ## Building the code
-**Important:** Before building the code, rename the file to Credentials.h and put in your SSID name and WiFi password.
 After setting up the project in the IDE, the code should build with the standard tool chain.
 
 To compile, add the switch "-D USE_NIMBLE" to the compile options.
 
 **Note:** Ignitron will work as a bluetooth keyboard in Looper mode. This could lead to your mobile OS keyboard to disappear, which can ben annoying. In order to prevent this, in the file "BleKeyboard.cpp" (part of ESP-BLE-Keyboard library) change line
 `  USAGE(1),           0x06,` to
-`  USAGE(1),           0x07,` in "_hidReportDescriptor" array.
+`  USAGE(1),           0x07,`
+in "_hidReportDescriptor" array.
 
-THis will cause Ignitron to be treated like a keypad instead of a keyboard, which keeps your phone's keyboard active.
+This will cause Ignitron to be treated like a keypad instead of a keyboard, which keeps your phone's keyboard active.
 
 ## Installing Firmware and data files
+**Note:** With Arduino IDE version 2.x plugins are not supported. This means you need to install Arduino IDE 1.8.x to follow the steps in this paragraph. Both versions 1.8.x and 2.x can be installed in parallel, so version 2.x can be used for development and version 1.8.x to use the plugins.
+
 After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.
 
 In case you don't like the default presets, you can delete the presets you don't want, and also need to change the file *PresetList.txt* accordingly. This file just contains the file names of the presets to use. Lines starting with "--" are ignored.
 
-**Note:** Please be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automaticalle rewritten, so custom commented lines will be removed.
+**Note:** Please be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automatically rewritten, so custom commented lines will be removed.
