@@ -317,7 +317,8 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
-		pendingPreset_ = activePreset_;
+		// Should not be needed, as both are already set to the same value above
+		//pendingPreset_ = activePreset_;
 	}
 	return retCode;
 }
