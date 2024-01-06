@@ -221,6 +221,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 						// SparkMessage already creates messages split into 173 byte chunks
 						DEBUG_PRINTLN("Sending block:");
 						DEBUG_PRINTVECTOR(block);
+						DEBUG_PRINTLN();
 						if (pChr->writeValue(block.data(), block.size(),
 								response)) {
 							// Delay seems to be required in order to not lose any packages.

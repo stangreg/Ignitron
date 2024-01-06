@@ -83,8 +83,8 @@ private:
 
 
 	// Functions to structure and process input data (high level)
-	std::vector<CmdData> read_message();
-	boolean structure_data();
+	std::vector<CmdData> read_message(bool processHeader=true);
+	boolean structure_data(bool processHeader=true);
 	void interpret_data();
 	void set_interpreter (ByteVector _msg);
 	int run_interpreter (byte _cmd, byte _sub_cmd);
@@ -95,6 +95,8 @@ private:
 	std::string read_string();
 	float read_float ();
 	boolean read_onoff();
+
+	boolean isValidBlockWithoutHeader(ByteVector blk);
 
 	// Functions to create string representations of processed data
 	void start_str();

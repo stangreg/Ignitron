@@ -91,11 +91,10 @@ void loop() {
 			DEBUG_PRINTLN("Initial boot, setting preset to 1");
 			spark_dc.setBank(1);
 			spark_dc.switchPreset(1, true);
+			//Wait for preset change and acknowledgment to arrive
+			delay (2000);
 			if (!(spark_dc.activePreset()->isEmpty)) {
 				isInitBoot = false;
-			} else
-			{
-				delay(2000);
 			}
 		}
 	}
