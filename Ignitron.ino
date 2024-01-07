@@ -86,10 +86,9 @@ void loop() {
 			spark_bh.readButtons();
 		}
 		//After connection is established, continue.
-		// On first boot, set the preset to number 1.
+		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
-			DEBUG_PRINTLN("Initial boot, setting preset to 1");
-			spark_dc.setBank(1);
+			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
 			spark_dc.switchPreset(1, true);
 			//Wait for preset change and acknowledgment to arrive
 			delay (2000);

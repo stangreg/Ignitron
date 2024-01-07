@@ -294,10 +294,22 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
 		std::string msgStr = spark_ssr.getJson();
-		if (msgStr.length() > 0) {
-			Serial.println("Message processed:");
-			Serial.println(msgStr.c_str());
+		if (operationMode_ == SPARK_MODE_APP) {
+
+			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
+				activeBank_ = pendingBank_ = 0;
+				activePresetNum_ = spark_ssr.currentPresetNumber();
+			}
+
+			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET
+					|| spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+				if (msgStr.length() > 0) {
+					Serial.println("Message processed:");
+					Serial.println(msgStr.c_str());
+				}
+			}
 		}
+
 		if (operationMode_ == SPARK_MODE_AMP) {
 			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
 				presetEditMode_ = PRESET_EDIT_STORE;
@@ -579,8 +591,8 @@ void SparkDataControl::increaseBank(){
 
 	// Cycle around if at the end
 	if (pendingBank_ == numberOfBanks()) {
-		// Changed to 1 for test with Spark Mini TODO Clean up before merging into MAIN!!
-		pendingBank_ = std::min(1, numberOfBanks());
+		// Roll over to 0 when going beyond the last bank
+		pendingBank_ = 0;
 	} else {
 		pendingBank_++;
 	}
@@ -593,10 +605,12 @@ void SparkDataControl::increaseBank(){
 void SparkDataControl::decreaseBank(){
 
 	if (!processAction()) { return; }
-	pendingBank_--;
-	// Cycle around if at the start (only test for Spark MINI TODO clean up before merging into main!!)
-	if (operationMode_ == SPARK_MODE_APP && pendingBank_ == 0) {
+
+	// Roll over to last bank if going beyond the first bank
+	if (pendingBank_ == 0) {
 		pendingBank_ = numberOfBanks();
+	} else {
+		pendingBank_--;
 	}
 	// Don't go to bank 0 in AMP mode
 	if (operationMode_ == SPARK_MODE_AMP && pendingBank_ == 0) {

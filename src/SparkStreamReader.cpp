@@ -294,8 +294,7 @@ void SparkStreamReader::read_effect_onoff() {
 
 void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
-	DEBUG_PRINTF("Free memory before reading preset: %d\n",
-			xPortGetFreeHeapSize());
+	//DEBUG_PRINTF("Free memory before reading preset: %d\n", xPortGetFreeHeapSize());
 	read_byte();
 	byte preset = read_byte();
 	//DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
@@ -319,7 +318,7 @@ void SparkStreamReader::read_preset() {
 	//DEBUG_PRINTF("Read BPM: %f\n", bpm);
 	currentSetting_.bpm = bpm;
 	// Build string representations
-	DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
+	//DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
 	start_str();
 	add_int ("PresetNumber", preset);
 	add_separator();
@@ -337,7 +336,7 @@ void SparkStreamReader::read_preset() {
 	add_float("BPM", bpm);
 	add_separator();
 	add_newline();
-	DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
+	//DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
 	// Read Pedal data (including string representations)
 	int num_effects = read_byte() - 0x90;
 	//DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
@@ -360,8 +359,7 @@ void SparkStreamReader::read_preset() {
 		add_separator();
 		int num_p = read_byte() - char(0x90);
 		//DEBUG_PRINTF("  Number of Parameters: %d\n", num_p);
-		DEBUG_PRINTF("Free memory before parameters: %d\n",
-				xPortGetFreeHeapSize());
+		//DEBUG_PRINTF("Free memory before parameters: %d\n", xPortGetFreeHeapSize());
 		add_python("\"Parameters\":[");
 		// Read parameters of current pedal
 		currentPedal.parameters = {};
@@ -373,8 +371,7 @@ void SparkStreamReader::read_preset() {
 			byte spec = read_byte();
 			//DEBUG_PRINTF("    Parameter Special: %s\n",
 			//	SparkHelper::intToHex(spec));
-			DEBUG_PRINTF("Free memory before reading float: %d\n",
-					xPortGetFreeHeapSize());
+			//DEBUG_PRINTF("Free memory before reading float: %d\n", xPortGetFreeHeapSize());
 			float val = read_float();
 			//DEBUG_PRINTF("    Parameter Value: %f\n", val);
 			currentParameter.number = num;
@@ -388,8 +385,7 @@ void SparkStreamReader::read_preset() {
 				add_separator();
 			}
 			currentPedal.parameters.push_back(currentParameter);
-			DEBUG_PRINTF("Free memory after reading preset: %d\n",
-					xPortGetFreeHeapSize());
+			//DEBUG_PRINTF("Free memory after reading preset: %d\n", xPortGetFreeHeapSize());
 		}
 		
 		add_python("]");
