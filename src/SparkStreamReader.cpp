@@ -704,11 +704,13 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// Then pass everything to StreamReader
 	response.push_back(blk);
 
+	// Block with header needs to start with 01FE and to be longer than 22 bytes.
+	// If sent without header, check for validity (starting with F001 and ending with F7) for immediate processing
 	if ( (blk.size() < 22) || (blk[0] != 0x01 || blk[1] != 0xFE)){
 		// Check if block came without header (01FE) and apply process special handling
 		// Case implemented for Spark Mini/ (Go(?))
 		if (!(isValidBlockWithoutHeader(blk))){
-			DEBUG_PRINTLN("Incorrect block format or block too short, ignoring.");
+			DEBUG_PRINTLN("Block not ready for processing, skipping further processing.");
 			return retValue;
 		}
 		setMessage(response);
