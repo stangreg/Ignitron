@@ -331,16 +331,27 @@ void SparkMessage::add_onoff (boolean enable){
 
 std::vector<ByteVector> SparkMessage::get_current_preset_num(){
 	// hardcoded message
+	/*
 	std::vector<ByteVector> msg;
 	ByteVector msg_vec = {0x01, 0xfe, 0x00, 0x00, 0x53, 0xfe,
 			0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0xf0, 0x01, 0x08, 0x00, 0x02, 0x10, 0xf7}; // had an extra 0x79 at the end, likely not needed
 	msg.push_back(msg_vec);
 	return msg;
+	*/
+	cmd = 0x02;
+	sub_cmd = 0x10;
+
+	start_message (cmd, sub_cmd);
+	return end_message();
+
+
 }
 
 std::vector<ByteVector> SparkMessage::get_current_preset(){
 	// hardcoded message
+
+	/*
 	std::vector<ByteVector> msg;
 	ByteVector msg_vec = {0x01, 0xfe, 0x00, 0x00, 0x53, 0xfe,
 			0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -352,6 +363,17 @@ std::vector<ByteVector> SparkMessage::get_current_preset(){
 
 	msg.push_back(msg_vec);
 	return msg;
+	*/
+	cmd = 0x02;
+	sub_cmd = 0x01;
+
+	start_message (cmd, sub_cmd);
+	add_byte(0x01);
+	add_byte(0x00);
+	for (int i=0; i<30; i++){
+		add_byte(0x00);
+	}
+	return end_message();
 }
 
 std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal, int param, float val){

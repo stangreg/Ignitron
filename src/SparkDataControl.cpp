@@ -368,8 +368,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (bleControl->writeBLE(current_msg)
-						 && getCurrentPresetFromSpark()) {
+				if (bleControl->writeBLE(current_msg)) {
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
 					retValue = true;
@@ -378,7 +377,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
 
 				if (pendingPreset_.isEmpty) {
-					Serial.println("Emtpy preset, skipping further processing");
+					Serial.println("Empty preset, skipping further processing");
 					return false;
 				}
 
@@ -393,6 +392,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 					}
 				}
 			}
+			getCurrentPresetFromSpark();
 		}
 	}
 	if (retValue == true) {
