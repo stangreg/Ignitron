@@ -226,7 +226,8 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 								response)) {
 							// Delay seems to be required in order to not lose any packages.
 							// Seems to be more stable with a short delay
-							//delay(10);
+							// also seems to be not working for Spark Mini without a delay.s
+							delay(50);
 						} else {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed
