@@ -187,7 +187,8 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 |`Preset 2`  | Short         | Select preset 2                 | *Press twice to store received preset* |
 |`Preset 3`  | Short         | Select preset 3                 | *Press twice to store received preset* |
 |`Preset 4`  | Short         | Select preset 4                 | *Press twice to store received preset* |
-|`Bank down` | Long          | Unload preset                   | *Removes loaded preset if present*                         |
+|`Bank down` | Long          | Unload preset                   | *Removes loaded preset if present*     |
+|`Bank up`   | Long          | Toggle Bluetooth mode                   | *Toggle between BLE and BT Serial mode*  |
 |`Preset 2`  | Long          | Restart **Ignitron**                  |        |
 
 
@@ -212,7 +213,7 @@ In AMP mode, **Ignitron** acts like a Spark AMP and can communicate with the Spa
 |`Preset 4`  | Short         | Select preset 4          |        |
 |`Bank down` | Long          | Mark preset for deletion | *Pressing any other button in that state will cancel the deletion* |
 |`Bank down` | Long          | Delete marked preset     | *Only if preset was first marked for deletion* |
-|`Bank up` | Long          | Switch between BLE/Serial BT mode | *Ignitron will restart in new BT mode* |
+|`Bank up` | Long          | Toggle Bluetooth mode                   | *Toggle between BLE and BT Serial mode*  |
 |`Preset 2`  | Long          | Restart **Ignitron**           |        |
 
 -------------------------------------------------------
