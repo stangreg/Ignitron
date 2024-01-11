@@ -1,5 +1,5 @@
 # Ignitron - Software
-This document describes the software side of the **Ignitron** foot pedal.
+This document describes the software part of the **Ignitron** foot pedal.
 
 ## IDE
 I am using the [Sloeber](https://eclipse.baeyens.it) Eclipse plugin for development as it offers more convenient functions than the standard Arduino IDE. Of course, you can use the IDE of your choice.
