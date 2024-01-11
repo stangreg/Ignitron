@@ -51,7 +51,7 @@ A (rudimentary and incomplete) doxygen documentation has been created [here](htt
 | SparkMessage | Builds command messages to be sent to the Spark Amp via BLE |
 | SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
-| SparkTypes | Container class to hold Preset and CommandData sructs |
+| SparkTypes | Container class to hold Preset and CommandData structs |
 | Config_Definitions | Configuration items to map LEDs and buttons to GPIOs, enable DEBUG mode, and other technical definitions |
 
 ## Building the code
