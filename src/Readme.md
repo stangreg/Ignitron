@@ -35,9 +35,9 @@ There is a number of custom libraries used on top of the standard ones to use wi
 | NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
 
 ## Stucture of the code
-A (rudimentary and incomplete) doxygen documentation has been created [here](https://github.com/stangreg/Ignitron/blob/main/doxygen/html/index.html)
-Class structure:
+A (rudimentary and incomplete) doxygen documentation has been created [here](https://github.com/stangreg/Ignitron/blob/main/doxygen/html/index.html).\
 
+### Class structure
 | Class/File | Function |
 |---|---|
 | Ignitron.ino | Basic .ino file which only provides the setup() and loop() functions. It invokes the other control classes (see below) and controls the execution loop |
@@ -52,24 +52,25 @@ Class structure:
 | SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
 | SparkTypes | Container class to hold Preset and CommandData sructs |
+| Config_Definitions | Configuration items to map LEDs and buttons to GPIOs, enable DEBUG mode, and other technical definitions |
 
 ## Building the code
 After setting up the project in the IDE, the code should build with the standard tool chain.
 
-To compile, add the switch "-D USE_NIMBLE" to the compile options.
+To compile, add the switch **`-D USE_NIMBLE`** to the compile options.
 
-**Note:** Ignitron will work as a bluetooth keyboard in Looper mode. This could lead to your mobile OS keyboard to disappear, which can ben annoying. In order to prevent this, in the file "BleKeyboard.cpp" (part of ESP-BLE-Keyboard library) change line
-`  USAGE(1),           0x06,` to
-`  USAGE(1),           0x07,`
-in "_hidReportDescriptor" array.
+**Note:** Ignitron will work as a bluetooth keyboard in Looper mode. This could lead to your mobile OS keyboard to disappear, which can ben annoying. In order to prevent this, in the file "BleKeyboard.cpp" (part of ESP-BLE-Keyboard library) change line\
+`USAGE(1),           0x06,`\
+to `USAGE(1),           0x07,`\
+in the `_hidReportDescriptor` array.
 
-This will cause Ignitron to be treated like a keypad instead of a keyboard, which keeps your phone's keyboard active.
+This will cause Ignitron to be treated like a **keypad** instead of a **keyboard**, which keeps your phone's keyboard active.
 
 ## Installing Firmware and data files
-**Note:** With Arduino IDE version 2.x plugins are not supported. This means you need to install Arduino IDE 1.8.x to follow the steps in this paragraph. Both versions 1.8.x and 2.x can be installed in parallel, so version 2.x can be used for development and version 1.8.x to use the plugins.
+**Note:** With Arduino IDE version 2.x, plugins are not supported. This means you need to install Arduino IDE 1.8.x to follow the steps in this paragraph. Both versions 1.8.x and 2.x can be installed in parallel, so version 2.x can be used for development and version 1.8.x to use the plugins.
 
-After building and installing the firmware on the board, it is required to also transfer the data/ directory to the board. In order to do so, you need to install the add-in "ESP32 Sketch Data Upload" to the **Arduino IDE**. Open the Ignitron sketch into the Arduino IDE and select the Data Upload from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.
+After building and installing the firmware on the board, it is required to also transfer the data directory to the board. In order to do so, you need to install the add-in `ESP32 Sketch Data Upload` to the **Arduino IDE**. Open the Ignitron sketch in the Arduino IDE and select `Data Upload` from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.
 
-In case you don't like the default presets, you can delete the presets you don't want, and also need to change the file *PresetList.txt* accordingly. This file just contains the file names of the presets to use. Lines starting with "--" are ignored.
+In case you don't like the default presets, you can delete the presets you don't want, and also change the file *PresetList.txt* accordingly. This file contains the file names of the presets to use. Lines starting with `--` are ignored.
 
-**Note:** Please be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automatically rewritten, so custom commented lines will be removed.
+**Note:** Be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automatically rewritten, so custom commented lines will be removed.
