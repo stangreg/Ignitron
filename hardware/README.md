@@ -5,7 +5,10 @@ The software that controls the Spark amp runs on an ESP32 microcontroller which 
 
 One objective of the PCB design was to keep things as modular as possible. This means that no cables coming from the hardware should be soldered directly to the PCB or the ESP32. For example the foot switches, LEDs and the external power supply are supposed to be connected by PCB connectors that can be connected and disconnected. In case you cannot find such connectors you can of course still solder the cables directly to the PCB.
 
-Link to images PCBPiggybackISO.jpg and PCBPiggybackTOP.jpg.
+<p align="center">
+  <img src="PCBPiggybackISO.jpg" width=400>
+  <img src="PCBPiggybackTOP.jpg" width=400>
+</p>
 
 ## Bill of Materials (BOM)
 To keep things clean the bill of materials will differentiate between hardware like the enclosure, switches, etc. and everything that's needed to assemble the PCB.
@@ -42,9 +45,10 @@ To populate the PCB itself you will need the following components:
 |R7, R8, R9, R10, R11, R12|6|¼ W Resistor|1K|Resistors for the switches|
 
 <p align="center">
-  <img width="512" height="341" src="PCBPiggybackISO.jpg">
-  <img width="512" height="341" src="PCBPiggybackTOP.jpg">
+  <img src="PCBPiggybackISO.jpg" width=400>
+  <img src="PCBPiggybackTOP.jpg" width=400>
 </p>
+
 
 ### OLED Frame
 The OLED frame was designed with [OpenSCAD](https://openscad.org/). The project file is [tinyOledBezel.scad](tinyOledBezel.scad) which is an adjusted version of [this design](https://www.thingiverse.com/thing:1645893).
