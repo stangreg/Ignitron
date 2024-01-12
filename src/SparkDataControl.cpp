@@ -293,16 +293,18 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
-		std::string msgStr = spark_ssr.getJson();
+		std::string msgStr;
 		if (operationMode_ == SPARK_MODE_APP) {
 
 			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
+				DEBUG_PRINTLN("Received HW Preset response");
 				activeBank_ = pendingBank_ = 0;
 				activePresetNum_ = spark_ssr.currentPresetNumber();
 			}
 
 			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET
 					|| spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+				msgStr = spark_ssr.getJson();
 				if (msgStr.length() > 0) {
 					Serial.println("Message processed:");
 					Serial.println(msgStr.c_str());
@@ -326,11 +328,12 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
 	// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
-	if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
+	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
+	if ((lastAck == 0x38 && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
 		// Should not be needed, as both are already set to the same value above
-		//pendingPreset_ = activePreset_;
+		pendingPreset_ = activePreset_;
 	}
 	return retCode;
 }
@@ -368,7 +371,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (bleControl->writeBLE(current_msg)) {
+				if (bleControl->writeBLE(current_msg) && getCurrentPresetFromSpark()) {
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
 					retValue = true;
@@ -392,7 +395,6 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 					}
 				}
 			}
-			getCurrentPresetFromSpark();
 		}
 	}
 	if (retValue == true) {
