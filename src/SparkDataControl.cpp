@@ -328,7 +328,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	// confirm pending preset into active
 	byte lastAck = spark_ssr.getLastAckAndEmpty();
 	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
-	if ((lastAck == 0x38 && activeBank_ != 0) || lastAck == 0x15) {
+	if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
 		activePreset_ = pendingPreset_;
 		// Should not be needed, as both are already set to the same value above
