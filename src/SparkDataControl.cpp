@@ -293,7 +293,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
-		std::string msgStr;
+		std::string msgStr = spark_ssr.getJson();
 		if (operationMode_ == SPARK_MODE_APP) {
 
 			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
@@ -304,7 +304,6 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET
 					|| spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
-				msgStr = spark_ssr.getJson();
 				if (msgStr.length() > 0) {
 					Serial.println("Message processed:");
 					Serial.println(msgStr.c_str());
