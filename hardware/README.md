@@ -5,7 +5,10 @@ The software that controls the Spark amp runs on an ESP32 microcontroller which 
 
 One objective of the PCB design was to keep things as modular as possible. This means that no cables coming from the hardware should be soldered directly to the PCB or the ESP32. For example the foot switches, LEDs and the external power supply are supposed to be connected by PCB connectors that can be connected and disconnected. In case you cannot find such connectors you can of course still solder the cables directly to the PCB.
 
-Link to images PCBPiggybackISO.jpg and PCBPiggybackTOP.jpg.
+<p align="center">
+  <img src="PCBPiggybackISO.jpg" width=400>
+  <img src="PCBPiggybackTOP.jpg" width=400>
+</p>
 
 ## Bill of Materials (BOM)
 To keep things clean the bill of materials will differentiate between hardware like the enclosure, switches, etc. and everything that's needed to assemble the PCB.
@@ -42,9 +45,10 @@ To populate the PCB itself you will need the following components:
 |R7, R8, R9, R10, R11, R12|6|¼ W Resistor|1K|Resistors for the switches|
 
 <p align="center">
-  <img width="512" height="341" src="PCBPiggybackISO.jpg">
-  <img width="512" height="341" src="PCBPiggybackTOP.jpg">
+  <img src="PCBPiggybackISO.jpg" width=400>
+  <img src="PCBPiggybackTOP.jpg" width=400>
 </p>
+
 
 ### OLED Frame
 The OLED frame was designed with [OpenSCAD](https://openscad.org/). The project file is [tinyOledBezel.scad](tinyOledBezel.scad) which is an adjusted version of [this design](https://www.thingiverse.com/thing:1645893).
@@ -115,11 +119,11 @@ To make sure that the headers fit well on the ESP32 once they are soldered to th
 6. Solder the 1x4 angled pin header to J2. Attach it to the "lower" side of the board so that you can still read the values on the "upper" side of the board.
 
 ## Final assembly
-Once the enclosure is prepared and the PCB is assembled we can finally put everything together. On the main page you can find an image that shows how everything is fit into the enclosure and what goes where.
+Once the enclosure is prepared and the PCB is assembled we can finally put everything together. On the [main page](https://www.github.com/stangreg/Ignitron) you can find an image that shows how everything is fit into the enclosure and what goes where.
 1. Put the OLED display into the OLED frame, secure it with the bars and put the frame with the display into the enclosure.
 2. Put some insulating tape in the area where the ESP32 with the attached PCB will go.
 3. Install the LEDs and switches into the enclosure and measure how long the cables of the PCB connectors must be for each of them so they reach the PCB. Please refer to the resistor listings for R1 - R6 in the PCB BOM on how the numbers are mapped to "Drive", "Mod", etc. Example: SW1 refers to the switch for "Drive", D1 refer to the LED for "Drive".
-4. Take out the switches again to make it easier to solder them later. Keep the LEDs inside because we will need to solder them in an installed state anyway.
+4. Take out the switches again to make it easier to solder them later. Keep the LEDs inside because you will need to solder them in an installed state anyway.
 5. Install the USB adapter if you want to use it.
 6. Solder the PCB connectors to the switches. The order of the cables does not matter in this case.
 7. Solder the PCB connectors to the installed LEDs.
