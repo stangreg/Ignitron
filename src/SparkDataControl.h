@@ -185,6 +185,7 @@ private:
 	// Messages to send to Spark
 	std::vector<ByteVector> current_msg;
 	static std::vector<ByteVector> ack_msg;
+	static bool customPresetAckPending;
 
 	//Spark AMP mode
 	static Preset appReceivedPreset_;
