@@ -138,6 +138,7 @@ public:
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
+	void resetLastMessageType();
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
