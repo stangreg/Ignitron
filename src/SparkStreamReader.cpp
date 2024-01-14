@@ -414,8 +414,6 @@ void SparkStreamReader::read_preset() {
 	currentSetting_.json = json;
 	currentSetting_.isEmpty = false;
 	isPresetUpdated_ = true;
-	//TODO check if helping!
-	isPresetNumberUpdated_ = true;
 	last_message_type_ = MSG_TYPE_PRESET;
 
 }
