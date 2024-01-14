@@ -29,6 +29,7 @@ int SparkDataControl::activePresetNum_ = 1;
 std::string SparkDataControl::responseMsg_ = "";
 
 std::vector<ByteVector> SparkDataControl::ack_msg;
+bool SparkDataControl::customPresetAckPending = false;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
 int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
@@ -336,9 +337,14 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
 	if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
 		Serial.println("OK!");
+		if (customPresetAckPending) {
+			//getCurrentPresetFromSpark();
+			customPresetAckPending = false;
+		}
 		activePreset_ = pendingPreset_;
 		// Should not be needed, as both are already set to the same value above
 		pendingPreset_ = activePreset_;
+
 	}
 	return retCode;
 }
@@ -396,16 +402,17 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 					//previously sent preset
 					current_msg = spark_msg.change_hardware_preset(128);
 					if (bleControl->writeBLE(current_msg)) {
+						customPresetAckPending = true;
 						retValue = true;
 					}
 				}
 			}
 		}
 	}
-	if (retValue == true) {
+	/*if (retValue == true) {
 		activeBank_ = bnk;
 		activePresetNum_ = pre;
-	}
+	}*/
 	return retValue;
 }
 
