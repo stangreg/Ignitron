@@ -139,6 +139,7 @@ void SparkDataControl::checkForUpdates() {
 
 
 	if (spark_ssr.isPresetNumberUpdated()) {
+		DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
 		spark_ssr.resetPresetNumberUpdateFlag();
 		getCurrentPresetFromSpark();
 	}
@@ -300,10 +301,14 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 				DEBUG_PRINTLN("Received HW Preset response");
 				activeBank_ = pendingBank_ = 0;
 				activePresetNum_ = spark_ssr.currentPresetNumber();
+				if (msgStr.length() > 0) {
+					Serial.println("Message processed:");
+					Serial.println(msgStr.c_str());
+				}
 			}
 
-			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET
-					|| spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+				DEBUG_PRINTLN("Last message was a preset change.");
 				if (msgStr.length() > 0) {
 					Serial.println("Message processed:");
 					Serial.println(msgStr.c_str());
@@ -322,6 +327,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 				presetNumToEdit_ = 0;
 			}
 		}
+		spark_ssr.resetLastMessageType();
 	}
 
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
