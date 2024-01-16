@@ -140,7 +140,7 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 void SparkDataControl::checkForUpdates() {
 
 
-	if (spark_ssr.isPresetNumberUpdated()) {
+	if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
 		DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
 		spark_ssr.resetPresetNumberUpdateFlag();
 		getCurrentPresetFromSpark();

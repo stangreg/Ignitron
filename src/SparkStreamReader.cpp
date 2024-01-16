@@ -692,20 +692,22 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		}
 		//if current block starts with 01FE, check if last block was complete, otherwise remove from response
 	} else {
-		bool removeLastChunk = false;
-		ByteVector lastChunk = response.back();
-		if (lastChunk.size() < 2) {
-			DEBUG_PRINTLN("Last message too short and incomplete, ignoring");
-			removeLastChunk = true;
-		}
+		if (response.size() > 0) {
+			bool removeLastChunk = false;
+			ByteVector lastChunk = response.back();
+			if (lastChunk.size() < 2) {
+				DEBUG_PRINTLN("Last message too short and incomplete, ignoring");
+				removeLastChunk = true;
+			}
 
-		byte lastByte = lastChunk.back();
-		if (lastByte != 0xF7) {
-			DEBUG_PRINTLN("Last chunk incomplete, ignoring");
-			removeLastChunk = true;
-		}
-		if(removeLastChunk) {
-			response.pop_back();
+			byte lastByte = lastChunk.back();
+			if (lastByte != 0xF7) {
+				DEBUG_PRINTLN("Last chunk incomplete, ignoring");
+				removeLastChunk = true;
+			}
+			if(removeLastChunk) {
+				response.pop_back();
+			}
 		}
 	}
 
