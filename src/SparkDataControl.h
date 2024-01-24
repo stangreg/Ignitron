@@ -71,7 +71,7 @@ public:
 	// return the number of banks in the preset list
 	int getNumberOfBanks();
 
-	std::string lastKeyboardButtonPressed() const {
+	uint8_t lastKeyboardButtonPressed() const {
 		return lastKeyboardButtonPressed_;
 	}
 
@@ -151,7 +151,8 @@ public:
 	bool decreasePresetLooper();
 
 	// Functions for Looper mode
-	void sendButtonPressAsKeyboard(std::string c);
+	void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
+	
 	void resetLastKeyboardButtonPressed();
 
 	void restartESP(bool resetSparkMode=false);
@@ -173,7 +174,7 @@ private:
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
-	std::string lastKeyboardButtonPressed_ = "";
+	uint8_t lastKeyboardButtonPressed_ = 0;
 
 	//PRESET variables
 	static Preset activePreset_;

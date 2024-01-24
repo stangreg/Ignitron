@@ -551,20 +551,25 @@ void SparkDataControl::updateActiveWithPendingPreset() {
 	activePreset_ = pendingPreset_;
 }
 
-void SparkDataControl::sendButtonPressAsKeyboard(std::string str) {
+
+void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
 	if (bleKeyboard.isConnected()) {
-		Serial.printf("Sending button: %s\n", str.c_str());
-		bleKeyboard.print(str.c_str());
-		lastKeyboardButtonPressed_ = str;
+		
+		Serial.printf("Sending button: %d - mod: %d - repeat: %d\n", k.key, k.modifier, k.repeat);
+		if (k.modifier != 0) bleKeyboard.press(k.modifier);
+		for (uint8_t i=0; i<= k.repeat ; i++) {
+			bleKeyboard.write(k.key);
+		}
+		if (k.modifier != 0) bleKeyboard.release(k.modifier);
+		lastKeyboardButtonPressed_ = k.key_uid;
 	}
 	else {
 		Serial.println("Keyboard not connected");
 	}
-
 }
 
 void SparkDataControl::resetLastKeyboardButtonPressed() {
-	lastKeyboardButtonPressed_ = "";
+	lastKeyboardButtonPressed_ = 0;
 }
 
 void SparkDataControl::toggleBTMode() {

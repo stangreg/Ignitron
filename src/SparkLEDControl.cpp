@@ -115,14 +115,14 @@ void SparkLEDControl::updateLED_AMP() {
 
 void SparkLEDControl::updateLED_KEYBOARD(){
 
-	std::string pressedKey = spark_dc->lastKeyboardButtonPressed();
-	if ( pressedKey == "" ) {
+	uint8_t pressedKey = spark_dc->lastKeyboardButtonPressed();
+	if ( pressedKey == 0 ) {
 		allLedOff();
 		return;
 	}
 
 	// Map index of pressed key from 1 to 6
-	int index = mapping.indexOfKey(pressedKey)+1;
+	int index = mapping.indexOfKey(pressedKey);
 	switchLED(index, HIGH);
 
 }

@@ -68,7 +68,7 @@ private:
 	std::string upperButtonsShort;
 	std::string upperButtonsLong;
 
-	std::string lastKeyboardButtonPressed;
+	uint8_t lastKeyboardButtonPressed;
 	unsigned long keyboardPressedTimestamp = 0;
 	int showKeyboardPressedInterval = 500;
 	bool showKeyboardPressedFlag = false;

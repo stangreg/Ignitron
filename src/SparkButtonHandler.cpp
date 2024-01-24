@@ -212,10 +212,14 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 
 	// Button configuration is set in the SparkTypes.h file
 	int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
-	std::vector<std::string> keyMap;
+	
+	//std::vector<std::string> keyMap;
+	std::vector<keyboardKeyDefinition> keyMap;
+
 
 	switch (pattern) {
 	case BfButton::SINGLE_PRESS:
+		//keyMap = mapping.keyboardShortPress;
 		keyMap = mapping.keyboardShortPress;
 		break;
 	case BfButton::LONG_PRESS:
@@ -229,10 +233,10 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 		Serial.println("ERROR: Keyboard index out of bounds");
 		return;
 	}
-	// Keyboard mapping array index starts at 0
-	keyToSend = keyMap[buttonIndex-1];
-	spark_dc->sendButtonPressAsKeyboard(keyToSend);
 
+
+	// Keyboard mapping array index starts at 0
+	spark_dc->sendButtonPressAsKeyboard(keyMap[buttonIndex-1]);
 }
 
 void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,

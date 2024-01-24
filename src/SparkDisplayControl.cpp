@@ -303,7 +303,7 @@ void SparkDisplayControl::showPressedKey(){
 	display.setCursor(pressedButtonPosX, pressedButtonPosY);
 
 	unsigned long currentMillis = millis();
-	if (lastKeyboardButtonPressed != "" && showKeyboardPressedFlag == false) {
+	if (lastKeyboardButtonPressed != 0 && showKeyboardPressedFlag == false) {
 		keyboardPressedTimestamp = millis();
 		showKeyboardPressedFlag = true;
 	}
@@ -312,40 +312,53 @@ void SparkDisplayControl::showPressedKey(){
 			// reset the show message flag to show preset data again
 			showKeyboardPressedFlag = false;
 			spark_dc->resetLastKeyboardButtonPressed();
-			lastKeyboardButtonPressed = "";
+			lastKeyboardButtonPressed = 0;
 		}
 	}
 
-	display.print(lastKeyboardButtonPressed.c_str());
+	display.print(lastKeyboardButtonPressed);
 }
 
 void SparkDisplayControl::initKeyboardLayoutStrings(){
 
 	std::string spacerText = "  ";
 
-	lowerButtonsShort = mapping.keyboardShortPress[0]
-										.append(spacerText)
-										.append(mapping.keyboardShortPress[1])
-										.append(spacerText)
-										.append(mapping.keyboardShortPress[2])
-										.append(spacerText)
-										.append(mapping.keyboardShortPress[3]);
+	// lowerButtonsShort = mapping.keyboardShortPress[0]
+	// 									.append(spacerText)
+	// 									.append(mapping.keyboardShortPress[1])
+	// 									.append(spacerText)
+	// 									.append(mapping.keyboardShortPress[2])
+	// 									.append(spacerText)
+	// 									.append(mapping.keyboardShortPress[3]);
 
-		upperButtonsShort = mapping.keyboardShortPress[4]
-										.append(spacerText)
-										.append(mapping.keyboardShortPress[5]);
+	// upperButtonsShort = mapping.keyboardShortPress[4]
+	// 								.append(spacerText)
+	// 								.append(mapping.keyboardShortPress[5]);
 
-		lowerButtonsLong = mapping.keyboardLongPress[0]
-										.append(spacerText)
-										.append(mapping.keyboardLongPress[1])
-										.append(spacerText)
-										.append(mapping.keyboardLongPress[2])
-										.append(spacerText)
-										.append(mapping.keyboardLongPress[3]);
 
-		upperButtonsLong = mapping.keyboardLongPress[4]
+	lowerButtonsShort = mapping.keyboardShortPress[0].display  
 										.append(spacerText)
-										.append(mapping.keyboardLongPress[5]);
+										.append(mapping.keyboardShortPress[1].display)
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[2].display)
+										.append(spacerText)
+										.append(mapping.keyboardShortPress[3].display);
+
+	upperButtonsShort = mapping.keyboardShortPress[4].display
+									.append(spacerText)
+									.append(mapping.keyboardShortPress[5].display);
+
+	lowerButtonsLong = mapping.keyboardLongPress[0].display
+									.append(spacerText)
+									.append(mapping.keyboardLongPress[1].display)
+									.append(spacerText)
+									.append(mapping.keyboardLongPress[2].display)
+									.append(spacerText)
+									.append(mapping.keyboardLongPress[3].display);
+
+	upperButtonsLong = mapping.keyboardLongPress[4].display
+									.append(spacerText)
+									.append(mapping.keyboardLongPress[5].display);
 
 }
 
