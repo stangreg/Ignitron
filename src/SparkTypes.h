@@ -43,6 +43,7 @@ struct KeyboardMapping {
 
 	int mappingSize = 6;
 
+	// Mapping for short press 
 	std::vector<keyboardKeyDefinition> keyboardShortPress = {
 		{   1,
 			0xD8, // KEY_LEFT_ARROW
@@ -82,8 +83,7 @@ struct KeyboardMapping {
 		}	
 	};
 
-
-	//TODO: assign different combinations
+	// Mapping for long press 
 	std::vector<keyboardKeyDefinition> keyboardLongPress = {
 		{	11,
 			'0', 
@@ -134,17 +134,6 @@ struct KeyboardMapping {
 	}
 
 	private:
-	// int indexOfValue(std::vector<std::string> vec, std::string val){
-
-	// 	for (int i = 0; i < vec.size(); i++){
-	// 		if (vec[i] == val) {
-	// 			return i;
-	// 		}
-	// 	}
-
-	// 	return -1;
-
-	// }
 
 };
 

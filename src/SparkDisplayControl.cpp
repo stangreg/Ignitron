@@ -323,19 +323,6 @@ void SparkDisplayControl::initKeyboardLayoutStrings(){
 
 	std::string spacerText = "  ";
 
-	// lowerButtonsShort = mapping.keyboardShortPress[0]
-	// 									.append(spacerText)
-	// 									.append(mapping.keyboardShortPress[1])
-	// 									.append(spacerText)
-	// 									.append(mapping.keyboardShortPress[2])
-	// 									.append(spacerText)
-	// 									.append(mapping.keyboardShortPress[3]);
-
-	// upperButtonsShort = mapping.keyboardShortPress[4]
-	// 								.append(spacerText)
-	// 								.append(mapping.keyboardShortPress[5]);
-
-
 	lowerButtonsShort = mapping.keyboardShortPress[0].display  
 										.append(spacerText)
 										.append(mapping.keyboardShortPress[1].display)

@@ -213,13 +213,10 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 	// Button configuration is set in the SparkTypes.h file
 	int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
 	
-	//std::vector<std::string> keyMap;
 	std::vector<keyboardKeyDefinition> keyMap;
-
 
 	switch (pattern) {
 	case BfButton::SINGLE_PRESS:
-		//keyMap = mapping.keyboardShortPress;
 		keyMap = mapping.keyboardShortPress;
 		break;
 	case BfButton::LONG_PRESS:
