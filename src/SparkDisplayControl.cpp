@@ -303,7 +303,7 @@ void SparkDisplayControl::showPressedKey(){
 	display.setCursor(pressedButtonPosX, pressedButtonPosY);
 
 	unsigned long currentMillis = millis();
-	if (lastKeyboardButtonPressed != 0 && showKeyboardPressedFlag == false) {
+	if (lastKeyboardButtonPressedString != "" && showKeyboardPressedFlag == false) {
 		keyboardPressedTimestamp = millis();
 		showKeyboardPressedFlag = true;
 	}
@@ -312,11 +312,11 @@ void SparkDisplayControl::showPressedKey(){
 			// reset the show message flag to show preset data again
 			showKeyboardPressedFlag = false;
 			spark_dc->resetLastKeyboardButtonPressed();
-			lastKeyboardButtonPressed = 0;
+			lastKeyboardButtonPressedString = "";
 		}
 	}
 
-	display.print(lastKeyboardButtonPressed);
+	display.print(lastKeyboardButtonPressedString.c_str());
 }
 
 void SparkDisplayControl::initKeyboardLayoutStrings(){
@@ -393,7 +393,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
 	if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) && isInitBoot) {
 		showInitialMessage();
 	} else if (opMode == SPARK_MODE_KEYBOARD) {
-		lastKeyboardButtonPressed = spark_dc->lastKeyboardButtonPressed();
+		lastKeyboardButtonPressedString = spark_dc->lastKeyboardButtonPressedString();
 		showPressedKey();
 		showKeyboardLayout();
 	} else {

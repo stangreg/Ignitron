@@ -562,6 +562,7 @@ void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
 		}
 		if (k.modifier != 0) bleKeyboard.release(k.modifier);
 		lastKeyboardButtonPressed_ = k.key_uid;
+		lastKeyboardButtonPressedString_ = k.display;
 	}
 	else {
 		Serial.println("Keyboard not connected");
@@ -570,6 +571,7 @@ void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
 
 void SparkDataControl::resetLastKeyboardButtonPressed() {
 	lastKeyboardButtonPressed_ = 0;
+	lastKeyboardButtonPressedString_ = "";
 }
 
 void SparkDataControl::toggleBTMode() {

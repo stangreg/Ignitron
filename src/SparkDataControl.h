@@ -75,6 +75,10 @@ public:
 		return lastKeyboardButtonPressed_;
 	}
 
+	std::string lastKeyboardButtonPressedString() const {
+			return lastKeyboardButtonPressedString_;
+		}
+
 	// Return active or pending preset/bank, set/get active preset number
 	Preset* activePreset() const {
 		return &activePreset_;
@@ -175,6 +179,7 @@ private:
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
 	uint8_t lastKeyboardButtonPressed_ = 0;
+	std::string lastKeyboardButtonPressedString_= "";
 
 	//PRESET variables
 	static Preset activePreset_;
