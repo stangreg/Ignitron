@@ -229,6 +229,7 @@ void SparkDataControl::bleNotificationCallback(
 		size_t length, bool isNotify) {
 	//Triggered when data is received from Spark Amp in APP mode
 	// Transform data into ByteVetor and process
+	DEBUG_PRINTLN("Received message via BT callback");
 	ByteVector chunk(&pData[0], &pData[length]);
 	processSparkData(chunk);
 
@@ -254,7 +255,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 		DEBUG_PRINTLN("Sending acknowledgement");
 		if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
-			bleControl->writeBLE(ack_msg);
+			sendMessageToBT(ack_msg);
 		} else if (operationMode_ == SPARK_MODE_AMP) {
 			bleControl->notifyClients(ack_msg);
 		}
@@ -358,7 +359,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 bool SparkDataControl::getCurrentPresetFromSpark() {
 	current_msg = spark_msg.get_current_preset();
 	DEBUG_PRINTLN("Getting current preset from Spark");
-	if (bleControl->writeBLE(current_msg)) {
+	if (sendMessageToBT(current_msg)) {
 		return true;
 	}
 	return false;
@@ -388,7 +389,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			if (bnk == 0) { // for bank 0 switch hardware presets
 				current_msg = spark_msg.change_hardware_preset(pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (bleControl->writeBLE(current_msg) && getCurrentPresetFromSpark()) {
+				if (sendMessageToBT(current_msg) && getCurrentPresetFromSpark()) {
 					// For HW presets we always need to get the preset from Spark
 					// as we don't know the parameters
 					retValue = true;
@@ -403,11 +404,11 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
 				current_msg = spark_msg.create_preset(pendingPreset_);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
-				if (bleControl->writeBLE(current_msg)) {
+				if (sendMessageToBT(current_msg)) {
 					// This is the final message with actually switches over to the
 					//previously sent preset
 					current_msg = spark_msg.change_hardware_preset(128);
-					if (bleControl->writeBLE(current_msg)) {
+					if (sendMessageToBT(current_msg)) {
 						customPresetAckPending = true;
 						retValue = true;
 					}
@@ -435,7 +436,7 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 		}
 	}
 	current_msg = spark_msg.turn_effect_onoff(fx_name, enable);
-	if (bleControl->writeBLE(current_msg)) {
+	if (sendMessageToBT(current_msg)) {
 		return true;
 	}
 	return false;
@@ -815,4 +816,10 @@ bool SparkDataControl::decreasePresetLooper(){
 		selectedPresetNum = activePresetNum_ - 1;
 	}
 	return switchPreset(selectedPresetNum, false);
+}
+
+bool SparkDataControl::sendMessageToBT(std::vector<ByteVector> msg){
+
+	spark_ssr. clearMessageBuffer();
+	return bleControl->writeBLE(msg);
 }

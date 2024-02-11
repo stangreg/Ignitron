@@ -142,6 +142,7 @@ public:
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
 	byte getLastAckAndEmpty();
+	void clearMessageBuffer();
 
 };
 

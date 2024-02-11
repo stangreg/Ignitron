@@ -691,7 +691,11 @@ int SparkStreamReader::processBlock(ByteVector blk){
 			blk = lastChunk;
 		}
 		//if current block starts with 01FE, check if last block was complete, otherwise remove from response
-	} else {
+	}
+
+	// Removed as multi chunk blocks can stop in the middle of a chunk it seems
+	/*
+	 else {
 		if (response.size() > 0) {
 			bool removeLastChunk = false;
 			ByteVector lastChunk = response.back();
@@ -710,6 +714,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 			}
 		}
 	}
+	*/
 
 	// Process:
 	// Read a block
@@ -860,4 +865,9 @@ bool SparkStreamReader::isValidBlockWithoutHeader(ByteVector blk){
 
 	return true;
 
+}
+
+void SparkStreamReader::clearMessageBuffer(){
+	DEBUG_PRINTLN("Clearing response buffer.");
+	response.clear();
 }

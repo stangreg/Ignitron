@@ -213,6 +213,7 @@ private:
 	void processDeletePresetRequest();
 	void setPresetDeletionFlag();
 	void updatePendingBankStatus();
+	static bool sendMessageToBT(std::vector<ByteVector> msg);
 
 	bool processAction();
 
