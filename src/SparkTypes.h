@@ -41,89 +41,12 @@ struct keyboardKeyDefinition {
 
 struct KeyboardMapping {
 
-	int mappingSize = 6;
-
+	//int mappingSize = 6;
+	std::string mappingName;
 	// Mapping for short press 
-	std::vector<keyboardKeyDefinition> keyboardShortPress = {
-		{   1,
-			0xD8, // KEY_LEFT_ARROW
-			0x81, // KEY_LEFT_SHIFT
-			0,
-			"<"
-		},	
-		{   2,
-			0xD8, // KEY_LEFT_ARROW
-			0, 
-			0,
-			"<"
-		},	
-		{   3,
-			' ', 
-			0, 
-			0,
-			"P"
-		},	
-		{   4,
-			0xD7, // KEY_RIGHT_ARROW
-			0, 
-			0,
-			">"
-		},	
-		{   5,
-			0xD8, // KEY_LEFT_ARROW
-			0, 
-			2,	// x3
-			"<"
-		},	
-		{   6, 
-			0xD7, // KEY_RIGHT_ARROW
-			0, 
-			2,	// x3
-			">"	
-		}	
-	};
-
+	std::vector<keyboardKeyDefinition> keyboardShortPress;
 	// Mapping for long press 
-	std::vector<keyboardKeyDefinition> keyboardLongPress = {
-		{	11,
-			'0', 
-			0, 
-			0,	// x5
-			"B"
-		},	
-		{	12,
-			0xD7, // KEY_RIGHT_ARROW
-			0, 
-			5,	// x6
-			"F"
-		},	
-		{   13,
-			'<',	// speed down 
-			0, 
-			0,
-			"-"
-		},	
-		{   14,
-			'>', // speed up
-			0, 
-			0,
-			"+"
-		},	
-		{   15,
-			0xD9, // KEY_DOWN_ARROW
-			0, 
-			0,
-			"D"
-		},	
-		{   16,
-			0xDA,	// KEY_UP_ARROW 
-			0, 
-			0,
-			"U"
-		}	
-	};
-
-
+	std::vector<keyboardKeyDefinition> keyboardLongPress;
 
 	int indexOfKey(uint8_t ki){
 		
@@ -132,8 +55,6 @@ struct KeyboardMapping {
 		return index;
 
 	}
-
-	private:
 
 };
 

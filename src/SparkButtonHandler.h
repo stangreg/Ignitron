@@ -37,7 +37,8 @@ private:
 	static BfButton btn_bank_down;
 	static SparkDataControl* spark_dc;
 
-	static KeyboardMapping mapping;
+	static KeyboardMapping currentKeyboard;
+
 	// BUTTON Handlers
 	static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 	static void btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
@@ -49,7 +50,8 @@ private:
 			BfButton::press_pattern_t pattern);
 	static void btnKeyboardHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
-
+	static void btnKeyboardSwitchHandler(BfButton *btn,
+			BfButton::press_pattern_t pattern);
 	static void btnToggleLoopHandler(BfButton *btn,
 			BfButton::press_pattern_t pattern);
 	static void btnToggleBTMode(BfButton *btn,

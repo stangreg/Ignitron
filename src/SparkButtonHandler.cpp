@@ -21,10 +21,11 @@ BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_
 BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false,
 		HIGH);
 
-KeyboardMapping SparkButtonHandler::mapping;
 
 // Initialize SparkDataControl;
 SparkDataControl* SparkButtonHandler::spark_dc = nullptr;
+KeyboardMapping SparkButtonHandler::currentKeyboard;
+
 
 SparkButtonHandler::SparkButtonHandler() {
 }
@@ -190,8 +191,11 @@ void SparkButtonHandler::configureKeyboardButtons(){
 	btn_preset2.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
 	btn_preset3.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
 	btn_preset4.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
-	btn_bank_down.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
-	btn_bank_up.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
+	btn_bank_down.onPressFor(btnKeyboardSwitchHandler, LONG_BUTTON_PRESS_TIME);
+	btn_bank_up.onPressFor(btnKeyboardSwitchHandler, LONG_BUTTON_PRESS_TIME);
+
+	//btn_bank_down.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
+	//btn_bank_up.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
 
 }
 
@@ -209,18 +213,19 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 	DEBUG_PRINTLN(pressed_btn_gpio);
 
 	std::string keyToSend;
+	currentKeyboard = spark_dc->currentKeyboard();
 
 	// Button configuration is set in the SparkTypes.h file
 	int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
-	
+
 	std::vector<keyboardKeyDefinition> keyMap;
 
 	switch (pattern) {
 	case BfButton::SINGLE_PRESS:
-		keyMap = mapping.keyboardShortPress;
+		keyMap = currentKeyboard.keyboardShortPress;
 		break;
 	case BfButton::LONG_PRESS:
-		keyMap = mapping.keyboardLongPress;
+		keyMap = currentKeyboard.keyboardLongPress;
 		break;
 	}
 
@@ -327,12 +332,12 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
 
-		if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
-			spark_dc->decreaseBank();
-		}
-		else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
-			spark_dc->increaseBank();
-		}
+	if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
+		spark_dc->decreaseBank();
+	}
+	else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
+		spark_dc->increaseBank();
+	}
 
 }
 
@@ -402,5 +407,23 @@ void SparkButtonHandler::btnToggleFXHandler(BfButton *btn, BfButton::press_patte
 	spark_dc->toggleEffect(fxIndex);
 }
 
+void SparkButtonHandler::btnKeyboardSwitchHandler(BfButton *btn, BfButton::press_pattern_t pattern){
+	if (!spark_dc) {
+		Serial.println("SparkDataControl not setup yet, ignoring button press.");
+		return;
+	}
 
+	// Debug
+	int pressed_btn_gpio = btn->getID();
+	DEBUG_PRINT("Button pressed: ");
+	DEBUG_PRINTLN(pressed_btn_gpio);
+
+	if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
+		currentKeyboard = spark_dc->previousKeyboard();
+	}
+	else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
+		currentKeyboard = spark_dc->nextKeyboard();
+	}
+
+}
 

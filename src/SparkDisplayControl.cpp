@@ -321,35 +321,39 @@ void SparkDisplayControl::showPressedKey(){
 
 void SparkDisplayControl::initKeyboardLayoutStrings(){
 
+	currentKeyboard = spark_dc->currentKeyboard();
 	std::string spacerText = "  ";
 
-	lowerButtonsShort = mapping.keyboardShortPress[0].display  
+	lowerButtonsShort = currentKeyboard.keyboardShortPress[0].display
 										.append(spacerText)
-										.append(mapping.keyboardShortPress[1].display)
+										.append(currentKeyboard.keyboardShortPress[1].display)
 										.append(spacerText)
-										.append(mapping.keyboardShortPress[2].display)
+										.append(currentKeyboard.keyboardShortPress[2].display)
 										.append(spacerText)
-										.append(mapping.keyboardShortPress[3].display);
+										.append(currentKeyboard.keyboardShortPress[3].display);
 
-	upperButtonsShort = mapping.keyboardShortPress[4].display
+	upperButtonsShort = currentKeyboard.keyboardShortPress[4].display
 									.append(spacerText)
-									.append(mapping.keyboardShortPress[5].display);
+									.append(currentKeyboard.keyboardShortPress[5].display);
 
-	lowerButtonsLong = mapping.keyboardLongPress[0].display
+	lowerButtonsLong = currentKeyboard.keyboardLongPress[0].display
 									.append(spacerText)
-									.append(mapping.keyboardLongPress[1].display)
+									.append(currentKeyboard.keyboardLongPress[1].display)
 									.append(spacerText)
-									.append(mapping.keyboardLongPress[2].display)
+									.append(currentKeyboard.keyboardLongPress[2].display)
 									.append(spacerText)
-									.append(mapping.keyboardLongPress[3].display);
+									.append(currentKeyboard.keyboardLongPress[3].display);
 
-	upperButtonsLong = mapping.keyboardLongPress[4].display
+	upperButtonsLong = currentKeyboard.keyboardLongPress[4].display
 									.append(spacerText)
-									.append(mapping.keyboardLongPress[5].display);
+									.append(currentKeyboard.keyboardLongPress[5].display);
 
 }
 
 void SparkDisplayControl::showKeyboardLayout(){
+
+
+	currentKeyboard = spark_dc->currentKeyboard();
 
 	short int upperButtonsLongY = 1;
 	short int upperButtonsShortY = 17;
@@ -393,6 +397,10 @@ void SparkDisplayControl::update(bool isInitBoot) {
 	if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) && isInitBoot) {
 		showInitialMessage();
 	} else if (opMode == SPARK_MODE_KEYBOARD) {
+		if (spark_dc->keyboardChanged()) {
+			initKeyboardLayoutStrings();
+			spark_dc->resetKeyboardChangeIndicator();
+		}
 		lastKeyboardButtonPressedString = spark_dc->lastKeyboardButtonPressedString();
 		showPressedKey();
 		showKeyboardLayout();

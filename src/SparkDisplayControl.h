@@ -55,7 +55,7 @@ private:
 	int opMode = 1;
 	int currentBTMode = 0;
 	bool isBTConnected = false;
-	KeyboardMapping mapping;
+	KeyboardMapping currentKeyboard;
 
 	std::string primaryLineText;
 	const Preset* primaryLinePreset;

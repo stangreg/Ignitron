@@ -14,6 +14,7 @@
 #include "Config_Definitions.h"
 #include "SparkBLEControl.h"
 #include "SparkBLEKeyboard.h"
+#include "SparkKeyboardControl.h"
 
 #include "SparkDisplayControl.h"
 #include "SparkMessage.h"
@@ -79,6 +80,21 @@ public:
 			return lastKeyboardButtonPressedString_;
 		}
 
+	KeyboardMapping currentKeyboard() const {
+		return keyboardControl->getCurrentKeyboard();
+	}
+
+	KeyboardMapping nextKeyboard() {
+			keyboardChanged_ = true;
+			return keyboardControl->getNextKeyboard();
+	}
+
+	KeyboardMapping previousKeyboard(){
+			keyboardChanged_ = true;
+			return keyboardControl->getPreviousKeyboard();
+	}
+
+	void resetKeyboardChangeIndicator() { keyboardChanged_ = false; }
 	// Return active or pending preset/bank, set/get active preset number
 	Preset* activePreset() const {
 		return &activePreset_;
@@ -137,6 +153,10 @@ public:
 		return buttonMode_;
 	}
 
+	bool& keyboardChanged(){
+		return keyboardChanged_;
+	}
+
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
 	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
@@ -169,6 +189,7 @@ private:
 	static SparkMessage spark_msg;
 	static SparkPresetBuilder presetBuilder;
 	static SparkDisplayControl *spark_display;
+	static SparkKeyboardControl *keyboardControl;
 
 	SparkBLEKeyboard bleKeyboard;
 	eSPIFFS fileSystem;
@@ -180,6 +201,7 @@ private:
 	int buttonMode_ = SWITCH_MODE_PRESET;
 	uint8_t lastKeyboardButtonPressed_ = 0;
 	std::string lastKeyboardButtonPressedString_= "";
+	bool keyboardChanged_ = false;
 
 	//PRESET variables
 	static Preset activePreset_;

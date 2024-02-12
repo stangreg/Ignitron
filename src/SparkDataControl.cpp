@@ -12,6 +12,7 @@ SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
+SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
@@ -40,6 +41,7 @@ int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 SparkDataControl::SparkDataControl() {
 	//init();
 	bleControl = new SparkBLEControl(this);
+	keyboardControl = new SparkKeyboardControl();
 }
 
 SparkDataControl::~SparkDataControl() {
@@ -47,6 +49,8 @@ SparkDataControl::~SparkDataControl() {
 		delete bleControl;
 	if (spark_display)
 		delete spark_display;
+	if (keyboardControl)
+		delete keyboardControl;
 }
 
 int SparkDataControl::init(int opModeInput) {
