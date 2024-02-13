@@ -9,7 +9,6 @@
 #define SPARKKEYBOARDCONTROL_H_
 
 #include <vector>;
-#include <codecvt>;
 #include "SparkTypes.h";
 
 class SparkKeyboardControl {

@@ -345,7 +345,7 @@ void SparkDisplayControl::initKeyboardLayoutStrings(){
 									.append(currentKeyboard.keyboardLongPress[3].display);
 
 	upperButtonsLong = currentKeyboard.keyboardLongPress[4].display
-									.append(spacerText)
+									//.append(spacerText)
 									.append(currentKeyboard.keyboardLongPress[5].display);
 
 }

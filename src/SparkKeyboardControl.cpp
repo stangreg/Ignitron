@@ -19,11 +19,28 @@ SparkKeyboardControl::~SparkKeyboardControl() {
 
 void SparkKeyboardControl::init(){
 
+	// Standard keyboard definition (1-6, A-D)
 	KeyboardMapping mapping1;
-	mapping1.mappingName = "YouTube";
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
-
+	mapping1.mappingName = "Standard";
 	mapping1.keyboardShortPress = {
+			{ 1, '1', 0, 0, "1" },
+			{ 2, '2', 0, 0, "2" },
+			{ 3, '3', 0, 0, "3" },
+			{ 4, '4', 0, 0, "4" },
+			{ 5, '5', 0, 0, "5" },
+			{ 6, '6', 0, 0, "6" }
+	};
+	mapping1.keyboardLongPress = {
+			{ 11, 'A', 0, 0, "A" },
+			{ 12, 'B', 0, 0, "B" },
+			{ 13, 'C', 0, 0, "C" },
+			{ 14, 'D', 0, 0, "D" }
+	};
+
+	// Special keyboard for YouTube
+	KeyboardMapping mapping2;
+	mapping1.mappingName = "YouTube";
+	mapping2.keyboardShortPress = {
 			{   1,
 					0xD8, // KEY_LEFT_ARROW
 					0x81, // KEY_LEFT_SHIFT
@@ -63,7 +80,7 @@ void SparkKeyboardControl::init(){
 	};
 
 	// Mapping for long press
-	mapping1.keyboardLongPress = {
+	mapping2.keyboardLongPress = {
 			{	11,
 					'0',
 					0,
@@ -87,53 +104,35 @@ void SparkKeyboardControl::init(){
 					0,
 					0,
 					"+"
-			},
-			{   15,
-					0xD9, // KEY_DOWN_ARROW
-					0,
-					0,
-					convert.to_bytes(0x2193)
-			},
-			{   16,
-					0xDA,	// KEY_UP_ARROW
-					0,
-					0,
-					convert.to_bytes(0x2191)
 			}
 	};
+
+
+
+	//Adding default definitions for changing to previous and next keyboard
+	keyboardKeyDefinition prevKeyboard =
+	{   15,
+			0xD9, // KEY_DOWN_ARROW
+			0,
+			0,
+			"K-"
+	};
+
+	keyboardKeyDefinition nextKeyboard =
+	{   16,
+			0xDA,	// KEY_UP_ARROW
+			0,
+			0,
+			"K+"
+	};
+
+	mapping1.keyboardLongPress.push_back(prevKeyboard);
+	mapping1.keyboardLongPress.push_back(nextKeyboard);
+
+	mapping2.keyboardLongPress.push_back(prevKeyboard);
+	mapping2.keyboardLongPress.push_back(nextKeyboard);
 
 	keyboards.push_back(mapping1);
-
-	KeyboardMapping mapping2;
-	mapping2.mappingName = "Standard";
-	mapping2.keyboardShortPress = {
-			{ 1, '1', 0, 0, "1" },
-			{ 2, '2', 0, 0, "2" },
-			{ 3, '3', 0, 0, "3" },
-			{ 4, '4', 0, 0, "4" },
-			{ 5, '5', 0, 0, "5" },
-			{ 6, '6', 0, 0, "6" }
-	};
-	// Mapping for long press
-	mapping2.keyboardLongPress = {
-			{ 11, 'A', 0, 0, "A" },
-			{ 12, 'B', 0, 0, "B" },
-			{ 13, 'C', 0, 0, "C" },
-			{ 14, 'D', 0, 0, "D" },
-			{ 15,
-				0xD9, // KEY_DOWN_ARROW
-				0,
-				0,
-				"v"
-			},
-			{ 16,
-				0xDA,	// KEY_UP_ARROW
-				0,
-				0,
-				"^"
-			}
-	};
-
 	keyboards.push_back(mapping2);
 
 
