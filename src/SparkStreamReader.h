@@ -68,7 +68,7 @@ private:
 	//Flags to indicate that either preset or presetNumber have been updated
 	boolean isPresetUpdated_ = false;
 	boolean isPresetNumberUpdated_ = false;
-	ByteVector acknowledgements;
+	std::vector<AckData> acknowledgments;
 	int last_message_type_ = 0;
 	byte last_message_num_ = 0x00;
 	byte last_requested_preset = 0x00;
@@ -141,9 +141,10 @@ public:
 	void resetLastMessageType();
 	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
-	byte getLastAckAndEmpty();
+	AckData getLastAckAndEmpty();
 	void clearMessageBuffer();
-
+	std::vector<AckData> *getAcknowledgments() { return &acknowledgments; }
+	bool checkForAcknowledment(byte msg_num);
 };
 
 #endif 

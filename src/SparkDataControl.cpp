@@ -12,7 +12,7 @@ SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
-SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
+SparkKeyboardControl *SparkDataControl::keyboardControl;
 
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
@@ -28,6 +28,7 @@ int SparkDataControl::presetBankToEdit_ = 0;
 
 int SparkDataControl::activePresetNum_ = 1;
 std::string SparkDataControl::responseMsg_ = "";
+byte SparkDataControl::nextMessageNum = 0x01;
 
 std::vector<ByteVector> SparkDataControl::ack_msg;
 bool SparkDataControl::customPresetAckPending = false;
@@ -42,6 +43,7 @@ SparkDataControl::SparkDataControl() {
 	//init();
 	bleControl = new SparkBLEControl(this);
 	keyboardControl = new SparkKeyboardControl();
+	keyboardControl->init();
 }
 
 SparkDataControl::~SparkDataControl() {
@@ -58,7 +60,7 @@ int SparkDataControl::init(int opModeInput) {
 
 	std::string currentSparkModeFile;
 	int sparkModeInput = 0;
-		// Creating vector of presets
+	// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
 
 	fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
@@ -153,9 +155,9 @@ void SparkDataControl::checkForUpdates() {
 	// Check if active preset has been updated
 	// If so, update the preset variables
 	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
-			pendingPreset_  = spark_ssr.currentSetting();
-			activePreset_ = pendingPreset_;
-			spark_ssr.resetPresetUpdateFlag();
+		pendingPreset_  = spark_ssr.currentSetting();
+		activePreset_ = pendingPreset_;
+		spark_ssr.resetPresetUpdateFlag();
 	}
 
 	if (retrieveCurrentPreset) {
@@ -344,9 +346,10 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 
 	// if last Ack was for preset change (0x38) or effect switch (0x15),
 	// confirm pending preset into active
-	byte lastAck = spark_ssr.getLastAckAndEmpty();
+	// TODO: Might require refactoring in order to manage acks where they are needed
+	AckData lastAck = spark_ssr.getLastAckAndEmpty();
 	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
-	if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
+	if (((lastAck.subcmd == 0x38 || lastAck.subcmd == 0x01) && activeBank_ != 0) || lastAck.subcmd == 0x15) {
 		Serial.println("OK!");
 		if (customPresetAckPending) {
 			retrieveCurrentPreset = true;
@@ -361,7 +364,7 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 }
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
-	current_msg = spark_msg.get_current_preset();
+	current_msg = spark_msg.get_current_preset(nextMessageNum);
 	DEBUG_PRINTLN("Getting current preset from Spark");
 	if (sendMessageToBT(current_msg)) {
 		return true;
@@ -391,12 +394,15 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			}
 		} else {
 			if (bnk == 0) { // for bank 0 switch hardware presets
-				current_msg = spark_msg.change_hardware_preset(pre);
+				current_msg = spark_msg.change_hardware_preset(nextMessageNum, pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (sendMessageToBT(current_msg) && getCurrentPresetFromSpark()) {
-					// For HW presets we always need to get the preset from Spark
-					// as we don't know the parameters
-					retValue = true;
+				if (sendMessageToBT(current_msg)) {
+					waitForAck(nextMessageNum-1);
+					if ( getCurrentPresetFromSpark()){
+						// For HW presets we always need to get the preset from Spark
+						// as we don't know the parameters
+						retValue = true;
+					}
 				}
 			} else {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
@@ -406,12 +412,13 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 					return false;
 				}
 
-				current_msg = spark_msg.create_preset(pendingPreset_);
+				current_msg = spark_msg.create_preset(pendingPreset_, DIR_TO_SPARK, nextMessageNum);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
 				if (sendMessageToBT(current_msg)) {
 					// This is the final message with actually switches over to the
 					//previously sent preset
-					current_msg = spark_msg.change_hardware_preset(128);
+					waitForAck(nextMessageNum-1);
+					current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
 					if (sendMessageToBT(current_msg)) {
 						customPresetAckPending = true;
 						retValue = true;
@@ -439,8 +446,8 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 			break;
 		}
 	}
-	current_msg = spark_msg.turn_effect_onoff(fx_name, enable);
-	if (sendMessageToBT(current_msg)) {
+	current_msg = spark_msg.turn_effect_onoff(nextMessageNum, fx_name, enable);
+	if (sendMessageToBT(current_msg) && waitForAck(nextMessageNum-1)) {
 		return true;
 	}
 	return false;
@@ -559,7 +566,7 @@ void SparkDataControl::updateActiveWithPendingPreset() {
 
 void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
 	if (bleKeyboard.isConnected()) {
-		
+
 		Serial.printf("Sending button: %d - mod: %d - repeat: %d\n", k.key, k.modifier, k.repeat);
 		if (k.modifier != 0) bleKeyboard.press(k.modifier);
 		for (uint8_t i=0; i<= k.repeat ; i++) {
@@ -823,7 +830,24 @@ bool SparkDataControl::decreasePresetLooper(){
 }
 
 bool SparkDataControl::sendMessageToBT(std::vector<ByteVector> msg){
-
-	spark_ssr. clearMessageBuffer();
+	nextMessageNum++;
+	//spark_ssr.clearMessageBuffer();
+	DEBUG_PRINTLN("Sending message via BT.");
 	return bleControl->writeBLE(msg);
+}
+
+bool SparkDataControl::waitForAck(byte msg_num) {
+	bool ackFound = false;
+	DEBUG_PRINT("Waiting for ACK...");
+	DEBUG_PRINT(msg_num);
+	// TODO: Set timer for ack timeout, handle timeouts in reverting command
+	while (!ackFound) {
+		spark_ssr.checkForAcknowledment(msg_num);
+		ackFound = true;
+		//acks.erase(acks.begin() + i);
+		delay(50);
+	}
+	DEBUG_PRINTLN("Done");
+	return true;
+
 }

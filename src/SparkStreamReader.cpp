@@ -391,7 +391,7 @@ void SparkStreamReader::read_preset() {
 			currentPedal.parameters.push_back(currentParameter);
 			//DEBUG_PRINTF("Free memory after reading preset: %d\n", xPortGetFreeHeapSize());
 		}
-		
+
 		add_python("]");
 		//del_indent();
 		add_python("}");
@@ -466,7 +466,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 
 		//DEBUG_PRINTLN("Pushed chunk bytes to block content");
 	} // FOR block
-	  //DEBUG_PRINTLN("...Processed");
+	DEBUG_PRINTLN("...Processed");
 
 
 	if (block_content[0] != 0xF0 || block_content[1] != 0x01){
@@ -487,11 +487,12 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 				chunk_temp = {};
 			}
 		}
-		//DEBUG_PRINTLN("Split at F7");
+		DEBUG_PRINTLN("Split at F7");
 
 
 		std::vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
+			last_message_num_ = chunk[2];
 			byte this_cmd = chunk[4];
 			byte this_sub_cmd = chunk[5];
 			ByteVector data7bit = {};
@@ -631,8 +632,11 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 		}
 	}
 	else if (_cmd == 0x04 || _cmd == 0x05 ) {
-		acknowledgements.push_back(_sub_cmd);
-		DEBUG_PRINTF("Acknowledgement for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
+		DEBUG_PRINT("ACK number ");
+		DEBUG_PRINTLN(last_message_num_);
+		AckData ack = { last_message_num_, _sub_cmd };
+		acknowledgments.push_back(ack);
+		DEBUG_PRINTF("Acknowledgment for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
 	}
 	else {
 		// unprocessed command (likely the initial ones sent from the app
@@ -653,6 +657,8 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	}
 	byte direction[2] = { blk[4], blk[5] };
 	last_message_num_ = blk[18];
+	DEBUG_PRINT("Updated last message num in needs ack ");
+				DEBUG_PRINTLN(last_message_num_);
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
@@ -665,11 +671,11 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	return std::tuple<bool, byte, byte>(false, 0, 0);
 }
 
-byte SparkStreamReader::getLastAckAndEmpty(){
-	byte lastAck = 0;
-	if (acknowledgements.size() > 0){
-		lastAck = acknowledgements.back();
-		acknowledgements.clear();
+AckData SparkStreamReader::getLastAckAndEmpty(){
+	AckData lastAck = {0x00, 0x00 };
+	if (acknowledgments.size() > 0){
+		lastAck = acknowledgments.back();
+		acknowledgments.clear();
 	}
 	return lastAck;
 }
@@ -714,7 +720,7 @@ int SparkStreamReader::processBlock(ByteVector blk){
 			}
 		}
 	}
-	*/
+	 */
 
 	// Process:
 	// Read a block
@@ -815,12 +821,17 @@ int SparkStreamReader::processBlock(ByteVector blk){
 				response.clear();
 				retValue = MSG_PROCESS_RES_COMPLETE;
 			} // msg_last_block
-		} // If length not equal to announced length
+		}
+		// If length not equal to announced length
 
 		// Message is not complete, has not been processed yet
 		// if request was an initiating one from the app, return value for INITIAL message,
 		// so SparkDataControl knows how to notify.
 		// so notifications will be triggered
+
+		else {
+			DEBUG_PRINTLN("Message size not matching announced size, no further processing.");
+		}
 
 		if(cmd == 0x02){
 			retValue = MSG_PROCESS_RES_REQUEST;
@@ -870,4 +881,15 @@ bool SparkStreamReader::isValidBlockWithoutHeader(ByteVector blk){
 void SparkStreamReader::clearMessageBuffer(){
 	DEBUG_PRINTLN("Clearing response buffer.");
 	response.clear();
+}
+
+bool SparkStreamReader::checkForAcknowledment(byte msg_num) {
+	for (int i = 0; i < acknowledgments.size(); i++) {
+		AckData currentAck = acknowledgments[i];
+		if (currentAck.msg_num == msg_num){
+			return true;
+		}
+	}
+	return false;
+
 }

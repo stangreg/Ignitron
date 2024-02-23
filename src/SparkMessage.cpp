@@ -27,6 +27,9 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	//TODO: split into sub functions
+	DEBUG_PRINT("END MESSAGE NUMBER: ");
+	DEBUG_PRINT(msg_number);
+	DEBUG_PRINTLN();
 
 	int max_chunk_size;
 	if (dir == DIR_TO_SPARK) {
@@ -329,7 +332,7 @@ void SparkMessage::add_onoff (boolean enable){
 	add_byte(b);
 }
 
-std::vector<ByteVector> SparkMessage::get_current_preset_num(){
+std::vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
 	// hardcoded message
 	/*
 	std::vector<ByteVector> msg;
@@ -343,27 +346,13 @@ std::vector<ByteVector> SparkMessage::get_current_preset_num(){
 	sub_cmd = 0x10;
 
 	start_message (cmd, sub_cmd);
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 
 
 }
 
-std::vector<ByteVector> SparkMessage::get_current_preset(){
-	// hardcoded message
+std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num){
 
-	/*
-	std::vector<ByteVector> msg;
-	ByteVector msg_vec = {0x01, 0xfe, 0x00, 0x00, 0x53, 0xfe,
-			0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0xf0, 0x01, 0x0a, 0x01, 0x02, 0x01, 0x00, 0x01, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0xf7};
-
-	msg.push_back(msg_vec);
-	return msg;
-	*/
 	cmd = 0x02;
 	sub_cmd = 0x01;
 
@@ -373,10 +362,10 @@ std::vector<ByteVector> SparkMessage::get_current_preset(){
 	for (int i=0; i<30; i++){
 		add_byte(0x00);
 	}
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 }
 
-std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal, int param, float val){
+std::vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, std::string pedal, int param, float val){
 	cmd = 0x01;
 	sub_cmd = 0x04;
 
@@ -384,41 +373,41 @@ std::vector<ByteVector> SparkMessage::change_effect_parameter (std::string pedal
 	add_prefixed_string (pedal);
 	add_byte((byte)param);
 	add_float(val);
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 
 }
 
-std::vector<ByteVector> SparkMessage::change_effect (std::string pedal1, std::string pedal2){
+std::vector<ByteVector> SparkMessage::change_effect (byte msg_num, std::string pedal1, std::string pedal2){
 	cmd = 0x01;
 	sub_cmd = 0x06;
 
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal1);
 	add_prefixed_string (pedal2);
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 
 
 }
 
-std::vector<ByteVector> SparkMessage::change_hardware_preset (int preset_num){
+std::vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int preset_num){
 	cmd = 0x01;
 	sub_cmd = 0x38;
 
 	start_message (cmd, sub_cmd);
 	add_byte((byte)0);
 	add_byte((byte)preset_num-1);
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 
 }
 
-std::vector<ByteVector> SparkMessage::turn_effect_onoff (std::string pedal, boolean enable){
+std::vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, std::string pedal, boolean enable){
 	cmd = 0x01;
 	sub_cmd = 0x15;
 
 	start_message (cmd, sub_cmd);
 	add_prefixed_string (pedal);
 	add_onoff(enable);
-	return end_message();
+	return end_message(DIR_TO_SPARK, msg_num);
 }
 
 std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {

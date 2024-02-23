@@ -191,6 +191,8 @@ private:
 	static SparkDisplayControl *spark_display;
 	static SparkKeyboardControl *keyboardControl;
 
+
+
 	SparkBLEKeyboard bleKeyboard;
 	eSPIFFS fileSystem;
 
@@ -230,6 +232,7 @@ private:
 	ByteVector currentBTMsg;
 
 	int lastUpdateCheck = 0;
+	static byte nextMessageNum;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();
@@ -238,6 +241,7 @@ private:
 	static bool sendMessageToBT(std::vector<ByteVector> msg);
 
 	bool processAction();
+	bool waitForAck(byte msg_num);
 
 };
 
