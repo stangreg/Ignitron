@@ -14,6 +14,8 @@ SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl;
 
+std::queue<ByteVector> SparkDataControl::msgQueue;
+
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
 
@@ -145,6 +147,12 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 
 void SparkDataControl::checkForUpdates() {
 
+	ByteVector currentMsg;
+	while(msgQueue.size() > 0){
+		currentMsg = msgQueue.front();
+		processSparkData(currentMsg);
+		msgQueue.pop();
+	}
 
 	if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
 		DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
@@ -235,10 +243,12 @@ void SparkDataControl::bleNotificationCallback(
 		size_t length, bool isNotify) {
 	//Triggered when data is received from Spark Amp in APP mode
 	// Transform data into ByteVetor and process
-	DEBUG_PRINTLN("Received message via BT callback");
+	//DEBUG_PRINTLN("Received message via BT callback");
 	ByteVector chunk(&pData[0], &pData[length]);
-	processSparkData(chunk);
-
+	DEBUG_PRINT("Incoming block: ");
+	SparkHelper::printByteVector(chunk);
+	DEBUG_PRINTLN();
+	msgQueue.push(chunk);
 }
 
 int SparkDataControl::processSparkData(ByteVector blk) {
@@ -246,9 +256,11 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	bool ackNeeded;
 	byte seq, sub_cmd;
 
-	DEBUG_PRINTLN("Received data:");
+	/*DEBUG_PRINTLN("Received data:");
 	DEBUG_PRINTVECTOR(blk);
-	DEBUG_PRINTLN();
+	DEBUG_PRINTLN();*/
+
+
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
 	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);

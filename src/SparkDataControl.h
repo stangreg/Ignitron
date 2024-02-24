@@ -10,6 +10,7 @@
 
 
 #include <vector>
+#include <queue>
 #include <Arduino.h>
 #include "Config_Definitions.h"
 #include "SparkBLEControl.h"
@@ -233,6 +234,7 @@ private:
 
 	int lastUpdateCheck = 0;
 	static byte nextMessageNum;
+	static std::queue<ByteVector> msgQueue;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();

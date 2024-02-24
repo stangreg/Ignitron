@@ -687,40 +687,19 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the previous one.
 	if (!(blk[0] == '\x01' && blk[1] == '\xFE')){ // check if block needs to be appended to earlier block
-		DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
+		//DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
 		if (response.size() > 0){
 			ByteVector lastChunk = response.back();
-			response.pop_back();
 			for (auto by: blk){
 				lastChunk.push_back(by);
 			}
 			blk = lastChunk;
+			response.pop_back();
 		}
 		//if current block starts with 01FE, check if last block was complete, otherwise remove from response
 	}
 
-	// Removed as multi chunk blocks can stop in the middle of a chunk it seems
-	/*
-	 else {
-		if (response.size() > 0) {
-			bool removeLastChunk = false;
-			ByteVector lastChunk = response.back();
-			if (lastChunk.size() < 2) {
-				DEBUG_PRINTLN("Last message too short and incomplete, ignoring");
-				removeLastChunk = true;
-			}
 
-			byte lastByte = lastChunk.back();
-			if (lastByte != 0xF7) {
-				DEBUG_PRINTLN("Last chunk incomplete, ignoring");
-				removeLastChunk = true;
-			}
-			if(removeLastChunk) {
-				response.pop_back();
-			}
-		}
-	}
-	 */
 
 	// Process:
 	// Read a block
@@ -733,14 +712,18 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// else read on.
 	// Then pass everything to StreamReader
 	response.push_back(blk);
+	//DEBUG_PRINTF("Resonse vector size: %i", response.size());
+	/*DEBUG_PRINT("Current block: ");
+	SparkHelper::printByteVector(blk);
+	DEBUG_PRINTLN();*/
 
 	// Block with header needs to start with 01FE and to be longer than 22 bytes.
 	// If sent without header, check for validity (starting with F001 and ending with F7) for immediate processing
 	if ( (blk.size() < 22) || (blk[0] != 0x01 || blk[1] != 0xFE)){
 		// Check if block came without header (01FE) and apply process special handling
-		// Case implemented for Spark Mini/ (Go(?))
+		// Case implemented for Spark Mini/Go)
 		if (!(isValidBlockWithoutHeader(blk))){
-			DEBUG_PRINTLN("Block not ready for processing, skipping further processing.");
+			//DEBUG_PRINTLN("Block not ready for processing, skipping further processing.");
 			return retValue;
 		}
 		setMessage(response);
