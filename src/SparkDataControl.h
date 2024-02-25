@@ -245,7 +245,7 @@ private:
 	static bool getCurrentPresetFromSpark();
 
 	bool processAction();
-	bool waitForAck(byte msg_num);
+	//bool waitForAck(byte msg_num);
 
 };
 

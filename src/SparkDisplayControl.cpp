@@ -48,7 +48,7 @@ void SparkDisplayControl::init(int mode) {
 	display.display();
 	if (opMode == SPARK_MODE_KEYBOARD) {
 		//Allow the initial screen to show for some time
-		delay(3000);
+		delay(2000);
 	}
 }
 

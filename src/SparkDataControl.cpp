@@ -170,10 +170,6 @@ void SparkDataControl::checkForUpdates() {
 		spark_ssr.resetPresetUpdateFlag();
 	}
 
-	if (retrieveCurrentPreset) {
-		retrieveCurrentPreset = false;
-		getCurrentPresetFromSpark();
-	}
 	if (operationMode_ == SPARK_MODE_AMP) {
 
 		while (bleControl && bleControl->byteAvailable()) {
@@ -362,22 +358,6 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	// confirm pending preset into active
 	// TODO: Might require refactoring in order to manage acks where they are needed
 	AckData lastAck = spark_ssr.getLastAckAndEmpty();
-	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
-	/*if (((lastAck.subcmd == 0x38 || lastAck.subcmd == 0x01) && activeBank_ != 0) || lastAck.subcmd == 0x15) {
-		Serial.println("OK!");
-		if (customPresetAckPending) {
-			retrieveCurrentPreset = true;
-			customPresetAckPending = false;
-		}
-
-		activePreset_ = pendingPreset_;
-		// Should not be needed, as both are already set to the same value above
-		pendingPreset_ = activePreset_;
-		}
-		*/
-		// If 0x38 get current preset
-		// if 0x01 => Change HW preset 128
-		// if 0x15 => confirm pending preset
 
 		if (lastAck.subcmd == 0x01) {
 			current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
@@ -877,20 +857,21 @@ bool SparkDataControl::sendMessageToBT(std::vector<ByteVector> msg){
 	return bleControl->writeBLE(msg);
 }
 
-bool SparkDataControl::waitForAck(byte msg_num) {
+/*bool SparkDataControl::waitForAck(byte msg_num) {
 	bool ackFound = false;
 	DEBUG_PRINT("Waiting for ACK...");
 	DEBUG_PRINT(msg_num);
 	// TODO: Set timer for ack timeout, handle timeouts in reverting command
-	/*while (!ackFound) {
+	while (!ackFound) {
 		if (spark_ssr.checkForAcknowledment(msg_num)) {
 			ackFound = true;
 		}
 		//acks.erase(acks.begin() + i);
 		delay(50);
-	}*/
+	}
 	delay(300);
 	DEBUG_PRINTLN("Done (FAKE)");
 	return true;
 
 }
+*/

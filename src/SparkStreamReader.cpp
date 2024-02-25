@@ -21,7 +21,10 @@ std::string SparkStreamReader::getJson(){
 
 void SparkStreamReader::setMessage(std::vector<ByteVector> msg_){
 	DEBUG_PRINT("Processing data:");
-	SparkHelper::printByteVector(msg);
+	for (auto block : msg_){
+		SparkHelper::printByteVector(block);
+		DEBUG_PRINTLN();
+	}
 	DEBUG_PRINTLN();
 	unstructured_data = msg_;
 	message.clear();
@@ -737,14 +740,6 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	if (blk.size() > 0) {
 		response.push_back(blk);
 	}
-	//DEBUG_PRINTF("Response vector sizes: %i", response.size());
-	//for (auto element : response){
-	//	DEBUG_PRINTF(", %i", element.size());
-	//}
-
-	//DEBUG_PRINT("Current block: ");
-	//SparkHelper::printByteVector(blk);
-	//DEBUG_PRINTLN();
 
 	// Block with header needs to start with 01FE and to be longer than 22 bytes.
 	// If sent without header, check for validity (starting with F001 and ending with F7) for immediate processing

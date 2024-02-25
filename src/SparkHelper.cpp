@@ -45,7 +45,7 @@ void SparkHelper::printDataAsHexString(std::vector<ByteVector>data) {
 
 void SparkHelper::printByteVector(ByteVector vec){
 	for (auto by: vec){
-		Serial.print(SparkHelper::intToHex(by).c_str());
+		DEBUG_PRINT(SparkHelper::intToHex(by).c_str());
 	}
 }
 
