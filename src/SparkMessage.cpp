@@ -360,7 +360,7 @@ std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_pr
 	if (hw_preset == -1) {
 		add_byte(0x10);
 		add_byte(0x00);
-		for (int i=0; i<60; i++){
+		for (int i=0; i<30; i++){
 			add_byte(0x00);
 		}
 	} else {
@@ -451,20 +451,25 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	sub_cmd = 0x2A;
 
 	start_message(cmd, sub_cmd);
-	/*add_byte(0x94);
-		add_byte(0x50);
-		add_byte(0xCC);
-		add_byte(0xF0);
-		add_byte(0x5A);
-		add_byte(0x58);
-	*/
+
 	//0D 147D 4C07 5A58
+	/*
 	add_byte(0x94);
 	add_byte(0x7D);
 	add_byte(0xCC);
 	add_byte(0x87);
 	add_byte(0x5A);
 	add_byte(0x58);
+	*/
+
+	// 94 CC 8e 75 67 2a
+	add_byte(0x94);
+	add_byte(0xCC);
+	add_byte(0x9e);
+	add_byte(0x75);
+	add_byte(0x67);
+	add_byte(0x2a);
+
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -553,3 +558,39 @@ byte SparkMessage::calculate_checksum(ByteVector chunk) {
 	return (byte) current_sum;
 }
 
+std::vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
+
+	// f0 01 03 13 03 71 10 0c 04 01 02 4d 0e 51 05 4d 06 49 1d f7
+	// 10 = 0 0 0 1 0 0 0 0 ==> 0 0 0 0 1 0 0 0
+	// 05 = 0 0 0 0 0 1 0 1 ==> 1 0 1 0 0 0 0 0
+	cmd = 0x03;
+	sub_cmd = 0x71;
+
+	start_message(cmd, sub_cmd);
+	add_byte(0x0C);
+	add_byte(0x04);
+	add_byte(0x01);
+	add_byte(0x02);
+	add_byte(0xCD);
+	add_byte(0x0E);
+	add_byte(0x51);
+	add_byte(0xCD);
+	add_byte(0x06);
+	add_byte(0xC9);
+	add_byte(0x1D);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}
+
+std::vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
+
+	//f0 01 02 53 03 72 01 43 1e 00 0f f7
+	cmd = 0x03;
+	sub_cmd = 0x72;
+
+	start_message(cmd, sub_cmd);
+	add_byte(0xC3);
+	add_byte(0x1E);
+	add_byte(0x00);
+	add_byte(0x0F);
+	return end_message(DIR_FROM_SPARK, msg_number);
+}

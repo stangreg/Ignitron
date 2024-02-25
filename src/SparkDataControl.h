@@ -217,6 +217,7 @@ private:
 	static std::vector<ByteVector> ack_msg;
 	static bool customPresetAckPending;
 	static bool retrieveCurrentPreset;
+	static bool customPresetNumberChangePending;
 
 	//Spark AMP mode
 	static Preset appReceivedPreset_;

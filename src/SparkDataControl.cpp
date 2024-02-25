@@ -37,6 +37,7 @@ std::vector<ByteVector> SparkDataControl::current_msg;
 
 bool SparkDataControl::customPresetAckPending = false;
 bool SparkDataControl::retrieveCurrentPreset = false;
+bool SparkDataControl::customPresetNumberChangePending = false;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 
 int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
@@ -157,9 +158,11 @@ void SparkDataControl::checkForUpdates() {
 	}
 
 	if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
-		DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
 		spark_ssr.resetPresetNumberUpdateFlag();
-		getCurrentPresetFromSpark();
+		if (pendingBank_ == 0) {
+			DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
+			getCurrentPresetFromSpark();
+		}
 	}
 
 	// Check if active preset has been updated
@@ -309,6 +312,14 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 			msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK,
 					currentMessageNum);
 			break;
+		case 0x71:
+			DEBUG_PRINTLN("Found request for 02 71");
+			msg = spark_msg.send_response_71(currentMessageNum);
+			break;
+		case 0x72:
+			DEBUG_PRINTLN("Found request for 02 72");
+			msg = spark_msg.send_response_72(currentMessageNum);
+			break;
 		default:
 			DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
 			break;
@@ -360,9 +371,13 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	AckData lastAck = spark_ssr.getLastAckAndEmpty();
 
 		if (lastAck.subcmd == 0x01) {
-			current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-			sendMessageToBT(current_msg);
-			activePreset_ = pendingPreset_;
+			// only execute preset number change on first ack for preset change
+			if (customPresetNumberChangePending) {
+				current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
+				sendMessageToBT(current_msg);
+				customPresetNumberChangePending = false;
+				activePreset_ = pendingPreset_;
+			}
 		}
 		if (lastAck.subcmd == 0x38) {
 			getCurrentPresetFromSpark();
@@ -399,6 +414,7 @@ void SparkDataControl::updatePendingWithActive() {
 bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	bool retValue = false;
 	int bnk = pendingBank_;
+	Serial.printf("Switching preset to number %2d-%d\n", bnk, pre);
 	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 		if (pre == activePresetNum_ && activeBank_ == pendingBank_
 				&& !(activePreset_.isEmpty) && !isInitial) {
@@ -433,6 +449,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				current_msg = spark_msg.create_preset(pendingPreset_, DIR_TO_SPARK, nextMessageNum);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
 				if (sendMessageToBT(current_msg)) {
+					customPresetNumberChangePending = true;
 					retValue = true;
 					// This is the final message with actually switches over to the
 					//previously sent preset
