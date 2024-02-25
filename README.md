@@ -110,12 +110,12 @@ When **Looper mode** is activated, Ignitron acts partially like a bluetooth keyb
 #### Looper mode (combined with Preset functionality)
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
-|`Preset 1`  | Short         | Sends character "A" (can be freely configured in app) |
-|`Preset 2`  | Short         | Sends character "B" (can be freely configured in app) |
-|`Preset 3`  | Short         | Sends character "C" (can be freely configured in app) |
-|`Preset 4`  | Short         | Sends character "D" (can be freely configured in app) |
-|`Bank down` | Short         | Sends character "E" (can be freely configured in app) |
-|`Bank up`   | Short         | Sends character "F" (can be freely configured in app) |
+|`Preset 1`  | Short         | Sends character "1" (can be freely configured in app) |
+|`Preset 2`  | Short         | Sends character "2" (can be freely configured in app) |
+|`Preset 3`  | Short         | Sends character "3" (can be freely configured in app) |
+|`Preset 4`  | Short         | Sends character "4" (can be freely configured in app) |
+|`Bank down` | Short         | Sends character "5" (can be freely configured in app) |
+|`Bank up`   | Short         | Sends character "6" (can be freely configured in app) |
 |`Bank down` | Long          | Switch to previous preset (across banks)  |
 |`Bank up` | Long          | Switch to next preset (across banks)  |
 |`Preset 4` | Long          | Switch to Preset mode |
@@ -137,23 +137,50 @@ Example Button setup (available commands depend on availability in the respectiv
 
 ## Keyboard mode
 This mode will turn the Ignitron into a Bluetooth LE keyboard. All buttons will act like keyboard presses, there is no functionality regarding Preset change or other Spark Amp related functions. Use this mode if you want to only use Ignitron as a looper control device (or any other supporting app like a tabs app) . If you want to use looper control in combination with Spark Amp control, use the Looper mode as part of the APP mode (see above).
+In the code, multiple different keyboard layouts can be defined to support various apps. In operations, Ignitron can switch between these keyboard with the press of a button.
+
+Every key needs be configured with the following parameters:
+- *Key ID* (1-6 for short presses, 11-14 for long presses)
+- *Key code*
+- *Modifier key* (Shift, CTRL, etc.)
+- Key press *repetitions* (0 for single press)
+- *String representation* of key in display (should only be 1 character)
+
+In operations, when a button is pressed, the corresponding key including modifiers will be sent to the connected device. The display will show the key representations of the currently active keyboard.
+The standard defined keyboard layout will send characters `1` to `6` for short presses and characters `A` to `D`for long presses.
+
+Example:
+```
+{
+  1,
+  0xD8, // KEY_LEFT_ARROW
+  0x81, // KEY_LEFT_SHIFT
+  2,
+  "<"
+}
+```
+   
+If a key is configured like the above, a button press will send the combination of the `LEFT SHIFT` and `LEFT ARROW` keys with 2 repetitions. In the display the key will be shown as `<`.
+Long pressing `Bank down` and `Bank up` are reserved for keyboard layout switching.
+
+Key codes for special keys can be found here: [BLE Keyboard Library](https://github.com/T-vK/ESP32-BLE-Keyboard/blob/master/BleKeyboard.h)
 
 In keyboard mode, the following keys will be sent to the connected device:
 
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
-|`Preset 1`  | Short         | Sends character "1" (function can be freely configured in app) |
-|`Preset 2`  | Short         | Sends character "2" (function can be freely configured in app) |
-|`Preset 3`  | Short         | Sends character "3" (function can be freely configured in app) |
-|`Preset 4`  | Short         | Sends character "4" (function can be freely configured in app) |
-|`Bank down` | Short         | Sends character "5" (function can be freely configured in app) |
-|`Bank up`   | Short         | Sends character "6" (function can be freely configured in app) |
-|`Preset 1`  | Long          | Sends character "A" (function can be freely configured in app) |
-|`Preset 2`  | Long          | Sends character "B" (function can be freely configured in app) |
-|`Preset 3`  | Long          | Sends character "C" (function can be freely configured in app) |
-|`Preset 4`  | Long          | Sends character "D" (function can be freely configured in app) |
-|`Bank down` | Long          | Sends character "E" (function can be freely configured in app) |
-|`Bank up`   | Long          | Sends character "F" (function can be freely configured in app) |
+|`Preset 1`  | Short         | Sends defined character (function can be freely configured in app) |
+|`Preset 2`  | Short         | Sends defined character (function can be freely configured in app) |
+|`Preset 3`  | Short         | Sends defined character (function can be freely configured in app) |
+|`Preset 4`  | Short         | Sends defined character (function can be freely configured in app) |
+|`Bank down` | Short         | Sends defined character (function can be freely configured in app) |
+|`Bank up`   | Short         | Sends defined character (function can be freely configured in app) |
+|`Preset 1`  | Long          | Sends defined character (function can be freely configured in app) |
+|`Preset 2`  | Long          | Sends defined character (function can be freely configured in app) |
+|`Preset 3`  | Long          | Sends defined character (function can be freely configured in app) |
+|`Preset 4`  | Long          | Sends defined character (function can be freely configured in app) |
+|`Bank down` | Long          | Switch to previous keyboard layout (cycling) |
+|`Bank up`   | Long          | Switch to next keyboard layoout (cycling) |
 
 
 -----------------------------------------------
