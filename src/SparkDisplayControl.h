@@ -90,7 +90,7 @@ private:
 
 	int text_row_1_timestamp = 0;
 	int text_row_2_timestamp = 0;
-	int text_scroll_delay = 3500;
+	int text_scroll_delay = 2500;
 	std::string text_filler = "   ";
 	std::string previous_text1 = "";
 	std::string previous_text2 = "";

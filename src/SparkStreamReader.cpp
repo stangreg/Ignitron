@@ -533,7 +533,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 				this_cmd     = chunkData.cmd;
 				this_sub_cmd = chunkData.subcmd;
 				ByteVector this_data = chunkData.data;
-				if ((this_cmd == 1 || this_cmd == 3) && this_sub_cmd == 1) {
+				if ((this_cmd == 0x01 || this_cmd == 0x03) && this_sub_cmd == 0x01) {
 					//DEBUG_PRINTLN("Multi message");
 					//found a multi-message
 					int num_chunks = this_data[0];
@@ -658,7 +658,7 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	byte direction[2] = { blk[4], blk[5] };
 	last_message_num_ = blk[18];
 	DEBUG_PRINT("Updated last message num in needs ack ");
-				DEBUG_PRINTLN(last_message_num_);
+	DEBUG_PRINTLN(last_message_num_);
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
@@ -686,19 +686,39 @@ int SparkStreamReader::processBlock(ByteVector blk){
 
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the previous one.
-	if (!(blk[0] == '\x01' && blk[1] == '\xFE')){ // check if block needs to be appended to earlier block
-		//DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
-		if (response.size() > 0){
-			ByteVector lastChunk = response.back();
-			for (auto by: blk){
-				lastChunk.push_back(by);
+	if (!(blk[0] == 0x01 && blk[1] == 0xFE)){ // check if block needs to be appended to earlier block
+		// Check if current block starts with F0 01
+		// if block starts with F001, check if previous block ends with F7.
+		// If this is not the case, throw away everything before adding current block
+		bool validStart = (blk[0] == 0xF0 && blk[1] == 0x01);
+		if ( validStart && response.size() > 0){
+			ByteVector previousBlock = response.back();
+			if (previousBlock.size() > 0) {
+				byte lastByte = previousBlock.back();
+				if (lastByte != 0xF7) {
+					DEBUG_PRINTLN("Old block not ending properly, clearing buffer.");
+					response.clear();
+				}
 			}
-			blk = lastChunk;
-			response.pop_back();
 		}
-		//if current block starts with 01FE, check if last block was complete, otherwise remove from response
-	}
+		if (!validStart) {
+			//DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
+			if (response.size() > 0 ){
+				ByteVector lastChunk = response.back();
+				for (auto by: blk){
+					lastChunk.push_back(by);
+				}
+				blk = lastChunk;
+				response.pop_back();
+			}
+			// Invalid start and response empty => throw away block
+			else {
+				blk.clear();
+			}
+			//if current block starts with 01FE, check if last block was complete, otherwise remove from response
 
+		}
+	}
 
 
 	// Process:
@@ -711,11 +731,17 @@ int SparkStreamReader::processBlock(ByteVector blk){
 	// if counter == number_of_messages -1 => last block read
 	// else read on.
 	// Then pass everything to StreamReader
-	response.push_back(blk);
-	//DEBUG_PRINTF("Resonse vector size: %i", response.size());
-	/*DEBUG_PRINT("Current block: ");
-	SparkHelper::printByteVector(blk);
-	DEBUG_PRINTLN();*/
+	if (blk.size() > 0) {
+		response.push_back(blk);
+	}
+	//DEBUG_PRINTF("Response vector sizes: %i", response.size());
+	//for (auto element : response){
+	//	DEBUG_PRINTF(", %i", element.size());
+	//}
+
+	//DEBUG_PRINT("Current block: ");
+	//SparkHelper::printByteVector(blk);
+	//DEBUG_PRINTLN();
 
 	// Block with header needs to start with 01FE and to be longer than 22 bytes.
 	// If sent without header, check for validity (starting with F001 and ending with F7) for immediate processing

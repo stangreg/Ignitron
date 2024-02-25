@@ -65,7 +65,7 @@ public:
 	std::vector<ByteVector> create_preset(Preset preset_data, int dir =
 	DIR_TO_SPARK, byte msg_num = 0x00);
 	std::vector<ByteVector> get_current_preset_num(byte msg_num);
-	std::vector<ByteVector> get_current_preset(byte msg_num);
+	std::vector<ByteVector> get_current_preset(byte msg_num, int hw_preset = -1);
 	std::vector<ByteVector> send_ack(byte seq, byte cmd_, int direction =
 			DIR_TO_SPARK);
 

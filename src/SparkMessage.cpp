@@ -351,17 +351,24 @@ std::vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
 
 }
 
-std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num){
+std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset){
 
 	cmd = 0x02;
 	sub_cmd = 0x01;
 
 	start_message (cmd, sub_cmd);
-	add_byte(0x01);
-	add_byte(0x00);
-	for (int i=0; i<30; i++){
+	if (hw_preset == -1) {
+		add_byte(0x10);
 		add_byte(0x00);
+		for (int i=0; i<30; i++){
+			add_byte(0x00);
+		}
+	} else {
+		add_byte(0x00);
+		add_byte((byte)hw_preset-1);
 	}
+
+
 	return end_message(DIR_TO_SPARK, msg_num);
 }
 

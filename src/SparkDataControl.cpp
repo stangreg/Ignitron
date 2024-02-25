@@ -33,6 +33,8 @@ std::string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
 std::vector<ByteVector> SparkDataControl::ack_msg;
+std::vector<ByteVector> SparkDataControl::current_msg;
+
 bool SparkDataControl::customPresetAckPending = false;
 bool SparkDataControl::retrieveCurrentPreset = false;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
@@ -361,22 +363,44 @@ int SparkDataControl::processSparkData(ByteVector blk) {
 	// TODO: Might require refactoring in order to manage acks where they are needed
 	AckData lastAck = spark_ssr.getLastAckAndEmpty();
 	//if (((lastAck == 0x38 || lastAck == 0x01) && activeBank_ != 0) || lastAck == 0x15) {
-	if (((lastAck.subcmd == 0x38 || lastAck.subcmd == 0x01) && activeBank_ != 0) || lastAck.subcmd == 0x15) {
+	/*if (((lastAck.subcmd == 0x38 || lastAck.subcmd == 0x01) && activeBank_ != 0) || lastAck.subcmd == 0x15) {
 		Serial.println("OK!");
 		if (customPresetAckPending) {
 			retrieveCurrentPreset = true;
 			customPresetAckPending = false;
 		}
+
 		activePreset_ = pendingPreset_;
 		// Should not be needed, as both are already set to the same value above
 		pendingPreset_ = activePreset_;
+		}
+		*/
+		// If 0x38 get current preset
+		// if 0x01 => Change HW preset 128
+		// if 0x15 => confirm pending preset
 
-	}
+		if (lastAck.subcmd == 0x01) {
+			current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
+			sendMessageToBT(current_msg);
+			activePreset_ = pendingPreset_;
+		}
+		if (lastAck.subcmd == 0x38) {
+			getCurrentPresetFromSpark();
+			activePreset_ = pendingPreset_;
+		}
+		if (lastAck.subcmd == 0x15) {
+			activePreset_ = pendingPreset_;
+		}
+
 	return retCode;
 }
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
-	current_msg = spark_msg.get_current_preset(nextMessageNum);
+	int hw_preset = -1;
+	if (pendingBank_ == 0) {
+		hw_preset = activePresetNum_;
+	}
+	current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
 	DEBUG_PRINTLN("Getting current preset from Spark");
 	if (sendMessageToBT(current_msg)) {
 		return true;
@@ -409,12 +433,14 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				current_msg = spark_msg.change_hardware_preset(nextMessageNum, pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
 				if (sendMessageToBT(current_msg)) {
+					/*
 					waitForAck(nextMessageNum-1);
 					if ( getCurrentPresetFromSpark()){
 						// For HW presets we always need to get the preset from Spark
 						// as we don't know the parameters
-						retValue = true;
-					}
+					 */
+					retValue = true;
+					//}
 				}
 			} else {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
@@ -427,14 +453,17 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				current_msg = spark_msg.create_preset(pendingPreset_, DIR_TO_SPARK, nextMessageNum);
 				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
 				if (sendMessageToBT(current_msg)) {
+					retValue = true;
 					// This is the final message with actually switches over to the
 					//previously sent preset
-					waitForAck(nextMessageNum-1);
+					//waitForAck(nextMessageNum-1);
+					/*
 					current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
 					if (sendMessageToBT(current_msg)) {
 						customPresetAckPending = true;
 						retValue = true;
 					}
+					*/
 				}
 			}
 		}
@@ -459,7 +488,7 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 		}
 	}
 	current_msg = spark_msg.turn_effect_onoff(nextMessageNum, fx_name, enable);
-	if (sendMessageToBT(current_msg) && waitForAck(nextMessageNum-1)) {
+	if (sendMessageToBT(current_msg)){ // && waitForAck(nextMessageNum-1)) {
 		return true;
 	}
 	return false;
@@ -853,13 +882,15 @@ bool SparkDataControl::waitForAck(byte msg_num) {
 	DEBUG_PRINT("Waiting for ACK...");
 	DEBUG_PRINT(msg_num);
 	// TODO: Set timer for ack timeout, handle timeouts in reverting command
-	while (!ackFound) {
-		spark_ssr.checkForAcknowledment(msg_num);
-		ackFound = true;
+	/*while (!ackFound) {
+		if (spark_ssr.checkForAcknowledment(msg_num)) {
+			ackFound = true;
+		}
 		//acks.erase(acks.begin() + i);
 		delay(50);
-	}
-	DEBUG_PRINTLN("Done");
+	}*/
+	delay(300);
+	DEBUG_PRINTLN("Done (FAKE)");
 	return true;
 
 }

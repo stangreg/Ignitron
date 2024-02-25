@@ -57,8 +57,7 @@ public:
 	void updatePendingPreset(int bnk);
 	void updatePendingWithActive();
 	void updateActiveWithPendingPreset();
-	// Retrieves the current preset from Spark (required for HW presets)
-	bool getCurrentPresetFromSpark();
+
 	// Switch to a selected preset of the current bank
 	bool switchPreset(int pre, bool isInitial);
 	// Switch effect on/off
@@ -214,7 +213,7 @@ private:
 	static int activePresetNum_;
 
 	// Messages to send to Spark
-	std::vector<ByteVector> current_msg;
+	static std::vector<ByteVector> current_msg;
 	static std::vector<ByteVector> ack_msg;
 	static bool customPresetAckPending;
 	static bool retrieveCurrentPreset;
@@ -241,6 +240,9 @@ private:
 	void setPresetDeletionFlag();
 	void updatePendingBankStatus();
 	static bool sendMessageToBT(std::vector<ByteVector> msg);
+
+	// Retrieves the current preset from Spark (required for HW presets)
+	static bool getCurrentPresetFromSpark();
 
 	bool processAction();
 	bool waitForAck(byte msg_num);
