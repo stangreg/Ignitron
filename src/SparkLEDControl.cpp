@@ -139,5 +139,7 @@ void SparkLEDControl::allLedOff(){
 void SparkLEDControl::switchLED(int num, bool on){
 	int STATE = on ? HIGH : LOW;
 	int ledGpio = SparkHelper::getLedGpio(num);
-	digitalWrite(ledGpio, STATE);
+	if (ledGpio != -1) {
+		digitalWrite(ledGpio, STATE);
+	}
 }

@@ -360,7 +360,7 @@ std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_pr
 	if (hw_preset == -1) {
 		add_byte(0x10);
 		add_byte(0x00);
-		for (int i=0; i<30; i++){
+		for (int i=0; i<60; i++){
 			add_byte(0x00);
 		}
 	} else {

@@ -20,6 +20,9 @@ std::string SparkStreamReader::getJson(){
 }
 
 void SparkStreamReader::setMessage(std::vector<ByteVector> msg_){
+	DEBUG_PRINT("Processing data:");
+	SparkHelper::printByteVector(msg);
+	DEBUG_PRINTLN();
 	unstructured_data = msg_;
 	message.clear();
 }
