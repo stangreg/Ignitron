@@ -248,7 +248,7 @@ void SparkDataControl::bleNotificationCallback(
 	// Transform data into ByteVetor and process
 	ByteVector chunk(&pData[0], &pData[length]);
 	DEBUG_PRINT("Incoming block: ");
-	SparkHelper::printByteVector(chunk);
+	DEBUG_PRINTVECTOR(chunk);
 	DEBUG_PRINTLN();
 	// Add incoming data to message queue for processing
 	msgQueue.push(chunk);
@@ -296,7 +296,6 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	bool retValue = false;
 
 	int bnk = pendingBank_;
-	Serial.printf("Switching preset to number %02d-%d\n", bnk, pre);
 	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 		// Check if selected preset is equal to active preset.
 		// In this case toggle the drive pedal only
@@ -310,8 +309,8 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 		else {
 			// Switch HW preset
 			if (bnk == 0) {
+				Serial.printf("Changing to HW preset %d...", pre);
 				current_msg = spark_msg.change_hardware_preset(nextMessageNum, pre);
-				Serial.printf("Changing to HW preset %d\n", pre);
 				retValue = sendMessageToBT(current_msg);
 			}
 			// Switch to custom preset
@@ -863,13 +862,17 @@ void SparkDataControl::handleIncomingAck() {
 			sendMessageToBT(current_msg);
 			customPresetNumberChangePending = false;
 			activePreset_ = pendingPreset_;
+			Serial.println("OK");
 		}
 	}
 	if (lastAck.subcmd == 0x38) {
+		DEBUG_PRINTLN("Received ACK for 0x38 command, getting preset from Spark.");
 		getCurrentPresetFromSpark();
 		activePreset_ = pendingPreset_;
+		Serial.println("OK");
 	}
 	if (lastAck.subcmd == 0x15) {
 		activePreset_ = pendingPreset_;
+		Serial.println("OK");
 	}
 }
