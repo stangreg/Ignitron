@@ -8,6 +8,8 @@
 #ifndef CONFIG_DEFINITIONS_H_
 #define CONFIG_DEFINITIONS_H_
 
+#include <string>
+
 //#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)

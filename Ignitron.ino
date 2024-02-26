@@ -107,7 +107,7 @@ void loop() {
 	spark_bh.readButtons();
 	// Update LED status
 	spark_led.updateLEDs();
-	// Update display (not required in Keyboard mode)
+	// Update display
 	spark_display.update();
 
 }
