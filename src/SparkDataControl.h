@@ -52,6 +52,9 @@ public:
 	static void bleNotificationCallback(NimBLERemoteCharacteristic *pRemoteCharacteristic,
 			uint8_t *pData, size_t length, bool isNotify);
 
+	// methods to process any data from Spark (process with SparkStreamReader and send ack if required)
+	static void processSparkData(ByteVector blk);
+
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
 	void updatePendingPreset(int bnk);
@@ -159,8 +162,6 @@ public:
 
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
-	// method to process any data from Spark (process with SparkStreamReader and send ack if required)
-	static int processSparkData(ByteVector blk);
 	void triggerInitialBLENotifications();
 	void processPresetEdit(int presetNum = 0);
 	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
@@ -174,10 +175,10 @@ public:
 	bool increasePresetLooper();
 	bool decreasePresetLooper();
 
-	// Functions for Looper mode
+	// Functions for Looper/Keyboard mode
 	void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
-	
 	void resetLastKeyboardButtonPressed();
+
 
 	void restartESP(bool resetSparkMode=false);
 
@@ -246,7 +247,13 @@ private:
 	static bool getCurrentPresetFromSpark();
 
 	bool processAction();
-	//bool waitForAck(byte msg_num);
+
+	// methods to process any data from Spark (process with SparkStreamReader and send ack if required)
+	static void handleSendingAck(ByteVector blk);
+	static void handleAmpModeRequest();
+	static void handleAppModeResponse();
+	static void handleIncomingAck();
+
 
 };
 

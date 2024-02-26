@@ -227,7 +227,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 							// Delay seems to be required in order to not lose any packages.
 							// Seems to be more stable with a short delay
 							// also seems to be not working for Spark Mini without a delay.s
-							delay(50);
+							//delay(50);
 						} else {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed
@@ -266,7 +266,7 @@ void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
 		setAdvertisedDevice(advertisedDevice);
 		/** Ready to connect now */
 		isConnectionFound_ = true;
-		delay(200);
+		delay(500);
 	}
 }
 
@@ -351,6 +351,8 @@ void SparkBLEControl::startServer() {
 }
 
 void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
+
+	// This method will be triggered if receiving data in AMP mode.
 	DEBUG_PRINT(pCharacteristic->getUUID().toString().c_str());
 	DEBUG_PRINTLN(": onWrite()");
 	std::string rxValue = pCharacteristic->getValue();
@@ -373,7 +375,7 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 	if (subValue == 0) {
 		str += " Unsubscribed to ";
 	} else if (subValue == 1) {
-		str += " Subscribed to notfications for ";
+		str += " Subscribed to notifications for ";
 	} else if (subValue == 2) {
 		str += " Subscribed to indications for ";
 	} else if (subValue == 3) {

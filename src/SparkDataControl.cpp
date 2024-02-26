@@ -158,11 +158,11 @@ void SparkDataControl::checkForUpdates() {
 	}
 
 	if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
-		spark_ssr.resetPresetNumberUpdateFlag();
 		if (pendingBank_ == 0) {
 			DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
 			getCurrentPresetFromSpark();
 		}
+		spark_ssr.resetPresetNumberUpdateFlag();
 	}
 
 	// Check if active preset has been updated
@@ -175,19 +175,20 @@ void SparkDataControl::checkForUpdates() {
 
 	if (operationMode_ == SPARK_MODE_AMP) {
 
+		// Read incoming (serial) Bluetooth data, if available
 		while (bleControl && bleControl->byteAvailable()) {
 			byte inputByte = bleControl->readByte();
 			currentBTMsg.push_back(inputByte);
 			int msgSize = currentBTMsg.size();
 			if (msgSize > 0) {
 				if (currentBTMsg[msgSize - 1] == 0xF7) {
-					DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap()); DEBUG_PRINTF("Max free Heap block: %d\n",
-							ESP.getMaxAllocHeap());
+					//DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap()); DEBUG_PRINTF("Max free Heap block: %d\n",
+					//		ESP.getMaxAllocHeap());
 
 					DEBUG_PRINTLN("Received a message");
 					DEBUG_PRINTVECTOR(currentBTMsg);
 					DEBUG_PRINTLN();
-					heap_caps_check_integrity_all(true) ;
+					//heap_caps_check_integrity_all(true) ;
 					processSparkData(currentBTMsg);
 
 					currentBTMsg.clear();
@@ -242,152 +243,33 @@ bool SparkDataControl::isAppConnected() {
 void SparkDataControl::bleNotificationCallback(
 		NimBLERemoteCharacteristic *pRemoteCharacteristic, uint8_t *pData,
 		size_t length, bool isNotify) {
+
 	//Triggered when data is received from Spark Amp in APP mode
 	// Transform data into ByteVetor and process
-	//DEBUG_PRINTLN("Received message via BT callback");
 	ByteVector chunk(&pData[0], &pData[length]);
 	DEBUG_PRINT("Incoming block: ");
 	SparkHelper::printByteVector(chunk);
 	DEBUG_PRINTLN();
+	// Add incoming data to message queue for processing
 	msgQueue.push(chunk);
+
 }
 
-int SparkDataControl::processSparkData(ByteVector blk) {
+void SparkDataControl::processSparkData(ByteVector blk) {
 
-	bool ackNeeded;
-	byte seq, sub_cmd;
+	// Check if incoming message requires sending an acknowledgment
+	handleSendingAck(blk);
 
-	/*DEBUG_PRINTLN("Received data:");
-	DEBUG_PRINTVECTOR(blk);
-	DEBUG_PRINTLN();*/
-
-
-	// Check if ack needed. In positive case the sequence number and command
-	// are also returned to send back to requester
-	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
-	if (ackNeeded) {
-		if (operationMode_ == SPARK_MODE_AMP) {
-			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
-		} else {
-			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_TO_SPARK);
-		}
-
-		DEBUG_PRINTLN("Sending acknowledgement");
-		if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
-			sendMessageToBT(ack_msg);
-		} else if (operationMode_ == SPARK_MODE_AMP) {
-			bleControl->notifyClients(ack_msg);
-		}
-	}
 	int retCode = spark_ssr.processBlock(blk);
 	if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
-
-		std::vector<ByteVector> msg;
-		std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
-		byte currentMessageNum = spark_ssr.lastMessageNum();
-		byte sub_cmd_ = currentMessage.back().subcmd;
-
-		switch (sub_cmd_) {
-
-		case 0x23:
-			DEBUG_PRINTLN("Found request for serial number");
-			msg = spark_msg.send_serial_number(
-					currentMessageNum);
-			break;
-		case 0x2F:
-			DEBUG_PRINTLN("Found request for firmware version");
-			msg = spark_msg.send_firmware_version(
-					currentMessageNum);
-			break;
-		case 0x2A:
-			DEBUG_PRINTLN("Found request for hw checksum");
-			msg = spark_msg.send_hw_checksums(currentMessageNum);
-			break;
-		case 0x10:
-			DEBUG_PRINTLN("Found request for hw preset number");
-			msg = spark_msg.send_hw_preset_number(currentMessageNum);
-			break;
-		case 0x01:
-			DEBUG_PRINTLN("Found request for current preset");
-			msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK,
-					currentMessageNum);
-			break;
-		case 0x71:
-			DEBUG_PRINTLN("Found request for 02 71");
-			msg = spark_msg.send_response_71(currentMessageNum);
-			break;
-		case 0x72:
-			DEBUG_PRINTLN("Found request for 02 72");
-			msg = spark_msg.send_response_72(currentMessageNum);
-			break;
-		default:
-			DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
-			break;
-		}
-
-		bleControl->notifyClients(msg);
-
+		handleAmpModeRequest();
 	}
 	if (retCode == MSG_PROCESS_RES_COMPLETE) {
-		std::string msgStr = spark_ssr.getJson();
-		if (operationMode_ == SPARK_MODE_APP) {
-
-			if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
-				DEBUG_PRINTLN("Received HW Preset response");
-				activeBank_ = pendingBank_ = 0;
-				activePresetNum_ = spark_ssr.currentPresetNumber();
-				if (msgStr.length() > 0) {
-					Serial.println("Message processed:");
-					Serial.println(msgStr.c_str());
-				}
-			}
-
-			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
-				DEBUG_PRINTLN("Last message was a preset change.");
-				if (msgStr.length() > 0) {
-					Serial.println("Message processed:");
-					Serial.println(msgStr.c_str());
-				}
-			}
-		}
-
-		if (operationMode_ == SPARK_MODE_AMP) {
-			if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
-				presetEditMode_ = PRESET_EDIT_STORE;
-				appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
-				DEBUG_PRINTLN("received from app:");
-				DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
-				spark_ssr.resetPresetUpdateFlag();
-				spark_ssr.resetPresetNumberUpdateFlag();
-				presetNumToEdit_ = 0;
-			}
-		}
-		spark_ssr.resetLastMessageType();
+		handleAppModeResponse();
 	}
 
-	// if last Ack was for preset change (0x38) or effect switch (0x15),
-	// confirm pending preset into active
-	// TODO: Might require refactoring in order to manage acks where they are needed
-	AckData lastAck = spark_ssr.getLastAckAndEmpty();
+	handleIncomingAck();
 
-		if (lastAck.subcmd == 0x01) {
-			// only execute preset number change on first ack for preset change
-			if (customPresetNumberChangePending) {
-				current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-				sendMessageToBT(current_msg);
-				customPresetNumberChangePending = false;
-				activePreset_ = pendingPreset_;
-			}
-		}
-		if (lastAck.subcmd == 0x38) {
-			getCurrentPresetFromSpark();
-			activePreset_ = pendingPreset_;
-		}
-		if (lastAck.subcmd == 0x15) {
-			activePreset_ = pendingPreset_;
-		}
-
-	return retCode;
 }
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
@@ -397,10 +279,8 @@ bool SparkDataControl::getCurrentPresetFromSpark() {
 	}
 	current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
 	DEBUG_PRINTLN("Getting current preset from Spark");
-	if (sendMessageToBT(current_msg)) {
-		return true;
-	}
-	return false;
+
+	return sendMessageToBT(current_msg);
 }
 
 void SparkDataControl::updatePendingPreset(int bnk) {
@@ -412,59 +292,45 @@ void SparkDataControl::updatePendingWithActive() {
 	pendingPreset_ = activePreset_;
 }
 bool SparkDataControl::switchPreset(int pre, bool isInitial) {
+
 	bool retValue = false;
+
 	int bnk = pendingBank_;
-	Serial.printf("Switching preset to number %2d-%d\n", bnk, pre);
+	Serial.printf("Switching preset to number %02d-%d\n", bnk, pre);
 	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
+		// Check if selected preset is equal to active preset.
+		// In this case toggle the drive pedal only
 		if (pre == activePresetNum_ && activeBank_ == pendingBank_
-				&& !(activePreset_.isEmpty) && !isInitial) {
-			Pedal drivePedal = activePreset_.pedals[2];
-			std::string drivePedalName = drivePedal.name;
-			bool isDriveEnabled = drivePedal.isOn;
-			if (switchEffectOnOff(drivePedalName, !isDriveEnabled)) {
-				retValue = true;
-			}
-		} else {
-			if (bnk == 0) { // for bank 0 switch hardware presets
+				&& !(activePreset_.isEmpty)
+				&& !isInitial) {
+
+			retValue = toggleEffect(INDEX_FX_DRIVE);
+		}
+		// Preset is actually changing
+		else {
+			// Switch HW preset
+			if (bnk == 0) {
 				current_msg = spark_msg.change_hardware_preset(nextMessageNum, pre);
 				Serial.printf("Changing to HW preset %d\n", pre);
-				if (sendMessageToBT(current_msg)) {
-					/*
-					waitForAck(nextMessageNum-1);
-					if ( getCurrentPresetFromSpark()){
-						// For HW presets we always need to get the preset from Spark
-						// as we don't know the parameters
-					 */
-					retValue = true;
-					//}
-				}
-			} else {
+				retValue = sendMessageToBT(current_msg);
+			}
+			// Switch to custom preset
+			else {
 				pendingPreset_ = presetBuilder.getPreset(bnk, pre);
-
 				if (pendingPreset_.isEmpty) {
 					Serial.println("Empty preset, skipping further processing");
 					return false;
 				}
 
 				current_msg = spark_msg.create_preset(pendingPreset_, DIR_TO_SPARK, nextMessageNum);
-				Serial.printf("Changing to preset %2d-%d...", bnk, pre);
+				Serial.printf("Changing to preset %02d-%d...", bnk, pre);
 				if (sendMessageToBT(current_msg)) {
 					customPresetNumberChangePending = true;
 					retValue = true;
-					// This is the final message with actually switches over to the
-					//previously sent preset
-					//waitForAck(nextMessageNum-1);
-					/*
-					current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-					if (sendMessageToBT(current_msg)) {
-						customPresetAckPending = true;
-						retValue = true;
-					}
-					*/
 				}
-			}
-		}
-	}
+			} // Else (custom preset)
+		} // else (preset changing)
+	} // if APP / LOOPER mode
 	if (retValue == true) {
 		activeBank_ = bnk;
 		activePresetNum_ = pre;
@@ -485,10 +351,9 @@ bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
 		}
 	}
 	current_msg = spark_msg.turn_effect_onoff(nextMessageNum, fx_name, enable);
-	if (sendMessageToBT(current_msg)){ // && waitForAck(nextMessageNum-1)) {
-		return true;
-	}
-	return false;
+
+	return sendMessageToBT(current_msg);
+
 }
 
 void SparkDataControl::processPresetEdit(int presetNum) {
@@ -874,21 +739,137 @@ bool SparkDataControl::sendMessageToBT(std::vector<ByteVector> msg){
 	return bleControl->writeBLE(msg);
 }
 
-/*bool SparkDataControl::waitForAck(byte msg_num) {
-	bool ackFound = false;
-	DEBUG_PRINT("Waiting for ACK...");
-	DEBUG_PRINT(msg_num);
-	// TODO: Set timer for ack timeout, handle timeouts in reverting command
-	while (!ackFound) {
-		if (spark_ssr.checkForAcknowledment(msg_num)) {
-			ackFound = true;
+void SparkDataControl::handleSendingAck(ByteVector blk) {
+	bool ackNeeded;
+	byte seq, sub_cmd;
+
+	// Check if ack needed. In positive case the sequence number and command
+	// are also returned to send back to requester
+	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
+	if (ackNeeded) {
+		if (operationMode_ == SPARK_MODE_AMP) {
+			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
+		} else {
+			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_TO_SPARK);
 		}
-		//acks.erase(acks.begin() + i);
-		delay(50);
+
+		DEBUG_PRINTLN("Sending acknowledgment");
+		if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
+			sendMessageToBT(ack_msg);
+		} else if (operationMode_ == SPARK_MODE_AMP) {
+			bleControl->notifyClients(ack_msg);
+		}
 	}
-	delay(300);
-	DEBUG_PRINTLN("Done (FAKE)");
-	return true;
 
 }
-*/
+
+void SparkDataControl::handleAmpModeRequest() {
+
+	std::vector<ByteVector> msg;
+	std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
+	byte currentMessageNum = spark_ssr.lastMessageNum();
+	byte sub_cmd_ = currentMessage.back().subcmd;
+
+	switch (sub_cmd_) {
+
+	case 0x23:
+		DEBUG_PRINTLN("Found request for serial number");
+		msg = spark_msg.send_serial_number(
+				currentMessageNum);
+		break;
+	case 0x2F:
+		DEBUG_PRINTLN("Found request for firmware version");
+		msg = spark_msg.send_firmware_version(
+				currentMessageNum);
+		break;
+	case 0x2A:
+		DEBUG_PRINTLN("Found request for hw checksum");
+		msg = spark_msg.send_hw_checksums(currentMessageNum);
+		break;
+	case 0x10:
+		DEBUG_PRINTLN("Found request for hw preset number");
+		msg = spark_msg.send_hw_preset_number(currentMessageNum);
+		break;
+	case 0x01:
+		DEBUG_PRINTLN("Found request for current preset");
+		msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK,
+				currentMessageNum);
+		break;
+	case 0x71:
+		DEBUG_PRINTLN("Found request for 02 71");
+		msg = spark_msg.send_response_71(currentMessageNum);
+		break;
+	case 0x72:
+		DEBUG_PRINTLN("Found request for 02 72");
+		msg = spark_msg.send_response_72(currentMessageNum);
+		break;
+	default:
+		DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
+		break;
+	}
+
+	bleControl->notifyClients(msg);
+
+}
+
+void SparkDataControl::handleAppModeResponse() {
+
+	std::string msgStr = spark_ssr.getJson();
+	if (operationMode_ == SPARK_MODE_APP) {
+
+		if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
+			DEBUG_PRINTLN("Received HW Preset response");
+			activeBank_ = pendingBank_ = 0;
+			activePresetNum_ = spark_ssr.currentPresetNumber();
+			if (msgStr.length() > 0) {
+				Serial.println("Message processed:");
+				Serial.println(msgStr.c_str());
+			}
+		}
+
+		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+			DEBUG_PRINTLN("Last message was a preset change.");
+			if (msgStr.length() > 0) {
+				Serial.println("Message processed:");
+				Serial.println(msgStr.c_str());
+			}
+		}
+	}
+
+	if (operationMode_ == SPARK_MODE_AMP) {
+		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+			presetEditMode_ = PRESET_EDIT_STORE;
+			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
+			DEBUG_PRINTLN("received from app:");
+			DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
+			spark_ssr.resetPresetUpdateFlag();
+			spark_ssr.resetPresetNumberUpdateFlag();
+			presetNumToEdit_ = 0;
+		}
+	}
+	spark_ssr.resetLastMessageType();
+}
+
+void SparkDataControl::handleIncomingAck() {
+
+	// if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
+	// confirm pending preset into active
+	AckData lastAck = spark_ssr.getLastAckAndEmpty();
+
+	if (lastAck.subcmd == 0x01) {
+		// only execute preset number change on first ack for preset change
+		if (customPresetNumberChangePending) {
+			current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
+			sendMessageToBT(current_msg);
+			customPresetNumberChangePending = false;
+			activePreset_ = pendingPreset_;
+		}
+	}
+	if (lastAck.subcmd == 0x38) {
+		getCurrentPresetFromSpark();
+		activePreset_ = pendingPreset_;
+	}
+	if (lastAck.subcmd == 0x15) {
+		activePreset_ = pendingPreset_;
+	}
+}

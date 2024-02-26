@@ -143,8 +143,6 @@ public:
 	int processBlock(ByteVector block);
 	AckData getLastAckAndEmpty();
 	void clearMessageBuffer();
-	std::vector<AckData> *getAcknowledgments() { return &acknowledgments; }
-	bool checkForAcknowledment(byte msg_num);
 };
 
 #endif 

@@ -21,6 +21,9 @@
 #define DEBUG_PRINTVECTOR(x)
 #endif
 
+// Software version
+const std::string VERSION = "1.1.0";
+
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 25
 #define BUTTON_DRIVE_GPIO 25

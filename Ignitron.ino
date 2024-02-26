@@ -13,7 +13,7 @@
 
 // Device Info Definitions
 const std::string DEVICE_NAME = "Ignitron";
-const std::string VERSION = "1.0";
+
 
 // Control classes
 SparkDataControl spark_dc;

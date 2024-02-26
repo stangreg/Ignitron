@@ -663,8 +663,6 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	}
 	byte direction[2] = { blk[4], blk[5] };
 	last_message_num_ = blk[18];
-	DEBUG_PRINT("Updated last message num in needs ack ");
-	DEBUG_PRINTLN(last_message_num_);
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
@@ -755,7 +753,9 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		response.clear();
 		retValue = MSG_PROCESS_RES_COMPLETE;
 
-	} else {
+	}
+	// Block starts with 01FE and is long enough
+	else {
 
 		int blk_len = blk[6];
 		byte direction[2] = { blk[4], blk[5] };
@@ -890,13 +890,3 @@ void SparkStreamReader::clearMessageBuffer(){
 	response.clear();
 }
 
-bool SparkStreamReader::checkForAcknowledment(byte msg_num) {
-	for (int i = 0; i < acknowledgments.size(); i++) {
-		AckData currentAck = acknowledgments[i];
-		if (currentAck.msg_num == msg_num){
-			return true;
-		}
-	}
-	return false;
-
-}

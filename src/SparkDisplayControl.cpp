@@ -60,18 +60,19 @@ void SparkDisplayControl::showInitialMessage() {
 	std::string modeText;
 	switch(opMode){
 	case SPARK_MODE_APP:
-		modeText = "APP mode";
+		modeText = "APP";
 		break;
 	case SPARK_MODE_AMP:
-		modeText = "AMP mode";
+		modeText = "AMP";
 		break;
 	case SPARK_MODE_LOOPER:
-		modeText = "LOOPER";
+		modeText = "LPR";
 		break;
 	case SPARK_MODE_KEYBOARD:
-		modeText = "KEYBOARD";
+		modeText = "KB";
 		break;
 	}
+	modeText += " v" + VERSION;
 
 	drawCentreString(modeText.c_str(), 50);
 }
