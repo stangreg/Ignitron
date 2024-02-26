@@ -21,6 +21,11 @@ SparkButtonHandler spark_bh;
 SparkLEDControl spark_led;
 SparkDisplayControl spark_display;
 
+unsigned long lastInitialPresetTimestamp = 0;
+unsigned long currentTimestamp = 0;
+int initialRequestInterval = 3000;
+
+
 // Check for initial boot
 bool isInitBoot;
 int operationMode = SPARK_MODE_APP;
@@ -88,10 +93,14 @@ void loop() {
 		//After connection is established, continue.
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
-			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-			spark_dc.switchPreset(1, true);
+			currentTimestamp = millis();
+			// only do initial request in defined intervals
+			if (currentTimestamp - lastInitialPresetTimestamp > initialRequestInterval) {
+				lastInitialPresetTimestamp = millis();
+				DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
+				spark_dc.switchPreset(1, true);
+			}
 			//Wait for preset change and acknowledgment to arrive
-			delay (2000);
 			if (!(spark_dc.activePreset()->isEmpty)) {
 				isInitBoot = false;
 			}
