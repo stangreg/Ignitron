@@ -219,7 +219,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 						// This it to split messages into sizes of max. max_send_size.
 						// As we have chosen 173, usually no further splitting is requried.
 						// SparkMessage already creates messages split into 173 byte chunks
-						DEBUG_PRINTLN("Sending block:");
+						DEBUG_PRINT("Sending block:");
 						DEBUG_PRINTVECTOR(block);
 						DEBUG_PRINTLN();
 						if (pChr->writeValue(block.data(), block.size(),
@@ -228,7 +228,7 @@ bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
 							// Seems to be more stable with a short delay
 							// also seems to be not working for Spark Mini without a delay.s
 							//TEST SPark GO
-							delay(50);
+							delay(10);
 						} else {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed

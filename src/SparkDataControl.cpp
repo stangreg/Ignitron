@@ -43,6 +43,8 @@ int SparkDataControl::operationMode_ = SPARK_MODE_APP;
 int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
+int SparkDataControl::sparkAmpType = AMP_TYPE_40;
+std::string SparkDataControl::sparkAmpName = "Spark 40";
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -596,6 +598,14 @@ bool SparkDataControl::toggleEffect(int fx_identifier){
 	return false;
 }
 
+bool SparkDataControl::getAmpName() {
+	current_msg = spark_msg.get_amp_name(nextMessageNum);
+	DEBUG_PRINTLN("Getting amp name from Spark");
+
+	return sendMessageToBT(current_msg);
+
+}
+
 bool SparkDataControl::toggleButtonMode(){
 
 	if (!processAction() || operationMode_ == SPARK_MODE_AMP ) {
@@ -814,29 +824,36 @@ void SparkDataControl::handleAmpModeRequest() {
 void SparkDataControl::handleAppModeResponse() {
 
 	std::string msgStr = spark_ssr.getJson();
+	int lastMessageType = spark_ssr.lastMessageType();
+	bool printMessage = false;
 	if (operationMode_ == SPARK_MODE_APP) {
 
-		if (spark_ssr.lastMessageType() == MSG_TYPE_HWPRESET) {
+		if (lastMessageType == MSG_TYPE_HWPRESET) {
 			DEBUG_PRINTLN("Received HW Preset response");
 			activeBank_ = pendingBank_ = 0;
 			activePresetNum_ = spark_ssr.currentPresetNumber();
-			if (msgStr.length() > 0) {
-				Serial.println("Message processed:");
-				Serial.println(msgStr.c_str());
-			}
+			printMessage = true;
 		}
 
-		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+		if (lastMessageType == MSG_TYPE_PRESET) {
 			DEBUG_PRINTLN("Last message was a preset change.");
-			if (msgStr.length() > 0) {
-				Serial.println("Message processed:");
-				Serial.println(msgStr.c_str());
-			}
+			printMessage = true;
+		}
+
+		if (lastMessageType == MSG_TYPE_AMP_NAME) {
+			DEBUG_PRINTLN("Last message was amp name.");
+			sparkAmpName = spark_ssr.getAmpName();
+			setAmpParameters();
+			printMessage = true;
+		}
+		if (msgStr.length() > 0 && printMessage) {
+			Serial.println("Message processed:");
+			Serial.println(msgStr.c_str());
 		}
 	}
 
 	if (operationMode_ == SPARK_MODE_AMP) {
-		if (spark_ssr.lastMessageType() == MSG_TYPE_PRESET) {
+		if (lastMessageType == MSG_TYPE_PRESET) {
 			presetEditMode_ = PRESET_EDIT_STORE;
 			appReceivedPreset_ = presetBuilder.getPresetFromJson(&msgStr[0]);
 			DEBUG_PRINTLN("received from app:");
@@ -875,4 +892,24 @@ void SparkDataControl::handleIncomingAck() {
 		activePreset_ = pendingPreset_;
 		Serial.println("OK");
 	}
+}
+
+
+void SparkDataControl::setAmpParameters() {
+
+	std::string ampName = sparkAmpName;
+	if (ampName == "Spark 40"){
+		spark_msg.maxChunkSizeToSpark() = 0x80;
+		spark_msg.maxBlockSizeToSpark() = 0xAD;
+		spark_msg.withHeader() = true;
+	}
+	if (ampName == "Spark GO" || ampName == "Spark Mini") {
+		spark_msg.maxChunkSizeToSpark() = 0x27;
+		spark_msg.maxBlockSizeToSpark() = 0x14;
+		spark_msg.withHeader() = false;
+	}
+	spark_msg.maxChunkSizeFromSpark() = 0x19;
+	spark_msg.maxBlockSizeFromSpark() = 0x6A;
+
+
 }

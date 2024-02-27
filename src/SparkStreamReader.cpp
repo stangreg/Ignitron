@@ -614,6 +614,10 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 			DEBUG_PRINTLN("Reading effect");
 			read_effect();
 		}
+		else if (_sub_cmd == 0x11) {
+					DEBUG_PRINTLN("Reading amp name");
+					read_amp_name();
+		}
 		else if (_sub_cmd == 0x27) {
 			DEBUG_PRINTLN("Storing HW preset");
 			read_store_hardware_preset();
@@ -886,3 +890,16 @@ void SparkStreamReader::clearMessageBuffer(){
 	response.clear();
 }
 
+void SparkStreamReader::read_amp_name() {
+	std::string ampName = read_prefixed_string ();
+
+	// Build string representations
+	start_str();
+	add_str ("Amp Name", ampName);
+	end_str();
+
+	// Set values
+	last_message_type_ = MSG_TYPE_AMP_NAME;
+	ampName_ = ampName;
+
+}

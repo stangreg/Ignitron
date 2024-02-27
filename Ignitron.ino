@@ -90,6 +90,7 @@ void loop() {
 			spark_display.update(isInitBoot);
 			spark_bh.readButtons();
 		}
+
 		//After connection is established, continue.
 		// On first boot, set the preset to Hardware setting 1.
 		if (isInitBoot == true) {
@@ -97,6 +98,8 @@ void loop() {
 			// only do initial request in defined intervals
 			if (currentTimestamp - lastInitialPresetTimestamp > initialRequestInterval) {
 				lastInitialPresetTimestamp = millis();
+				// Read AMP name to determine special parameters
+				spark_dc.getAmpName();
 				DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
 				spark_dc.switchPreset(1, true);
 			}

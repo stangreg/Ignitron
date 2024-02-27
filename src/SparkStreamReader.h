@@ -25,6 +25,7 @@ using ByteVector = std::vector<byte>;
 #define MSG_TYPE_FX_ONOFF 3
 #define MSG_TYPE_FX_CHANGE 4
 #define MSG_TYPE_FX_PARAM 5
+#define MSG_TYPE_AMP_NAME 6
 
 #define MSG_REQ_SERIAL = 11
 #define MSG_REQ_FW_VER = 12
@@ -72,8 +73,10 @@ private:
 	int last_message_type_ = 0;
 	byte last_message_num_ = 0x00;
 	byte last_requested_preset = 0x00;
+	std::string ampName_ = "";
 
 	// Functions to process calls based on identified cmd/sub_cmd.
+	void read_amp_name();
 	void read_effect_parameter();
 	void read_effect();
 	void read_effect_onoff();
@@ -135,6 +138,8 @@ public:
 	const std::vector<CmdData> lastMessage() const {
 		return message;
 	}
+	std::string getAmpName() { return ampName_;}
+
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();

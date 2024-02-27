@@ -61,6 +61,7 @@ public:
 	void updatePendingWithActive();
 	void updateActiveWithPendingPreset();
 
+	bool getAmpName();
 	// Switch to a selected preset of the current bank
 	bool switchPreset(int pre, bool isInitial);
 	// Switch effect on/off
@@ -135,6 +136,7 @@ public:
 	int& operationMode() {
 		return operationMode_;
 	}
+
 	const int currentBTMode() const {
 		return currentBTMode_;
 	}
@@ -159,6 +161,9 @@ public:
 	bool& keyboardChanged(){
 		return keyboardChanged_;
 	}
+
+	int getMaxChunkSize(int direction);
+	int getMaxBlockSize(int direction);
 
 	// Functions for Spark AMP (Server mode)
 	void receiveSparkWrite(ByteVector blk);
@@ -232,6 +237,8 @@ private:
 	static int sparkModeAmp;
 	static int sparkModeApp;
 	ByteVector currentBTMsg;
+	static int sparkAmpType;
+	static std::string sparkAmpName;
 
 	int lastUpdateCheck = 0;
 	static byte nextMessageNum;
@@ -245,6 +252,7 @@ private:
 
 	// Retrieves the current preset from Spark (required for HW presets)
 	static bool getCurrentPresetFromSpark();
+	static void setAmpParameters();
 
 	bool processAction();
 

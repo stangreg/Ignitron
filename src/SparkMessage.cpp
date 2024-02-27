@@ -24,21 +24,20 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 	final_message = {};
 };
 
-std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool with_header) {
+vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	//TODO: split into sub functions
 	DEBUG_PRINT("END MESSAGE NUMBER: ");
 	DEBUG_PRINT(msg_number);
 	DEBUG_PRINTLN();
 
-	int max_chunk_size;
+	int MAX_CHUNK_SIZE;
 	if (dir == DIR_TO_SPARK) {
 		// maximum chunk size for messages to Spark Amp
-		//max_chunk_size = 0x80;
-		max_chunk_size = 0x27;
+		MAX_CHUNK_SIZE = maxChunkSizeToSpark();
 	} else {
 		// maximum chunk size for messages sent from Spark Amp to App
-		max_chunk_size = 0x19;
+		MAX_CHUNK_SIZE = maxChunkSizeFromSpark();
 	}
 
 	// determine how many chunks there are
@@ -46,7 +45,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 	// minimum is 1 chunk
 	int num_chunks = 1;
 	if (data_len > 0) {
-		num_chunks = int((data_len + max_chunk_size - 1) / max_chunk_size);
+		num_chunks = int((data_len + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE);
 	}
 
 
@@ -55,8 +54,8 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 	// and add a chunk sub-header if a multi-chunk message
 
 	for (int this_chunk=0; this_chunk <num_chunks; this_chunk++){
-		int chunk_len = min(max_chunk_size,
-				data_len - (this_chunk * max_chunk_size));
+		int chunk_len = min(MAX_CHUNK_SIZE,
+				data_len - (this_chunk * MAX_CHUNK_SIZE));
 		ByteVector data8;
 		if (num_chunks > 1){
 			// we need the chunk sub-header
@@ -67,8 +66,8 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 		else{
 			data8 = {};
 		}
-		data8.insert(data8.end(), data.begin() + (this_chunk * max_chunk_size),
-				data.begin() + (this_chunk * max_chunk_size + chunk_len));
+		data8.insert(data8.end(), data.begin() + (this_chunk * MAX_CHUNK_SIZE),
+				data.begin() + (this_chunk * MAX_CHUNK_SIZE + chunk_len));
 		split_data8.push_back(data8);
 	}
 
@@ -108,15 +107,11 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 	int MAX_BLOCK_SIZE;
 	if (dir == DIR_TO_SPARK) {
 		// Maximum block size for messages to Spark Amp
-		//MAX_BLOCK_SIZE = 0xAD;
-		//TEST for Spark GO: only 20 bytes per chunk
-		MAX_BLOCK_SIZE = 0x14;
+		MAX_BLOCK_SIZE = maxBlockSizeToSpark();
 	} else {
 		// Maximum block size for messages sent to Spark App
-		MAX_BLOCK_SIZE = 0x6A;
+		MAX_BLOCK_SIZE = maxBlockSizeFromSpark();
 	}
-
-
 
 	// now we can create the final message with the message header and the chunk header
 	ByteVector block_header = { 0x01, 0xFE, 0x00, 0x00 };
@@ -137,7 +132,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 	}
 	byte trailer = 0xF7;
 
-	std::vector<ByteVector> all_chunks;
+	vector<ByteVector> all_chunks;
 
 	// build F0 01 chunks:
 	for (auto data7bit : split_data7) {
@@ -156,7 +151,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 	}
 
 	//Reverse order for iterating with pop
-	std::reverse(all_chunks.begin(), all_chunks.end());
+	reverse(all_chunks.begin(), all_chunks.end());
 
 	int block_prefix_size = 0;
 	if (with_header) {
@@ -174,13 +169,10 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 
 	bool new_block = true;
 
-	DEBUG_PRINTLN("1");
 	// start filling with chunks and start new blocks if required
 	while (all_chunks.size() > 0) {
 
-		DEBUG_PRINTLN("2");
 		if (new_block && with_header) {
-			DEBUG_PRINTLN("3");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 					+ (int) data_remainder.size() + block_prefix_size);
@@ -193,7 +185,6 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 					block_filler.end());
 		}
 
-		DEBUG_PRINTLN("4");
 		ByteVector current_chunk = all_chunks.back();
 		all_chunks.pop_back();
 
@@ -201,7 +192,6 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 		int remaining_space;
 		// Put remaining data to chunks as long as some left
 		while (data_remainder.size() > 0) {
-			DEBUG_PRINTLN("5");
 
 			remaining_space = MAX_BLOCK_SIZE - current_block.size();
 			int data_to_insert = min(remaining_space, (int)data_remainder.size());
@@ -220,14 +210,12 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 
 		// Chunk fits and space is left
 		if (remaining_block_indicator > 0) {
-			DEBUG_PRINTLN("6");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			new_block = false;
 		}
 		// Chunk fits exactly into the remaining space
 		if (remaining_block_indicator == 0) {
-			DEBUG_PRINTLN("7");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			final_message.push_back(current_block);
@@ -238,12 +226,11 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 		}
 		// Chunk does not fit, needs to be split between blocks
 		if (remaining_block_indicator < 0) {
-			DEBUG_PRINTF("Remaining indicator = %i\n", remaining_block_indicator);
-			DEBUG_PRINTF("Remaining space = %i\n", remaining_space);
-			DEBUG_PRINTF("Current block size = %i\n", current_block.size());
-			DEBUG_PRINTF("Current chunk size = %i\n", current_chunk.size());
+			//DEBUG_PRINTF("Remaining indicator = %i\n", remaining_block_indicator);
+			//DEBUG_PRINTF("Remaining space = %i\n", remaining_space);
+			//DEBUG_PRINTF("Current block size = %i\n", current_block.size());
+			//DEBUG_PRINTF("Current chunk size = %i\n", current_chunk.size());
 
-			DEBUG_PRINTLN("8");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.begin() + remaining_space);
 			data_remainder.assign(current_chunk.begin() + remaining_space,
@@ -256,13 +243,10 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 		}
 
 	}
-	DEBUG_PRINTLN("8.5");
 	// If there is a remainder after all chunks have been added, add to block
 	if (data_remainder.size() > 0) {
-		DEBUG_PRINTLN("9");
 		// New header needs to be created as only remainder is left if flag is set here
 		if (new_block && with_header) {
-			DEBUG_PRINTLN("10");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 					+ (int) data_remainder.size() + block_prefix_size);
@@ -280,9 +264,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool
 		data_remainder.clear();
 	}
 
-	DEBUG_PRINTLN("11");
 	if (current_block.size() > 0) {
-		DEBUG_PRINTLN("12");
 		final_message.push_back(current_block);
 		current_block.clear();
 	}
@@ -301,31 +283,31 @@ void SparkMessage::add_byte(byte by){
 	data.push_back(by);
 }
 
-void SparkMessage::add_prefixed_string(std::string pack_str, int length_override){
+void SparkMessage::add_prefixed_string(string pack_str, int length_override){
 	int str_length = length_override;
 	if (str_length == 0) str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((byte)str_length);
 	byte_pack.push_back((byte)(str_length + 0xa0));
-	std::copy(pack_str.begin(), pack_str.end(), std::back_inserter<ByteVector>(byte_pack));
+	copy(pack_str.begin(), pack_str.end(), back_inserter<ByteVector>(byte_pack));
 	add_bytes (byte_pack);
 }
 
 
-void SparkMessage::add_string(std::string pack_str){
+void SparkMessage::add_string(string pack_str){
 	int str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((byte)(str_length + 0xa0));
-	std::copy(pack_str.begin(), pack_str.end(), std::back_inserter<ByteVector>(byte_pack));
+	copy(pack_str.begin(), pack_str.end(), back_inserter<ByteVector>(byte_pack));
 	add_bytes (byte_pack);
 }
 
-void SparkMessage::add_long_string(std::string pack_str){
+void SparkMessage::add_long_string(string pack_str){
 	int str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((0xD9));
 	byte_pack.push_back((byte)str_length);
-	std::copy(pack_str.begin(), pack_str.end(), std::back_inserter<ByteVector>(byte_pack));
+	copy(pack_str.begin(), pack_str.end(), back_inserter<ByteVector>(byte_pack));
 	add_bytes(byte_pack);
 }
 
@@ -364,10 +346,10 @@ void SparkMessage::add_onoff (boolean enable){
 	add_byte(b);
 }
 
-std::vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
+vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
 	// hardcoded message
 	/*
-	std::vector<ByteVector> msg;
+	vector<ByteVector> msg;
 	ByteVector msg_vec = {0x01, 0xfe, 0x00, 0x00, 0x53, 0xfe,
 			0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0xf0, 0x01, 0x08, 0x00, 0x02, 0x10, 0xf7}; // had an extra 0x79 at the end, likely not needed
@@ -383,7 +365,7 @@ std::vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
 
 }
 
-std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset){
+vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset){
 
 	cmd = 0x02;
 	sub_cmd = 0x01;
@@ -404,7 +386,7 @@ std::vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_pr
 	return end_message(DIR_TO_SPARK, msg_num);
 }
 
-std::vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, std::string pedal, int param, float val){
+vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, string pedal, int param, float val){
 	cmd = 0x01;
 	sub_cmd = 0x04;
 
@@ -416,7 +398,7 @@ std::vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, std
 
 }
 
-std::vector<ByteVector> SparkMessage::change_effect (byte msg_num, std::string pedal1, std::string pedal2){
+vector<ByteVector> SparkMessage::change_effect (byte msg_num, string pedal1, string pedal2){
 	cmd = 0x01;
 	sub_cmd = 0x06;
 
@@ -428,7 +410,7 @@ std::vector<ByteVector> SparkMessage::change_effect (byte msg_num, std::string p
 
 }
 
-std::vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int preset_num){
+vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int preset_num){
 	cmd = 0x01;
 	sub_cmd = 0x38;
 
@@ -439,7 +421,18 @@ std::vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int 
 
 }
 
-std::vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, std::string pedal, boolean enable){
+vector<ByteVector> SparkMessage::get_amp_name(byte msg_num){
+
+	cmd = 0x02;
+	sub_cmd = 0x11;
+
+	start_message (cmd, sub_cmd);
+	return end_message(DIR_TO_SPARK, msg_num);
+
+
+}
+
+vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, string pedal, boolean enable){
 	cmd = 0x01;
 	sub_cmd = 0x15;
 
@@ -449,12 +442,12 @@ std::vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, std::stri
 	return end_message(DIR_TO_SPARK, msg_num);
 }
 
-std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
+vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 	cmd = 0x03;
 	sub_cmd = 0x23;
 
 	start_message(cmd, sub_cmd);
-	std::string serial_num = "S999C999B999";
+	string serial_num = "S999C999B999";
 	// Spark App seems to send the F7 byte as part of the string in addition to the final F7 byte,
 	// so we need to have a flexible add_prefixed_string method to increase lenght information by one
 	add_prefixed_string(serial_num, serial_num.length()+1);
@@ -462,7 +455,7 @@ std::vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
+vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
 	cmd = 0x03;
 	sub_cmd = 0x2F;
 
@@ -478,7 +471,7 @@ std::vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
+vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	cmd = 0x03;
 	sub_cmd = 0x2A;
 
@@ -505,7 +498,7 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
+vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
 	cmd = 0x03;
 	sub_cmd = 0x10;
 
@@ -516,7 +509,7 @@ std::vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
+vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 		int direction, byte msg_num) {
 
 	if (direction == DIR_TO_SPARK) {
@@ -537,7 +530,7 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 	add_long_string (preset_data.uuid);
 	add_string (preset_data.name);
 	add_string (preset_data.version);
-	std::string descr = preset_data.description;
+	string descr = preset_data.description;
 	if (descr.size() > 31){
 		add_long_string (descr);
 	}
@@ -551,7 +544,7 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 		Pedal curr_pedal = preset_data.pedals[i];
 		add_string (curr_pedal.name);
 		add_onoff(curr_pedal.isOn);
-		std::vector<Parameter> curr_pedal_params = curr_pedal.parameters;
+		vector<Parameter> curr_pedal_params = curr_pedal.parameters;
 		int num_p = curr_pedal_params.size();
 		add_byte ((byte)(num_p + 0x90));
 		for (int p=0; p<num_p; p++){
@@ -568,7 +561,7 @@ std::vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
 
 
 // This prepares a message to send an acknowledgement
-std::vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
+vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
 		int dir) {
 
 	byte cmd_ = 0x04;
@@ -590,7 +583,7 @@ byte SparkMessage::calculate_checksum(ByteVector chunk) {
 	return (byte) current_sum;
 }
 
-std::vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
+vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
 
 	// f0 01 03 13 03 71 10 0c 04 01 02 4d 0e 51 05 4d 06 49 1d f7
 	// 10 = 0 0 0 1 0 0 0 0 ==> 0 0 0 0 1 0 0 0
@@ -613,7 +606,7 @@ std::vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-std::vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
+vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
 
 	//f0 01 02 53 03 72 01 43 1e 00 0f f7
 	cmd = 0x03;
