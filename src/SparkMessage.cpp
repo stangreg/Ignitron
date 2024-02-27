@@ -24,7 +24,7 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 	final_message = {};
 };
 
-std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
+std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number, bool with_header) {
 
 	//TODO: split into sub functions
 	DEBUG_PRINT("END MESSAGE NUMBER: ");
@@ -34,7 +34,8 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	int max_chunk_size;
 	if (dir == DIR_TO_SPARK) {
 		// maximum chunk size for messages to Spark Amp
-		max_chunk_size = 0x80;
+		//max_chunk_size = 0x80;
+		max_chunk_size = 0x27;
 	} else {
 		// maximum chunk size for messages sent from Spark Amp to App
 		max_chunk_size = 0x19;
@@ -107,13 +108,15 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	int MAX_BLOCK_SIZE;
 	if (dir == DIR_TO_SPARK) {
 		// Maximum block size for messages to Spark Amp
-		MAX_BLOCK_SIZE = 0xAD;
+		//MAX_BLOCK_SIZE = 0xAD;
+		//TEST for Spark GO: only 20 bytes per chunk
+		MAX_BLOCK_SIZE = 0x14;
 	} else {
 		// Maximum block size for messages sent to Spark App
 		MAX_BLOCK_SIZE = 0x6A;
 	}
-		
-	
+
+
 
 	// now we can create the final message with the message header and the chunk header
 	ByteVector block_header = { 0x01, 0xFE, 0x00, 0x00 };
@@ -147,7 +150,7 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		complete_chunk.push_back(sub_cmd);
 		complete_chunk.insert(complete_chunk.end(), data7bit.begin(), data7bit.end());
 		complete_chunk.push_back(trailer);
-		
+
 		all_chunks.push_back(complete_chunk);
 
 	}
@@ -155,27 +158,32 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	//Reverse order for iterating with pop
 	std::reverse(all_chunks.begin(), all_chunks.end());
 
-	int block_prefix_size = 16;
+	int block_prefix_size = 0;
+	if (with_header) {
+		block_prefix_size = 16;
+	}
+
 	int max_data_size = MAX_BLOCK_SIZE - block_prefix_size;
 
 	int block_size = min(MAX_BLOCK_SIZE,
 			SparkHelper::dataVectorNumOfBytes(all_chunks) + block_prefix_size);
 
 	//create block
-	ByteVector current_block;
+	ByteVector current_block = { };
 	ByteVector data_remainder;
 
 	bool new_block = true;
 
+	DEBUG_PRINTLN("1");
 	// start filling with chunks and start new blocks if required
 	while (all_chunks.size() > 0) {
 
-		if (new_block) {
-
+		DEBUG_PRINTLN("2");
+		if (new_block && with_header) {
+			DEBUG_PRINTLN("3");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
-							+ (int) data_remainder.size() + block_prefix_size);
-
+					+ (int) data_remainder.size() + block_prefix_size);
 			current_block = block_header;
 			current_block.insert(current_block.end(),
 					block_header_direction.begin(),
@@ -185,29 +193,41 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 					block_filler.end());
 		}
 
-
+		DEBUG_PRINTLN("4");
 		ByteVector current_chunk = all_chunks.back();
 		all_chunks.pop_back();
 
-		if (data_remainder.size() > 0) {
+		int remaining_block_indicator;
+		int remaining_space;
+		// Put remaining data to chunks as long as some left
+		while (data_remainder.size() > 0) {
+			DEBUG_PRINTLN("5");
+
+			remaining_space = MAX_BLOCK_SIZE - current_block.size();
+			int data_to_insert = min(remaining_space, (int)data_remainder.size());
 			current_block.insert(current_block.end(), data_remainder.begin(),
-					data_remainder.end());
-			data_remainder.clear();
+					data_remainder.begin() + data_to_insert);
+			final_message.push_back(current_block);
+			current_block.clear();
+			data_remainder.assign(data_remainder.begin() + data_to_insert, data_remainder.end());
 		}
 
-		// Calculating if mext chunk fits into current block or if needs to be split
-		int remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
-				- current_chunk.size();
-		int remaining_space = MAX_BLOCK_SIZE - current_block.size();
+		data_remainder.clear();
+		// Calculating if next chunk fits into current block or if needs to be split
+		remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
+						- current_chunk.size();
+		remaining_space = MAX_BLOCK_SIZE - current_block.size();
 
 		// Chunk fits and space is left
 		if (remaining_block_indicator > 0) {
+			DEBUG_PRINTLN("6");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			new_block = false;
 		}
 		// Chunk fits exactly into the remaining space
 		if (remaining_block_indicator == 0) {
+			DEBUG_PRINTLN("7");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.end());
 			final_message.push_back(current_block);
@@ -218,24 +238,34 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		}
 		// Chunk does not fit, needs to be split between blocks
 		if (remaining_block_indicator < 0) {
+			DEBUG_PRINTF("Remaining indicator = %i\n", remaining_block_indicator);
+			DEBUG_PRINTF("Remaining space = %i\n", remaining_space);
+			DEBUG_PRINTF("Current block size = %i\n", current_block.size());
+			DEBUG_PRINTF("Current chunk size = %i\n", current_chunk.size());
+
+			DEBUG_PRINTLN("8");
 			current_block.insert(current_block.end(), current_chunk.begin(),
 					current_chunk.begin() + remaining_space);
 			data_remainder.assign(current_chunk.begin() + remaining_space,
 					current_chunk.end());
+
 			final_message.push_back(current_block);
+
 			current_block.clear();
 			new_block = true;
 		}
 
 	}
-
+	DEBUG_PRINTLN("8.5");
 	// If there is a remainder after all chunks have been added, add to block
 	if (data_remainder.size() > 0) {
+		DEBUG_PRINTLN("9");
 		// New header needs to be created as only remainder is left if flag is set here
-		if (new_block == true) {
+		if (new_block && with_header) {
+			DEBUG_PRINTLN("10");
 			block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
-							+ (int) data_remainder.size() + block_prefix_size);
+					+ (int) data_remainder.size() + block_prefix_size);
 
 			current_block = block_header;
 			current_block.insert(current_block.end(),
@@ -250,11 +280,13 @@ std::vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		data_remainder.clear();
 	}
 
+	DEBUG_PRINTLN("11");
 	if (current_block.size() > 0) {
+		DEBUG_PRINTLN("12");
 		final_message.push_back(current_block);
 		current_block.clear();
 	}
-	
+
 	return final_message;
 
 }
@@ -341,7 +373,7 @@ std::vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num){
 			0xf0, 0x01, 0x08, 0x00, 0x02, 0x10, 0xf7}; // had an extra 0x79 at the end, likely not needed
 	msg.push_back(msg_vec);
 	return msg;
-	*/
+	 */
 	cmd = 0x02;
 	sub_cmd = 0x10;
 
@@ -460,7 +492,7 @@ std::vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
 	add_byte(0x87);
 	add_byte(0x5A);
 	add_byte(0x58);
-	*/
+	 */
 
 	// 94 CC 8e 75 67 2a
 	add_byte(0x94);

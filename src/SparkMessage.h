@@ -41,7 +41,7 @@ private:
 
 	void start_message (byte cmd_, byte sub_cmd_);
 	std::vector<ByteVector> end_message(int dir = DIR_TO_SPARK,
-			byte msg_number = 0x00);
+			byte msg_number = 0x00, bool with_header = false);
 	//ByteVector end_message();
 	void add_bytes(ByteVector bytes_8);
 	void add_byte(byte by);

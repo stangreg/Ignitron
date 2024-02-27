@@ -11,7 +11,7 @@
 #include <string>
 
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
