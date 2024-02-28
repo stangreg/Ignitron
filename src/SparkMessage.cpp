@@ -21,15 +21,9 @@ void SparkMessage::start_message (byte _cmd, byte _sub_cmd){
 	data = {};
 	split_data8 = {};
 	split_data7 = {};
-	final_message = {};
 };
 
-vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
-
-	//TODO: split into sub functions
-	DEBUG_PRINT("END MESSAGE NUMBER: ");
-	DEBUG_PRINT(msg_number);
-	DEBUG_PRINTLN();
+void SparkMessage::splitDataToChunks(int dir) {
 
 	int MAX_CHUNK_SIZE;
 	if (dir == DIR_TO_SPARK) {
@@ -48,8 +42,6 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		num_chunks = int((data_len + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE);
 	}
 
-
-
 	// split the data into chunks of maximum 0x80 bytes (still 8 bit bytes)
 	// and add a chunk sub-header if a multi-chunk message
 
@@ -59,6 +51,7 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		ByteVector data8;
 		if (num_chunks > 1){
 			// we need the chunk sub-header
+			// TODO: validate that num_chunks and this_chunk are in correct order
 			data8.push_back(num_chunks);
 			data8.push_back(this_chunk);
 			data8.push_back(chunk_len);
@@ -71,17 +64,19 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		split_data8.push_back(data8);
 	}
 
-	// now we can convert this to 7-bit data format with the 8-bits byte at the front
+}
+
+void SparkMessage::convertDataTo7Bit() {
+
 	// so loop over each chunk
 	// and in each chunk loop over every sequence of (max) 7 bytes
 	// and extract the 8th bit and put in 'bit8'
 	// and then add bit8 and the 7-bit sequence to data7
 	for (auto chunk : split_data8){
+
 		int chunk_len = chunk.size();
-		//DEBUG_PRINTF("Chunk size 8bit: %d\n", chunk_len);
 		int num_seq = int ((chunk_len + 6) / 7);
 		ByteVector bytes7 = {};
-
 
 		for (int this_seq = 0; this_seq < num_seq; this_seq++){
 			int seq_len = min (7, chunk_len - (this_seq * 7));
@@ -103,26 +98,10 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		split_data7.push_back(bytes7);
 	}
 
+}
 
-	int MAX_BLOCK_SIZE;
-	if (dir == DIR_TO_SPARK) {
-		// Maximum block size for messages to Spark Amp
-		MAX_BLOCK_SIZE = maxBlockSizeToSpark();
-	} else {
-		// Maximum block size for messages sent to Spark App
-		MAX_BLOCK_SIZE = maxBlockSizeFromSpark();
-	}
+void SparkMessage::buildChunkData(byte msg_number) {
 
-	// now we can create the final message with the message header and the chunk header
-	ByteVector block_header = { 0x01, 0xFE, 0x00, 0x00 };
-	ByteVector block_header_direction;
-	if (dir == DIR_TO_SPARK) {
-		block_header_direction = msg_to_spark;
-	} else {
-		block_header_direction = msg_from_spark;
-	}
-	ByteVector block_filler = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00 };
 	ByteVector chunk_header = { 0xF0, 0x01 };
 	byte msg_num;
 	if (msg_number == 0) {
@@ -132,7 +111,6 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	}
 	byte trailer = 0xF7;
 
-	vector<ByteVector> all_chunks;
 
 	// build F0 01 chunks:
 	for (auto data7bit : split_data7) {
@@ -150,8 +128,36 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	}
 
+}
+
+vector<ByteVector> SparkMessage::buildMessage(int dir) {
+
+	vector<ByteVector> final_message;
+
+	int MAX_BLOCK_SIZE;
+	if (dir == DIR_TO_SPARK) {
+		// Maximum block size for messages to Spark Amp
+		MAX_BLOCK_SIZE = maxBlockSizeToSpark();
+	} else {
+		// Maximum block size for messages sent to Spark App
+		MAX_BLOCK_SIZE = maxBlockSizeFromSpark();
+	}
+
+
 	//Reverse order for iterating with pop
 	reverse(all_chunks.begin(), all_chunks.end());
+
+
+	// now we can create the final message with the message header and the chunk header
+	ByteVector block_header = { 0x01, 0xFE, 0x00, 0x00 };
+	ByteVector block_header_direction;
+	if (dir == DIR_TO_SPARK) {
+		block_header_direction = msg_to_spark;
+	} else {
+		block_header_direction = msg_from_spark;
+	}
+	ByteVector block_filler = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00 };
 
 	int block_prefix_size = 0;
 	if (with_header) {
@@ -205,7 +211,7 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 		data_remainder.clear();
 		// Calculating if next chunk fits into current block or if needs to be split
 		remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
-						- current_chunk.size();
+									- current_chunk.size();
 		remaining_space = MAX_BLOCK_SIZE - current_block.size();
 
 		// Chunk fits and space is left
@@ -270,6 +276,25 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 	}
 
 	return final_message;
+}
+
+vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
+
+	//TODO: split into sub functions
+	DEBUG_PRINT("END MESSAGE NUMBER: ");
+	DEBUG_PRINT(msg_number);
+	DEBUG_PRINTLN();
+
+	vector<ByteVector> finalMessage;
+
+	// First split all data into chunks of defined maximum size
+	splitDataToChunks(dir);
+	// now we can convert this to 7-bit data format with the 8-bits byte at the front
+	convertDataTo7Bit();
+	// build F001 chunks
+	buildChunkData(msg_number);
+	// build final message (with 01FE header if required)
+	return buildMessage(dir);
 
 }
 

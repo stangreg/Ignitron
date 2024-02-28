@@ -24,7 +24,8 @@
 #define SPARK_BLE_NOTIF_CHAR_UUID "FFC2"
 
 
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 class SparkDataControl;
 
 // Forward declaration of Callbacks classes, does nothing special, only default actions
@@ -105,7 +106,7 @@ public:
 	 *
 	 * @return TRUE if successful
 	 */
-	bool writeBLE(std::vector<ByteVector> cmd, bool response = false);
+	bool writeBLE(vector<ByteVector> cmd, bool response = false);
 	/**
 	 * @brief  Initializes Ignitron BLE as client to connect to the Spark Amp
 	 *
@@ -153,7 +154,7 @@ public:
 	 * so that the Spark App can connect to Ignitron
 	 *
 	 */
-	void notifyClients(std::vector<ByteVector> msg);
+	void notifyClients(vector<ByteVector> msg);
 
 	void stopBLEServer();
 
@@ -182,8 +183,8 @@ private:
 
 
 	BluetoothSerial *btSerial = nullptr;
-	std::string bt_name_ble = "Spark 40 BLE"; // Spark 40 BLE
-	std::string bt_name_serial = "Spark 40 Audio"; // Spark 40 Audio
+	string bt_name_ble = "Spark 40 BLE"; // Spark 40 BLE
+	string bt_name_serial = "Spark 40 Audio"; // Spark 40 Audio
 
 	bool isAmpConnected_ = false;
 	bool isConnectionFound_ = false;

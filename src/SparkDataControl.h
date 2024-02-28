@@ -24,12 +24,12 @@
 
 #include "SparkTypes.h"
 
-
 #define PRESET_EDIT_NONE 0
 #define PRESET_EDIT_STORE 1
 #define PRESET_EDIT_DELETE 2
 
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 
 class SparkBLEControl;
 class SparkDisplayControl;
@@ -65,7 +65,7 @@ public:
 	// Switch to a selected preset of the current bank
 	bool switchPreset(int pre, bool isInitial);
 	// Switch effect on/off
-	bool switchEffectOnOff(std::string fx_name, bool enable);
+	bool switchEffectOnOff(string fx_name, bool enable);
 	bool toggleEffect(int fx_identifier);
 	bool toggleButtonMode();
 	bool toggleLooperAppMode();
@@ -80,7 +80,7 @@ public:
 		return lastKeyboardButtonPressed_;
 	}
 
-	std::string lastKeyboardButtonPressedString() const {
+	string lastKeyboardButtonPressedString() const {
 			return lastKeyboardButtonPressedString_;
 		}
 
@@ -143,7 +143,7 @@ public:
 	const int presetNumToEdit() const {
 		return presetNumToEdit_;
 	}
-	const std::string responseMsg() const {
+	const string responseMsg() const {
 		return responseMsg_;
 	}
 	const int presetEditMode() const {
@@ -202,13 +202,13 @@ private:
 	SparkBLEKeyboard bleKeyboard;
 	eSPIFFS fileSystem;
 
-	std::string btModeFileName = "/config/BTMode.config";
-	std::string sparkModeFileName = "/config/SparkMode.config";
+	string btModeFileName = "/config/BTMode.config";
+	string sparkModeFileName = "/config/SparkMode.config";
 
 	//Button data
 	int buttonMode_ = SWITCH_MODE_PRESET;
 	uint8_t lastKeyboardButtonPressed_ = 0;
-	std::string lastKeyboardButtonPressedString_= "";
+	string lastKeyboardButtonPressedString_= "";
 	bool keyboardChanged_ = false;
 
 	//PRESET variables
@@ -219,8 +219,8 @@ private:
 	static int activePresetNum_;
 
 	// Messages to send to Spark
-	static std::vector<ByteVector> current_msg;
-	static std::vector<ByteVector> ack_msg;
+	static vector<ByteVector> current_msg;
+	static vector<ByteVector> ack_msg;
 	static bool customPresetAckPending;
 	static bool retrieveCurrentPreset;
 	static bool customPresetNumberChangePending;
@@ -231,24 +231,24 @@ private:
 	static int presetBankToEdit_;
 	static int presetEditMode_;
 
-	static std::string responseMsg_;
+	static string responseMsg_;
 
 	static int currentBTMode_;
 	static int sparkModeAmp;
 	static int sparkModeApp;
 	ByteVector currentBTMsg;
 	static int sparkAmpType;
-	static std::string sparkAmpName;
+	static string sparkAmpName;
 
 	int lastUpdateCheck = 0;
 	static byte nextMessageNum;
-	static std::queue<ByteVector> msgQueue;
+	static queue<ByteVector> msgQueue;
 
 	void processStorePresetRequest(int presetNum);
 	void processDeletePresetRequest();
 	void setPresetDeletionFlag();
 	void updatePendingBankStatus();
-	static bool sendMessageToBT(std::vector<ByteVector> msg);
+	static bool sendMessageToBT(vector<ByteVector> msg);
 
 	// Retrieves the current preset from Spark (required for HW presets)
 	static bool getCurrentPresetFromSpark();

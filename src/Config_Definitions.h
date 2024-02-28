@@ -9,9 +9,10 @@
 #define CONFIG_DEFINITIONS_H_
 
 #include <string>
+using namespace std;
 
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -25,7 +26,7 @@
 #endif
 
 // Software version
-const std::string VERSION = "1.1.0";
+const string VERSION = "1.1.0";
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 	25
@@ -115,6 +116,8 @@ const std::string VERSION = "1.1.0";
 #define AMP_TYPE_MINI 		2
 #define AMP_TYPE_GO 		3
 
-
+#define AMP_NAME_SPARK_40	"Spark 40"
+#define AMP_NAME_SPARK_MINI	"Spark MINI"
+#define AMP_NAME_SPARK_GO	"Spark GO"
 
 #endif /* CONFIG_DEFINITIONS_H_ */

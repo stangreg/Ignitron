@@ -26,6 +26,8 @@
 #define imageWidth 128
 #define imageHeight 47
 
+using namespace std;
+
 class SparkDataControl;
 
 class SparkDisplayControl {
@@ -57,18 +59,18 @@ private:
 	bool isBTConnected = false;
 	KeyboardMapping currentKeyboard;
 
-	std::string primaryLineText;
+	string primaryLineText;
 	const Preset* primaryLinePreset;
-	std::string secondaryLineText;
+	string secondaryLineText;
 	const Preset* secondaryLinePreset;
-	std::string currentBTModeText;
+	string currentBTModeText;
 
-	std::string lowerButtonsShort;
-	std::string lowerButtonsLong;
-	std::string upperButtonsShort;
-	std::string upperButtonsLong;
+	string lowerButtonsShort;
+	string lowerButtonsLong;
+	string upperButtonsShort;
+	string upperButtonsLong;
 
-	std::string lastKeyboardButtonPressedString;
+	string lastKeyboardButtonPressedString;
 	unsigned long keyboardPressedTimestamp = 0;
 	int showKeyboardPressedInterval = 500;
 	bool showKeyboardPressedFlag = false;
@@ -91,9 +93,9 @@ private:
 	int text_row_1_timestamp = 0;
 	int text_row_2_timestamp = 0;
 	int text_scroll_delay = 2500;
-	std::string text_filler = "   ";
-	std::string previous_text1 = "";
-	std::string previous_text2 = "";
+	string text_filler = "   ";
+	string previous_text1 = "";
+	string previous_text2 = "";
 
 	SparkDataControl* dataControl() {return spark_dc;}
 	void showInitialMessage();

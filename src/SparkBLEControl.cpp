@@ -7,6 +7,7 @@
 
 #include "SparkBLEControl.h"
 
+
 bool SparkBLEControl::isAppConnectedSerial_ = false;
 
 //ClientCallbacks SparkBLEControl::clientCB;
@@ -187,6 +188,8 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 			}
 
 			Serial.println("Done with this device.");
+			// Read AMP name to determine special parameters
+			spark_dc->getAmpName();
 			return true;
 		} // pSrv
 		else {
@@ -202,7 +205,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(std::vector<ByteVector> cmd, bool response) {
+bool SparkBLEControl::writeBLE(vector<ByteVector> cmd, bool response) {
 	if (pClient && pClient->isConnected()) {
 
 		NimBLERemoteService *pSvc = nullptr;
@@ -356,7 +359,7 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 	// This method will be triggered if receiving data in AMP mode.
 	DEBUG_PRINT(pCharacteristic->getUUID().toString().c_str());
 	DEBUG_PRINTLN(": onWrite()");
-	std::string rxValue = pCharacteristic->getValue();
+	string rxValue = pCharacteristic->getValue();
 	ByteVector byteVector;
 	byteVector.clear();
 
@@ -371,8 +374,8 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 
 void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 		ble_gap_conn_desc *desc, uint16_t subValue) {
-	std::string str = "Address: ";
-	str += std::string(NimBLEAddress(desc->peer_ota_addr)).c_str();
+	string str = "Address: ";
+	str += string(NimBLEAddress(desc->peer_ota_addr)).c_str();
 	if (subValue == 0) {
 		str += " Unsubscribed to ";
 	} else if (subValue == 1) {
@@ -382,13 +385,13 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 	} else if (subValue == 3) {
 		str += " Subscribed to notifications and indications for ";
 	}
-	str += std::string(pCharacteristic->getUUID());
+	str += string(pCharacteristic->getUUID());
 
 	Serial.println(str.c_str());
 }
 ;
 
-void SparkBLEControl::notifyClients(std::vector<ByteVector> msg) {
+void SparkBLEControl::notifyClients(vector<ByteVector> msg) {
 	if (pServer) {
 		NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) {

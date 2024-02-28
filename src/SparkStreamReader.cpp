@@ -15,11 +15,11 @@ SparkStreamReader::SparkStreamReader(){
 	msg_pos = 0;
 }
 
-std::string SparkStreamReader::getJson(){
+string SparkStreamReader::getJson(){
 	return json;
 }
 
-void SparkStreamReader::setMessage(std::vector<ByteVector> msg_){
+void SparkStreamReader::setMessage(vector<ByteVector> msg_){
 	DEBUG_PRINT("Processing data:");
 	for (auto block : msg_){
 		DEBUG_PRINTVECTOR(block);
@@ -51,11 +51,11 @@ byte SparkStreamReader::read_byte() {
 	return a_byte;
 }
 
-std::string SparkStreamReader::read_prefixed_string() {
+string SparkStreamReader::read_prefixed_string() {
 	int str_len = read_byte();
 	// offset removed from string length byte to get real length
 	int real_str_len = read_byte() - 0xa0;
-	std::string a_str = "";
+	string a_str = "";
 	// reading string
 	for (int i = 0; i < real_str_len; i++) {
 		a_str += char(read_byte());
@@ -63,7 +63,7 @@ std::string SparkStreamReader::read_prefixed_string() {
 	return a_str;
 }
 
-std::string SparkStreamReader::read_string() {
+string SparkStreamReader::read_string() {
 	byte a_byte = read_byte();
 	int str_len;
 	if (a_byte == 0xd9) {
@@ -78,7 +78,7 @@ std::string SparkStreamReader::read_string() {
 		str_len = a_byte - 0xa0;
 	}
 
-	std::string a_str = "";
+	string a_str = "";
 	for (int i = 0; i < str_len; i++) {
 		a_str += char(read_byte());
 	}
@@ -150,7 +150,7 @@ void SparkStreamReader::add_python(char* python_str) {
 	json += indent + python_str;// + "\n";
 }
 
-void SparkStreamReader::add_str(char* a_title, std::string a_str, char* nature) {
+void SparkStreamReader::add_str(char* a_title, string a_str, char* nature) {
 	raw +=  a_str;
 	raw += " ";
 	char string_add[200] = "";
@@ -218,7 +218,7 @@ void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
 
 void SparkStreamReader::read_effect_parameter() {
 	// Read object
-	std::string effect = read_prefixed_string ();
+	string effect = read_prefixed_string ();
 	byte param = read_byte ();
 	float val = read_float();
 
@@ -237,8 +237,8 @@ void SparkStreamReader::read_effect_parameter() {
 
 void SparkStreamReader::read_effect() {
 	//Read object
-	std::string effect1 = read_prefixed_string ();
-	std::string effect2 = read_prefixed_string ();
+	string effect1 = read_prefixed_string ();
+	string effect2 = read_prefixed_string ();
 
 	// Build string representations
 	start_str();
@@ -287,7 +287,7 @@ void SparkStreamReader::read_store_hardware_preset() {
 
 void SparkStreamReader::read_effect_onoff() {
 	// Read object
-	std::string effect = read_prefixed_string ();
+	string effect = read_prefixed_string ();
 	boolean isOn = read_onoff ();
 
 	// Build string representations
@@ -309,19 +309,19 @@ void SparkStreamReader::read_preset() {
 	byte preset = read_byte();
 	//DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
 	currentSetting_.presetNumber = preset;
-	std::string uuid = read_string();
+	string uuid = read_string();
 	//DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
 	currentSetting_.uuid = uuid;
-	std::string name = read_string();
+	string name = read_string();
 	//DEBUG_PRINTF("Read Name: %s\n", name.c_str());
 	currentSetting_.name = name;
-	std::string version = read_string();
+	string version = read_string();
 	//DEBUG_PRINTF("Read Version: %s\n", version.c_str());
 	currentSetting_.version = version;
-	std::string descr = read_string();
+	string descr = read_string();
 	//DEBUG_PRINTF("Read Description: %s\n", descr.c_str());
 	currentSetting_.description = descr;
-	std::string icon = read_string();
+	string icon = read_string();
 	//DEBUG_PRINTF("Read Icon: %s\n", icon.c_str());
 	currentSetting_.icon = icon;
 	float bpm = read_float();
@@ -356,7 +356,7 @@ void SparkStreamReader::read_preset() {
 	for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
 		Pedal currentPedal = {};
 		//DEBUG_PRINTF("Reading Pedal %d:\n", i);
-		std::string e_str = read_string();
+		string e_str = read_string();
 		//DEBUG_PRINTF("  Pedal name: %s\n", e_str.c_str());
 		currentPedal.name = e_str;
 		boolean e_onoff = read_onoff();
@@ -483,7 +483,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 	{
 		//DEBUG_PRINTLN("Data seems correct");
 		// and split them into chunks now, splitting on each f7
-		std::vector<ByteVector> chunks;
+		vector<ByteVector> chunks;
 		chunks.clear();
 		ByteVector chunk_temp = {};
 		for (byte by : block_content) {
@@ -496,7 +496,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 		DEBUG_PRINTLN("Split at F7");
 
 
-		std::vector<CmdData> chunk_8bit = {};
+		vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
 			last_message_num_ = chunk[2];
 			byte this_cmd = chunk[4];
@@ -647,8 +647,8 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	else {
 		// unprocessed command (likely the initial ones sent from the app
 
-		std::string cmd_str = SparkHelper::intToHex(_cmd);
-		std::string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
+		string cmd_str = SparkHelper::intToHex(_cmd);
+		string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
 		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(),
 				sub_cmd_str.c_str());
 		DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
@@ -656,10 +656,10 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	return 1;
 }
 
-std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
+tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 
 	if(blk.size() < 22){ // Block is too short, does not need acknowledgement
-		return std::tuple<bool, byte, byte>(false, 0, 0);
+		return tuple<bool, byte, byte>(false, 0, 0);
 	}
 	byte direction[2] = { blk[4], blk[5] };
 	last_message_num_ = blk[18];
@@ -670,9 +670,9 @@ std::tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 	if (msg_to_spark_comp == 0 && cmd == 0x01 && sub_cmd != 0x04) {
 		// the app sent a message that needs a response
-		return std::tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
+		return tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
 	}
-	return std::tuple<bool, byte, byte>(false, 0, 0);
+	return tuple<bool, byte, byte>(false, 0, 0);
 }
 
 AckData SparkStreamReader::getLastAckAndEmpty(){
@@ -859,7 +859,7 @@ void SparkStreamReader::interpret_data() {
 	//message.clear();
 }
 
-std::vector<CmdData> SparkStreamReader::read_message(bool processHeader) {
+vector<CmdData> SparkStreamReader::read_message(bool processHeader) {
 	if(structure_data(processHeader)){
 		interpret_data();
 	}
@@ -891,7 +891,7 @@ void SparkStreamReader::clearMessageBuffer(){
 }
 
 void SparkStreamReader::read_amp_name() {
-	std::string ampName = read_prefixed_string ();
+	string ampName = read_prefixed_string ();
 
 	// Build string representations
 	start_str();

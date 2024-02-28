@@ -14,8 +14,8 @@
 #include "Config_Definitions.h"
 #include "SparkHelper.h"
 
-
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 
 
 #define DIR_TO_SPARK	0
@@ -36,17 +36,17 @@ struct keyboardKeyDefinition {
 	uint8_t modifier;	// 0: no mod / 0x80 to 0x87 in BleKeyboard.h
 	uint8_t repeat;		// 0: no repeat, just once / >0 repeat n times
 	
-	std::string display; 	// what to display in LCD
+	string display; 	// what to display in LCD
 };
 
 struct KeyboardMapping {
 
 	//int mappingSize = 6;
-	std::string mappingName;
+	string mappingName;
 	// Mapping for short press 
-	std::vector<keyboardKeyDefinition> keyboardShortPress;
+	vector<keyboardKeyDefinition> keyboardShortPress;
 	// Mapping for long press 
-	std::vector<keyboardKeyDefinition> keyboardLongPress;
+	vector<keyboardKeyDefinition> keyboardLongPress;
 
 	int indexOfKey(uint8_t ki){
 		
@@ -61,15 +61,15 @@ struct KeyboardMapping {
 struct Parameter {
 
 	int number;
-	std::string special;
+	string special;
 	float value;
 };
 
 struct Pedal {
 
-	std::string name;
+	string name;
 	boolean isOn;
-	std::vector<Parameter> parameters;
+	vector<Parameter> parameters;
 
 };
 
@@ -78,19 +78,19 @@ struct Preset {
 	boolean isEmpty = true;
 	static const int numberOfPedals = 7;
 
-	std::string json;
+	string json;
 	// Raw and text might not be filled (when read from the stored presets).
-	std::string raw;
-	std::string text;
+	string raw;
+	string text;
 
 	int presetNumber;
-	std::string uuid;
-	std::string name;
-	std::string version;
-	std::string description;
-	std::string icon;
+	string uuid;
+	string name;
+	string version;
+	string description;
+	string icon;
 	float bpm;
-	std::vector<Pedal> pedals;
+	vector<Pedal> pedals;
 	byte filler;
 
 };
@@ -100,8 +100,8 @@ struct CmdData {
 	byte subcmd;
 	ByteVector data;
 
-	std::string toString() {
-		std::string cmdStr;
+	string toString() {
+		string cmdStr;
 		cmdStr = "[" + SparkHelper::intToHex(cmd) + "], ["
 				+ SparkHelper::intToHex(subcmd) + "], [";
 		for (byte by : data) {

@@ -11,9 +11,10 @@
 #include "src/SparkDisplayControl.h"
 #include "src/SparkLEDControl.h"
 
-// Device Info Definitions
-const std::string DEVICE_NAME = "Ignitron";
+using namespace std;
 
+// Device Info Definitions
+const string DEVICE_NAME = "Ignitron";
 
 // Control classes
 SparkDataControl spark_dc;
@@ -98,8 +99,6 @@ void loop() {
 			// only do initial request in defined intervals
 			if (currentTimestamp - lastInitialPresetTimestamp > initialRequestInterval) {
 				lastInitialPresetTimestamp = millis();
-				// Read AMP name to determine special parameters
-				spark_dc.getAmpName();
 				DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
 				spark_dc.switchPreset(1, true);
 			}

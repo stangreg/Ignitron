@@ -12,6 +12,7 @@
 #include "Config_Definitions.h"
 #include "SparkDataControl.h"
 
+using namespace std;
 
 class SparkLEDControl {
 public:

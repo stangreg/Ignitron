@@ -33,19 +33,20 @@
 #define DELETE_PRESET_UNKNOWN_ERROR 4
 
 
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 
 class SparkPresetBuilder{
 
 private:
-	std::vector<std::vector<std::string>> presetBanksNames;
+	vector<vector<string>> presetBanksNames;
 	eSPIFFS fileSystem;
 	const char* presetListFileName = "/PresetList.txt";
 	bool deletePresetFile(int bnk, int pre);
 
 public:
 	SparkPresetBuilder();
-	//std::string getJsonFromPreset(preset pset);
+	//string getJsonFromPreset(preset pset);
 	void initializePresetListFromFS();
 	Preset getPreset(int bank, int preset);
 	int getNumberOfBanks();

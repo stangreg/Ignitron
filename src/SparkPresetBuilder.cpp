@@ -15,7 +15,7 @@ SparkPresetBuilder::SparkPresetBuilder() {
 Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
 	Preset resultPreset;
-	std::string jsonString(json);
+	string jsonString(json);
 
 	const int capacity = JSON_OBJECT_SIZE(
 					10) + JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8*JSON_OBJECT_SIZE(8);
@@ -31,24 +31,24 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 	resultPreset.presetNumber = 0;
 	// myObject.hasOwnProperty(key) checks if the object contains an entry for key
 	// preset UUID
-	std::string presetUUID = jsonPreset["UUID"].as<std::string>();
+	string presetUUID = jsonPreset["UUID"].as<string>();
 	resultPreset.uuid = presetUUID;
 
 	// preset NAME
-	std::string presetName = jsonPreset["Name"].as<std::string>();
+	string presetName = jsonPreset["Name"].as<string>();
 	resultPreset.name = presetName;
 
 
 	// preset VERSION
-	std::string presetVersion = jsonPreset["Version"].as<std::string>();
+	string presetVersion = jsonPreset["Version"].as<string>();
 	resultPreset.version = presetVersion;
 
 	// preset Description
-	std::string presetDescription = jsonPreset["Description"].as<std::string>();
+	string presetDescription = jsonPreset["Description"].as<string>();
 	resultPreset.description = presetDescription;
 
 	// preset Icon
-	std::string presetIcon = jsonPreset["Icon"].as<std::string>();
+	string presetIcon = jsonPreset["Icon"].as<string>();
 	resultPreset.icon = presetIcon;
 
 	// preset BPM
@@ -59,7 +59,7 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 	JsonArray pedalArray = jsonPreset["Pedals"];
 	for (JsonObject currentJsonPedal : pedalArray) {
 		Pedal currentPedal;
-		currentPedal.name = currentJsonPedal["Name"].as<std::string>();
+		currentPedal.name = currentJsonPedal["Name"].as<string>();
 		currentPedal.isOn = currentJsonPedal["IsOn"].as<bool>();
 
 		JsonArray pedalParamArray = currentJsonPedal["Parameters"];
@@ -87,25 +87,25 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 
 }
 
-//std::string SparkPresetBuilder::getJsonFromPreset(preset pset){};
+//string SparkPresetBuilder::getJsonFromPreset(preset pset){};
 
 void SparkPresetBuilder::initializePresetListFromFS(){
 
 	presetBanksNames.clear();
-	std::string allPresetsAsText;
-	std::vector<std::string> tmpVector;
+	string allPresetsAsText;
+	vector<string> tmpVector;
 	DEBUG_PRINTLN("Trying to read file list");
 	if(!fileSystem.openFromFile(presetListFileName, allPresetsAsText)){
 		Serial.println("ERROR while trying to open presets list file");
 		return;
 	}
 
-	std::stringstream stream(allPresetsAsText);
-	std::string line;
-	while (std::getline(stream, line)) {
-		line.erase(std::remove(line.begin(), line.end(), '\r' ), line.end());
-		line.erase(std::remove(line.begin(), line.end(), '\n' ), line.end());
-		std::string presetFilename = line;
+	stringstream stream(allPresetsAsText);
+	string line;
+	while (getline(stream, line)) {
+		line.erase(remove(line.begin(), line.end(), '\r' ), line.end());
+		line.erase(remove(line.begin(), line.end(), '\n' ), line.end());
+		string presetFilename = line;
 		// Lines starting with '-' and empty lines
 		// are ignored and can be used for comments in the file
 		if (line.rfind("-", 0) != 0 && !line.empty()) {
@@ -137,8 +137,8 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre){
 		Serial.println("Requested bank out of bounds.");
 		return retPreset;
 	}
-	std::string presetFilename = "/"+presetBanksNames[bank-1][pre-1];
-	std::string presetJsonString;
+	string presetFilename = "/"+presetBanksNames[bank-1][pre-1];
+	string presetJsonString;
 	if(fileSystem.openFromFile(&presetFilename[0], presetJsonString)){
 		retPreset = getPresetFromJson(&presetJsonString[0]);
 		return retPreset;
@@ -154,26 +154,26 @@ int SparkPresetBuilder::getNumberOfBanks(){
 }
 
 int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
-	std::string presetNamePrefix = newPreset.name;
+	string presetNamePrefix = newPreset.name;
 	if (presetNamePrefix == "null" || presetNamePrefix.empty()) {
 		presetNamePrefix = "Preset";
 	}
 	Serial.println("Saving preset:");
 	Serial.println(newPreset.json.c_str());
-	std::string presetNameWithPath;
+	string presetNameWithPath;
 	// remove any blanks from the name for a new filename
-	presetNamePrefix.erase(std::remove_if(presetNamePrefix.begin(),
+	presetNamePrefix.erase(remove_if(presetNamePrefix.begin(),
 									presetNamePrefix.end(),
 									[](char chr){
-										return not(std::regex_match(std::string(1,chr), std::regex("[A-z0-9_]")));
+										return not(regex_match(string(1,chr), regex("[A-z0-9_]")));
 										}
 									),
 									presetNamePrefix.end());
 	//cut down name to 24 characters (a potential counter + .json will then increase to 30);
 	const int nameLength = presetNamePrefix.length();
-	presetNamePrefix = presetNamePrefix.substr(0,std::min(24, nameLength));
+	presetNamePrefix = presetNamePrefix.substr(0,min(24, nameLength));
 
-	std::string presetFileName = presetNamePrefix + ".json";
+	string presetFileName = presetNamePrefix + ".json";
 	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
 	int counter = 0;
 
@@ -189,8 +189,8 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 	fileSystem.saveToFile(presetNameWithPath.c_str(), newPreset.json.c_str());
 
 	// Then insert the preset into the right position
-	std::string filestr = "";
-	std::string oldListFile;
+	string filestr = "";
+	string oldListFile;
 	int lineCount = 1;
 	int insertPosition = 4 * (bnk-1) + pre;
 
@@ -199,9 +199,9 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 		return STORE_PRESET_ERROR_OPEN;
 	}
 
-	std::stringstream stream(oldListFile);
-	std::string line;
-	while (std::getline(stream, line)) {
+	stringstream stream(oldListFile);
+	string line;
+	while (getline(stream, line)) {
 		if (lineCount != insertPosition) {
 			// Lines starting with '-' and empty lines
 			// are ignored and can be used for comments in the file
@@ -236,9 +236,9 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 int SparkPresetBuilder::deletePreset(int bnk, int pre){
 
 	// Then insert the preset into the right position
-	std::string filestr = "";
-	std::string oldListFile;
-	std::string presetFileToDelete = "";
+	string filestr = "";
+	string oldListFile;
+	string presetFileToDelete = "";
 	int lineCount = 1;
 	int presetCount = 1;
 	int deletePosition = 4 * (bnk-1) + pre;
@@ -248,9 +248,9 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 		return STORE_PRESET_ERROR_OPEN;
 	}
 
-	std::stringstream stream(oldListFile);
-	std::string line;
-	while (std::getline(stream, line)) {
+	stringstream stream(oldListFile);
+	string line;
+	while (getline(stream, line)) {
 		if (lineCount != deletePosition) {
 			// Lines starting with '-' and empty lines
 			// are ignored and can be used for comments in the file

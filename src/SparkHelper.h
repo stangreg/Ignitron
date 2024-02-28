@@ -16,8 +16,8 @@
 #include <Arduino.h>
 #include "Config_Definitions.h"
 
-
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 
 class SparkHelper{
 
@@ -26,22 +26,22 @@ private:
 
 public:
 	// Convert a string to a ByteVector
-	//static ByteVector HexToBytes(const std::string& hex);
+	//static ByteVector HexToBytes(const string& hex);
 	// Convert a string hex item to a byte
-	static byte HexToByte(const std::string& hex);
+	static byte HexToByte(const string& hex);
 
 	// Convert a byte array to a string
-	//static std::string hexStr(byte *data, int len);
+	//static string hexStr(byte *data, int len);
 	// convert a byte to a string hex representation
-	static std::string intToHex(byte by);
+	static string intToHex(byte by);
 	// print a vector of byte vectors;
-	static void printDataAsHexString(std::vector<ByteVector>data);
+	static void printDataAsHexString(vector<ByteVector>data);
 	// Print a byte vector
 	static void printByteVector(ByteVector vec);
 	// get a byteVector from int value
 	//static ByteVector bytes(int value);
 
-	static int dataVectorNumOfBytes(std::vector<ByteVector> data);
+	static int dataVectorNumOfBytes(vector<ByteVector> data);
 
 	static int getButtonNumber(int btn_gpio);
 	static int getFXIndexFromBtnGpio(int btn_gpio);

@@ -11,6 +11,8 @@
 #include <vector>;
 #include "SparkTypes.h";
 
+using namespace std;
+
 class SparkKeyboardControl {
 public:
 	SparkKeyboardControl();
@@ -24,7 +26,7 @@ public:
 
 
 private:
-	std::vector<KeyboardMapping> keyboards;
+	vector<KeyboardMapping> keyboards;
 	int currentKeyboardIndex = 0;
 
 };

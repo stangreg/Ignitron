@@ -29,11 +29,11 @@ private:
 
 	byte cmd;
 	byte sub_cmd;
-	// data types to be confirmed
+	// data types for transformation
+	ByteVector data;
 	vector<ByteVector> split_data8;
 	vector<ByteVector> split_data7;
-	ByteVector data;
-	vector<ByteVector> final_message;
+	vector<ByteVector> all_chunks;
 	byte current_msg_number_ = 0x00;
 
 	const ByteVector msg_from_spark = { 0x41, 0xff };
@@ -53,6 +53,11 @@ private:
 	void start_message (byte cmd_, byte sub_cmd_);
 	vector<ByteVector> end_message(int dir = DIR_TO_SPARK,
 			byte msg_number = 0x00);
+
+	void splitDataToChunks(int dir);
+	void convertDataTo7Bit();
+	void buildChunkData(byte msg_number);
+	vector<ByteVector> buildMessage(int dir);
 	//ByteVector end_message();
 	void add_bytes(ByteVector bytes_8);
 	void add_byte(byte by);

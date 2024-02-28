@@ -13,6 +13,7 @@
 #include "SparkDataControl.h"
 #include "SparkTypes.h"
 
+using namespace std;
 
 class SparkButtonHandler {
 public:

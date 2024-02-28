@@ -57,7 +57,7 @@ void SparkDisplayControl::showInitialMessage() {
 	SSD1306_WHITE);
 	display.setTextSize(2);
 
-	std::string modeText;
+	string modeText;
 	switch(opMode){
 	case SPARK_MODE_APP:
 		modeText = "APP";
@@ -81,17 +81,17 @@ void SparkDisplayControl::showBankAndPresetNum() {
 	// Display the bank and preset number
 	display.setTextColor(SSD1306_WHITE);
 	//Configure numbers as strings
-	std::ostringstream selBankStr;
+	ostringstream selBankStr;
 	selBankStr << pendingBank;
 
-	std::ostringstream selPresetStr;
+	ostringstream selPresetStr;
 	selPresetStr << activePresetNum;
 
 	display.setCursor(display.width() - 48, 0);
 
 	// Preset display
 	display.setTextSize(4);
-	std::string presetText = " ";
+	string presetText = " ";
 	if (opMode == SPARK_MODE_APP && buttonMode == SWITCH_MODE_FX) {
 		// If in FX mode, show an "M" for manual mode
 		presetText = "M";
@@ -109,7 +109,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
 	display.print(presetText.c_str());
 
 	// Bank number display
-	std::string bankDisplay = "";
+	string bankDisplay = "";
 	if (pendingBank < 10) {
 		bankDisplay = "0";
 	}
@@ -125,8 +125,8 @@ void SparkDisplayControl::showBankAndPresetNum() {
 
 void SparkDisplayControl::showPresetName() {
 
-	const std::string msg = spark_dc->responseMsg();
-	std::ostringstream selPresetStr;
+	const string msg = spark_dc->responseMsg();
+	ostringstream selPresetStr;
 	selPresetStr << activePresetNum;
 
 	//Rectangle color for preset name
@@ -221,12 +221,12 @@ void SparkDisplayControl::showFX_SecondaryName() {
 	} else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
 		// Build string to show active FX
 		secondaryLinePreset = primaryLinePreset;
-		std::string currPedalStatus;
+		string currPedalStatus;
 		// blank placeholder for Amp
-		std::string fx_indicators_on[] =
+		string fx_indicators_on[] =
 				{ "N", "C ", "D ", " ", "M ", "D ",
 				"R" };
-		std::string fx_indicators_off[] = { " ", "  ", "  ", " ", "  ", "  ",
+		string fx_indicators_off[] = { " ", "  ", "  ", " ", "  ", "  ",
 				" " };
 
 		// When we switched to FX mode, we always show the current selected preset
@@ -323,7 +323,7 @@ void SparkDisplayControl::showPressedKey(){
 void SparkDisplayControl::initKeyboardLayoutStrings(){
 
 	currentKeyboard = spark_dc->currentKeyboard();
-	std::string spacerText = "  ";
+	string spacerText = "  ";
 
 	lowerButtonsShort = currentKeyboard.keyboardShortPress[0].display
 										.append(spacerText)

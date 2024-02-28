@@ -16,8 +16,8 @@
 #include "SparkHelper.h"
 #include "SparkTypes.h"
 
-
-using ByteVector = std::vector<byte>;
+using namespace std;
+using ByteVector = vector<byte>;
 
 
 #define MSG_TYPE_PRESET 1
@@ -44,22 +44,22 @@ class SparkStreamReader{
 private:
 
 	// String representations of processed data
-	std::string raw;
-	std::string text;
-	std::string indent;
-	std::string json;
+	string raw;
+	string text;
+	string indent;
+	string json;
 
 	// Vector containing struct of cmd, sub_cmd, and payload
-	std::vector<CmdData> message = { };
+	vector<CmdData> message = { };
 	// Unstructured input data, needs to go through structure_data first
-	std::vector<ByteVector> unstructured_data = {};
+	vector<ByteVector> unstructured_data = {};
 
 	// payload of a CmdData object to be interpreted. msg_pos is pointing at the next byte to read
 	ByteVector msg;
 	int msg_pos;
 	// indicator if a block received is the last one
 	bool msg_last_block = false;
-	std::vector<ByteVector> response;
+	vector<ByteVector> response;
 
 
 	// In case a preset was received from Spark, it is saved here. Can then be read by main program
@@ -69,11 +69,11 @@ private:
 	//Flags to indicate that either preset or presetNumber have been updated
 	boolean isPresetUpdated_ = false;
 	boolean isPresetNumberUpdated_ = false;
-	std::vector<AckData> acknowledgments;
+	vector<AckData> acknowledgments;
 	int last_message_type_ = 0;
 	byte last_message_num_ = 0x00;
 	byte last_requested_preset = 0x00;
-	std::string ampName_ = "";
+	string ampName_ = "";
 
 	// Functions to process calls based on identified cmd/sub_cmd.
 	void read_amp_name();
@@ -86,7 +86,7 @@ private:
 
 
 	// Functions to structure and process input data (high level)
-	std::vector<CmdData> read_message(bool processHeader=true);
+	vector<CmdData> read_message(bool processHeader=true);
 	boolean structure_data(bool processHeader=true);
 	void interpret_data();
 	void set_interpreter (ByteVector _msg);
@@ -94,8 +94,8 @@ private:
 
 	// Low level functions to read single elements from structured payload
 	byte read_byte();
-	std::string read_prefixed_string();
-	std::string read_string();
+	string read_prefixed_string();
+	string read_string();
 	float read_float ();
 	boolean read_onoff();
 
@@ -109,7 +109,7 @@ private:
 	void add_separator();
 	void add_newline();
 	void add_python(char* python_str);
-	void add_str(char* a_title, std::string a_str, char* nature = "all");
+	void add_str(char* a_title, string a_str, char* nature = "all");
 	void add_int(char* a_title, int an_int, char* nature = "all");
 	void add_float(char* a_title, float a_float, char* nature = "all");
 	void add_float_pure(float a_float, char* nature = "all");
@@ -123,8 +123,8 @@ public:
 	//Constructors
 	SparkStreamReader();
 	// setting the messag so it can be structured and interpreted
-	void setMessage(std::vector<ByteVector> msg_);
-	std::string getJson();
+	void setMessage(vector<ByteVector> msg_);
+	string getJson();
 
 	// Preset related methods to make information public
 	const Preset currentSetting() const {return currentSetting_;}
@@ -135,16 +135,16 @@ public:
 	const byte lastMessageNum() const {
 		return last_message_num_;
 	}
-	const std::vector<CmdData> lastMessage() const {
+	const vector<CmdData> lastMessage() const {
 		return message;
 	}
-	std::string getAmpName() { return ampName_;}
+	string getAmpName() { return ampName_;}
 
 
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
 	void resetLastMessageType();
-	std::tuple<boolean, byte, byte> needsAck(ByteVector block);
+	tuple<boolean, byte, byte> needsAck(ByteVector block);
 	int processBlock(ByteVector block);
 	AckData getLastAckAndEmpty();
 	void clearMessageBuffer();

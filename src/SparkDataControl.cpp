@@ -14,7 +14,7 @@ SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl;
 
-std::queue<ByteVector> SparkDataControl::msgQueue;
+queue<ByteVector> SparkDataControl::msgQueue;
 
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
@@ -29,11 +29,11 @@ int SparkDataControl::presetBankToEdit_ = 0;
 
 
 int SparkDataControl::activePresetNum_ = 1;
-std::string SparkDataControl::responseMsg_ = "";
+string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
-std::vector<ByteVector> SparkDataControl::ack_msg;
-std::vector<ByteVector> SparkDataControl::current_msg;
+vector<ByteVector> SparkDataControl::ack_msg;
+vector<ByteVector> SparkDataControl::current_msg;
 
 bool SparkDataControl::customPresetAckPending = false;
 bool SparkDataControl::retrieveCurrentPreset = false;
@@ -44,7 +44,7 @@ int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
-std::string SparkDataControl::sparkAmpName = "Spark 40";
+string SparkDataControl::sparkAmpName = "Spark 40";
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -65,19 +65,19 @@ SparkDataControl::~SparkDataControl() {
 int SparkDataControl::init(int opModeInput) {
 	operationMode_ = opModeInput;
 
-	std::string currentSparkModeFile;
+	string currentSparkModeFile;
 	int sparkModeInput = 0;
 	// Creating vector of presets
 	presetBuilder.initializePresetListFromFS();
 
 	fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
 
-	std::stringstream sparkModeStream(currentSparkModeFile);
-	std::string line;
-	std::string currentBTModeFile;
-	std::stringstream btModeStream;
+	stringstream sparkModeStream(currentSparkModeFile);
+	string line;
+	string currentBTModeFile;
+	stringstream btModeStream;
 
-	while (std::getline(sparkModeStream, line)) {
+	while (getline(sparkModeStream, line)) {
 		sparkModeInput = (int)(line[0]-'0'); // was: stoi(line);
 	}
 	if (sparkModeInput != 0) {
@@ -107,7 +107,7 @@ int SparkDataControl::init(int opModeInput) {
 		fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
 		btModeStream.str(currentBTModeFile);
 
-		while (std::getline(btModeStream, line)) {
+		while (getline(btModeStream, line)) {
 			currentBTMode_ = (int)(line[0]-'0'); // was: stoi(line);
 		}
 
@@ -340,7 +340,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	return retValue;
 }
 
-bool SparkDataControl::switchEffectOnOff(std::string fx_name, bool enable) {
+bool SparkDataControl::switchEffectOnOff(string fx_name, bool enable) {
 
 	Serial.printf("Switching %s effect %s...", enable ? "On" : "Off",
 			fx_name.c_str());
@@ -541,7 +541,7 @@ void SparkDataControl::increaseBank(){
 		pendingBank_++;
 	}
 	if (operationMode_ == SPARK_MODE_AMP && pendingBank_ == 0) {
-		pendingBank_ = std::min(1, numberOfBanks());
+		pendingBank_ = min(1, numberOfBanks());
 	}
 	updatePendingBankStatus();
 }
@@ -590,7 +590,7 @@ bool SparkDataControl::toggleEffect(int fx_identifier){
 		return false;
 	}
 	if (!activePreset_.isEmpty) {
-		std::string fx_name = activePreset_.pedals[fx_identifier].name;
+		string fx_name = activePreset_.pedals[fx_identifier].name;
 		bool fx_isOn = activePreset_.pedals[fx_identifier].isOn;
 
 		return switchEffectOnOff(fx_name, fx_isOn ? false : true);
@@ -741,7 +741,7 @@ bool SparkDataControl::decreasePresetLooper(){
 	return switchPreset(selectedPresetNum, false);
 }
 
-bool SparkDataControl::sendMessageToBT(std::vector<ByteVector> msg){
+bool SparkDataControl::sendMessageToBT(vector<ByteVector> msg){
 	nextMessageNum++;
 	//spark_ssr.clearMessageBuffer();
 	DEBUG_PRINTLN("Sending message via BT.");
@@ -754,7 +754,7 @@ void SparkDataControl::handleSendingAck(ByteVector blk) {
 
 	// Check if ack needed. In positive case the sequence number and command
 	// are also returned to send back to requester
-	std::tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
+	tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
 		if (operationMode_ == SPARK_MODE_AMP) {
 			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
@@ -774,8 +774,8 @@ void SparkDataControl::handleSendingAck(ByteVector blk) {
 
 void SparkDataControl::handleAmpModeRequest() {
 
-	std::vector<ByteVector> msg;
-	std::vector<CmdData> currentMessage = spark_ssr.lastMessage();
+	vector<ByteVector> msg;
+	vector<CmdData> currentMessage = spark_ssr.lastMessage();
 	byte currentMessageNum = spark_ssr.lastMessageNum();
 	byte sub_cmd_ = currentMessage.back().subcmd;
 
@@ -823,7 +823,7 @@ void SparkDataControl::handleAmpModeRequest() {
 
 void SparkDataControl::handleAppModeResponse() {
 
-	std::string msgStr = spark_ssr.getJson();
+	string msgStr = spark_ssr.getJson();
 	int lastMessageType = spark_ssr.lastMessageType();
 	bool printMessage = false;
 	if (operationMode_ == SPARK_MODE_APP) {
@@ -897,13 +897,14 @@ void SparkDataControl::handleIncomingAck() {
 
 void SparkDataControl::setAmpParameters() {
 
-	std::string ampName = sparkAmpName;
-	if (ampName == "Spark 40"){
+	string ampName = sparkAmpName;
+	DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
+	if (ampName == AMP_NAME_SPARK_40){
 		spark_msg.maxChunkSizeToSpark() = 0x80;
 		spark_msg.maxBlockSizeToSpark() = 0xAD;
 		spark_msg.withHeader() = true;
 	}
-	if (ampName == "Spark GO" || ampName == "Spark Mini") {
+	if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_GO) {
 		spark_msg.maxChunkSizeToSpark() = 0x27;
 		spark_msg.maxBlockSizeToSpark() = 0x14;
 		spark_msg.withHeader() = false;

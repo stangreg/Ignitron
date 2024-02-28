@@ -7,10 +7,10 @@
 
 #include "SparkHelper.h"
 
-using ByteVector = std::vector<byte>;
+using ByteVector = vector<byte>;
 
 
-byte SparkHelper::HexToByte(const std::string& hex) {
+byte SparkHelper::HexToByte(const string& hex) {
 	byte ret_byte;
 
 	if (hex.length() <= 2){
@@ -24,13 +24,13 @@ byte SparkHelper::HexToByte(const std::string& hex) {
 }
 
 
-std::string SparkHelper::intToHex(byte by) {
+string SparkHelper::intToHex(byte by) {
 	char hex_string[20];
 	sprintf(hex_string, "%02X", by);
 	return hex_string;
 }
 
-void SparkHelper::printDataAsHexString(std::vector<ByteVector>data) {
+void SparkHelper::printDataAsHexString(vector<ByteVector>data) {
 	for (auto elements : data) {
 		for (auto by : elements) {
 			char hex_string[20];
@@ -49,7 +49,7 @@ void SparkHelper::printByteVector(ByteVector vec){
 	}
 }
 
-int SparkHelper::dataVectorNumOfBytes(std::vector<ByteVector> data) {
+int SparkHelper::dataVectorNumOfBytes(vector<ByteVector> data) {
 	int count = 0;
 	for (auto vec : data) {
 		count += vec.size();

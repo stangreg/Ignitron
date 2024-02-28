@@ -212,13 +212,13 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
 
-	std::string keyToSend;
+	string keyToSend;
 	currentKeyboard = spark_dc->currentKeyboard();
 
 	// Button configuration is set in the SparkTypes.h file
 	int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
 
-	std::vector<keyboardKeyDefinition> keyMap;
+	vector<keyboardKeyDefinition> keyMap;
 
 	switch (pattern) {
 	case BfButton::SINGLE_PRESS:
