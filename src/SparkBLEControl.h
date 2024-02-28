@@ -106,7 +106,7 @@ public:
 	 *
 	 * @return TRUE if successful
 	 */
-	bool writeBLE(vector<ByteVector> cmd, bool response = false);
+	bool writeBLE(vector<ByteVector> cmd, bool with_delay = false, bool response = false);
 	/**
 	 * @brief  Initializes Ignitron BLE as client to connect to the Spark Amp
 	 *

@@ -188,8 +188,6 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 			}
 
 			Serial.println("Done with this device.");
-			// Read AMP name to determine special parameters
-			spark_dc->getAmpName();
 			return true;
 		} // pSrv
 		else {
@@ -205,7 +203,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(vector<ByteVector> cmd, bool response) {
+bool SparkBLEControl::writeBLE(vector<ByteVector> cmd, bool with_delay, bool response) {
 	if (pClient && pClient->isConnected()) {
 
 		NimBLERemoteService *pSvc = nullptr;
@@ -231,7 +229,9 @@ bool SparkBLEControl::writeBLE(vector<ByteVector> cmd, bool response) {
 							// Seems to be more stable with a short delay
 							// also seems to be not working for Spark Mini without a delay.s
 							//TEST SPark GO
-							delay(10);
+							if(with_delay) {
+								delay(10);
+							}
 						} else {
 							Serial.println("There was an error with writing!");
 							// Disconnect if write failed

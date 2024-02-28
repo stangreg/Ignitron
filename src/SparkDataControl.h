@@ -239,6 +239,7 @@ private:
 	ByteVector currentBTMsg;
 	static int sparkAmpType;
 	static string sparkAmpName;
+	static bool with_delay;
 
 	int lastUpdateCheck = 0;
 	static byte nextMessageNum;

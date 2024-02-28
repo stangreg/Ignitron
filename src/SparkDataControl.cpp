@@ -45,6 +45,7 @@ int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = "Spark 40";
+bool SparkDataControl::with_delay = false;
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -745,7 +746,7 @@ bool SparkDataControl::sendMessageToBT(vector<ByteVector> msg){
 	nextMessageNum++;
 	//spark_ssr.clearMessageBuffer();
 	DEBUG_PRINTLN("Sending message via BT.");
-	return bleControl->writeBLE(msg);
+	return bleControl->writeBLE(msg, with_delay);
 }
 
 void SparkDataControl::handleSendingAck(ByteVector blk) {
@@ -903,11 +904,13 @@ void SparkDataControl::setAmpParameters() {
 		spark_msg.maxChunkSizeToSpark() = 0x80;
 		spark_msg.maxBlockSizeToSpark() = 0xAD;
 		spark_msg.withHeader() = true;
+		with_delay = false;
 	}
 	if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_GO) {
 		spark_msg.maxChunkSizeToSpark() = 0x27;
 		spark_msg.maxBlockSizeToSpark() = 0x14;
 		spark_msg.withHeader() = false;
+		with_delay = true;
 	}
 	spark_msg.maxChunkSizeFromSpark() = 0x19;
 	spark_msg.maxBlockSizeFromSpark() = 0x6A;

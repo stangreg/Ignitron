@@ -20,12 +20,15 @@ string SparkStreamReader::getJson(){
 }
 
 void SparkStreamReader::setMessage(vector<ByteVector> msg_){
+
+	/*
 	DEBUG_PRINT("Processing data:");
 	for (auto block : msg_){
 		DEBUG_PRINTVECTOR(block);
 		DEBUG_PRINTLN();
 	}
 	DEBUG_PRINTLN();
+	*/
 	unstructured_data = msg_;
 	message.clear();
 }
