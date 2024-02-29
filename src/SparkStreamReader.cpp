@@ -28,7 +28,7 @@ void SparkStreamReader::setMessage(vector<ByteVector> msg_){
 		DEBUG_PRINTLN();
 	}
 	DEBUG_PRINTLN();
-	*/
+	 */
 	unstructured_data = msg_;
 	message.clear();
 }
@@ -580,22 +580,23 @@ void SparkStreamReader::set_interpreter (ByteVector _msg) {
 int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	if (_cmd == 0x01) {
 		if (_sub_cmd == 0x01) {
-			DEBUG_PRINTLN("Reading preset");
+			DEBUG_PRINTLN("01 01 - Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x04) {
-			DEBUG_PRINTLN("Reading effect param");
+			DEBUG_PRINTLN("01 04 - Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x06) {
-			DEBUG_PRINTLN("Reading effect");
+			DEBUG_PRINTLN("01 06 - Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x15) {
-			DEBUG_PRINTLN("Reading effect on off");
+			DEBUG_PRINTLN("01 15 - Reading effect on/off");
 			read_effect_onoff();
 		}
 		else if (_sub_cmd == 0x38) {
+			DEBUG_PRINTLN("01 38 - Change to different preset");
 			read_hardware_preset();
 		}
 		else {
@@ -610,27 +611,27 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else if (_cmd == 0x03) {
 		if (_sub_cmd == 0x01) {
-			DEBUG_PRINTLN("Reading preset");
+			DEBUG_PRINTLN("03 01 - Reading preset");
 			read_preset();
 		}
 		else if (_sub_cmd == 0x06) {
-			DEBUG_PRINTLN("Reading effect");
+			DEBUG_PRINTLN("03 06 - Reading effect");
 			read_effect();
 		}
 		else if (_sub_cmd == 0x11) {
-					DEBUG_PRINTLN("Reading amp name");
-					read_amp_name();
+			DEBUG_PRINTLN("03 11 - Reading amp name");
+			read_amp_name();
 		}
 		else if (_sub_cmd == 0x27) {
-			DEBUG_PRINTLN("Storing HW preset");
+			DEBUG_PRINTLN("03 27 - Storing HW preset");
 			read_store_hardware_preset();
 		}
 		else if (_sub_cmd == 0x37) {
-			DEBUG_PRINTLN("Reading effect param");
+			DEBUG_PRINTLN("03 37 - Reading effect param");
 			read_effect_parameter();
 		}
 		else if (_sub_cmd == 0x38 || _sub_cmd == 0x10) {
-			DEBUG_PRINTLN("Reading HW preset");
+			DEBUG_PRINTLN("03 38/10 - Reading HW preset");
 			read_hardware_preset();
 		}
 		else {
@@ -643,9 +644,9 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	else if (_cmd == 0x04 || _cmd == 0x05 ) {
 		DEBUG_PRINT("ACK number ");
 		DEBUG_PRINTLN(last_message_num_);
-		AckData ack = { last_message_num_, _sub_cmd };
+		AckData ack = { last_message_num_, _cmd, _sub_cmd };
 		acknowledgments.push_back(ack);
-		DEBUG_PRINTF("Acknowledgment for command %s\n", SparkHelper::intToHex(_sub_cmd).c_str());
+		DEBUG_PRINTF("Acknowledgment for command %s %s\n", SparkHelper::intToHex(_cmd).c_str(), SparkHelper::intToHex(_sub_cmd).c_str());
 	}
 	else {
 		// unprocessed command (likely the initial ones sent from the app

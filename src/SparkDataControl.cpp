@@ -831,8 +831,17 @@ void SparkDataControl::handleAppModeResponse() {
 
 		if (lastMessageType == MSG_TYPE_HWPRESET) {
 			DEBUG_PRINTLN("Received HW Preset response");
-			activeBank_ = pendingBank_ = 0;
-			activePresetNum_ = spark_ssr.currentPresetNumber();
+			int spark_presetNumber = spark_ssr.currentPresetNumber();
+
+			// only change active presetNumber if new number is between 1 and 4,
+			// otherwise it is a custom preset number and can be ignored
+			if(spark_presetNumber >= 1 && spark_presetNumber <= 4){
+				activeBank_ = pendingBank_ = 0;
+				activePresetNum_= spark_presetNumber;
+			}
+			else {
+				DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
+			}
 			printMessage = true;
 		}
 
@@ -872,26 +881,28 @@ void SparkDataControl::handleIncomingAck() {
 	// if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
 	// confirm pending preset into active
 	AckData lastAck = spark_ssr.getLastAckAndEmpty();
-
-	if (lastAck.subcmd == 0x01) {
-		// only execute preset number change on first ack for preset change
-		if (customPresetNumberChangePending) {
-			current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-			sendMessageToBT(current_msg);
-			customPresetNumberChangePending = false;
+	if (lastAck.cmd == 0x04){
+		DEBUG_PRINTLN("Received ACK");
+		if (lastAck.subcmd == 0x01) {
+			// only execute preset number change on first ack for preset change
+			if (customPresetNumberChangePending) {
+				current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
+				sendMessageToBT(current_msg);
+				customPresetNumberChangePending = false;
+				activePreset_ = pendingPreset_;
+				Serial.println("OK");
+			}
+		}
+		if (lastAck.subcmd == 0x38) {
+			DEBUG_PRINTLN("Received ACK for 0x38 command, getting preset from Spark.");
+			getCurrentPresetFromSpark();
 			activePreset_ = pendingPreset_;
 			Serial.println("OK");
 		}
-	}
-	if (lastAck.subcmd == 0x38) {
-		DEBUG_PRINTLN("Received ACK for 0x38 command, getting preset from Spark.");
-		getCurrentPresetFromSpark();
-		activePreset_ = pendingPreset_;
-		Serial.println("OK");
-	}
-	if (lastAck.subcmd == 0x15) {
-		activePreset_ = pendingPreset_;
-		Serial.println("OK");
+		if (lastAck.subcmd == 0x15) {
+			activePreset_ = pendingPreset_;
+			Serial.println("OK");
+		}
 	}
 }
 

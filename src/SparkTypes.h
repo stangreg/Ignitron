@@ -114,7 +114,9 @@ struct CmdData {
 
 struct AckData {
 	byte msg_num;
+	byte cmd;
 	byte subcmd;
+
 };
 
 #endif
