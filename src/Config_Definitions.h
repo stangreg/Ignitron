@@ -26,7 +26,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.1.0";
+const string VERSION = "1.6.0";
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 	25
