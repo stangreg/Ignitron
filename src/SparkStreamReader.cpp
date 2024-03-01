@@ -20,15 +20,6 @@ string SparkStreamReader::getJson(){
 }
 
 void SparkStreamReader::setMessage(vector<ByteVector> msg_){
-
-	/*
-	DEBUG_PRINT("Processing data:");
-	for (auto block : msg_){
-		DEBUG_PRINTVECTOR(block);
-		DEBUG_PRINTLN();
-	}
-	DEBUG_PRINTLN();
-	 */
 	unstructured_data = msg_;
 	message.clear();
 }
@@ -433,13 +424,8 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 	block_content.clear();
 	message.clear();
 
-	//DEBUG_PRINTLN("Structuring data..:");
-	//SparkHelper::printDataAsHexString(unstructured_data);
 	for (auto block : unstructured_data) {
-		//DEBUG_PRINTLN("Processing block");
-		//SparkHelper::printByteVector(block);
-		//DEBUG_PRINTLN();
-		//DEBUG_PRINTF("Current heap size: %d\n", ESP.getFreeHeap());
+
 		int block_length;
 		if(processHeader){
 			block_length = block[6];
@@ -466,10 +452,8 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 		else {
 			chunk.assign(block.begin(), block.end());
 		}
-		//DEBUG_PRINTF("Assigned block of size %d", chunk.size());
 
 		for (auto chunk_byte : chunk) {
-			//DEBUG_PRINT(SparkHelper::intToHex(chunk_byte).c_str());
 			block_content.push_back(chunk_byte);
 		} // FOR chunk_byte
 
@@ -496,8 +480,8 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 				chunk_temp = {};
 			}
 		}
-		DEBUG_PRINTLN("Split at F7");
 
+		vector<ByteVector> = convertDataTo8Bit(chunks);
 
 		vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
@@ -570,7 +554,6 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 	} // else (Block starts with F001)
 	return true;
 }
-
 
 void SparkStreamReader::set_interpreter (ByteVector _msg) {
 	msg = _msg;
