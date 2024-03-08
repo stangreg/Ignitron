@@ -481,8 +481,6 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 			}
 		}
 
-		vector<ByteVector> = convertDataTo8Bit(chunks);
-
 		vector<CmdData> chunk_8bit = {};
 		for (auto chunk : chunks) {
 			last_message_num_ = chunk[2];
@@ -653,12 +651,13 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
 	byte cmd = blk[20];
 	byte sub_cmd = blk[21];
 
-	byte msg_to_spark[2] = { '\x53', '\xfe' };
+	byte msg_to_spark[2] = { 0x53, 0xFE };
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 	if (msg_to_spark_comp == 0 && cmd == 0x01 && sub_cmd != 0x04) {
 		// the app sent a message that needs a response
 		return tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
 	}
+
 	return tuple<bool, byte, byte>(false, 0, 0);
 }
 
@@ -671,46 +670,57 @@ AckData SparkStreamReader::getLastAckAndEmpty(){
 	return lastAck;
 }
 
-int SparkStreamReader::processBlock(ByteVector blk){
-
-	int retValue = MSG_PROCESS_RES_INCOMPLETE;
+ByteVector SparkStreamReader::preProcessBlock(ByteVector blk) {
 
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the previous one.
-	if (!(blk[0] == 0x01 && blk[1] == 0xFE)){ // check if block needs to be appended to earlier block
-		// Check if current block starts with F0 01
-		// if block starts with F001, check if previous block ends with F7.
-		// If this is not the case, throw away everything before adding current block
-		bool validStart = (blk[0] == 0xF0 && blk[1] == 0x01);
-		if ( validStart && response.size() > 0){
-			ByteVector previousBlock = response.back();
-			if (previousBlock.size() > 0) {
-				byte lastByte = previousBlock.back();
-				if (lastByte != 0xF7) {
-					DEBUG_PRINTLN("Old block not ending properly, clearing buffer.");
-					response.clear();
-				}
+
+
+	// if message starts with 01 FE, we can return adn process normally
+	if (blk[0] == 0x01 && blk[1] == 0xFE){
+		return blk;
+	}
+
+	// check if block needs to be appended to earlier block
+	// Check if current block starts with F0 01
+	// if block starts with F001, check if previous block ends with F7.
+	// If this is not the case, throw away everything before adding current block
+	bool validStart = (blk[0] == 0xF0 && blk[1] == 0x01);
+	if ( validStart && response.size() > 0){
+		ByteVector previousBlock = response.back();
+		if (previousBlock.size() > 0) {
+			byte lastByte = previousBlock.back();
+			if (lastByte != 0xF7) {
+				DEBUG_PRINTLN("Old block not ending properly, clearing buffer.");
+				response.clear();
 			}
 		}
-		if (!validStart) {
-			//DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
-			if (response.size() > 0 ){
-				ByteVector lastChunk = response.back();
-				for (auto by: blk){
-					lastChunk.push_back(by);
-				}
-				blk = lastChunk;
-				response.pop_back();
+	}
+	if (!validStart) {
+		//DEBUG_PRINTLN("Received block with no header start, appending to previous (if present)");
+		if (response.size() > 0 ){
+			ByteVector lastChunk = response.back();
+			for (auto by: blk){
+				lastChunk.push_back(by);
 			}
-			// Invalid start and response empty => throw away block
-			else {
-				blk.clear();
-			}
-			//if current block starts with 01FE, check if last block was complete, otherwise remove from response
-
+			blk = lastChunk;
+			response.pop_back();
+		}
+		// Invalid start and response empty => throw away block
+		else {
+			blk.clear();
 		}
 	}
 
+	return blk;
+}
+
+
+int SparkStreamReader::processBlock(ByteVector blk_to_process){
+
+	int retValue = MSG_PROCESS_RES_INCOMPLETE;
+
+	ByteVector blk = preProcessBlock(blk_to_process);
 
 	// Process:
 	// Read a block
@@ -739,98 +749,91 @@ int SparkStreamReader::processBlock(ByteVector blk){
 		read_message(false);
 		response.clear();
 		retValue = MSG_PROCESS_RES_COMPLETE;
+		return retValue;
 
 	}
+
+
 	// Block starts with 01FE and is long enough
-	else {
+	// Read meta data of block
+	int blk_len = blk[6];
+	byte dir[2] = { blk[4], blk[5] };
+	byte seq = blk[18];
+	byte cmd = blk[20];
+	byte sub_cmd = blk[21];
 
-		int blk_len = blk[6];
-		byte direction[2] = { blk[4], blk[5] };
-		byte seq = blk[18];
-		byte cmd = blk[20];
-		byte sub_cmd = blk[21];
+	//Check if announced size matches real size, otherwise skip (and wait for more data);
+	if(blk_len != blk.size()){
+		DEBUG_PRINTLN("Message size not matching announced size, no further processing.");
+		return retValue;
+	}
 
-		//Check if announced size matches real size, otherwise skip (and wait for more data);
-		if(blk_len == blk.size()){
-			byte msg_to_spark[2] = { '\x53', '\xfe' };
-			int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
 
-			// now we need to see if this is the last block
+	bool msg_to_spark = dir[0] == 0x53 && dir[1] == 0xFE;
+	bool msg_from_spark = dir[0] == 0x41 && dir[1] == 0xFF;
+	// now we need to see if this is the last block
 
-			// if the block length is less than the max size then
-			// definitely last block
-			// otherwise we check either directly for the message counter,
-			// or we check if the block end with 0xF7. Then we can search for the last
-			// 0xF001 occurrence and check the message count.
+	// if the block length is less than the max size then
+	// definitely last block
+	// otherwise we check either directly for the message counter,
+	// or we check if the block end with 0xF7. Then we can search for the last
+	// 0xF001 occurrence and check the message count.
+	if (msg_to_spark) {
+		if (blk_len < 0xAD) {
+			msg_last_block = true;
+		} else {
+			// this is sent to Spark so will have a chunk header at top
+			int num_chunks = blk[23];
+			int this_chunk = blk[24];
+			if ((this_chunk + 1) == num_chunks) {
+				msg_last_block = true;
+			}
+		}
+	}
 
-			if (msg_to_spark_comp == 0) {
-				if (blk_len < 0xad) {
-					msg_last_block = true;
-				} else {
-					// this is sent to Spark so will have a chunk header at top
-					int num_chunks = blk[23];
-					int this_chunk = blk[24];
-					if ((this_chunk + 1) == num_chunks) {
-						msg_last_block = true;
-					}
-				}
+	if (msg_from_spark) {
+		if (blk_len < 0x6A) {
+			// if the message is smaller than the largest size possible for block, definitely the last block
+			msg_last_block = true;
+		}
+		// if message ends with F7 we can check if that was the last block. Otherwise there will be more.
+		else if (blk.back() == 0xF7) {
+			// this is from Spark so chunk header could be anywhere
+			// so search from the end
+			ByteVector startSequence = { 0xF0, 0x01 };
+			int pos = SparkHelper::searchSubVector(blk, startSequence);
+
+			// If F0 01 not found or not sufficient number of bytes following
+			if (pos >= blk.size() - 8) {
+				Serial.println("ERROR :Chunk Header not found or chunk not complete");
 			}
 
-			byte msg_from_spark[2] = { '\x41', '\xff' };
-			int msg_from_spark_comp = memcmp(direction, msg_from_spark,
-					sizeof(direction));
-			if (msg_from_spark_comp == 0) {
-				if (blk_len < 0x6a) {
-					// if the message is smaller than the largest size possible for block, definitely the last block
-					msg_last_block = true;
-				}
-				// if message ends with F7 we can check if that was the last block. Otherwise there will be more.
-				else if (blk[blk.size() - 1] == '\xf7') {
-					// this is from Spark so chunk header could be anywhere
-					// so search from the end
-					int pos = -1;
-					for (int i = blk.size() - 2; i >= 0; i--) {
-						if (blk[i] == '\xf0' && blk[i + 1] == '\x01') {
-							pos = i;
-							break;
-						}
-					}
-					if (pos >= 0) {
-						int num_chunks = blk[pos + 7];
-						int this_chunk = blk[pos + 8];
-						if ((this_chunk + 1) == num_chunks) {
-							msg_last_block = true;
-						} // if this_chunk+1 == num_chunks
-					} //pos >= 0
-					else {
-						Serial.println("Chunk Header not found");
-					}
-				} //if message ends with F7
-			} // Message is from Spark
-			//Process data if the block just analyzed was the last
-			if (msg_last_block) {
-				msg_last_block = false;
-				setMessage(response);
-				read_message(true);
-				response.clear();
-				retValue = MSG_PROCESS_RES_COMPLETE;
-			} // msg_last_block
-		}
-		// If length not equal to announced length
+			// F0 01 string found and sufficient bytes following
+			int num_chunks = blk[pos + 7];
+			int this_chunk = blk[pos + 8];
+			if ((this_chunk + 1) == num_chunks) {
+				msg_last_block = true;
+			} // if this_chunk+1 == num_chunks
+		} //if message ends with F7
+	} // Message is from Spark
 
-		// Message is not complete, has not been processed yet
+	//Process data if the block just analyzed was the last
+	if (msg_last_block) {
+		msg_last_block = false;
+		setMessage(response);
+		read_message(true);
+		response.clear();
+		retValue = MSG_PROCESS_RES_COMPLETE;
+	} // msg_last_block
+
+	// Message is not complete, has not been processed yet
 		// if request was an initiating one from the app, return value for INITIAL message,
 		// so SparkDataControl knows how to notify.
 		// so notifications will be triggered
-
-		else {
-			DEBUG_PRINTLN("Message size not matching announced size, no further processing.");
-		}
-
 		if(cmd == 0x02){
 			retValue = MSG_PROCESS_RES_REQUEST;
 		}
-	}
+
 	return retValue;
 }
 
@@ -855,18 +858,14 @@ vector<CmdData> SparkStreamReader::read_message(bool processHeader) {
 
 bool SparkStreamReader::isValidBlockWithoutHeader(ByteVector blk){
 
+	// Checks done:
+	// 1. Block has a length of at least 3
+	// 2. Block starts with F0 01
+	// 3. Block ends with F7
+
 	if (blk.size() < 3) return false;
-
-	byte blk_start[2] = { blk[0], blk[1]};
-	byte valid_start[2] = { 0xF0, 0x01 };
-
-	int valid_start_check = memcmp(blk_start, valid_start,
-			sizeof(valid_start));
-
-	if ( valid_start_check != 0) return false;
-
-	byte blk_end = blk[blk.size()-1];
-	if (blk_end != 0xF7) return false;
+	if (blk[0] != 0xF0 || blk[1] != 0x01) return false;
+	if (blk.back() != 0xF7) return false;
 
 	return true;
 
@@ -890,3 +889,4 @@ void SparkStreamReader::read_amp_name() {
 	ampName_ = ampName;
 
 }
+

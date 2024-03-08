@@ -84,6 +84,7 @@ private:
 	void read_store_hardware_preset();
 	void read_preset();
 
+	ByteVector preProcessBlock(ByteVector blk);
 
 	// Functions to structure and process input data (high level)
 	vector<CmdData> read_message(bool processHeader=true);

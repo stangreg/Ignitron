@@ -47,6 +47,8 @@ public:
 	static int getFXIndexFromBtnGpio(int btn_gpio);
 	static int getLedGpio(int btn_number);
 	static int getFXIndexFromButtonNumber(int btn_number);
+
+	static int searchSubVector(ByteVector vectorToSearchIn, ByteVector vectorToFind);
 };
 
 #endif

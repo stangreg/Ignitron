@@ -125,9 +125,9 @@ bool SparkBLEControl::connectToServer() {
 		 Min interval: 12 * 1.25ms = 15, Max interval: 12 * 1.25ms = 15, 0 latency, 51 * 10ms = 510ms timeout
 		 */
 		//pClient->setConnectionParams(12, 12, 0, 51);
-		pClient->setConnectionParams(120, 120, 0, 60);
+		pClient->setConnectionParams(32, 160, 0, 500);
 		/** Set how long we are willing to wait for the connection to complete (seconds), default is 30. */
-		pClient->setConnectTimeout(10);
+		pClient->setConnectTimeout(15);
 		if (!pClient->connect(advDevice)) {
 			/** Created a client but failed to connect, don't need to keep it as it has no data */
 			NimBLEDevice::deleteClient(pClient);

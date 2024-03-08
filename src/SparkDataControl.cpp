@@ -757,6 +757,7 @@ void SparkDataControl::handleSendingAck(ByteVector blk) {
 	// are also returned to send back to requester
 	tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
 	if (ackNeeded) {
+		DEBUG_PRINTLN("ACK required");
 		if (operationMode_ == SPARK_MODE_AMP) {
 			ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
 		} else {

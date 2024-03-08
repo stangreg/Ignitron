@@ -281,7 +281,7 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 	//TODO: split into sub functions
-	DEBUG_PRINT("END MESSAGE NUMBER: ");
+	DEBUG_PRINT("MESSAGE NUMBER: ");
 	DEBUG_PRINT(msg_number);
 	DEBUG_PRINTLN();
 

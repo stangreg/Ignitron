@@ -157,3 +157,10 @@ int SparkHelper::getFXIndexFromButtonNumber(int btn_number){
 		break;
 	}
 }
+
+int SparkHelper::searchSubVector(ByteVector vectorToSearchIn,
+		ByteVector vectorToFind) {
+	auto it = std::search(vectorToSearchIn.begin(), vectorToSearchIn.end(), vectorToFind.begin(), vectorToFind.end());
+	return it - vectorToSearchIn.begin();
+
+}
