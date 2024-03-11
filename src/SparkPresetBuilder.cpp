@@ -9,6 +9,7 @@
 
 SparkPresetBuilder::SparkPresetBuilder() {
 	presetBanksNames = {};
+	resetHWPresets();
 }
 
 
@@ -136,6 +137,9 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre){
 	if(bank > presetBanksNames.size()){
 		Serial.println("Requested bank out of bounds.");
 		return retPreset;
+	}
+	if (bank == 0){
+		return hwPresets.at(pre-1);
 	}
 	string presetFilename = "/"+presetBanksNames[bank-1][pre-1];
 	string presetJsonString;
@@ -289,4 +293,18 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 	return DELETE_PRESET_UNKNOWN_ERROR;
 }
 
+void SparkPresetBuilder::insertHWPreset(int number, Preset preset) {
 
+	if (number <0 || number > 3){
+		Serial.println("ERROR: HW Preset not inserted, preset number out of bounds.");
+		return;
+	}
+	hwPresets.at(number) = preset;
+
+}
+
+void SparkPresetBuilder::resetHWPresets() {
+	hwPresets.clear();
+	Preset examplePreset;
+	hwPresets = {examplePreset, examplePreset, examplePreset, examplePreset };
+}

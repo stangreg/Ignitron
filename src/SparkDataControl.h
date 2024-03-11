@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <queue>
+#include <stdexcept>
 #include <Arduino.h>
 #include "Config_Definitions.h"
 #include "SparkBLEControl.h"
@@ -41,6 +42,7 @@ public:
 	virtual ~SparkDataControl();
 
 	int init(int op_mode);
+	void resetStatus();
 	void setDisplayControl(SparkDisplayControl *display);
 	bool checkBLEConnection();
 	bool isAmpConnected();
@@ -64,6 +66,9 @@ public:
 	bool getAmpName();
 	// Switch to a selected preset of the current bank
 	bool switchPreset(int pre, bool isInitial);
+
+	// Read in all HW presets
+	static void readHWPresets();
 	// Switch effect on/off
 	bool switchEffectOnOff(string fx_name, bool enable);
 	bool toggleEffect(int fx_identifier);
@@ -136,6 +141,15 @@ public:
 	int& operationMode() {
 		return operationMode_;
 	}
+
+	bool& isInitBoot() {
+		return isInitBoot_;
+	}
+
+	const bool& isInitHWRead() const{
+		return isInitHWRead_;
+	}
+
 
 	const int currentBTMode() const {
 		return currentBTMode_;
@@ -240,6 +254,12 @@ private:
 	static int sparkAmpType;
 	static string sparkAmpName;
 	static bool with_delay;
+
+	// keep track which HW presets have been read so far
+	static int initialHWpreset;
+	static int currentRequestedHWPreset;
+	static bool isInitBoot_;
+	static bool isInitHWRead_;
 
 	int lastUpdateCheck = 0;
 	static byte nextMessageNum;

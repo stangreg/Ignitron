@@ -719,7 +719,7 @@ ByteVector SparkStreamReader::preProcessBlock(ByteVector blk) {
 int SparkStreamReader::processBlock(ByteVector blk_to_process){
 
 	int retValue = MSG_PROCESS_RES_INCOMPLETE;
-
+	DEBUG_PRINTLN("Processing block");
 	ByteVector blk = preProcessBlock(blk_to_process);
 
 	// Process:

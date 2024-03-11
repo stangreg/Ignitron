@@ -211,7 +211,7 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 		data_remainder.clear();
 		// Calculating if next chunk fits into current block or if needs to be split
 		remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size()
-									- current_chunk.size();
+											- current_chunk.size();
 		remaining_space = MAX_BLOCK_SIZE - current_block.size();
 
 		// Chunk fits and space is left
@@ -399,12 +399,14 @@ vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset)
 	if (hw_preset == -1) {
 		add_byte(0x10);
 		add_byte(0x00);
-		for (int i=0; i<30; i++){
-			add_byte(0x00);
-		}
 	} else {
 		add_byte(0x00);
 		add_byte((byte)hw_preset-1);
+	}
+
+	// add trailing 30 bytes of 00
+	for (int i=0; i<30; i++){
+		add_byte(0x00);
 	}
 
 

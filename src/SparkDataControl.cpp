@@ -47,6 +47,11 @@ int SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = "Spark 40";
 bool SparkDataControl::with_delay = false;
 
+int SparkDataControl::initialHWpreset = 1;
+int SparkDataControl::currentRequestedHWPreset = 0;
+bool SparkDataControl::isInitBoot_ = true;
+bool SparkDataControl::isInitHWRead_ = true;
+
 SparkDataControl::SparkDataControl() {
 	//init();
 	bleControl = new SparkBLEControl(this);
@@ -253,8 +258,12 @@ void SparkDataControl::bleNotificationCallback(
 	DEBUG_PRINT("Incoming block: ");
 	DEBUG_PRINTVECTOR(chunk);
 	DEBUG_PRINTLN();
+	//DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
 	// Add incoming data to message queue for processing
 	msgQueue.push(chunk);
+	//DEBUG_PRINTF("Seding back data via notify.");
+	//vector<ByteVector> notifyVector = { chunk };
+	//bleControl->writeBLE(notifyVector, false, false);
 
 }
 
@@ -832,6 +841,7 @@ void SparkDataControl::handleAppModeResponse() {
 
 		if (lastMessageType == MSG_TYPE_HWPRESET) {
 			DEBUG_PRINTLN("Received HW Preset response");
+
 			int spark_presetNumber = spark_ssr.currentPresetNumber();
 
 			// only change active presetNumber if new number is between 1 and 4,
@@ -848,6 +858,17 @@ void SparkDataControl::handleAppModeResponse() {
 
 		if (lastMessageType == MSG_TYPE_PRESET) {
 			DEBUG_PRINTLN("Last message was a preset change.");
+			if (isInitHWRead_){
+				Preset receivedPreset = spark_ssr.currentSetting();
+				presetBuilder.insertHWPreset(receivedPreset.presetNumber, receivedPreset);
+				initialHWpreset++;
+				if (initialHWpreset > 4) {
+					isInitHWRead_ = false;
+				}
+				else {
+					readHWPresets();
+				}
+			}
 			printMessage = true;
 		}
 
@@ -885,7 +906,7 @@ void SparkDataControl::handleIncomingAck() {
 	if (lastAck.cmd == 0x04){
 		DEBUG_PRINTLN("Received ACK");
 		if (lastAck.subcmd == 0x01) {
-			// only execute preset number change on first ack for preset change
+			// only execute preset number change on last ack for preset change
 			if (customPresetNumberChangePending) {
 				current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
 				sendMessageToBT(current_msg);
@@ -896,8 +917,18 @@ void SparkDataControl::handleIncomingAck() {
 		}
 		if (lastAck.subcmd == 0x38) {
 			DEBUG_PRINTLN("Received ACK for 0x38 command, getting preset from Spark.");
-			getCurrentPresetFromSpark();
-			activePreset_ = pendingPreset_;
+			// getCurrentPresetFromSpark();
+			if (activeBank_ == 0) {
+				try {
+					activePreset_ = presetBuilder.getPreset(0, activePresetNum_);
+				}
+				catch(std::out_of_range& exception){
+					getCurrentPresetFromSpark();
+				}
+			}
+			else {
+				activePreset_ = pendingPreset_;
+			}
 			Serial.println("OK");
 		}
 		if (lastAck.subcmd == 0x15) {
@@ -927,5 +958,30 @@ void SparkDataControl::setAmpParameters() {
 	spark_msg.maxChunkSizeFromSpark() = 0x19;
 	spark_msg.maxBlockSizeFromSpark() = 0x6A;
 
+
+}
+
+void SparkDataControl::readHWPresets() {
+
+	// TODO Does not work yet, what is needed:
+	// for numbers 1 to four
+	//   request preset
+	//   done. On response: increase counter, request next
+	//   until all are read.
+	if (isInitHWRead_ && initialHWpreset != currentRequestedHWPreset) {
+		Serial.printf("Reading initial HW preset %d\n", initialHWpreset);
+		current_msg = spark_msg.get_current_preset(nextMessageNum, initialHWpreset);
+		sendMessageToBT(current_msg);
+		currentRequestedHWPreset = initialHWpreset;
+	}
+
+}
+
+void SparkDataControl::resetStatus() {
+	isInitBoot_ = true;
+	isInitHWRead_ = true;
+	initialHWpreset = 1;
+	currentRequestedHWPreset = 0;
+	presetBuilder.resetHWPresets();
 
 }

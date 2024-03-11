@@ -40,6 +40,7 @@ class SparkPresetBuilder{
 
 private:
 	vector<vector<string>> presetBanksNames;
+	vector<Preset> hwPresets;
 	eSPIFFS fileSystem;
 	const char* presetListFileName = "/PresetList.txt";
 	bool deletePresetFile(int bnk, int pre);
@@ -48,11 +49,14 @@ public:
 	SparkPresetBuilder();
 	//string getJsonFromPreset(preset pset);
 	void initializePresetListFromFS();
+	void resetHWPresets();
 	Preset getPreset(int bank, int preset);
 	int getNumberOfBanks();
 	Preset getPresetFromJson(char* json);
 	int storePreset(Preset newPreset, int bnk, int pre);
 	int deletePreset(int bnk, int pre);
+
+	void insertHWPreset(int number, Preset preset);
 
 };
 
