@@ -87,7 +87,7 @@ void loop() {
 	// Methods to call only in APP mode
 	if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
 		while (!(spark_dc.checkBLEConnection())) {
-			spark_display.update(isInitBoot);
+			spark_display.update(spark_dc.isInitBoot());
 			spark_bh.readButtons();
 		}
 

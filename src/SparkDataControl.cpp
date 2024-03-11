@@ -176,8 +176,11 @@ void SparkDataControl::checkForUpdates() {
 	// Check if active preset has been updated
 	// If so, update the preset variables
 	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
-		pendingPreset_  = spark_ssr.currentSetting();
-		activePreset_ = pendingPreset_;
+
+		if (!isInitHWRead_){
+			pendingPreset_  = spark_ssr.currentSetting();
+			activePreset_ = pendingPreset_;
+		}
 		spark_ssr.resetPresetUpdateFlag();
 	}
 
@@ -756,6 +759,7 @@ bool SparkDataControl::sendMessageToBT(vector<ByteVector> msg){
 	//spark_ssr.clearMessageBuffer();
 	DEBUG_PRINTLN("Sending message via BT.");
 	return bleControl->writeBLE(msg, with_delay);
+
 }
 
 void SparkDataControl::handleSendingAck(ByteVector blk) {
@@ -858,9 +862,13 @@ void SparkDataControl::handleAppModeResponse() {
 
 		if (lastMessageType == MSG_TYPE_PRESET) {
 			DEBUG_PRINTLN("Last message was a preset change.");
-			if (isInitHWRead_){
-				Preset receivedPreset = spark_ssr.currentSetting();
+			Preset receivedPreset = spark_ssr.currentSetting();
+			int presetNumber = receivedPreset.presetNumber;
+
+			if (activeBank_ == 0 && presetNumber < 4) {
 				presetBuilder.insertHWPreset(receivedPreset.presetNumber, receivedPreset);
+			}
+			if (isInitHWRead_){
 				initialHWpreset++;
 				if (initialHWpreset > 4) {
 					isInitHWRead_ = false;
@@ -912,17 +920,15 @@ void SparkDataControl::handleIncomingAck() {
 				sendMessageToBT(current_msg);
 				customPresetNumberChangePending = false;
 				activePreset_ = pendingPreset_;
-				Serial.println("OK");
 			}
 		}
 		if (lastAck.subcmd == 0x38) {
-			DEBUG_PRINTLN("Received ACK for 0x38 command, getting preset from Spark.");
+			DEBUG_PRINTLN("Received ACK for 0x38 command");
 			// getCurrentPresetFromSpark();
 			if (activeBank_ == 0) {
-				try {
-					activePreset_ = presetBuilder.getPreset(0, activePresetNum_);
-				}
-				catch(std::out_of_range& exception){
+				activePreset_ = presetBuilder.getPreset(0, activePresetNum_);
+				if (activePreset_.isEmpty){
+					DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
 					getCurrentPresetFromSpark();
 				}
 			}
