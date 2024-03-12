@@ -106,10 +106,11 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 	while (getline(stream, line)) {
 		line.erase(remove(line.begin(), line.end(), '\r' ), line.end());
 		line.erase(remove(line.begin(), line.end(), '\n' ), line.end());
-		string presetFilename = line;
+
 		// Lines starting with '-' and empty lines
 		// are ignored and can be used for comments in the file
 		if (line.rfind("-", 0) != 0 && !line.empty()) {
+			string presetFilename = line;
 			tmpVector.push_back(presetFilename);
 			if(tmpVector.size() == PRESETS_PER_BANK){
 				presetBanksNames.push_back(tmpVector);
@@ -128,7 +129,7 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 }
 
 Preset SparkPresetBuilder::getPreset(int bank, int pre){
-	Preset retPreset;
+	Preset retPreset{};
 	if(pre > PRESETS_PER_BANK){
 		Serial.println("Requested preset out of bounds.");
 		return retPreset;
@@ -175,7 +176,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 									presetNamePrefix.end());
 	//cut down name to 24 characters (a potential counter + .json will then increase to 30);
 	const int nameLength = presetNamePrefix.length();
-	presetNamePrefix = presetNamePrefix.substr(0,min(24, nameLength));
+	presetNamePrefix.resize(min(24, nameLength));
 
 	string presetFileName = presetNamePrefix + ".json";
 	Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
@@ -222,7 +223,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 				filestr += line + "\n";
 			}
 		}
-		else if( lineCount == insertPosition) {
+		else {
 			filestr += presetFileName + "\n";
 			// Adding old line so it is not lost.
 			filestr += line + "\n";
@@ -272,7 +273,7 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 				presetCount++;
 			}
 		}
-		else if( lineCount == deletePosition) {
+		else {
 			// Just increase the line counter, so deleted line
 			// does not get into new content.
 			// presetCounter not increased to count presets properly

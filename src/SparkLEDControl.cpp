@@ -15,6 +15,7 @@ SparkLEDControl::SparkLEDControl() {
 
 SparkLEDControl::SparkLEDControl(SparkDataControl* dc) {
 	spark_dc = dc;
+	activePreset = nullptr;
 	init();
 
 }

@@ -46,7 +46,7 @@ byte SparkStreamReader::read_byte() {
 }
 
 string SparkStreamReader::read_prefixed_string() {
-	int str_len = read_byte();
+	(void) read_byte();
 	// offset removed from string length byte to get real length
 	int real_str_len = read_byte() - 0xa0;
 	string a_str = "";
@@ -129,7 +129,7 @@ void SparkStreamReader::add_indent() {
 }
 
 void SparkStreamReader::del_indent() {
-	indent = indent.substr(1);
+	indent.resize(indent.size()-1);
 }
 
 void SparkStreamReader::add_separator() {
@@ -148,7 +148,8 @@ void SparkStreamReader::add_str(char* a_title, string a_str, char* nature) {
 	raw +=  a_str;
 	raw += " ";
 	char string_add[200] = "";
-	sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
+	int size = sizeof string_add;
+	snprintf(string_add, size, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
 	text += string_add;
 	if (strcmp(nature , "python") != 0) {
 		json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
@@ -158,12 +159,13 @@ void SparkStreamReader::add_str(char* a_title, string a_str, char* nature) {
 
 void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 	char string_add[100] = "";
-	sprintf(string_add, "%d ", an_int);
+	int size = sizeof string_add;
+	snprintf(string_add, size, "%d ", an_int);
 	raw += string_add;
-	sprintf(string_add, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
+	snprintf(string_add, size, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
 	text += string_add;
 	if (strcmp(nature , "python") != 0) {
-		sprintf(string_add, "%s\"%s\": %d", indent.c_str(), a_title, an_int);
+		snprintf(string_add, size, "%s\"%s\": %d", indent.c_str(), a_title, an_int);
 		json += string_add;
 	}
 }
@@ -173,38 +175,41 @@ void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
 
 	char string_add[100] = "";
-	sprintf(string_add, "%2.4f ", a_float);
+	int size = sizeof string_add;
+	snprintf(string_add, size, "%2.4f ", a_float);
 	raw += string_add;
-	sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
+	snprintf(string_add, size, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
 	text += string_add;
 	if (strcmp(nature , "python") == 0) {
-		sprintf(string_add, "%s%2.4f", indent.c_str(), a_float);
+		snprintf(string_add, size, "%s%2.4f", indent.c_str(), a_float);
 		json += string_add;
 	}
 	else {
-		sprintf(string_add, "%s\"%s\": %2.4f",  indent.c_str(), a_title, a_float);
+		snprintf(string_add, size, "%s\"%s\": %2.4f",  indent.c_str(), a_title, a_float);
 		json += string_add;
 	}
 }
 
 void SparkStreamReader::add_float_pure(float a_float, char* nature) {
 	char string_add[100] = "";
-	sprintf(string_add, "%2.4f ", a_float);
+	int size = sizeof string_add;
+	snprintf(string_add, size, "%2.4f ", a_float);
 	raw += string_add;
-	sprintf(string_add, "%2.4f ", a_float);
+	snprintf(string_add, size, "%2.4f ", a_float);
 	text += string_add;
-	sprintf(string_add, "%2.4f", a_float);
+	snprintf(string_add, size, "%2.4f", a_float);
 	json += string_add;
 }
 
 void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
 	char string_add[100] = "";
-	sprintf(string_add, "%s ", a_bool ? "true" : "false");
+	int size = sizeof string_add;
+	snprintf(string_add, size, "%s ", a_bool ? "true" : "false");
 	raw += string_add;
-	sprintf(string_add, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
+	snprintf(string_add, size, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
 	text += string_add;
 	if (strcmp(nature , "python") != 0) {
-		sprintf(string_add, "%s\"%s\": %s", indent.c_str(), a_title, a_bool ? "true" : "false");
+		snprintf(string_add, size, "%s\"%s\": %s", indent.c_str(), a_title, a_bool ? "true" : "false");
 		json += string_add;
 	}
 }
@@ -342,7 +347,9 @@ void SparkStreamReader::read_preset() {
 	add_newline();
 	//DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
 	// Read Pedal data (including string representations)
-	int num_effects = read_byte() - 0x90;
+
+	// !!! number of pedals not used currently, assumed constant as 7 !!!
+	//int num_effects = read_byte() - 0x90;
 	//DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
 	add_python("\"Pedals\": [");
 	add_newline();
@@ -540,7 +547,6 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 						curr_data = {this_cmd, this_sub_cmd, concat_data};
 						message.push_back(curr_data);
 						concat_data = {};
-						curr_data = {};
 					}
 				}
 				else {
@@ -631,12 +637,13 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	}
 	else {
 		// unprocessed command (likely the initial ones sent from the app
-
+#ifdef DEBUG
 		string cmd_str = SparkHelper::intToHex(_cmd);
 		string sub_cmd_str = SparkHelper::intToHex(_sub_cmd);
 		DEBUG_PRINTF("Unprocessed: %s, %s - ", cmd_str.c_str(),
 				sub_cmd_str.c_str());
 		DEBUG_PRINTVECTOR(msg); DEBUG_PRINTLN();
+#endif
 	}
 	return 1;
 }

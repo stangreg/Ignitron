@@ -157,7 +157,6 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 	// Subscribe to notifications from Spark
 	NimBLERemoteService *pSvc = nullptr;
 	NimBLERemoteCharacteristic *pChr = nullptr;
-	NimBLERemoteDescriptor *pDsc = nullptr;
 
 	if (pClient) {
 		pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
@@ -172,7 +171,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 					Serial.println("Notifications turned on");
 					// Descriptor 2902 needs to be activated in order to receive notifications
 					pChr->getDescriptor(BLEUUID((uint16_t) 0x2902))->writeValue(
-							(uint8_t*) notificationOn, 2, true);
+							notificationOn, 2, true);
 					// Subscribing to Spark characteristic
 					if (!pChr->subscribe(true, notifyCB)) {
 						Serial.println("Subscribe failed, disconnecting");

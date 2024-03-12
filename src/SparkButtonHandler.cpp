@@ -250,7 +250,9 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 	}
 	// Switch between APP mode and LOOPER mode
 	// Debug
+#ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
+#endif
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
 

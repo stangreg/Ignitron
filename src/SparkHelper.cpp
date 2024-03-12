@@ -35,7 +35,7 @@ void SparkHelper::printDataAsHexString(vector<ByteVector>data) {
 		for (auto by : elements) {
 			char hex_string[20];
 
-			sprintf(hex_string, "%02X", by);
+			snprintf(hex_string, 3, "%02X", by);
 			Serial.print(hex_string);
 			Serial.print(" ");
 		}

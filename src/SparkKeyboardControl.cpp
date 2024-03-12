@@ -39,7 +39,7 @@ void SparkKeyboardControl::init(){
 
 	// Special keyboard for YouTube
 	KeyboardMapping mapping2;
-	mapping1.mappingName = "YouTube";
+	mapping2.mappingName = "YouTube";
 	mapping2.keyboardShortPress = {
 			{   1,
 					0xD8, // KEY_LEFT_ARROW

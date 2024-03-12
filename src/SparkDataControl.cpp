@@ -158,10 +158,8 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 
 void SparkDataControl::checkForUpdates() {
 
-	ByteVector currentMsg;
 	while(msgQueue.size() > 0){
-		currentMsg = msgQueue.front();
-		processSparkData(currentMsg);
+		processSparkData(msgQueue.front());
 		msgQueue.pop();
 	}
 
@@ -385,11 +383,12 @@ void SparkDataControl::processPresetEdit(int presetNum) {
 }
 
 void SparkDataControl::processStorePresetRequest(int presetNum) {
-	int responseCode;
+
 	responseMsg_ = "";
 	if (presetEditMode_ == PRESET_EDIT_STORE) {
 		if (presetNumToEdit_ == presetNum
 				&& presetBankToEdit_ == pendingBank_) {
+			int responseCode;
 			responseCode = presetBuilder.storePreset(appReceivedPreset_,
 					pendingBank_, presetNum);
 			if (responseCode == STORE_PRESET_OK) {
@@ -840,8 +839,9 @@ void SparkDataControl::handleAppModeResponse() {
 
 	string msgStr = spark_ssr.getJson();
 	int lastMessageType = spark_ssr.lastMessageType();
-	bool printMessage = false;
+
 	if (operationMode_ == SPARK_MODE_APP) {
+		bool printMessage = false;
 
 		if (lastMessageType == MSG_TYPE_HWPRESET) {
 			DEBUG_PRINTLN("Received HW Preset response");

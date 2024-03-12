@@ -12,7 +12,7 @@ Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
 		&Wire, OLED_RESET);
 
 SparkDisplayControl::SparkDisplayControl() :
-		SparkDisplayControl(nullptr) {
+						SparkDisplayControl(nullptr) {
 
 }
 
@@ -54,7 +54,7 @@ void SparkDisplayControl::init(int mode) {
 
 void SparkDisplayControl::showInitialMessage() {
 	display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
-	SSD1306_WHITE);
+			SSD1306_WHITE);
 	display.setTextSize(2);
 
 	string modeText;
@@ -221,13 +221,6 @@ void SparkDisplayControl::showFX_SecondaryName() {
 	} else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
 		// Build string to show active FX
 		secondaryLinePreset = primaryLinePreset;
-		string currPedalStatus;
-		// blank placeholder for Amp
-		string fx_indicators_on[] =
-				{ "N", "C ", "D ", " ", "M ", "D ",
-				"R" };
-		string fx_indicators_off[] = { " ", "  ", "  ", " ", "  ", "  ",
-				" " };
 
 		// When we switched to FX mode, we always show the current selected preset
 		if (buttonMode == SWITCH_MODE_FX) {
@@ -237,9 +230,15 @@ void SparkDisplayControl::showFX_SecondaryName() {
 			// Iterate through the corresponding preset's pedals and show indicators if switched on
 			for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored
 				if (i != 3) { // Amp is on position 3, ignore
+					// blank placeholder for Amp
+					string fx_indicators_on[] =
+					{ "N", "C ", "D ", " ", "M ", "D ", "R" };
+					string fx_indicators_off[] = { " ", "  ", "  ", " ", "  ", "  ", " " };
+
+					string currPedalStatus;
 					Pedal currPedal = secondaryLinePreset->pedals[i];
 					currPedalStatus =
-							secondaryLinePreset->pedals[i].isOn ?
+							currPedal.isOn ?
 									fx_indicators_on[i] : fx_indicators_off[i];
 					secondaryLineText += currPedalStatus;
 				}
@@ -259,7 +258,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 		display.setCursor(display_x2, secondaryLinePosY);
 		display.print(secondaryLineText.c_str());
 	}
-	
+
 
 }
 
@@ -326,28 +325,28 @@ void SparkDisplayControl::initKeyboardLayoutStrings(){
 	string spacerText = "  ";
 
 	lowerButtonsShort = currentKeyboard.keyboardShortPress[0].display
-										.append(spacerText)
-										.append(currentKeyboard.keyboardShortPress[1].display)
-										.append(spacerText)
-										.append(currentKeyboard.keyboardShortPress[2].display)
-										.append(spacerText)
-										.append(currentKeyboard.keyboardShortPress[3].display);
+			.append(spacerText)
+			.append(currentKeyboard.keyboardShortPress[1].display)
+			.append(spacerText)
+			.append(currentKeyboard.keyboardShortPress[2].display)
+			.append(spacerText)
+			.append(currentKeyboard.keyboardShortPress[3].display);
 
 	upperButtonsShort = currentKeyboard.keyboardShortPress[4].display
-									.append(spacerText)
-									.append(currentKeyboard.keyboardShortPress[5].display);
+			.append(spacerText)
+			.append(currentKeyboard.keyboardShortPress[5].display);
 
 	lowerButtonsLong = currentKeyboard.keyboardLongPress[0].display
-									.append(spacerText)
-									.append(currentKeyboard.keyboardLongPress[1].display)
-									.append(spacerText)
-									.append(currentKeyboard.keyboardLongPress[2].display)
-									.append(spacerText)
-									.append(currentKeyboard.keyboardLongPress[3].display);
+			.append(spacerText)
+			.append(currentKeyboard.keyboardLongPress[1].display)
+			.append(spacerText)
+			.append(currentKeyboard.keyboardLongPress[2].display)
+			.append(spacerText)
+			.append(currentKeyboard.keyboardLongPress[3].display);
 
 	upperButtonsLong = currentKeyboard.keyboardLongPress[4].display
-									//.append(spacerText)
-									.append(currentKeyboard.keyboardLongPress[5].display);
+			//.append(spacerText)
+			.append(currentKeyboard.keyboardLongPress[5].display);
 
 }
 
@@ -447,11 +446,6 @@ void SparkDisplayControl::updateTextPositions() {
 		if (millis() - text_row_1_timestamp > text_scroll_delay){
 			display_x1 -= display_scroll_num1;
 			if (display_x1 < display_minX1) {
-				// the two ifs are required in case the preset name length is
-				// longer than the previous one and has scrolled already too far
-				if (display_x1 < display_minX1) {
-					display_x1 = display_minX1;
-				}
 				// Reset text
 				display_x1 = 0;
 				text_row_1_timestamp = millis();
@@ -467,11 +461,6 @@ void SparkDisplayControl::updateTextPositions() {
 		if (millis() - text_row_2_timestamp > text_scroll_delay){
 			display_x2 -= display_scroll_num2;
 			if (display_x2 < display_minX2) {
-				// the two ifs are required in case the preset name length is
-				// longer than the previous one and has scrolled already too far
-				if (display_x2 < display_minX2) {
-					display_x2 = display_minX2;
-				}
 				// Reset text
 				display_x2 = 0;
 				text_row_2_timestamp = millis();

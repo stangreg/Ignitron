@@ -164,11 +164,6 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 		block_prefix_size = 16;
 	}
 
-	int max_data_size = MAX_BLOCK_SIZE - block_prefix_size;
-
-	int block_size = min(MAX_BLOCK_SIZE,
-			SparkHelper::dataVectorNumOfBytes(all_chunks) + block_prefix_size);
-
 	//create block
 	ByteVector current_block = { };
 	ByteVector data_remainder;
@@ -179,7 +174,7 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 	while (all_chunks.size() > 0) {
 
 		if (new_block && with_header) {
-			block_size = min(MAX_BLOCK_SIZE,
+			int block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 					+ (int) data_remainder.size() + block_prefix_size);
 			current_block = block_header;
@@ -253,7 +248,7 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 	if (data_remainder.size() > 0) {
 		// New header needs to be created as only remainder is left if flag is set here
 		if (new_block && with_header) {
-			block_size = min(MAX_BLOCK_SIZE,
+			int block_size = min(MAX_BLOCK_SIZE,
 					SparkHelper::dataVectorNumOfBytes(all_chunks)
 					+ (int) data_remainder.size() + block_prefix_size);
 

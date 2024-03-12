@@ -11,7 +11,8 @@
 #include <array>
 #include <vector>
 #include <iomanip>
-#include <sstream>
+//#include <sstream>
+#include <cstdio>
 
 #include <Arduino.h>
 #include "Config_Definitions.h"
