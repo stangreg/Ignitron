@@ -99,11 +99,9 @@ void SparkLEDControl::updateLED_AMP() {
 
 			allLedOff();
 			// if the LED is off turn it on and vice-versa:
+			ledState = !ledState;
 			if (ledState == LOW) {
-				ledState = HIGH;
 				switchLED(presetNumToEdit, true);
-			} else {
-				ledState = LOW;
 			}
 		}
 

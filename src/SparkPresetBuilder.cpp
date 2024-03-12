@@ -130,7 +130,7 @@ void SparkPresetBuilder::initializePresetListFromFS(){
 Preset SparkPresetBuilder::getPreset(int bank, int pre){
 	Preset retPreset;
 	if(pre > PRESETS_PER_BANK){
-		Serial.println("Requested preset out of bounds.");
+		Serial.printf("Requested preset %i out of bounds.\n", pre);
 		return retPreset;
 	}
 

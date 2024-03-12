@@ -300,9 +300,10 @@ void SparkStreamReader::read_preset() {
 	// Read object (Preset main data)
 	//DEBUG_PRINTF("Free memory before reading preset: %d\n", xPortGetFreeHeapSize());
 	read_byte();
+	// TEST if +1 needs to be added to get the interval between 1 and 4
 	byte preset = read_byte();
 	//DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
-	currentSetting_.presetNumber = preset;
+	currentSetting_.presetNumber = preset + 1;
 	string uuid = read_string();
 	//DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
 	currentSetting_.uuid = uuid;

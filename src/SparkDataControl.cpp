@@ -345,6 +345,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			} // Else (custom preset)
 		} // else (preset changing)
 	} // if APP / LOOPER mode
+	// TODO implement way to only update active preset number when ACK received
 	if (retValue == true) {
 		activeBank_ = bnk;
 		activePresetNum_ = pre;
@@ -357,6 +358,8 @@ bool SparkDataControl::switchEffectOnOff(string fx_name, bool enable) {
 
 	Serial.printf("Switching %s effect %s...", enable ? "On" : "Off",
 			fx_name.c_str());
+	// Required to avoid having the wrong pending preset
+	pendingPreset_ = activePreset_;
 	for (int i = 0; i < pendingPreset_.pedals.size(); i++) {
 		Pedal currentPedal = pendingPreset_.pedals[i];
 		if (currentPedal.name == fx_name) {
@@ -846,13 +849,13 @@ void SparkDataControl::handleAppModeResponse() {
 		if (lastMessageType == MSG_TYPE_HWPRESET) {
 			DEBUG_PRINTLN("Received HW Preset response");
 
-			int spark_presetNumber = spark_ssr.currentPresetNumber();
+			int presetNumber = spark_ssr.currentPresetNumber();
 
 			// only change active presetNumber if new number is between 1 and 4,
 			// otherwise it is a custom preset number and can be ignored
-			if(spark_presetNumber >= 1 && spark_presetNumber <= 4){
+			if(presetNumber >= 1 && presetNumber <= 4){
 				activeBank_ = pendingBank_ = 0;
-				activePresetNum_= spark_presetNumber;
+				activePresetNum_= presetNumber;
 			}
 			else {
 				DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
@@ -938,7 +941,7 @@ void SparkDataControl::handleIncomingAck() {
 			Serial.println("OK");
 		}
 		if (lastAck.subcmd == 0x15) {
-			activePreset_ = pendingPreset_;
+			//activePreset_ = pendingPreset_;
 			Serial.println("OK");
 		}
 	}
