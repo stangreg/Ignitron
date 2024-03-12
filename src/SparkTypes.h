@@ -84,6 +84,7 @@ struct Preset {
 		version = description = icon = "";
 		bpm = 0.0;
 		filler = 0x00;
+		isEmpty = true;
 	}
 
 	string json;

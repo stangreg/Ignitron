@@ -926,7 +926,7 @@ void SparkDataControl::handleIncomingAck() {
 			DEBUG_PRINTLN("Received ACK for 0x38 command");
 			// getCurrentPresetFromSpark();
 			if (activeBank_ == 0) {
-				activePreset_ = presetBuilder.getPreset(0, activePresetNum_);
+				activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
 				if (activePreset_.isEmpty){
 					DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
 					getCurrentPresetFromSpark();

@@ -95,7 +95,7 @@ void loop() {
 		// On first boot, set the preset to Hardware setting 1.
 		// get all HW presets
 		spark_dc.readHWPresets();
-		if (spark_dc.isInitBoot() && !spark_dc.isInitHWRead()) {
+		if (spark_dc.isInitBoot()){ // && !spark_dc.isInitHWRead()) {
 			currentTimestamp = millis();
 			// only do initial request in defined intervals
 			if (currentTimestamp - lastInitialPresetTimestamp > initialRequestInterval) {
