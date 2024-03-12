@@ -442,7 +442,6 @@ void SparkBLEControl::onDisconnect(NimBLEServer *pServer_) {
 	Serial.println("Start advertising");
 	NimBLEDevice::startAdvertising();
 }
-;
 
 void SparkBLEControl::onDisconnect(NimBLEClient *pClient_) {
 	isAmpConnected_ = false;

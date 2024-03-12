@@ -8,11 +8,9 @@
 #include "SparkStreamReader.h"
 
 
-SparkStreamReader::SparkStreamReader(){
-	message = {};
-	unstructured_data = {};
-	msg = {};
-	msg_pos = 0;
+SparkStreamReader::SparkStreamReader() :
+message{}, unstructured_data{}, msg{}, msg_pos(0)
+{
 }
 
 string SparkStreamReader::getJson(){

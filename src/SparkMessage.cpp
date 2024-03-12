@@ -7,12 +7,9 @@
 
 #include "SparkMessage.h"
 
-SparkMessage::SparkMessage(){
-	data = {};
-	split_data8={};
-	split_data7={};
-	cmd=0;
-	sub_cmd=0;
+SparkMessage::SparkMessage() :
+data{}, split_data8{}, split_data7{}, cmd(0), sub_cmd(0)
+{
 }
 
 void SparkMessage::start_message (byte _cmd, byte _sub_cmd){

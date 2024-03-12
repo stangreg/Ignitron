@@ -7,8 +7,9 @@
 
 #include "SparkPresetBuilder.h"
 
-SparkPresetBuilder::SparkPresetBuilder() {
-	presetBanksNames = {};
+SparkPresetBuilder::SparkPresetBuilder() :
+presetBanksNames{}
+{
 	resetHWPresets();
 }
 
