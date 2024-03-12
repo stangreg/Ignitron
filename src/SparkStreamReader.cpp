@@ -150,7 +150,7 @@ void SparkStreamReader::add_str(char* a_title, string a_str, char* nature) {
 	char string_add[200] = "";
 	sprintf(string_add, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
 	text += string_add;
-	if (nature != "python") {
+	if (strcmp(nature , "python") != 0) {
 		json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
 	}
 }
@@ -162,7 +162,7 @@ void SparkStreamReader::add_int(char* a_title, int an_int, char* nature) {
 	raw += string_add;
 	sprintf(string_add, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
 	text += string_add;
-	if (nature != "python") {
+	if (strcmp(nature , "python") != 0) {
 		sprintf(string_add, "%s\"%s\": %d", indent.c_str(), a_title, an_int);
 		json += string_add;
 	}
@@ -177,7 +177,7 @@ void SparkStreamReader::add_float(char* a_title, float a_float, char* nature) {
 	raw += string_add;
 	sprintf(string_add, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
 	text += string_add;
-	if (nature == "python") {
+	if (strcmp(nature , "python") == 0) {
 		sprintf(string_add, "%s%2.4f", indent.c_str(), a_float);
 		json += string_add;
 	}
@@ -203,7 +203,7 @@ void SparkStreamReader::add_bool(char* a_title, boolean a_bool, char* nature) {
 	raw += string_add;
 	sprintf(string_add, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
 	text += string_add;
-	if (nature != "python") {
+	if (strcmp(nature , "python") != 0) {
 		sprintf(string_add, "%s\"%s\": %s", indent.c_str(), a_title, a_bool ? "true" : "false");
 		json += string_add;
 	}

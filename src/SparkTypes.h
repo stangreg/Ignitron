@@ -78,12 +78,20 @@ struct Preset {
 	boolean isEmpty = true;
 	static const int numberOfPedals = 7;
 
+	Preset(){
+		json = raw = text = "";
+		uuid = name = "";
+		version = description = icon = "";
+		bpm = 0.0;
+		filler = 0x00;
+	}
+
 	string json;
 	// Raw and text might not be filled (when read from the stored presets).
 	string raw;
 	string text;
 
-	int presetNumber;
+	int presetNumber = -1;
 	string uuid;
 	string name;
 	string version;
