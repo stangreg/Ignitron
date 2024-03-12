@@ -203,7 +203,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(vector<ByteVector> cmd, bool with_delay, bool response) {
+bool SparkBLEControl::writeBLE(const vector<ByteVector>& cmd, bool with_delay, bool response) {
 	if (pClient && pClient->isConnected()) {
 
 		NimBLERemoteService *pSvc = nullptr;
@@ -391,7 +391,7 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 }
 ;
 
-void SparkBLEControl::notifyClients(vector<ByteVector> msg) {
+void SparkBLEControl::notifyClients(const vector<ByteVector>& msg) {
 	if (pServer) {
 		NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) {

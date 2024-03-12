@@ -268,7 +268,7 @@ void SparkDataControl::bleNotificationCallback(
 
 }
 
-void SparkDataControl::processSparkData(ByteVector blk) {
+void SparkDataControl::processSparkData(ByteVector& blk) {
 
 	// Check if incoming message requires sending an acknowledgment
 	handleSendingAck(blk);
@@ -351,7 +351,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	return retValue;
 }
 
-bool SparkDataControl::switchEffectOnOff(string fx_name, bool enable) {
+bool SparkDataControl::switchEffectOnOff(const string& fx_name, bool enable) {
 
 	Serial.printf("Switching %s effect %s...", enable ? "On" : "Off",
 			fx_name.c_str());
@@ -438,9 +438,9 @@ void SparkDataControl::resetPresetEditResponse() {
 }
 
 void SparkDataControl::processDeletePresetRequest() {
-	int responseCode;
 	responseMsg_ = "";
 	if (presetEditMode_ == PRESET_EDIT_DELETE && activeBank_ > 0) {
+		int responseCode;
 		responseCode = presetBuilder.deletePreset(activeBank_,
 				activePresetNum_);
 		if (responseCode == DELETE_PRESET_OK
@@ -753,7 +753,7 @@ bool SparkDataControl::decreasePresetLooper(){
 	return switchPreset(selectedPresetNum, false);
 }
 
-bool SparkDataControl::sendMessageToBT(vector<ByteVector> msg){
+bool SparkDataControl::sendMessageToBT(const vector<ByteVector>& msg){
 	nextMessageNum++;
 	//spark_ssr.clearMessageBuffer();
 	DEBUG_PRINTLN("Sending message via BT.");
@@ -761,7 +761,7 @@ bool SparkDataControl::sendMessageToBT(vector<ByteVector> msg){
 
 }
 
-void SparkDataControl::handleSendingAck(ByteVector blk) {
+void SparkDataControl::handleSendingAck(const ByteVector& blk) {
 	bool ackNeeded;
 	byte seq, sub_cmd;
 

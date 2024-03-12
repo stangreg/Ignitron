@@ -36,20 +36,20 @@ public:
 	// convert a byte to a string hex representation
 	static string intToHex(byte by);
 	// print a vector of byte vectors;
-	static void printDataAsHexString(vector<ByteVector>data);
+	static void printDataAsHexString(const vector<ByteVector>& data);
 	// Print a byte vector
-	static void printByteVector(ByteVector vec);
+	static void printByteVector(const ByteVector& vec);
 	// get a byteVector from int value
 	//static ByteVector bytes(int value);
 
-	static int dataVectorNumOfBytes(vector<ByteVector> data);
+	static int dataVectorNumOfBytes(const vector<ByteVector>& data);
 
 	static int getButtonNumber(int btn_gpio);
 	static int getFXIndexFromBtnGpio(int btn_gpio);
 	static int getLedGpio(int btn_number);
 	static int getFXIndexFromButtonNumber(int btn_number);
 
-	static int searchSubVector(ByteVector vectorToSearchIn, ByteVector vectorToFind);
+	static int searchSubVector(const ByteVector& vectorToSearchIn, const ByteVector& vectorToFind);
 };
 
 #endif

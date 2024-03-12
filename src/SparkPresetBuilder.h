@@ -56,7 +56,7 @@ public:
 	int storePreset(Preset newPreset, int bnk, int pre);
 	int deletePreset(int bnk, int pre);
 
-	void insertHWPreset(int number, Preset preset);
+	void insertHWPreset(int number, const Preset& preset);
 
 };
 

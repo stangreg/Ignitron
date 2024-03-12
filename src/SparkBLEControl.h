@@ -106,7 +106,7 @@ public:
 	 *
 	 * @return TRUE if successful
 	 */
-	bool writeBLE(vector<ByteVector> cmd, bool with_delay = false, bool response = false);
+	bool writeBLE(const vector<ByteVector>& cmd, bool with_delay = false, bool response = false);
 	/**
 	 * @brief  Initializes Ignitron BLE as client to connect to the Spark Amp
 	 *
@@ -154,7 +154,7 @@ public:
 	 * so that the Spark App can connect to Ignitron
 	 *
 	 */
-	void notifyClients(vector<ByteVector> msg);
+	void notifyClients(const vector<ByteVector>& msg);
 
 	void stopBLEServer();
 

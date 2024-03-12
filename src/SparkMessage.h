@@ -59,26 +59,26 @@ private:
 	void buildChunkData(byte msg_number);
 	vector<ByteVector> buildMessage(int dir);
 	//ByteVector end_message();
-	void add_bytes(ByteVector bytes_8);
+	void add_bytes(const ByteVector& bytes_8);
 	void add_byte(byte by);
 
-	void add_string(string pack_str);
-	void add_long_string(string pack_str);
-	void add_prefixed_string(string pack_str, int length_override = 0);
+	void add_string(const string& pack_str);
+	void add_long_string(const string& pack_str);
+	void add_prefixed_string(const string& pack_str, int length_override = 0);
 	void add_float (float flt);
 	void add_onoff (boolean onoff);
-	byte calculate_checksum(ByteVector chunk);
+	byte calculate_checksum(const ByteVector& chunk);
 
 public:
 
 	SparkMessage();
 
 	// Command messages to send to Spark
-	vector<ByteVector> change_effect_parameter (byte msg_num, string pedal, int param, float val);
-	vector<ByteVector> change_effect (byte msg_num, string pedal1, string pedal2);
+	vector<ByteVector> change_effect_parameter (byte msg_num, const string& pedal, int param, float val);
+	vector<ByteVector> change_effect (byte msg_num, const string& pedal1, const string& pedal2);
 	vector<ByteVector> change_hardware_preset (byte msg_num, int preset_num);
-	vector<ByteVector> turn_effect_onoff (byte msg_num, string pedal, boolean enable);
-	vector<ByteVector> create_preset(Preset preset_data, int dir =
+	vector<ByteVector> turn_effect_onoff (byte msg_num, const string& pedal, boolean enable);
+	vector<ByteVector> create_preset(const Preset& preset_data, int dir =
 			DIR_TO_SPARK, byte msg_num = 0x00);
 	vector<ByteVector> get_current_preset_num(byte msg_num);
 	vector<ByteVector> get_current_preset(byte msg_num, int hw_preset = -1);

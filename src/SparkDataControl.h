@@ -55,7 +55,7 @@ public:
 			uint8_t *pData, size_t length, bool isNotify);
 
 	// methods to process any data from Spark (process with SparkStreamReader and send ack if required)
-	static void processSparkData(ByteVector blk);
+	static void processSparkData(ByteVector& blk);
 
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
@@ -70,7 +70,7 @@ public:
 	// Read in all HW presets
 	static void readHWPresets();
 	// Switch effect on/off
-	bool switchEffectOnOff(string fx_name, bool enable);
+	bool switchEffectOnOff(const string& fx_name, bool enable);
 	bool toggleEffect(int fx_identifier);
 	bool toggleButtonMode();
 	bool toggleLooperAppMode();
@@ -180,7 +180,7 @@ public:
 	int getMaxBlockSize(int direction);
 
 	// Functions for Spark AMP (Server mode)
-	void receiveSparkWrite(ByteVector blk);
+	//void receiveSparkWrite(const ByteVector& blk);
 	void triggerInitialBLENotifications();
 	void processPresetEdit(int presetNum = 0);
 	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
@@ -269,7 +269,7 @@ private:
 	void processDeletePresetRequest();
 	void setPresetDeletionFlag();
 	void updatePendingBankStatus();
-	static bool sendMessageToBT(vector<ByteVector> msg);
+	static bool sendMessageToBT(const vector<ByteVector>& msg);
 
 	// Retrieves the current preset from Spark (required for HW presets)
 	static bool getCurrentPresetFromSpark();
@@ -278,7 +278,7 @@ private:
 	bool processAction();
 
 	// methods to process any data from Spark (process with SparkStreamReader and send ack if required)
-	static void handleSendingAck(ByteVector blk);
+	static void handleSendingAck(const ByteVector& blk);
 	static void handleAmpModeRequest();
 	static void handleAppModeResponse();
 	static void handleIncomingAck();

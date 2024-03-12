@@ -293,7 +293,7 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
 }
 
-void SparkMessage::add_bytes(ByteVector bytes_8){
+void SparkMessage::add_bytes(const ByteVector& bytes_8){
 	for (byte by: bytes_8){
 		data.push_back(by);
 	}
@@ -303,7 +303,7 @@ void SparkMessage::add_byte(byte by){
 	data.push_back(by);
 }
 
-void SparkMessage::add_prefixed_string(string pack_str, int length_override){
+void SparkMessage::add_prefixed_string(const string& pack_str, int length_override){
 	int str_length = length_override;
 	if (str_length == 0) str_length = pack_str.size();
 	ByteVector byte_pack;
@@ -314,7 +314,7 @@ void SparkMessage::add_prefixed_string(string pack_str, int length_override){
 }
 
 
-void SparkMessage::add_string(string pack_str){
+void SparkMessage::add_string(const string& pack_str){
 	int str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((byte)(str_length + 0xa0));
@@ -322,7 +322,7 @@ void SparkMessage::add_string(string pack_str){
 	add_bytes (byte_pack);
 }
 
-void SparkMessage::add_long_string(string pack_str){
+void SparkMessage::add_long_string(const string& pack_str){
 	int str_length = pack_str.size();
 	ByteVector byte_pack;
 	byte_pack.push_back((0xD9));
@@ -408,7 +408,7 @@ vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset)
 	return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, string pedal, int param, float val){
+vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, const string& pedal, int param, float val){
 	cmd = 0x01;
 	sub_cmd = 0x04;
 
@@ -420,7 +420,7 @@ vector<ByteVector> SparkMessage::change_effect_parameter (byte msg_num, string p
 
 }
 
-vector<ByteVector> SparkMessage::change_effect (byte msg_num, string pedal1, string pedal2){
+vector<ByteVector> SparkMessage::change_effect (byte msg_num, const string& pedal1, const string& pedal2){
 	cmd = 0x01;
 	sub_cmd = 0x06;
 
@@ -454,7 +454,7 @@ vector<ByteVector> SparkMessage::get_amp_name(byte msg_num){
 
 }
 
-vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, string pedal, boolean enable){
+vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, const string& pedal, boolean enable){
 	cmd = 0x01;
 	sub_cmd = 0x15;
 
@@ -531,7 +531,7 @@ vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
 	return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::create_preset(Preset preset_data,
+vector<ByteVector> SparkMessage::create_preset(const Preset& preset_data,
 		int direction, byte msg_num) {
 
 	if (direction == DIR_TO_SPARK) {
@@ -597,7 +597,7 @@ vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
 
 }
 
-byte SparkMessage::calculate_checksum(ByteVector chunk) {
+byte SparkMessage::calculate_checksum(const ByteVector& chunk) {
 	byte current_sum = 0x00;
 	for (byte by : chunk) {
 		current_sum ^= by;

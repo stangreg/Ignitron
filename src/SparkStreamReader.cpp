@@ -19,7 +19,7 @@ string SparkStreamReader::getJson(){
 	return json;
 }
 
-void SparkStreamReader::setMessage(vector<ByteVector> msg_){
+void SparkStreamReader::setMessage(const vector<ByteVector>& msg_){
 	unstructured_data = msg_;
 	message.clear();
 }
@@ -144,7 +144,7 @@ void SparkStreamReader::add_python(char* python_str) {
 	json += indent + python_str;// + "\n";
 }
 
-void SparkStreamReader::add_str(char* a_title, string a_str, char* nature) {
+void SparkStreamReader::add_str(char* a_title, const string& a_str, char* nature) {
 	raw +=  a_str;
 	raw += " ";
 	char string_add[200] = "";
@@ -559,7 +559,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 	return true;
 }
 
-void SparkStreamReader::set_interpreter (ByteVector _msg) {
+void SparkStreamReader::set_interpreter (const ByteVector& _msg) {
 	msg = _msg;
 	msg_pos = 0;
 }
@@ -648,7 +648,7 @@ int SparkStreamReader::run_interpreter (byte _cmd, byte _sub_cmd) {
 	return 1;
 }
 
-tuple<bool, byte, byte> SparkStreamReader::needsAck(ByteVector blk){
+tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector& blk){
 
 	if(blk.size() < 22){ // Block is too short, does not need acknowledgement
 		return tuple<bool, byte, byte>(false, 0, 0);
@@ -677,15 +677,15 @@ AckData SparkStreamReader::getLastAckAndEmpty(){
 	return lastAck;
 }
 
-ByteVector SparkStreamReader::preProcessBlock(ByteVector blk) {
+void SparkStreamReader::preProcessBlock(ByteVector& blk) {
 
 	// Special behavior: When receiving messages from Spark APP, blocks might be split into two.
 	// This will reassemble the block by appending to the previous one.
 
 
-	// if message starts with 01 FE, we can return adn process normally
+	// if message starts with 01 FE, we can return and process normally
 	if (blk[0] == 0x01 && blk[1] == 0xFE){
-		return blk;
+		return;
 	}
 
 	// check if block needs to be appended to earlier block
@@ -719,15 +719,14 @@ ByteVector SparkStreamReader::preProcessBlock(ByteVector blk) {
 		}
 	}
 
-	return blk;
 }
 
 
-int SparkStreamReader::processBlock(ByteVector blk_to_process){
+int SparkStreamReader::processBlock(ByteVector& blk){
 
 	int retValue = MSG_PROCESS_RES_INCOMPLETE;
 	DEBUG_PRINTLN("Processing block");
-	ByteVector blk = preProcessBlock(blk_to_process);
+	preProcessBlock(blk);
 
 	// Process:
 	// Read a block
@@ -863,7 +862,7 @@ vector<CmdData> SparkStreamReader::read_message(bool processHeader) {
 	return message;
 }
 
-bool SparkStreamReader::isValidBlockWithoutHeader(ByteVector blk){
+bool SparkStreamReader::isValidBlockWithoutHeader(const ByteVector& blk){
 
 	// Checks done:
 	// 1. Block has a length of at least 3

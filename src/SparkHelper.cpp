@@ -26,16 +26,17 @@ byte SparkHelper::HexToByte(const string& hex) {
 
 string SparkHelper::intToHex(byte by) {
 	char hex_string[20];
-	sprintf(hex_string, "%02X", by);
+	int size = sizeof hex_string;
+	snprintf(hex_string, size, "%02X", by);
 	return hex_string;
 }
 
-void SparkHelper::printDataAsHexString(vector<ByteVector>data) {
+void SparkHelper::printDataAsHexString(const vector<ByteVector>& data) {
 	for (auto elements : data) {
 		for (auto by : elements) {
 			char hex_string[20];
-
-			snprintf(hex_string, 3, "%02X", by);
+			int size = sizeof hex_string;
+			snprintf(hex_string, size, "%02X", by);
 			Serial.print(hex_string);
 			Serial.print(" ");
 		}
@@ -43,13 +44,13 @@ void SparkHelper::printDataAsHexString(vector<ByteVector>data) {
 	}
 }
 
-void SparkHelper::printByteVector(ByteVector vec){
+void SparkHelper::printByteVector(const ByteVector& vec){
 	for (auto by: vec){
 		Serial.print(SparkHelper::intToHex(by).c_str());
 	}
 }
 
-int SparkHelper::dataVectorNumOfBytes(vector<ByteVector> data) {
+int SparkHelper::dataVectorNumOfBytes(const vector<ByteVector>& data) {
 	int count = 0;
 	for (auto vec : data) {
 		count += vec.size();
@@ -158,8 +159,8 @@ int SparkHelper::getFXIndexFromButtonNumber(int btn_number){
 	}
 }
 
-int SparkHelper::searchSubVector(ByteVector vectorToSearchIn,
-		ByteVector vectorToFind) {
+int SparkHelper::searchSubVector(const ByteVector& vectorToSearchIn,
+		const ByteVector& vectorToFind) {
 	auto it = std::search(vectorToSearchIn.begin(), vectorToSearchIn.end(), vectorToFind.begin(), vectorToFind.end());
 	return it - vectorToSearchIn.begin();
 

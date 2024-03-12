@@ -186,7 +186,8 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 		counter++;
 		Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
 		char counterStr[2];
-		sprintf(counterStr, "%d", counter);
+		int size = sizeof counterStr;
+		snprintf(counterStr, size, "%d", counter);
 		presetFileName = presetNamePrefix + counterStr + ".json";
 	}
 	presetNameWithPath = "/" + presetFileName;
@@ -214,7 +215,8 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 				if (((lineCount-1) % 4) == 0){
 					// New bank separator addd to file for better readability
 					char bank_string[20] ="";
-					sprintf(bank_string, "%d ", ((lineCount-1)/4)+1);
+					int size = sizeof bank_string;
+					snprintf(bank_string, size, "%d ", ((lineCount-1)/4)+1);
 					filestr += "-- Bank ";
 					filestr += bank_string;
 					filestr += "\n";
@@ -263,7 +265,8 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 				if (((lineCount-1) % 4) == 0){
 					// New bank separator added to file for better readability
 					char bank_string[20] ="";
-					sprintf(bank_string, "%d ", ((lineCount-1)/4)+1);
+					int size = sizeof bank_string;
+					snprintf(bank_string, size, "%d ", ((lineCount-1)/4)+1);
 					filestr += "-- Bank ";
 					filestr += bank_string;
 					filestr += "\n";
@@ -294,7 +297,7 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre){
 	return DELETE_PRESET_UNKNOWN_ERROR;
 }
 
-void SparkPresetBuilder::insertHWPreset(int number, Preset preset) {
+void SparkPresetBuilder::insertHWPreset(int number, const Preset& preset) {
 
 	if (number <0 || number > 3){
 		Serial.println("ERROR: HW Preset not inserted, preset number out of bounds.");

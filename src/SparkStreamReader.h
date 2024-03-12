@@ -84,13 +84,13 @@ private:
 	void read_store_hardware_preset();
 	void read_preset();
 
-	ByteVector preProcessBlock(ByteVector blk);
+	void preProcessBlock(ByteVector& blk);
 
 	// Functions to structure and process input data (high level)
 	vector<CmdData> read_message(bool processHeader=true);
 	boolean structure_data(bool processHeader=true);
 	void interpret_data();
-	void set_interpreter (ByteVector _msg);
+	void set_interpreter (const ByteVector& _msg);
 	int run_interpreter (byte _cmd, byte _sub_cmd);
 
 	// Low level functions to read single elements from structured payload
@@ -100,7 +100,7 @@ private:
 	float read_float ();
 	boolean read_onoff();
 
-	boolean isValidBlockWithoutHeader(ByteVector blk);
+	boolean isValidBlockWithoutHeader(const ByteVector& blk);
 
 	// Functions to create string representations of processed data
 	void start_str();
@@ -110,7 +110,7 @@ private:
 	void add_separator();
 	void add_newline();
 	void add_python(char* python_str);
-	void add_str(char* a_title, string a_str, char* nature = "all");
+	void add_str(char* a_title, const string& a_str, char* nature = "all");
 	void add_int(char* a_title, int an_int, char* nature = "all");
 	void add_float(char* a_title, float a_float, char* nature = "all");
 	void add_float_pure(float a_float, char* nature = "all");
@@ -124,7 +124,7 @@ public:
 	//Constructors
 	SparkStreamReader();
 	// setting the messag so it can be structured and interpreted
-	void setMessage(vector<ByteVector> msg_);
+	void setMessage(const vector<ByteVector>& msg_);
 	string getJson();
 
 	// Preset related methods to make information public
@@ -145,8 +145,8 @@ public:
 	void resetPresetNumberUpdateFlag();
 	void resetPresetUpdateFlag();
 	void resetLastMessageType();
-	tuple<boolean, byte, byte> needsAck(ByteVector block);
-	int processBlock(ByteVector block);
+	tuple<boolean, byte, byte> needsAck(const ByteVector& block);
+	int processBlock(ByteVector& block);
 	AckData getLastAckAndEmpty();
 	void clearMessageBuffer();
 };

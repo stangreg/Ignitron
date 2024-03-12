@@ -252,9 +252,9 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 	// Debug
 #ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
-#endif
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
 
 	//Switch between APP and LOOPER mode
 	spark_dc->toggleLooperAppMode();
@@ -270,10 +270,13 @@ void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
 		Serial.println("SparkDataControl not setup yet, ignoring button press.");
 		return;
 	}
+#ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
 	// Debug
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
+
 	spark_dc->toggleBTMode();
 
 }
@@ -351,9 +354,11 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 	}
 	// Switch between preset mode FX mode where FX can be separately switched
 	// Debug
+#ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
 
 	//Switch mode in APP mode
 	spark_dc->toggleButtonMode();
@@ -369,10 +374,13 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
 		return;
 	}
 
+#ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
 	// Debug
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
+
 	spark_dc->handleDeletePreset();
 
 }
@@ -385,9 +393,12 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
 		return;
 	}
 	// DEBUG
+#ifdef DEBUG
 	int pressed_btn_gpio = btn->getID();
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
+
 	spark_dc->restartESP(true);
 
 }
@@ -403,9 +414,8 @@ void SparkButtonHandler::btnToggleFXHandler(BfButton *btn, BfButton::press_patte
 	int pressed_btn_gpio = btn->getID();
 	DEBUG_PRINT("Button pressed: ");
 	DEBUG_PRINTLN(pressed_btn_gpio);
-	int fxIndex;
 
-	fxIndex = SparkHelper::getFXIndexFromBtnGpio(pressed_btn_gpio);
+	int fxIndex = SparkHelper::getFXIndexFromBtnGpio(pressed_btn_gpio);
 	spark_dc->toggleEffect(fxIndex);
 }
 
