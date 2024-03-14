@@ -262,6 +262,7 @@ private:
 	static bool isInitHWRead_;
 
 	int lastUpdateCheck = 0;
+	int updateInterval = 2000;
 	static byte nextMessageNum;
 	static queue<ByteVector> msgQueue;
 

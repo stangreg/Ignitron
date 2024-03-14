@@ -158,6 +158,15 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 
 void SparkDataControl::checkForUpdates() {
 
+	if (isInitHWRead_) {
+		int currentTime = millis();
+		if (currentTime - lastUpdateCheck > updateInterval) {
+			lastUpdateCheck = currentTime;
+			// get all HW presets
+			readHWPresets();
+		}
+	}
+
 	while(msgQueue.size() > 0){
 		processSparkData(msgQueue.front());
 		msgQueue.pop();
@@ -851,8 +860,14 @@ void SparkDataControl::handleAppModeResponse() {
 			// only change active presetNumber if new number is between 1 and 4,
 			// otherwise it is a custom preset number and can be ignored
 			if(spark_presetNumber >= 1 && spark_presetNumber <= 4){
-				activeBank_ = pendingBank_ = 0;
-				activePresetNum_= spark_presetNumber;
+				//check if this improves behavior, updating activePreset when new HW preset received
+				if (!isInitHWRead_){
+					activePreset_ = spark_ssr.currentSetting();
+					activePresetNum_= spark_presetNumber;
+
+					activeBank_ = pendingBank_ = 0;
+				}
+
 			}
 			else {
 				DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
@@ -863,12 +878,18 @@ void SparkDataControl::handleAppModeResponse() {
 		if (lastMessageType == MSG_TYPE_PRESET) {
 			DEBUG_PRINTLN("Last message was a preset change.");
 			Preset receivedPreset = spark_ssr.currentSetting();
+			// This preset number is between 0 and 3!
 			int presetNumber = receivedPreset.presetNumber;
 
-			if (activeBank_ == 0 && presetNumber < 4) {
+			if (pendingBank_ == 0 && presetNumber < 4) {
 				presetBuilder.insertHWPreset(receivedPreset.presetNumber, receivedPreset);
 			}
-			if (isInitHWRead_){
+
+			if (!isInitHWRead_){
+				activePreset_ = spark_ssr.currentSetting();
+				activePresetNum_ = presetNumber+1;
+			}
+			else {
 				initialHWpreset++;
 				if (initialHWpreset > 4) {
 					isInitHWRead_ = false;
@@ -877,6 +898,7 @@ void SparkDataControl::handleAppModeResponse() {
 					readHWPresets();
 				}
 			}
+
 			printMessage = true;
 		}
 
@@ -974,7 +996,7 @@ void SparkDataControl::readHWPresets() {
 	//   request preset
 	//   done. On response: increase counter, request next
 	//   until all are read.
-	if (isInitHWRead_ && initialHWpreset != currentRequestedHWPreset) {
+	if (isInitHWRead_) {// && initialHWpreset != currentRequestedHWPreset) {
 		Serial.printf("Reading initial HW preset %d\n", initialHWpreset);
 		current_msg = spark_msg.get_current_preset(nextMessageNum, initialHWpreset);
 		sendMessageToBT(current_msg);
