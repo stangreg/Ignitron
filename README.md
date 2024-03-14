@@ -38,6 +38,9 @@ The following sections show how to [build](https://github.com/stangreg/SparkBLE#
 </p>
 
 # Building Ignitron
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0ca0e86eddaf426695d988fd52344ffb)](https://app.codacy.com/gh/stangreg/Ignitron?utm_source=github.com&utm_medium=referral&utm_content=stangreg/Ignitron&utm_campaign=Badge_Grade)
+
 Software: [click here](https://github.com/stangreg/Ignitron/blob/main/src/)
 
 Hardware: [click here](https://github.com/stangreg/Ignitron/blob/main/hardware/)
