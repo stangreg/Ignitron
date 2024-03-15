@@ -92,21 +92,15 @@ void loop() {
 		}
 
 		//After connection is established, continue.
-		// On first boot, set the preset to Hardware setting 1.
+		// On first boot, get the amp type and set the preset to Hardware setting 1.
+
 		if (spark_dc.isInitBoot()) { // && !spark_dc.isInitHWRead()) {
-			currentTimestamp = millis();
-			// only do initial request in defined intervals
-			if (currentTimestamp - lastInitialPresetTimestamp > initialRequestInterval) {
-				lastInitialPresetTimestamp = millis();
-				// Read AMP name to determine special parameters
-				spark_dc.getAmpName();
-				DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-				spark_dc.switchPreset(1, true);
-			}
-			//Wait for preset change and acknowledgment to arrive
-			if (!(spark_dc.activePreset()->isEmpty)) {
-				spark_dc.isInitBoot() = false;
-			}
+			// This is only done once after the connection has been established
+			// Read AMP name to determine special parameters
+			spark_dc.getAmpName();
+			DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
+			spark_dc.switchPreset(1, true);
+			spark_dc.isInitBoot() = false;
 
 		}
 

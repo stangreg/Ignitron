@@ -891,17 +891,18 @@ void SparkDataControl::handleAppModeResponse() {
 			DEBUG_PRINTLN("Last message was a preset change.");
 			Preset receivedPreset = spark_ssr.currentSetting();
 			// This preset number is between 0 and 3!
-			int presetNumber = receivedPreset.presetNumber;
+			int presetNumber = receivedPreset.presetNumber+1;
 
+			if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || lastMessageNumber != special_msg_num) {
+				activePreset_ = spark_ssr.currentSetting();
+				activePresetNum_ = presetNumber;
+			}
 			if (lastMessageNumber == special_msg_num) {
 				DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
-				presetBuilder.insertHWPreset(receivedPreset.presetNumber, receivedPreset);
+				presetBuilder.insertHWPreset(presetNumber-1, receivedPreset);
 				spark_ssr.resetPresetUpdateFlag();
 			}
-			else {
-				activePreset_ = spark_ssr.currentSetting();
-				activePresetNum_ = presetNumber+1;
-			}
+
 			printMessage = true;
 		}
 
