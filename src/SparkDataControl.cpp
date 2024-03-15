@@ -1001,10 +1001,20 @@ void SparkDataControl::readHWPreset(int num) {
 void SparkDataControl::resetStatus() {
 	isInitBoot_ = true;
 	presetBuilder.resetHWPresets();
+	activePresetNum_ = pendingPresetNum_ = 1;
+	activeBank_ = pendingBank_ = 0;
+	nextMessageNum = 0x01;
+	customPresetAckPending = false;
+	retrieveCurrentPreset = false;
+	customPresetNumberChangePending = false;
+	sparkAmpType = AMP_TYPE_40;
+	sparkAmpName = "Spark 40";
+	with_delay = false;
 
 }
 
 void SparkDataControl::checkForMissingPresets(void *args) {
+	delay(3000);
 	while(true) {
 		int currentTime = millis();
 		if (currentTime - lastUpdateCheck > updateInterval) {
