@@ -29,6 +29,7 @@ int SparkDataControl::presetBankToEdit_ = 0;
 
 
 int SparkDataControl::activePresetNum_ = 1;
+int SparkDataControl::pendingPresetNum_ = 1;
 string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
@@ -47,10 +48,10 @@ int SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = "Spark 40";
 bool SparkDataControl::with_delay = false;
 
-int SparkDataControl::initialHWpreset = 1;
-int SparkDataControl::currentRequestedHWPreset = 0;
 bool SparkDataControl::isInitBoot_ = true;
-bool SparkDataControl::isInitHWRead_ = true;
+int SparkDataControl::lastUpdateCheck = 0;
+int SparkDataControl::updateInterval = 3000;
+byte SparkDataControl::special_msg_num = 0xEE;
 
 SparkDataControl::SparkDataControl() {
 	//init();
@@ -106,6 +107,16 @@ int SparkDataControl::init(int opModeInput) {
 		//delay(2000);
 		bleKeyboard.end();
 		bleControl->initBLE(&bleNotificationCallback);
+		DEBUG_PRINTLN("Starting regular check for empty HW presets.");
+		xTaskCreatePinnedToCore (
+				checkForMissingPresets,     // Function to implement the task
+				"HWpresets",   // Name of the task
+				10000,      // Stack size in words
+				NULL,      // Task input parameter
+				0,         // Priority of the task
+				NULL,      // Task handle.
+				0          // Core where the task should run
+		);
 		break;
 	case SPARK_MODE_AMP:
 		pendingBank_ = 1;
@@ -158,15 +169,6 @@ void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
 
 void SparkDataControl::checkForUpdates() {
 
-	if (isInitHWRead_) {
-		int currentTime = millis();
-		if (currentTime - lastUpdateCheck > updateInterval) {
-			lastUpdateCheck = currentTime;
-			// get all HW presets
-			readHWPresets();
-		}
-	}
-
 	while(msgQueue.size() > 0){
 		processSparkData(msgQueue.front());
 		msgQueue.pop();
@@ -174,8 +176,8 @@ void SparkDataControl::checkForUpdates() {
 
 	if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
 		if (pendingBank_ == 0) {
-			DEBUG_PRINTLN("Preset number has changed, getting current preset from Spark");
-			getCurrentPresetFromSpark();
+			DEBUG_PRINTLN("Preset number has changed, updating active preset");
+			setActiveHWPreset();
 		}
 		spark_ssr.resetPresetNumberUpdateFlag();
 	}
@@ -184,10 +186,10 @@ void SparkDataControl::checkForUpdates() {
 	// If so, update the preset variables
 	if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)){
 
-		if (!isInitHWRead_){
-			pendingPreset_  = spark_ssr.currentSetting();
-			activePreset_ = pendingPreset_;
-		}
+		// TODO Check if there needs to be a condition here
+		DEBUG_PRINTLN("Preset has changed, updating active with current preset");
+		pendingPreset_  = spark_ssr.currentSetting();
+		updateActiveWithPendingPreset();
 		spark_ssr.resetPresetUpdateFlag();
 	}
 
@@ -251,7 +253,10 @@ int SparkDataControl::getNumberOfBanks() {
 }
 
 bool SparkDataControl::isAmpConnected() {
-	return bleControl->isAmpConnected();
+	if(bleControl->isAmpConnected()){
+		return true;
+	}
+	return false;
 }
 
 bool SparkDataControl::isAppConnected() {
@@ -318,6 +323,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 	bool retValue = false;
 
 	int bnk = pendingBank_;
+	pendingPresetNum_ = pre;
 	if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
 		// Check if selected preset is equal to active preset.
 		// In this case toggle the drive pedal only
@@ -326,6 +332,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 				&& !isInitial) {
 
 			retValue = toggleEffect(INDEX_FX_DRIVE);
+
 		}
 		// Preset is actually changing
 		else {
@@ -486,6 +493,8 @@ void SparkDataControl::setPresetDeletionFlag() {
 
 void SparkDataControl::updateActiveWithPendingPreset() {
 	activePreset_ = pendingPreset_;
+	activeBank_ = pendingBank_;
+	activePresetNum_ = pendingPresetNum_;
 }
 
 
@@ -766,6 +775,7 @@ bool SparkDataControl::sendMessageToBT(const vector<ByteVector>& msg){
 	nextMessageNum++;
 	//spark_ssr.clearMessageBuffer();
 	DEBUG_PRINTLN("Sending message via BT.");
+	//spark_ssr.clearMessageBuffer();
 	return bleControl->writeBLE(msg, with_delay);
 
 }
@@ -848,6 +858,8 @@ void SparkDataControl::handleAppModeResponse() {
 
 	string msgStr = spark_ssr.getJson();
 	int lastMessageType = spark_ssr.lastMessageType();
+	byte lastMessageNumber = spark_ssr.lastMessageNum();
+	DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
 	if (operationMode_ == SPARK_MODE_APP) {
 		bool printMessage = false;
@@ -859,14 +871,14 @@ void SparkDataControl::handleAppModeResponse() {
 
 			// only change active presetNumber if new number is between 1 and 4,
 			// otherwise it is a custom preset number and can be ignored
-			if(spark_presetNumber >= 1 && spark_presetNumber <= 4){
+			if(lastMessageNumber != special_msg_num
+					&& spark_presetNumber >= 1
+					&& spark_presetNumber <= 4){
 				//check if this improves behavior, updating activePreset when new HW preset received
-				if (!isInitHWRead_){
-					activePreset_ = spark_ssr.currentSetting();
-					activePresetNum_= spark_presetNumber;
-
-					activeBank_ = pendingBank_ = 0;
-				}
+				activePreset_ = spark_ssr.currentSetting();
+				activePresetNum_= spark_presetNumber;
+				activeBank_ = pendingBank_ = 0;
+				pendingPresetNum_ = activePresetNum_;
 
 			}
 			else {
@@ -881,24 +893,15 @@ void SparkDataControl::handleAppModeResponse() {
 			// This preset number is between 0 and 3!
 			int presetNumber = receivedPreset.presetNumber;
 
-			if (pendingBank_ == 0 && presetNumber < 4) {
+			if (lastMessageNumber == special_msg_num) {
+				DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
 				presetBuilder.insertHWPreset(receivedPreset.presetNumber, receivedPreset);
+				spark_ssr.resetPresetUpdateFlag();
 			}
-
-			if (!isInitHWRead_){
+			else {
 				activePreset_ = spark_ssr.currentSetting();
 				activePresetNum_ = presetNumber+1;
 			}
-			else {
-				initialHWpreset++;
-				if (initialHWpreset > 4) {
-					isInitHWRead_ = false;
-				}
-				else {
-					readHWPresets();
-				}
-			}
-
 			printMessage = true;
 		}
 
@@ -933,7 +936,7 @@ void SparkDataControl::handleIncomingAck() {
 	// if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
 	// confirm pending preset into active
 	AckData lastAck = spark_ssr.getLastAckAndEmpty();
-	if (lastAck.cmd == 0x04){
+	if (lastAck.cmd == 0x04 || lastAck.cmd == 0x05){
 		DEBUG_PRINTLN("Received ACK");
 		if (lastAck.subcmd == 0x01) {
 			// only execute preset number change on last ack for preset change
@@ -941,26 +944,22 @@ void SparkDataControl::handleIncomingAck() {
 				current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
 				sendMessageToBT(current_msg);
 				customPresetNumberChangePending = false;
-				activePreset_ = pendingPreset_;
+				updateActiveWithPendingPreset();
 			}
 		}
 		if (lastAck.subcmd == 0x38) {
 			DEBUG_PRINTLN("Received ACK for 0x38 command");
 			// getCurrentPresetFromSpark();
 			if (activeBank_ == 0) {
-				activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
-				if (activePreset_.isEmpty){
-					DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
-					getCurrentPresetFromSpark();
-				}
+				setActiveHWPreset();
 			}
 			else {
-				activePreset_ = pendingPreset_;
+				updateActiveWithPendingPreset();
 			}
 			Serial.println("OK");
 		}
 		if (lastAck.subcmd == 0x15) {
-			activePreset_ = pendingPreset_;
+			updateActiveWithPendingPreset();
 			Serial.println("OK");
 		}
 	}
@@ -989,27 +988,56 @@ void SparkDataControl::setAmpParameters() {
 
 }
 
-void SparkDataControl::readHWPresets() {
+void SparkDataControl::readHWPreset(int num) {
 
-	// TODO Does not work yet, what is needed:
-	// for numbers 1 to four
-	//   request preset
-	//   done. On response: increase counter, request next
-	//   until all are read.
-	if (isInitHWRead_) {// && initialHWpreset != currentRequestedHWPreset) {
-		Serial.printf("Reading initial HW preset %d\n", initialHWpreset);
-		current_msg = spark_msg.get_current_preset(nextMessageNum, initialHWpreset);
-		sendMessageToBT(current_msg);
-		currentRequestedHWPreset = initialHWpreset;
-	}
+	// in case HW presets are missing from the cache, they can be requested
+	Serial.printf("Reading missing HW preset %d\n", num);
+	current_msg = spark_msg.get_current_preset(special_msg_num, num);
+	sendMessageToBT(current_msg);
 
 }
 
 void SparkDataControl::resetStatus() {
 	isInitBoot_ = true;
-	isInitHWRead_ = true;
-	initialHWpreset = 1;
-	currentRequestedHWPreset = 0;
 	presetBuilder.resetHWPresets();
 
+}
+
+void SparkDataControl::checkForMissingPresets(void *args) {
+	while(true) {
+		int currentTime = millis();
+		if (currentTime - lastUpdateCheck > updateInterval) {
+			lastUpdateCheck = currentTime;
+			if(bleControl->isAmpConnected()){
+				bool somePresetMissing = false;
+				for (int num=1; num <= 4; num++) {
+					if (presetBuilder.isHWPresetMissing(num)){
+						somePresetMissing = true;
+						readHWPreset(num);
+						delay(1000);
+					}
+				}
+				// TODO Observation: Sometimes Ignitron fails to load a HW preset,
+				// as Spark GO does not send the full message
+				// switching to a different HW preset somehow
+				// fixes it! Does not happen if hte HW presets are the stock ones,
+				// seems only to affect certain custom presets
+				// Workaround below, but this would switch the preset to 3,
+				// no matter what was set before
+				//if (somePresetMissing){
+				//	switchPreset(3, true);
+				//}
+			}
+		}
+	}
+}
+
+void SparkDataControl::setActiveHWPreset() {
+
+	activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
+	pendingPresetNum_ = activePresetNum_;
+	if (activePreset_.isEmpty){
+		DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
+		getCurrentPresetFromSpark();
+	}
 }

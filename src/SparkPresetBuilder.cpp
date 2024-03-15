@@ -20,7 +20,7 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 	string jsonString(json);
 
 	const int capacity = JSON_OBJECT_SIZE(
-					10) + JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8*JSON_OBJECT_SIZE(8);
+			10) + JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8*JSON_OBJECT_SIZE(8);
 	DynamicJsonDocument jsonPreset(capacity);
 	DeserializationError err = deserializeJson(jsonPreset, json);
 
@@ -67,14 +67,14 @@ Preset SparkPresetBuilder::getPresetFromJson(char* json) {
 		JsonArray pedalParamArray = currentJsonPedal["Parameters"];
 		int i = 0;
 		for (float currentJsonPedalParam : pedalParamArray) {
-				Parameter currentParam;
+			Parameter currentParam;
 			currentParam.number = i;
-				currentParam.special = 0x91;
+			currentParam.special = 0x91;
 			currentParam.value = currentJsonPedalParam;
-				currentPedal.parameters.push_back(currentParam);
+			currentPedal.parameters.push_back(currentParam);
 			i++;
-			}
-			resultPreset.pedals.push_back(currentPedal);
+		}
+		resultPreset.pedals.push_back(currentPedal);
 	}
 	// preset Filler
 	byte presetFiller = jsonPreset["Filler"].as<unsigned char>();
@@ -169,12 +169,12 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre){
 	string presetNameWithPath;
 	// remove any blanks from the name for a new filename
 	presetNamePrefix.erase(remove_if(presetNamePrefix.begin(),
-									presetNamePrefix.end(),
-									[](char chr){
-										return not(regex_match(string(1,chr), regex("[A-z0-9_]")));
-										}
-									),
-									presetNamePrefix.end());
+			presetNamePrefix.end(),
+			[](char chr){
+		return not(regex_match(string(1,chr), regex("[A-z0-9_]")));
+	}
+	),
+			presetNamePrefix.end());
 	//cut down name to 24 characters (a potential counter + .json will then increase to 30);
 	const int nameLength = presetNamePrefix.length();
 	presetNamePrefix.resize(min(24, nameLength));
@@ -312,4 +312,14 @@ void SparkPresetBuilder::resetHWPresets() {
 	hwPresets.clear();
 	Preset examplePreset;
 	hwPresets = {examplePreset, examplePreset, examplePreset, examplePreset };
+}
+
+bool SparkPresetBuilder::isHWPresetMissing(int num) {
+	if (num < 1 || num > 4){
+		return false;
+	}
+	if (hwPresets.at(num-1).isEmpty) {
+		return true;
+	}
+	return false;
 }

@@ -464,96 +464,95 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 
 		//DEBUG_PRINTLN("Pushed chunk bytes to block content");
 	} // FOR block
-	DEBUG_PRINTLN("...Processed");
+	//DEBUG_PRINTLN("...Processed");
 
 
 	if (block_content[0] != 0xF0 || block_content[1] != 0x01){
 		Serial.println("Invalid block start, ignoring all data");
 		return false;
 	}
-	else
-	{
-		//DEBUG_PRINTLN("Data seems correct");
-		// and split them into chunks now, splitting on each f7
-		vector<ByteVector> chunks;
-		chunks.clear();
-		ByteVector chunk_temp = {};
-		for (byte by : block_content) {
-			chunk_temp.push_back(by);
-			if (by == 0xf7) {
-				chunks.push_back(chunk_temp);
-				chunk_temp = {};
+
+	//DEBUG_PRINTLN("Data seems correct");
+	// and split them into chunks now, splitting on each f7
+	vector<ByteVector> chunks;
+	chunks.clear();
+	ByteVector chunk_temp = {};
+	for (byte by : block_content) {
+		chunk_temp.push_back(by);
+		if (by == 0xf7) {
+			chunks.push_back(chunk_temp);
+			chunk_temp = {};
+		}
+	}
+
+	vector<CmdData> chunk_8bit = {};
+	for (auto chunk : chunks) {
+		last_message_num_ = chunk[2];
+		byte this_cmd = chunk[4];
+		byte this_sub_cmd = chunk[5];
+		ByteVector data7bit = {};
+		data7bit.assign(chunk.begin() + 6, chunk.end() - 1);
+
+		int chunk_len = data7bit.size();
+		//DEBUG_PRINT("Chunk_len:");
+		//DEBUG_PRINTLN(chunk_len);
+		int num_seq = int ((chunk_len + 7) / 8);
+		ByteVector data8bit = {};
+
+		for (int this_seq = 0; this_seq < num_seq; this_seq++) {
+			int seq_len = min (8, chunk_len - (this_seq * 8));
+			ByteVector seq = {};
+			byte bit8 = data7bit[this_seq * 8];
+			for (int ind = 0; ind < seq_len - 1; ind++) {
+				byte dat = data7bit[this_seq * 8 + ind + 1];
+				if ((bit8 & (1<<ind)) == (1<<ind)) {
+					dat |= 0x80;
+				}
+				seq.push_back(dat);
+			}
+			for (auto by : seq) {
+				data8bit.push_back(by);
 			}
 		}
+		//DEBUG_PRINTLN("Converted to 8bit");
+		struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
+		chunk_8bit.push_back(curr_data);
 
-		vector<CmdData> chunk_8bit = {};
-		for (auto chunk : chunks) {
-			last_message_num_ = chunk[2];
-			byte this_cmd = chunk[4];
-			byte this_sub_cmd = chunk[5];
-			ByteVector data7bit = {};
-			data7bit.assign(chunk.begin() + 6, chunk.end() - 1);
+		// now check for mult-chunk messages and collapse their data into a single message
+		// multi-chunk messages are cmd/sub_cmd of 1,1 or 3,1
 
-			int chunk_len = data7bit.size();
-			//DEBUG_PRINT("Chunk_len:");
-			//DEBUG_PRINTLN(chunk_len);
-			int num_seq = int ((chunk_len + 7) / 8);
-			ByteVector data8bit = {};
-
-			for (int this_seq = 0; this_seq < num_seq; this_seq++) {
-				int seq_len = min (8, chunk_len - (this_seq * 8));
-				ByteVector seq = {};
-				byte bit8 = data7bit[this_seq * 8];
-				for (int ind = 0; ind < seq_len - 1; ind++) {
-					byte dat = data7bit[this_seq * 8 + ind + 1];
-					if ((bit8 & (1<<ind)) == (1<<ind)) {
-						dat |= 0x80;
-					}
-					seq.push_back(dat);
+		message.clear();
+		ByteVector concat_data;
+		concat_data.clear();
+		for (CmdData chunkData : chunk_8bit) {
+			this_cmd     = chunkData.cmd;
+			this_sub_cmd = chunkData.subcmd;
+			ByteVector this_data = chunkData.data;
+			if ((this_cmd == 0x01 || this_cmd == 0x03) && this_sub_cmd == 0x01) {
+				//DEBUG_PRINTLN("Multi message");
+				//found a multi-message
+				int num_chunks = this_data[0];
+				int this_chunk = this_data[1];
+				ByteVector this_data_suffix;
+				this_data_suffix.assign(this_data.begin() + 3, this_data.end());
+				for (auto by : this_data_suffix) {
+					concat_data.push_back(by);
 				}
-				for (auto by : seq) {
-					data8bit.push_back(by);
+				// if at last chunk of multi-chunk
+				if (this_chunk == num_chunks - 1) {
+					//DEBUG_PRINTLN("Last chunk to process");
+					curr_data = {this_cmd, this_sub_cmd, concat_data};
+					message.push_back(curr_data);
+					concat_data = {};
 				}
 			}
-			//DEBUG_PRINTLN("Converted to 8bit");
-			struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
-			chunk_8bit.push_back(curr_data);
+			else {
+				// copy old one
+				message.push_back(chunkData);
+			} // else
+		} // For all in 8-bit vector
+	} // for all chunks
 
-			// now check for mult-chunk messages and collapse their data into a single message
-			// multi-chunk messages are cmd/sub_cmd of 1,1 or 3,1
-
-			message.clear();
-			ByteVector concat_data;
-			concat_data.clear();
-			for (CmdData chunkData : chunk_8bit) {
-				this_cmd     = chunkData.cmd;
-				this_sub_cmd = chunkData.subcmd;
-				ByteVector this_data = chunkData.data;
-				if ((this_cmd == 0x01 || this_cmd == 0x03) && this_sub_cmd == 0x01) {
-					//DEBUG_PRINTLN("Multi message");
-					//found a multi-message
-					int num_chunks = this_data[0];
-					int this_chunk = this_data[1];
-					ByteVector this_data_suffix;
-					this_data_suffix.assign(this_data.begin() + 3, this_data.end());
-					for (auto by : this_data_suffix) {
-						concat_data.push_back(by);
-					}
-					// if at last chunk of multi-chunk
-					if (this_chunk == num_chunks - 1) {
-						//DEBUG_PRINTLN("Last chunk to process");
-						curr_data = {this_cmd, this_sub_cmd, concat_data};
-						message.push_back(curr_data);
-						concat_data = {};
-					}
-				}
-				else {
-					// copy old one
-					message.push_back(chunkData);
-				} // else
-			} // For all in 8-bit vector
-		} // for all chunks
-	} // else (Block starts with F001)
 	return true;
 }
 
@@ -723,7 +722,7 @@ void SparkStreamReader::preProcessBlock(ByteVector& blk) {
 int SparkStreamReader::processBlock(ByteVector& blk){
 
 	int retValue = MSG_PROCESS_RES_INCOMPLETE;
-	DEBUG_PRINTLN("Processing block");
+	//DEBUG_PRINTLN("Processing block");
 	preProcessBlock(blk);
 
 	// Process:

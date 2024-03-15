@@ -57,6 +57,7 @@ public:
 	int deletePreset(int bnk, int pre);
 
 	void insertHWPreset(int number, const Preset& preset);
+	bool isHWPresetMissing(int num);
 
 };
 

@@ -45,8 +45,8 @@ public:
 	void resetStatus();
 	void setDisplayControl(SparkDisplayControl *display);
 	bool checkBLEConnection();
-	bool isAmpConnected();
-	bool isAppConnected(); // true if ESP in AMP mode and client is connected
+	static bool isAmpConnected();
+	static bool isAppConnected(); // true if ESP in AMP mode and client is connected
 	void startBLEServer();
 	//static void onScanEnded(NimBLEScanResults results);
 
@@ -59,25 +59,20 @@ public:
 
 	// Check if a preset has been updated (via ack or from Spark)
 	void checkForUpdates();
-	void updatePendingPreset(int bnk);
-	void updatePendingWithActive();
-	void updateActiveWithPendingPreset();
 
 	bool getAmpName();
 	// Switch to a selected preset of the current bank
-	bool switchPreset(int pre, bool isInitial);
+	static bool switchPreset(int pre, bool isInitial);
 
-	// Read in all HW presets
-	static void readHWPresets();
 	// Switch effect on/off
-	bool switchEffectOnOff(const string& fx_name, bool enable);
-	bool toggleEffect(int fx_identifier);
+	static bool switchEffectOnOff(const string& fx_name, bool enable);
+	static bool toggleEffect(int fx_identifier);
 	bool toggleButtonMode();
 	bool toggleLooperAppMode();
 	bool handleDeletePreset();
 	bool processPresetSelect(int presetNum);
 	// get a preset from saved presets
-	Preset getPreset(int bank, int pre);
+	static Preset getPreset(int bank, int pre);
 	// return the number of banks in the preset list
 	int getNumberOfBanks();
 
@@ -145,11 +140,6 @@ public:
 	bool& isInitBoot() {
 		return isInitBoot_;
 	}
-
-	const bool& isInitHWRead() const{
-		return isInitHWRead_;
-	}
-
 
 	const int currentBTMode() const {
 		return currentBTMode_;
@@ -231,6 +221,7 @@ private:
 	static int activeBank_;
 	static int pendingBank_;
 	static int activePresetNum_;
+	static int pendingPresetNum_;
 
 	// Messages to send to Spark
 	static vector<ByteVector> current_msg;
@@ -256,13 +247,11 @@ private:
 	static bool with_delay;
 
 	// keep track which HW presets have been read so far
-	static int initialHWpreset;
-	static int currentRequestedHWPreset;
 	static bool isInitBoot_;
-	static bool isInitHWRead_;
+	static byte special_msg_num;
 
-	int lastUpdateCheck = 0;
-	int updateInterval = 2000;
+	static int lastUpdateCheck;
+	static int updateInterval;
 	static byte nextMessageNum;
 	static queue<ByteVector> msgQueue;
 
@@ -276,13 +265,22 @@ private:
 	static bool getCurrentPresetFromSpark();
 	static void setAmpParameters();
 
-	bool processAction();
+	static bool processAction();
 
 	// methods to process any data from Spark (process with SparkStreamReader and send ack if required)
 	static void handleSendingAck(const ByteVector& blk);
 	static void handleAmpModeRequest();
 	static void handleAppModeResponse();
 	static void handleIncomingAck();
+
+	// Read in all HW presets
+	static void readHWPreset(int num);
+
+	static void checkForMissingPresets(void *args);
+	static void updatePendingPreset(int bnk);
+	static void updatePendingWithActive();
+	static void updateActiveWithPendingPreset();
+	static void setActiveHWPreset();
 
 
 };

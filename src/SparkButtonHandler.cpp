@@ -310,7 +310,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 		Serial.println("SparkDataControl not setup yet, ignoring button press.");
 		return;
 	}
-	int selectedPresetNum;
+
 
 	// Debug
 	int pressed_btn_gpio = btn->getID();
@@ -318,7 +318,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 	DEBUG_PRINTLN(pressed_btn_gpio);
 
 	// Change selected preset
-	selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
+	int selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
 	spark_dc->processPresetSelect(selectedPresetNum);
 
 }
