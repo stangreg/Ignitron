@@ -1009,10 +1009,8 @@ void SparkDataControl::checkForMissingPresets(void *args) {
 		if (currentTime - lastUpdateCheck > updateInterval) {
 			lastUpdateCheck = currentTime;
 			if(bleControl->isAmpConnected()){
-				bool somePresetMissing = false;
 				for (int num=1; num <= 4; num++) {
 					if (presetBuilder.isHWPresetMissing(num)){
-						somePresetMissing = true;
 						readHWPreset(num);
 						delay(1000);
 					}
