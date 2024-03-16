@@ -270,7 +270,7 @@ void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
 		setAdvertisedDevice(advertisedDevice);
 		/** Ready to connect now */
 		isConnectionFound_ = true;
-		delay(500);
+		//delay(500);
 	}
 }
 
