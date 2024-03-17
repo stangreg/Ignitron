@@ -359,6 +359,13 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 			} // Else (custom preset)
 		} // else (preset changing)
 	} // if APP / LOOPER mode
+	else { // AMP mode
+		current_msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK, nextMessageNum);
+		Serial.printf("Sending preset %02d-%d to app...", bnk, pre);
+		retValue = bleControl->notifyClients(current_msg);
+		current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128, DIR_FROM_SPARK);
+		retValue = bleControl->notifyClients(current_msg);
+	}
 	if (retValue == true) {
 		activeBank_ = bnk;
 		activePresetNum_ = pre;
@@ -394,6 +401,7 @@ void SparkDataControl::processPresetEdit(int presetNum) {
 		activePresetNum_ = presetNum;
 		activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
 		pendingPreset_ = activePreset_;
+		switchPreset(activePresetNum_, false);
 
 	}
 }

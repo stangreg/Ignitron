@@ -154,7 +154,7 @@ public:
 	 * so that the Spark App can connect to Ignitron
 	 *
 	 */
-	void notifyClients(const vector<ByteVector>& msg);
+	bool notifyClients(const vector<ByteVector>& msg);
 
 	void stopBLEServer();
 

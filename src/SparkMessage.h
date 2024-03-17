@@ -76,7 +76,7 @@ public:
 	// Command messages to send to Spark
 	vector<ByteVector> change_effect_parameter (byte msg_num, const string& pedal, int param, float val);
 	vector<ByteVector> change_effect (byte msg_num, const string& pedal1, const string& pedal2);
-	vector<ByteVector> change_hardware_preset (byte msg_num, int preset_num);
+	vector<ByteVector> change_hardware_preset (byte msg_num, int preset_num, int dir=DIR_TO_SPARK);
 	vector<ByteVector> turn_effect_onoff (byte msg_num, const string& pedal, boolean enable);
 	vector<ByteVector> create_preset(const Preset& preset_data, int dir =
 			DIR_TO_SPARK, byte msg_num = 0x00);

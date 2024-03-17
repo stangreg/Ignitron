@@ -171,10 +171,10 @@ public:
 
 	// Functions for Spark AMP (Server mode)
 	//void receiveSparkWrite(const ByteVector& blk);
-	void triggerInitialBLENotifications();
-	void processPresetEdit(int presetNum = 0);
-	void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
-	void resetPresetEditResponse();
+	static void triggerInitialBLENotifications();
+	static void processPresetEdit(int presetNum = 0);
+	static void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
+	static void resetPresetEditResponse();
 	void switchOperationMode(int opMode);
 	void toggleBTMode();
 
@@ -255,10 +255,10 @@ private:
 	static byte nextMessageNum;
 	static queue<ByteVector> msgQueue;
 
-	void processStorePresetRequest(int presetNum);
-	void processDeletePresetRequest();
-	void setPresetDeletionFlag();
-	void updatePendingBankStatus();
+	static void processStorePresetRequest(int presetNum);
+	static void processDeletePresetRequest();
+	static void setPresetDeletionFlag();
+	static void updatePendingBankStatus();
 	static bool sendMessageToBT(const vector<ByteVector>& msg);
 
 	// Retrieves the current preset from Spark (required for HW presets)

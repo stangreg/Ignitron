@@ -391,7 +391,8 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 }
 ;
 
-void SparkBLEControl::notifyClients(const vector<ByteVector>& msg) {
+bool SparkBLEControl::notifyClients(const vector<ByteVector>& msg) {
+	bool retValue = false;
 	if (pServer) {
 		NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
 		if (pSvc) {
@@ -406,7 +407,7 @@ void SparkBLEControl::notifyClients(const vector<ByteVector>& msg) {
 					pChr->notify();
 				}
 				DEBUG_PRINTLN("Clients notified.");
-
+				retValue = true;
 			}
 		}
 	}
@@ -422,9 +423,11 @@ void SparkBLEControl::notifyClients(const vector<ByteVector>& msg) {
 				btSerial->write(by);
 			}
 			DEBUG_PRINTLN();
-			DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap());
+			//DEBUG_PRINTF("Free Heap size: %d\n", ESP.getFreeHeap());
+			retValue = true;
 		}
 	}
+	return retValue;
 }
 
 void SparkBLEControl::onConnect(NimBLEServer *pServer_,

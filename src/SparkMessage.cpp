@@ -429,14 +429,19 @@ vector<ByteVector> SparkMessage::change_effect (byte msg_num, const string& peda
 
 }
 
-vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int preset_num){
-	cmd = 0x01;
+vector<ByteVector> SparkMessage::change_hardware_preset (byte msg_num, int preset_num, int dir){
+
+	if (dir == DIR_TO_SPARK) {
+		cmd = 0x01;
+	} else {
+		cmd = 0x03;
+	}
 	sub_cmd = 0x38;
 
 	start_message (cmd, sub_cmd);
 	add_byte((byte)0);
 	add_byte((byte)preset_num-1);
-	return end_message(DIR_TO_SPARK, msg_num);
+	return end_message(dir, msg_num);
 
 }
 
