@@ -363,7 +363,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 		current_msg = spark_msg.create_preset(activePreset_, DIR_FROM_SPARK, nextMessageNum);
 		Serial.printf("Sending preset %02d-%d to app...", bnk, pre);
 		retValue = bleControl->notifyClients(current_msg);
-		current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128, DIR_FROM_SPARK);
+		current_msg = spark_msg.change_hardware_preset(nextMessageNum, activePresetNum_, DIR_FROM_SPARK);
 		retValue = bleControl->notifyClients(current_msg);
 	}
 	if (retValue == true) {
