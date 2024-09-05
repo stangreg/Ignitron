@@ -451,6 +451,34 @@ vector<ByteVector> SparkMessage::get_amp_name(byte msg_num){
 
 }
 
+vector<ByteVector> SparkMessage::get_serial_number(byte msg_num)
+{
+	cmd = 0x02;
+	sub_cmd = 0x23;
+
+	start_message (cmd, sub_cmd);
+	return end_message(DIR_TO_SPARK, msg_num);
+}
+
+vector<ByteVector> SparkMessage::get_hw_checksums(byte msg_num)
+{
+    cmd = 0x02;
+	sub_cmd = 0x2a;
+
+	start_message (cmd, sub_cmd);
+	return end_message(DIR_TO_SPARK, msg_num);
+}
+
+
+vector<ByteVector> SparkMessage::get_firmware_version(byte msg_num)
+{
+    cmd = 0x02;
+	sub_cmd = 0x2f;
+
+	start_message (cmd, sub_cmd);
+	return end_message(DIR_TO_SPARK, msg_num);
+}
+
 vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, const string& pedal, boolean enable){
 	cmd = 0x01;
 	sub_cmd = 0x15;
@@ -460,6 +488,7 @@ vector<ByteVector> SparkMessage::turn_effect_onoff (byte msg_num, const string& 
 	add_onoff(enable);
 	return end_message(DIR_TO_SPARK, msg_num);
 }
+
 
 vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
 	cmd = 0x03;

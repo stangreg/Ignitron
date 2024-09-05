@@ -8,8 +8,8 @@
 #ifndef SPARKKEYBOARDCONTROL_H_
 #define SPARKKEYBOARDCONTROL_H_
 
-#include <vector>;
-#include "SparkTypes.h";
+#include <vector>
+#include "SparkTypes.h"
 
 using namespace std;
 

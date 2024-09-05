@@ -74,7 +74,9 @@ private:
 	byte last_message_num_ = 0x00;
 	byte last_requested_preset = 0x00;
 	string ampName_ = "";
-
+	byte last_read_byte;
+	const byte end_marker = 0xF7;
+	
 	// Functions to process calls based on identified cmd/sub_cmd.
 	void read_amp_name();
 	void read_effect_parameter();
@@ -85,6 +87,7 @@ private:
 	void read_preset();
 
 	void preProcessBlock(ByteVector& blk);
+	bool blockIsStarted(ByteVector& blk);
 
 	// Functions to structure and process input data (high level)
 	vector<CmdData> read_message(bool processHeader=true);

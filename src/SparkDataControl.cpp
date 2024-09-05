@@ -45,7 +45,7 @@ int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
-string SparkDataControl::sparkAmpName = "Spark 40";
+string SparkDataControl::sparkAmpName = "Spark 2";
 bool SparkDataControl::with_delay = false;
 
 bool SparkDataControl::isInitBoot_ = true;
@@ -108,6 +108,7 @@ int SparkDataControl::init(int opModeInput) {
 		bleKeyboard.end();
 		bleControl->initBLE(&bleNotificationCallback);
 		DEBUG_PRINTLN("Starting regular check for empty HW presets.");
+		//TODO Put that back in once everything works
 		xTaskCreatePinnedToCore (
 				checkForMissingPresets,     // Function to implement the task
 				"HWpresets",   // Name of the task
@@ -233,6 +234,7 @@ bool SparkDataControl::checkBLEConnection() {
 		if (bleControl->connectToServer()) {
 			bleControl->subscribeToNotifications(&bleNotificationCallback);
 			Serial.println("BLE connection to Spark established.");
+			delay(2000);
 			return true;
 		} else {
 			Serial.println("Failed to connect, starting scan");
@@ -270,9 +272,9 @@ void SparkDataControl::bleNotificationCallback(
 	//Triggered when data is received from Spark Amp in APP mode
 	// Transform data into ByteVetor and process
 	ByteVector chunk(&pData[0], &pData[length]);
-	DEBUG_PRINT("Incoming block: ");
+	/*DEBUG_PRINT("Incoming block: ");
 	DEBUG_PRINTVECTOR(chunk);
-	DEBUG_PRINTLN();
+	DEBUG_PRINTLN();*/
 	//DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
 	// Add incoming data to message queue for processing
 	msgQueue.push(chunk);
@@ -636,6 +638,47 @@ bool SparkDataControl::getAmpName() {
 
 }
 
+bool SparkDataControl::getCurrentPresetNum()
+{
+	current_msg = spark_msg.get_current_preset_num(nextMessageNum);
+	DEBUG_PRINTLN("Getting current preset num from Spark");
+
+	return sendMessageToBT(current_msg);
+
+}
+
+bool SparkDataControl::getSerialNumber()
+{
+   current_msg = spark_msg.get_serial_number(nextMessageNum);
+	DEBUG_PRINTLN("Getting serial number from Spark");
+
+	return sendMessageToBT(current_msg);
+}
+
+bool SparkDataControl::getFirmwareVersion()
+{
+      current_msg = spark_msg.get_firmware_version(nextMessageNum);
+	DEBUG_PRINTLN("Getting firmware version from Spark");
+
+	return sendMessageToBT(current_msg);
+}
+
+bool SparkDataControl::getHWChecksums()
+{
+      current_msg = spark_msg.get_hw_checksums(nextMessageNum);
+	DEBUG_PRINTLN("Getting checksums from Spark");
+
+	return sendMessageToBT(current_msg);
+}
+
+bool SparkDataControl::getCurrentPreset(int num)
+{
+      current_msg = spark_msg.get_current_preset(nextMessageNum, num);
+	DEBUG_PRINTLN("Getting preset information from Spark");
+
+	return sendMessageToBT(current_msg);
+}
+
 bool SparkDataControl::toggleButtonMode(){
 
 	if (!processAction() || operationMode_ == SPARK_MODE_AMP ) {
@@ -912,6 +955,7 @@ void SparkDataControl::handleAppModeResponse() {
 			setAmpParameters();
 			printMessage = true;
 		}
+		printMessage = true;
 		if (msgStr.length() > 0 && printMessage) {
 			Serial.println("Message processed:");
 			Serial.println(msgStr.c_str());
@@ -971,13 +1015,13 @@ void SparkDataControl::setAmpParameters() {
 
 	string ampName = sparkAmpName;
 	DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
-	if (ampName == AMP_NAME_SPARK_40){
+	if (ampName == AMP_NAME_SPARK_40 ){
 		spark_msg.maxChunkSizeToSpark() = 0x80;
 		spark_msg.maxBlockSizeToSpark() = 0xAD;
 		spark_msg.withHeader() = true;
 		with_delay = false;
 	}
-	if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_GO) {
+	if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_GO || ampName == AMP_NAME_SPARK_2) {
 		spark_msg.maxChunkSizeToSpark() = 0x27;
 		spark_msg.maxBlockSizeToSpark() = 0x14;
 		spark_msg.withHeader() = false;

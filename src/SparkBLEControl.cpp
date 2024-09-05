@@ -129,6 +129,7 @@ bool SparkBLEControl::connectToServer() {
 		pClient->setConnectionParams(18, 30, 0, 600);
 		/** Set how long we are willing to wait for the connection to complete (seconds), default is 30. */
 		pClient->setConnectTimeout(30);
+		pClient->getMTU();
 		if (!pClient->connect(advDevice)) {
 			/** Created a client but failed to connect, don't need to keep it as it has no data */
 			NimBLEDevice::deleteClient(pClient);
@@ -204,8 +205,13 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 
 // To send messages to Spark via Bluetooth LE
 bool SparkBLEControl::writeBLE(const vector<ByteVector>& cmd, bool with_delay, bool response) {
+	DEBUG_PRINTLN("Sending message:");
+	for (auto block: cmd){
+		DEBUG_PRINTVECTOR(block);
+	}
+	DEBUG_PRINTLN();
 	if (pClient && pClient->isConnected()) {
-
+		DEBUG_PRINTLN("Connection ok");
 		NimBLERemoteService *pSvc = nullptr;
 		NimBLERemoteCharacteristic *pChr = nullptr;
 
@@ -214,7 +220,7 @@ bool SparkBLEControl::writeBLE(const vector<ByteVector>& cmd, bool with_delay, b
 			pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
 
 			if (pChr) {
-				if (pChr->canWrite()) {
+				//if (pChr->canWrite()) {
 					for (auto block : cmd) {
 
 						// This it to split messages into sizes of max. max_send_size.
@@ -240,7 +246,7 @@ bool SparkBLEControl::writeBLE(const vector<ByteVector>& cmd, bool with_delay, b
 							return false;
 						}
 					} //For each block
-				}  // if can write
+				//}  // if can write
 			} // if pChr
 			else {
 				Serial.printf("Characteristic %s not found.\n",

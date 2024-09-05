@@ -61,6 +61,11 @@ public:
 	void checkForUpdates();
 
 	bool getAmpName();
+	bool getCurrentPresetNum();
+	bool getSerialNumber();
+	bool getFirmwareVersion();
+	bool getHWChecksums();
+	bool getCurrentPreset(int num);
 	// Switch to a selected preset of the current bank
 	static bool switchPreset(int pre, bool isInitial);
 

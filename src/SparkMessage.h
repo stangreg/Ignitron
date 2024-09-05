@@ -86,7 +86,11 @@ public:
 			DIR_TO_SPARK);
 
 	vector<ByteVector> get_amp_name(byte msg_num);
-
+	vector<ByteVector> get_serial_number(byte msg_num);
+	vector<ByteVector> get_hw_checksums(byte msg_num);
+	vector<ByteVector> get_firmware_version(byte msg_num);
+	
+	
 	vector<ByteVector> send_serial_number(byte msg_number);
 	vector<ByteVector> send_firmware_version(byte msg_number);
 	vector<ByteVector> send_hw_checksums(byte msg_number);
