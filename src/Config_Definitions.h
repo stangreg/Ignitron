@@ -12,7 +12,7 @@
 using namespace std;
 
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -26,7 +26,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.6.1";
+const string VERSION = "1.7.0";
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 	25

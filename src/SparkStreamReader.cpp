@@ -144,7 +144,7 @@ void SparkStreamReader::add_python(string python_str) {
 	json += indent + python_str;// + "\n";
 }
 
-void SparkStreamReader::add_str(string a_title, const string& a_str, string nature) {
+void SparkStreamReader::add_str(char* a_title, const string& a_str, string nature) {
 	raw +=  a_str;
 	raw += " ";
 	char string_add[200] = "";
@@ -157,7 +157,7 @@ void SparkStreamReader::add_str(string a_title, const string& a_str, string natu
 }
 
 
-void SparkStreamReader::add_int(string a_title, int an_int, string nature) {
+void SparkStreamReader::add_int(char* a_title, int an_int, string nature) {
 	char string_add[100] = "";
 	int size = sizeof string_add;
 	snprintf(string_add, size, "%d ", an_int);
@@ -172,7 +172,7 @@ void SparkStreamReader::add_int(string a_title, int an_int, string nature) {
 
 
 
-void SparkStreamReader::add_float(string a_title, float a_float, string nature) {
+void SparkStreamReader::add_float(char* a_title, float a_float, string nature) {
 
 	char string_add[100] = "";
 	int size = sizeof string_add;
@@ -201,7 +201,7 @@ void SparkStreamReader::add_float_pure(float a_float, string nature) {
 	json += string_add;
 }
 
-void SparkStreamReader::add_bool(string a_title, boolean a_bool, string nature) {
+void SparkStreamReader::add_bool(char* a_title, boolean a_bool, string nature) {
 	char string_add[100] = "";
 	int size = sizeof string_add;
 	snprintf(string_add, size, "%s ", a_bool ? "true" : "false");
@@ -669,9 +669,11 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector& blk){
 
 	byte msg_to_spark[2] = { 0x53, 0xFE };
 	int msg_to_spark_comp = memcmp(direction, msg_to_spark, sizeof(direction));
-	if (msg_to_spark_comp == 0 && cmd == 0x01 && sub_cmd != 0x04) {
-		// the app sent a message that needs a response
-		return tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
+	if (msg_to_spark_comp == 0){ 
+		if(cmd == 0x01 && sub_cmd != 0x04) {
+			// the app sent a message that needs a response
+			return tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
+		}	
 	}
 
 	return tuple<bool, byte, byte>(false, 0, 0);

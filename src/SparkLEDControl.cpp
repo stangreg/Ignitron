@@ -75,9 +75,10 @@ void SparkLEDControl::updateLED_APP_FXMode() {
 	if (!activePreset->isEmpty) {
 		for (int btn_number = 1; btn_number <= 6; btn_number++) {
 			int fxIndex = SparkHelper::getFXIndexFromButtonNumber(btn_number);
-			if( fxIndex == -1){
+			/*if( fxIndex == -1){
+				Serial.println("Invalid FX index found!");
 				return;
-			}
+			}*/
 			Pedal current_fx = activePreset->pedals[fxIndex];
 			switchLED(btn_number, current_fx.isOn);
 		}

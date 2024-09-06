@@ -75,6 +75,9 @@ private:
 	int showKeyboardPressedInterval = 500;
 	bool showKeyboardPressedFlag = false;
 
+	int logInterval = 5000;
+	unsigned long lastLogTimestamp = 0;
+
 	unsigned long previousMillis = 0;
 	int showMessageInterval = 2000;
 	bool showMsgFlag = false;
@@ -114,6 +117,7 @@ private:
 	void drawInvertBitmapColor(int16_t x, int16_t y, const uint8_t *bitmap,
 			int16_t w, int16_t h, uint16_t color);
 
+	void logDisplay();
 	const unsigned char epd_bitmap_Ignitron_Logo[768] PROGMEM = {
 			// 'Ignitron_logo_small, 128x47px
 			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
