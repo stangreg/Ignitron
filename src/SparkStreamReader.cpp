@@ -760,7 +760,9 @@ int SparkStreamReader::processBlock(ByteVector& blk){
 	bool msg_to_spark = false;
 	bool msg_from_spark = true;
 	
-	//DEBUG_PRINTLN("Processing block");
+	DEBUG_PRINTLN("Processing block");
+	DEBUG_PRINTVECTOR(blk);
+	DEBUG_PRINTLN();
 
 	// Process:
 	// 1. Remove 01FE header if present
@@ -774,10 +776,12 @@ int SparkStreamReader::processBlock(ByteVector& blk){
 		byte dir[2] = { blk[4], blk[5] };
 
 		//Check if announced size matches real size, otherwise skip (and wait for more data);
-		if(blk_len != blk.size()){
+		// Not using as app sometimes sends 01FE block in two steps and full size cannot be checked
+		// TODO: Change logic that 01FE blocks will be concatenated before processing.
+		/*if(blk_len != blk.size()){
 			DEBUG_PRINTLN("Message size not matching announced size, no further processing.");
 			return retValue;
-		}
+		}*/
 
 		msg_to_spark = dir[0] == 0x53 && dir[1] == 0xFE;
 		msg_from_spark = dir[0] == 0x41 && dir[1] == 0xFF;
@@ -790,6 +794,10 @@ int SparkStreamReader::processBlock(ByteVector& blk){
 	// Cut blk into chunks and append to response
 	preProcessBlock(blk);
 	
+	if(response.size() == 0){
+		return retValue;
+	}
+
 	// Check if last block is final and which command
 	ByteVector currentBlock = response.back();
 	byte seq = currentBlock[2];
