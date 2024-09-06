@@ -112,12 +112,12 @@ private:
 	void del_indent();
 	void add_separator();
 	void add_newline();
-	void add_python(char* python_str);
-	void add_str(char* a_title, const string& a_str, char* nature = "all");
-	void add_int(char* a_title, int an_int, char* nature = "all");
-	void add_float(char* a_title, float a_float, char* nature = "all");
-	void add_float_pure(float a_float, char* nature = "all");
-	void add_bool(char* a_title, boolean a_bool, char* nature = "all");
+	void add_python(string python_str);
+	void add_str(string a_title, const string& a_str, string nature = "all");
+	void add_int(string a_title, int an_int, string nature = "all");
+	void add_float(string a_title, float a_float, string nature = "all");
+	void add_float_pure(float a_float, string nature = "all");
+	void add_bool(string a_title, boolean a_bool, string nature = "all");
 
 
 

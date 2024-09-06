@@ -156,6 +156,8 @@ int SparkHelper::getFXIndexFromButtonNumber(int btn_number){
 	case REVERB_NUM:
 		return INDEX_FX_REVERB;
 		break;
+	default:
+		return -1;
 	}
 }
 

@@ -8,7 +8,6 @@
 #ifndef SPARKBLEKEYBOARD_H_
 #define SPARKBLEKEYBOARD_H_
 
-#define USE_NIMBLE
 
 #include <Arduino.h>
 #include <BleKeyboard.h>
