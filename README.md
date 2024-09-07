@@ -3,7 +3,7 @@
 </p>
 
 An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE (iOS) and Bluetooth Serial (Android). Also works as a control device for a Looper app on the mobile.
-**Ignitron works with all Spark Devices** (Spark 40, Spark Mini, Spark GO).
+**Ignitron has been successfully tested with Spark 2, Spark 40, Spark Mini, Spark GO**.
 
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
@@ -12,6 +12,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * **Save new presets** to Ignitron via the Spark App
 * **Delete** stored presets
 * Control **Looper apps** on a mobile (and other apps which support bluetooth keyboard controls)
+* Multiple BT keyboard layouts configurable
 
 Adding new presets to **Ignitron** can easily be done as it can also act like a Spark Amp. Simply connect to **Ignitron** with the Spark App and save new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
 
