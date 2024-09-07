@@ -10,6 +10,8 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * Spark Mini
 * Spark GO
 
+(Note: On Spark 2, Ignitron supports only the first bank of HW presets so far. The rest is fully functional.)
+
 **Ignitron** gives you full control over your Spark Amp:
 * Switch between the four **hardware presets**
 * Switch between **custom saved presets** organized in banks
