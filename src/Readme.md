@@ -2,9 +2,9 @@
 This document describes the software part of the **Ignitron** foot pedal.
 
 ## IDE
-I am using the [Sloeber](https://eclipse.baeyens.it) Eclipse plugin for development as it offers more convenient functions than the standard Arduino IDE. Of course, you can use the IDE of your choice.
+I am using the Visual Studio Code IDE with PlatfromIO plugin for development as it offers more convenient functions than the standard Arduino IDE. Of course, you can use the IDE of your choice.
 Whichever IDE you are using, you will need to set it up so it can build the code for the ESP32.
-I assume you already know how to setup an ESP32 project in an IDE, only specifics I have used will be described here.
+I assume you already know how to setup an ESP32 project in an IDE, only specifics I have used will be described here. When you use PlatformIO, the config file of the project should already contain most settings, you might need to slightly adjust depending on the exact board you are using.
 
 You need to add the board manager URL https://dl.espressif.com/dl/package_esp32_index.json
 
@@ -30,7 +30,7 @@ There is a number of custom libraries used on top of the standard ones to use wi
 | ArduinoJson | 6.21.3 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | Effortless-SPIFFS | 2.3.0 | File system to manage the presets | Arduino IDE Library |
-| ESP32-BLE-Keyboard | 0.3.0 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
+| ESP32-BLE-Keyboard | 0.3.2 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
 | FS | 1.0.0 | Basic File system library| Arduino IDE Library |
 | NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
 
