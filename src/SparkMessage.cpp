@@ -126,14 +126,8 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
     int total_bytes_to_process = SparkHelper::dataVectorNumOfBytes(all_chunks);
     int block_prefix_size = with_header ? 16 : 0;
 
-    int MAX_BLOCK_SIZE;
-    if (dir == DIR_TO_SPARK) {
-        // Maximum block size for messages to Spark Amp
-        MAX_BLOCK_SIZE = maxBlockSizeToSpark();
-    } else {
-        // Maximum block size for messages sent to Spark App
-        MAX_BLOCK_SIZE = maxBlockSizeFromSpark();
-    }
+    // Maximum block size depending on direction.
+    int MAX_BLOCK_SIZE = (dir == DIR_TO_SPARK) ? maxBlockSizeToSpark() : maxBlockSizeFromSpark();
 
     // now we can create the final message with the message header and the chunk header
     ByteVector block_header = {0x01, 0xFE, 0x00, 0x00};
