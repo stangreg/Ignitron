@@ -121,19 +121,10 @@ void SparkMessage::buildChunkData(byte msg_number) {
 
 vector<ByteVector> SparkMessage::buildMessage(int dir) {
 
-    vector<ByteVector> final_message;
+    vector<ByteVector> final_message = {};
 
-    /* DEBUG_PRINTLN("ALLCHUNKS: ");
-    for (auto block : all_chunks) {
-        DEBUG_PRINTVECTOR(block);
-        DEBUG_PRINTLN();
-    }
-    */
-
-    int block_prefix_size = 0;
-    if (with_header) {
-        block_prefix_size = 16;
-    }
+    int total_bytes_to_process = SparkHelper::dataVectorNumOfBytes(all_chunks);
+    int block_prefix_size = with_header ? 16 : 0;
 
     int MAX_BLOCK_SIZE;
     if (dir == DIR_TO_SPARK) {
@@ -144,121 +135,32 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
         MAX_BLOCK_SIZE = maxBlockSizeFromSpark();
     }
 
-    // Reverse order for iterating with pop
-    reverse(all_chunks.begin(), all_chunks.end());
-
     // now we can create the final message with the message header and the chunk header
     ByteVector block_header = {0x01, 0xFE, 0x00, 0x00};
-    ByteVector block_header_direction;
-    if (dir == DIR_TO_SPARK) {
-        block_header_direction = msg_to_spark;
-    } else {
-        block_header_direction = msg_from_spark;
-    }
+    ByteVector block_header_direction = (dir == DIR_TO_SPARK) ? msg_to_spark : msg_from_spark;
     ByteVector block_filler = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                0x00};
 
+    // read all chunks into one big chunk for splitting
+    std::deque<byte> data_to_split = {};
+    for (auto chunk : all_chunks) {
+        data_to_split.insert(data_to_split.end(), chunk.begin(), chunk.end());
+    }
+    all_chunks.clear();
+
     // create block
     ByteVector current_block = {};
-    ByteVector data_remainder = {};
+    int data_size;
 
-    bool new_block = true;
+    // create blocks from all data with headers.
+    while (data_to_split.size() > 0) {
+        DEBUG_PRINTVECTOR(current_block);
+        DEBUG_PRINTLN();
+        data_size = (int)data_to_split.size();
+        if (with_header) {
 
-    // start filling with chunks and start new blocks if required
-    while (all_chunks.size() > 0) {
-
-        if (new_block && with_header) {
             int block_size = min(MAX_BLOCK_SIZE,
-                                 SparkHelper::dataVectorNumOfBytes(all_chunks) + (int)data_remainder.size() + block_prefix_size);
-            current_block = block_header;
-            current_block.insert(current_block.end(),
-                                 block_header_direction.begin(),
-                                 block_header_direction.end());
-            current_block.push_back(block_size);
-            current_block.insert(current_block.end(), block_filler.begin(),
-                                 block_filler.end());
-            new_block = false;
-        }
-
-        ByteVector current_chunk = all_chunks.back();
-        all_chunks.pop_back();
-
-        int remaining_block_indicator;
-        int remaining_space;
-        // Put remaining data to chunks as long as some left
-        while (data_remainder.size() > 0) {
-
-            if (new_block && with_header) {
-                int block_size = min(MAX_BLOCK_SIZE,
-                                     SparkHelper::dataVectorNumOfBytes(all_chunks) + (int)data_remainder.size() + block_prefix_size);
-                current_block = block_header;
-                current_block.insert(current_block.end(),
-                                     block_header_direction.begin(),
-                                     block_header_direction.end());
-                current_block.push_back(block_size);
-                current_block.insert(current_block.end(), block_filler.begin(),
-                                     block_filler.end());
-                new_block = false;
-            }
-
-            remaining_space = MAX_BLOCK_SIZE - current_block.size();
-            int data_to_insert = min(remaining_space, (int)data_remainder.size());
-            current_block.insert(current_block.end(), data_remainder.begin(),
-                                 data_remainder.begin() + data_to_insert);
-            if (data_to_insert == remaining_space) {
-                final_message.push_back(current_block);
-                new_block = true;
-                current_block.clear();
-            }
-            data_remainder.assign(data_remainder.begin() + data_to_insert, data_remainder.end());
-        }
-
-        data_remainder.clear();
-        // Calculating if next chunk fits into current block or if needs to be split
-        remaining_block_indicator = MAX_BLOCK_SIZE - current_block.size() - current_chunk.size();
-        remaining_space = MAX_BLOCK_SIZE - current_block.size();
-
-        // Chunk fits and space is left
-        if (remaining_block_indicator > 0) {
-            current_block.insert(current_block.end(), current_chunk.begin(),
-                                 current_chunk.end());
-            new_block = false;
-        }
-        // Chunk fits exactly into the remaining space
-        if (remaining_block_indicator == 0) {
-            current_block.insert(current_block.end(), current_chunk.begin(),
-                                 current_chunk.end());
-            final_message.push_back(current_block);
-            current_block.clear();
-            if (all_chunks.size() > 1) {
-                new_block = true;
-            }
-        }
-        // Chunk does not fit, needs to be split between blocks
-        if (remaining_block_indicator < 0) {
-            // DEBUG_PRINTF("Remaining indicator = %i\n", remaining_block_indicator);
-            // DEBUG_PRINTF("Remaining space = %i\n", remaining_space);
-            // DEBUG_PRINTF("Current block size = %i\n", current_block.size());
-            // DEBUG_PRINTF("Current chunk size = %i\n", current_chunk.size());
-
-            current_block.insert(current_block.end(), current_chunk.begin(),
-                                 current_chunk.begin() + remaining_space);
-            data_remainder.assign(current_chunk.begin() + remaining_space,
-                                  current_chunk.end());
-
-            final_message.push_back(current_block);
-
-            current_block.clear();
-            new_block = true;
-        }
-    }
-    // If there is a remainder after all chunks have been added, add to block
-    if (data_remainder.size() > 0) {
-        // New header needs to be created as only remainder is left if flag is set here
-        if (new_block && with_header) {
-            int block_size = min(MAX_BLOCK_SIZE,
-                                 SparkHelper::dataVectorNumOfBytes(all_chunks) + (int)data_remainder.size() + block_prefix_size);
-
+                                 data_size + block_prefix_size);
             current_block = block_header;
             current_block.insert(current_block.end(),
                                  block_header_direction.begin(),
@@ -267,20 +169,23 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
             current_block.insert(current_block.end(), block_filler.begin(),
                                  block_filler.end());
         }
-        current_block.insert(current_block.end(), data_remainder.begin(),
-                             data_remainder.end());
-        data_remainder.clear();
-    }
-
-    if (current_block.size() > 0) {
+        int remaining_size = MAX_BLOCK_SIZE - current_block.size();
+        int bytes_to_insert = min(remaining_size, data_size);
+        std::deque<byte>::iterator num_bytes = data_to_split.begin() + bytes_to_insert;
+        current_block.insert(current_block.end(), data_to_split.begin(), num_bytes);
+        data_to_split.erase(data_to_split.begin(), num_bytes);
+        DEBUG_PRINTVECTOR(current_block);
+        DEBUG_PRINTLN();
         final_message.push_back(current_block);
         current_block.clear();
     }
+
     DEBUG_PRINTLN("COMPLETE MESSAGE: ");
     for (auto block : final_message) {
         DEBUG_PRINTVECTOR(block);
         DEBUG_PRINTLN();
     }
+
     return final_message;
 }
 

@@ -946,7 +946,7 @@ void SparkDataControl::handleIncomingAck() {
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
     AckData lastAck = spark_ssr.getLastAckAndEmpty();
-    if (lastAck.cmd == 0x04 || lastAck.cmd == 0x05) {
+    if (lastAck.cmd == 0x04) { // || lastAck.cmd == 0x05) {
         DEBUG_PRINTLN("Received ACK");
         if (lastAck.subcmd == 0x01) {
             // only execute preset number change on last ack for preset change
@@ -979,13 +979,13 @@ void SparkDataControl::setAmpParameters() {
 
     string ampName = sparkAmpName;
     DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
-    if (ampName == AMP_NAME_SPARK_40) {
+    if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO || ampName == AMP_NAME_SPARK_2) {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
-        with_delay = false;
+        with_delay = true;
     }
-    if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_GO || ampName == AMP_NAME_SPARK_2) {
+    if (ampName == AMP_NAME_SPARK_MINI ) {
         spark_msg.maxChunkSizeToSpark() = 0x27;
         spark_msg.maxBlockSizeToSpark() = 0x14;
         spark_msg.withHeader() = false;

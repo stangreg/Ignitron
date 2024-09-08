@@ -230,7 +230,7 @@ bool SparkBLEControl::writeBLE(const vector<ByteVector> &cmd, bool with_delay, b
                         // also seems to be not working for Spark Mini without a delay.s
                         // TEST SPark GO
                         if (with_delay) {
-                            delay(10);
+                            delay(100);
                         }
                     } else {
                         Serial.println("There was an error with writing!");
