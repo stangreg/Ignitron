@@ -46,7 +46,6 @@ void SparkMessage::splitDataToChunks(int dir) {
         ByteVector data8;
         if (num_chunks > 1) {
             // we need the chunk sub-header
-            // TODO: validate that num_chunks and this_chunk are in correct order
             data8.push_back(num_chunks);
             data8.push_back(this_chunk);
             data8.push_back(chunk_len);
@@ -185,7 +184,6 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
 
 vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
 
-    // TODO: split into sub functions
     DEBUG_PRINT("MESSAGE NUMBER: ");
     DEBUG_PRINT(msg_number);
     DEBUG_PRINTLN();
@@ -305,9 +303,9 @@ vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset)
     }
 
     // add trailing 30 bytes of 00
-    for (int i = 0; i < 30; i++) {
-        add_byte(0x00);
-    }
+    /* for (int i = 0; i < 30; i++) {
+         add_byte(0x00);
+     }*/
 
     return end_message(DIR_TO_SPARK, msg_num);
 }

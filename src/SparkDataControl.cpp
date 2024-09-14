@@ -15,6 +15,7 @@ SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl;
 
 queue<ByteVector> SparkDataControl::msgQueue;
+deque<ByteVector> SparkDataControl::currentCommand;
 
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
@@ -106,7 +107,6 @@ int SparkDataControl::init(int opModeInput) {
         bleKeyboard.end();
         bleControl->initBLE(&bleNotificationCallback);
         DEBUG_PRINTLN("Starting regular check for empty HW presets.");
-        // TODO Put that back in once everything works
         xTaskCreatePinnedToCore(
             checkForMissingPresets, // Function to implement the task
             "HWpresets",            // Name of the task
@@ -299,7 +299,7 @@ bool SparkDataControl::getCurrentPresetFromSpark() {
     current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
     DEBUG_PRINTLN("Getting current preset from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 void SparkDataControl::updatePendingPreset(int bnk) {
@@ -330,7 +330,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
             if (bnk == 0) {
                 Serial.printf("Changing to HW preset %d...", pre);
                 current_msg = spark_msg.change_hardware_preset(nextMessageNum, pre);
-                retValue = sendMessageToBT(current_msg);
+                retValue = triggerCommand(current_msg);
             }
             // Switch to custom preset
             else {
@@ -342,7 +342,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
                 current_msg = spark_msg.create_preset(pendingPreset_, DIR_TO_SPARK, nextMessageNum);
                 Serial.printf("Changing to preset %02d-%d...", bnk, pre);
-                if (sendMessageToBT(current_msg)) {
+                if (triggerCommand(current_msg)) {
                     customPresetNumberChangePending = true;
                     retValue = true;
                 }
@@ -370,7 +370,7 @@ bool SparkDataControl::switchEffectOnOff(const string &fx_name, bool enable) {
     }
     current_msg = spark_msg.turn_effect_onoff(nextMessageNum, fx_name, enable);
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 void SparkDataControl::processPresetEdit(int presetNum) {
@@ -615,42 +615,42 @@ bool SparkDataControl::getAmpName() {
     current_msg = spark_msg.get_amp_name(nextMessageNum);
     DEBUG_PRINTLN("Getting amp name from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::getCurrentPresetNum() {
     current_msg = spark_msg.get_current_preset_num(nextMessageNum);
     DEBUG_PRINTLN("Getting current preset num from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::getSerialNumber() {
     current_msg = spark_msg.get_serial_number(nextMessageNum);
     DEBUG_PRINTLN("Getting serial number from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::getFirmwareVersion() {
     current_msg = spark_msg.get_firmware_version(nextMessageNum);
     DEBUG_PRINTLN("Getting firmware version from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::getHWChecksums() {
     current_msg = spark_msg.get_hw_checksums(nextMessageNum);
     DEBUG_PRINTLN("Getting checksums from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::getCurrentPreset(int num) {
     current_msg = spark_msg.get_current_preset(nextMessageNum, num);
     DEBUG_PRINTLN("Getting preset information from Spark");
 
-    return sendMessageToBT(current_msg);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::toggleButtonMode() {
@@ -785,12 +785,25 @@ bool SparkDataControl::decreasePresetLooper() {
     return switchPreset(selectedPresetNum, false);
 }
 
-bool SparkDataControl::sendMessageToBT(const vector<ByteVector> &msg) {
+bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
+    DEBUG_PRINTLN("Sending message via BT.");
+    return bleControl->writeBLE(msg, with_delay);
+}
+
+bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
     nextMessageNum++;
+    currentCommand.assign(msg.begin(), msg.end());
     // spark_ssr.clearMessageBuffer();
     DEBUG_PRINTLN("Sending message via BT.");
     // spark_ssr.clearMessageBuffer();
-    return bleControl->writeBLE(msg, with_delay);
+    if (currentCommand.size() > 0) {
+        ByteVector firstBlock = currentCommand.front();
+        if (sendMessageToBT(firstBlock)) {
+            currentCommand.pop_front();
+            return true;
+        }
+    }
+    return false;
 }
 
 void SparkDataControl::handleSendingAck(const ByteVector &blk) {
@@ -810,7 +823,7 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
 
         DEBUG_PRINTLN("Sending acknowledgment");
         if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
-            sendMessageToBT(ack_msg);
+            triggerCommand(ack_msg);
         } else if (operationMode_ == SPARK_MODE_AMP) {
             bleControl->notifyClients(ack_msg);
         }
@@ -946,13 +959,25 @@ void SparkDataControl::handleIncomingAck() {
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
     AckData lastAck = spark_ssr.getLastAckAndEmpty();
-    if (lastAck.cmd == 0x04 || lastAck.cmd == 0x05) {
-        DEBUG_PRINTLN("Received ACK");
+    if (lastAck.cmd == 0x05) { // 05 is intermediate ack, not last message
+        DEBUG_PRINTLN("Received intermediate ACK");
+        if (lastAck.subcmd == 0x01) {
+            // send next part of command on intermediate ACK
+            if (currentCommand.size() > 0) {
+                ByteVector nextBlock = currentCommand.front();
+                if (sendMessageToBT(nextBlock)) {
+                    currentCommand.pop_front();
+                }
+            }
+        }
+    }
+    if (lastAck.cmd == 0x04) {
+        DEBUG_PRINTLN("Received final ACK");
         if (lastAck.subcmd == 0x01) {
             // only execute preset number change on last ack for preset change
             if (customPresetNumberChangePending) {
                 current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-                sendMessageToBT(current_msg);
+                triggerCommand(current_msg);
                 customPresetNumberChangePending = false;
                 updateActiveWithPendingPreset();
             }
@@ -983,15 +1008,13 @@ void SparkDataControl::setAmpParameters() {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
-        with_delay = true;
+        with_delay = false;
     }
     if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) {
-        /*spark_msg.maxChunkSizeToSpark() = 0x27;
-        spark_msg.maxBlockSizeToSpark() = 0x14;*/
         spark_msg.maxChunkSizeToSpark() = 0x80;
-        spark_msg.maxBlockSizeToSpark() = 0x64;
+        spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
-        with_delay = true;
+        with_delay = false;
     }
     spark_msg.maxChunkSizeFromSpark() = 0x19;
     spark_msg.maxBlockSizeFromSpark() = 0x6A;
@@ -1002,7 +1025,7 @@ void SparkDataControl::readHWPreset(int num) {
     // in case HW presets are missing from the cache, they can be requested
     Serial.printf("Reading missing HW preset %d\n", num);
     current_msg = spark_msg.get_current_preset(special_msg_num, num);
-    sendMessageToBT(current_msg);
+    triggerCommand(current_msg);
 }
 
 void SparkDataControl::resetStatus() {

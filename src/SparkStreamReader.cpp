@@ -738,14 +738,6 @@ int SparkStreamReader::processBlock(ByteVector &blk) {
         int blk_len = blk[6];
         byte dir[2] = {blk[4], blk[5]};
 
-        // Check if announced size matches real size, otherwise skip (and wait for more data);
-        //  Not using as app sometimes sends 01FE block in two steps and full size cannot be checked
-        //  TODO: Change logic that 01FE blocks will be concatenated before processing.
-        /*if(blk_len != blk.size()){
-            DEBUG_PRINTLN("Message size not matching announced size, no further processing.");
-            return retValue;
-        }*/
-
         msg_to_spark = dir[0] == 0x53 && dir[1] == 0xFE;
         msg_from_spark = dir[0] == 0x41 && dir[1] == 0xFF;
 

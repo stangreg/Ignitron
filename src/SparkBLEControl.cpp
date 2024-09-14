@@ -198,12 +198,10 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(const vector<ByteVector> &cmd, bool with_delay, bool response) {
-    DEBUG_PRINTLN("Sending message:");
-    for (auto block : cmd) {
-        DEBUG_PRINTVECTOR(block);
-    }
-    DEBUG_PRINTLN();
+bool SparkBLEControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
+    // DEBUG_PRINTLN("Sending message:");
+    // DEBUG_PRINTVECTOR(cmd);
+    // DEBUG_PRINTLN();
     if (pClient && pClient->isConnected()) {
         DEBUG_PRINTLN("Connection ok");
         NimBLERemoteService *pSvc = nullptr;
@@ -215,31 +213,41 @@ bool SparkBLEControl::writeBLE(const vector<ByteVector> &cmd, bool with_delay, b
 
             if (pChr) {
                 // if (pChr->canWrite()) {
-                for (auto block : cmd) {
+                // for (auto block : cmd) {
 
-                    // This it to split messages into sizes of max. max_send_size.
-                    // As we have chosen 173, usually no further splitting is requried.
-                    // SparkMessage already creates messages split into 173 byte chunks
-                    DEBUG_PRINT("Sending block:");
-                    DEBUG_PRINTVECTOR(block);
-                    DEBUG_PRINTLN();
-                    if (pChr->writeValue(block.data(), block.size(),
-                                         response)) {
-                        // Delay seems to be required in order to not lose any packages.
-                        // Seems to be more stable with a short delay
-                        // also seems to be not working for Spark Mini without a delay.s
-                        // TEST SPark GO
-                        if (with_delay) {
-                            delay(100);
-                        }
-                    } else {
-                        Serial.println("There was an error with writing!");
-                        // Disconnect if write failed
-                        pClient->disconnect();
-                        isAmpConnected_ = false;
-                        return false;
+                // This it to split messages into sizes of max. max_send_size.
+                // As we have chosen 173, usually no further splitting is requried.
+                // SparkMessage already creates messages split into 173 byte chunks
+                DEBUG_PRINT("Sending block:");
+                DEBUG_PRINTVECTOR(cmd);
+                DEBUG_PRINTLN();
+                // TODO: Move this value to the spark parameters and forward in call
+                int max_size = 0x64;
+                int cmd_size = cmd.size();
+                int cut_point = min(cmd_size, max_size);
+                ByteVector msg1;
+                ByteVector msg2;
+                msg1.assign(cmd.begin(), cmd.begin() + cut_point);
+                msg2.assign(cmd.begin() + cut_point, cmd.end());
+                if (pChr->writeValue(msg1.data(), msg1.size(),
+                                     response) &&
+                    pChr->writeValue(msg2.data(), msg2.size(),
+                                     response)) {
+                    // Delay seems to be required in order to not lose any packages.
+                    // Seems to be more stable with a short delay
+                    // also seems to be not working for Spark Mini without a delay.s
+                    // TEST SPark GO
+                    if (with_delay) {
+                        delay(80);
                     }
-                } // For each block
+                } else {
+                    Serial.println("There was an error with writing!");
+                    // Disconnect if write failed
+                    pClient->disconnect();
+                    isAmpConnected_ = false;
+                    return false;
+                }
+                //} // For each block
                 //}  // if can write
             } // if pChr
             else {
