@@ -171,6 +171,11 @@ public:
             return false;
     }
 
+    void setMaxBleMsgSize(int size) {
+        if (size > 0)
+            BLE_MAX_MSG_SIZE = size;
+    }
+
 private:
     /** Create a single global instance of the callback class to be used by all clients */
     // static ClientCallbacks clientCB;
@@ -190,6 +195,7 @@ private:
 
     uint32_t scanTime = 0; /** 0 = scan forever */
     const uint8_t notificationOn[2] = {0x1, 0x0};
+    int BLE_MAX_MSG_SIZE = 0x64;
 
     static void scanEndedCB(NimBLEScanResults results);
     void onResult(NimBLEAdvertisedDevice *advertisedDevice);

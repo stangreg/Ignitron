@@ -222,17 +222,18 @@ bool SparkBLEControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) 
                 DEBUG_PRINTVECTOR(cmd);
                 DEBUG_PRINTLN();
                 // TODO: Move this value to the spark parameters and forward in call
-                int max_size = 0x64;
-                int cmd_size = cmd.size();
-                int cut_point = min(cmd_size, max_size);
-                ByteVector msg1;
-                ByteVector msg2;
-                msg1.assign(cmd.begin(), cmd.begin() + cut_point);
-                msg2.assign(cmd.begin() + cut_point, cmd.end());
-                if (pChr->writeValue(msg1.data(), msg1.size(),
-                                     response) &&
-                    pChr->writeValue(msg2.data(), msg2.size(),
-                                     response)) {
+                bool return_value = true;
+                ByteVector send_cmd;
+                while (cmd.size() > 0) {
+                    int cmd_size = cmd.size();
+                    int cut_point = min(cmd_size, BLE_MAX_MSG_SIZE);
+                    if (cut_point > 0) {
+                        send_cmd.assign(cmd.begin(), cmd.begin() + cut_point);
+                        cmd.assign(cmd.begin() + cut_point, cmd.end());
+                        return_value = pChr->writeValue(send_cmd.data(), send_cmd.size(), response);
+                    }
+                }
+                if (return_value) {
                     // Delay seems to be required in order to not lose any packages.
                     // Seems to be more stable with a short delay
                     // also seems to be not working for Spark Mini without a delay.s

@@ -1008,12 +1008,14 @@ void SparkDataControl::setAmpParameters() {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
+        bleControl->setMaxBleMsgSize(0xAD);
         with_delay = false;
     }
     if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
+        bleControl->setMaxBleMsgSize(0x64);
         with_delay = false;
     }
     spark_msg.maxChunkSizeFromSpark() = 0x19;
