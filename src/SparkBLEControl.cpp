@@ -221,7 +221,6 @@ bool SparkBLEControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) 
                 DEBUG_PRINT("Sending block:");
                 DEBUG_PRINTVECTOR(cmd);
                 DEBUG_PRINTLN();
-                // TODO: Move this value to the spark parameters and forward in call
                 bool return_value = true;
                 ByteVector send_cmd;
                 while (cmd.size() > 0) {
