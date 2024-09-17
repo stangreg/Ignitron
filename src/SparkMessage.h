@@ -95,6 +95,7 @@ public:
 	vector<ByteVector> send_serial_number(byte msg_number);
 	vector<ByteVector> send_firmware_version(byte msg_number);
 	vector<ByteVector> send_hw_checksums(byte msg_number);
+	vector<ByteVector> send_hw_checksums_multi(byte msg_number);
 	vector<ByteVector> send_hw_preset_number(byte msg_number);
 	vector<ByteVector> send_response_71(byte msg_number);
 	vector<ByteVector> send_response_72(byte msg_number);

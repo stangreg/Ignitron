@@ -853,6 +853,10 @@ void SparkDataControl::handleAmpModeRequest() {
         DEBUG_PRINTLN("Found request for hw checksum");
         msg = spark_msg.send_hw_checksums(currentMessageNum);
         break;
+    case 0x2B:
+        DEBUG_PRINTLN("Found request for hw checksum multi");
+        msg = spark_msg.send_hw_checksums_multi(currentMessageNum);
+        break;
     case 0x10:
         DEBUG_PRINTLN("Found request for hw preset number");
         msg = spark_msg.send_hw_preset_number(currentMessageNum);
@@ -934,6 +938,9 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
         }
 
+        if (lastMessageType == MSG_TYPE_FX_CHANGE || lastMessageType == MSG_TYPE_FX_PARAM || lastMessageType == MSG_TYPE_FX_ONOFF) {
+            printMessage = true;
+        }
         if (msgStr.length() > 0 && printMessage) {
             Serial.println("Message processed:");
             Serial.println(msgStr.c_str());

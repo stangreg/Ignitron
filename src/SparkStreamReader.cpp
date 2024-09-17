@@ -104,7 +104,6 @@ boolean SparkStreamReader::read_onoff() {
 }
 
 void SparkStreamReader::start_str() {
-    text = "";
     json = "{";
     raw = "";
     // dict={};
@@ -135,70 +134,47 @@ void SparkStreamReader::add_python(string python_str) {
     json += indent + python_str; // + "\n";
 }
 
-void SparkStreamReader::add_str(char *a_title, const string &a_str, string nature) {
+void SparkStreamReader::add_str(string a_title, const string &a_str) {
     raw += a_str;
     raw += " ";
-    char string_add[200] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%s%-20s: %s \n", indent.c_str(), a_title, a_str.c_str());
-    text += string_add;
-    if (nature != "python") {
-        json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
-    }
+    json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
 }
 
-void SparkStreamReader::add_int(char *a_title, int an_int, string nature) {
+void SparkStreamReader::add_int(string a_title, int an_int) {
     char string_add[100] = "";
     int size = sizeof string_add;
     snprintf(string_add, size, "%d ", an_int);
     raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %d\n", indent.c_str(), a_title, an_int);
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %d", indent.c_str(), a_title, an_int);
-        json += string_add;
-    }
+    snprintf(string_add, size, "%s\"%s\": %d", indent.c_str(), a_title.c_str(), an_int);
+    json += string_add;
 }
 
-void SparkStreamReader::add_float(char *a_title, float a_float, string nature) {
+void SparkStreamReader::add_float(string a_title, float a_float) {
 
     char string_add[100] = "";
     int size = sizeof string_add;
     snprintf(string_add, size, "%2.4f ", a_float);
     raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %2.4f\n", indent.c_str(), a_title, a_float);
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s%2.4f", indent.c_str(), a_float);
-        json += string_add;
-    } else {
-        snprintf(string_add, size, "%s\"%s\": %2.4f", indent.c_str(), a_title, a_float);
-        json += string_add;
-    }
+    snprintf(string_add, size, "%s%2.4f", indent.c_str(), a_float);
+    json += string_add;
 }
 
-void SparkStreamReader::add_float_pure(float a_float, string nature) {
+void SparkStreamReader::add_float_pure(float a_float) {
     char string_add[100] = "";
     int size = sizeof string_add;
     snprintf(string_add, size, "%2.4f ", a_float);
     raw += string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    text += string_add;
     snprintf(string_add, size, "%2.4f", a_float);
     json += string_add;
 }
 
-void SparkStreamReader::add_bool(char *a_title, boolean a_bool, string nature) {
+void SparkStreamReader::add_bool(string a_title, boolean a_bool) {
     char string_add[100] = "";
     int size = sizeof string_add;
     snprintf(string_add, size, "%s ", a_bool ? "true" : "false");
     raw += string_add;
-    snprintf(string_add, size, "%s%s: %-20s\n", indent.c_str(), a_title, a_bool ? "true" : "false");
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %s", indent.c_str(), a_title, a_bool ? "true" : "false");
-        json += string_add;
-    }
+    snprintf(string_add, size, "%s\"%s\": %s", indent.c_str(), a_title.c_str(), a_bool ? "true" : "false");
+    json += string_add;
 }
 
 void SparkStreamReader::read_effect_parameter() {
@@ -329,7 +305,7 @@ void SparkStreamReader::read_preset() {
     add_separator();
     add_str("Icon", icon);
     add_separator();
-    add_float("BPM", bpm, "python");
+    add_float("BPM", bpm);
     add_separator();
     add_newline();
     // DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
@@ -378,7 +354,7 @@ void SparkStreamReader::read_preset() {
             // add_int("Parameter", num, "python");
             // add_str("Special", SparkHelper::intToHex(spec), "python");
             // add_float("Value", val, "python");
-            add_float_pure(val, "python");
+            add_float_pure(val);
             if (p < num_p - 1) {
                 add_separator();
             }
@@ -403,7 +379,6 @@ void SparkStreamReader::read_preset() {
     add_str("Filler", SparkHelper::intToHex(filler));
     add_newline();
     end_str();
-    currentSetting_.text = text;
     currentSetting_.raw = raw;
     currentSetting_.json = json;
     currentSetting_.isEmpty = false;

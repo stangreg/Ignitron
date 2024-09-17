@@ -405,11 +405,11 @@ vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
     start_message(cmd, sub_cmd);
 
     add_byte(0xCE);
-    // Version string 1.7.5.182 (old: 1.6.5.160 (160-128))
-    add_byte((byte)1);
-    add_byte((byte)10);
-    add_byte((byte)8);
-    add_byte((byte)25);
+    // Version string 1.10.8.25, (old: 1.7.5.182,  1.6.5.160 (160-128))
+    add_byte((byte)2);
+    add_byte((byte)2);
+    add_byte((byte)2);
+    add_byte((byte)58);
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -429,16 +429,47 @@ vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
     add_byte(0x58);
      */
 
-    // Spark 40: 94 CC 8e 75 67 2a
-
-    // Spark GO: f001 0779 032a   07 14 4c 1e 75 67 2a       f7
-
+    // 94 CC 8e 75 67 2a
     add_byte(0x94);
     add_byte(0xCC);
     add_byte(0x9e);
     add_byte(0x75);
     add_byte(0x67);
     add_byte(0x2a);
+
+    return end_message(DIR_FROM_SPARK, msg_number);
+}
+
+vector<ByteVector> SparkMessage::send_hw_checksums_multi(byte msg_number) {
+    cmd = 0x03;
+    sub_cmd = 0x2B;
+
+    start_message(cmd, sub_cmd);
+
+    // 0D 147D 4C07 5A58
+    /*
+    add_byte(0x94);
+    add_byte(0x7D);
+    add_byte(0xCC);
+    add_byte(0x87);
+    add_byte(0x5A);
+    add_byte(0x58);
+     */
+
+    // 0d 18 4e 4c 5f 3b 04 7d 0c 60 08 4c 50
+    // 8-bit indicator is here "0d" and "0c", so the numbers to get the 8th bit added as indicated (lsb)
+    // 94 CC 8e 75 67 2a
+    add_byte(0x98); // 1
+    add_byte(0x4e); // 0
+    add_byte(0x8c); // 1
+    add_byte(0xdf); // 1
+    add_byte(0x3b); // 0
+    add_byte(0x04); // 0
+    add_byte(0x7d); // 0
+    add_byte(0x60); // 0
+    add_byte(0x08); // 0
+    add_byte(0xcc); // 1
+    add_byte(0xd0); // 1
 
     return end_message(DIR_FROM_SPARK, msg_number);
 }

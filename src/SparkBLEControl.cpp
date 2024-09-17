@@ -286,7 +286,8 @@ void SparkBLEControl::startServer() {
     Serial.println("Starting NimBLE Server");
 
     /** sets device name */
-    NimBLEDevice::init("Spark 40 BLE");
+    // NimBLEDevice::init("Spark 40 BLE");
+    NimBLEDevice::init("Spark 2 BLE");
 
     /** Optional: set the transmit power, default is 3db */
     NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
