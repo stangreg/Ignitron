@@ -443,6 +443,8 @@ vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
+// TODO: Idea: Save a HW setup of Spark 2 in a custom one and send it from app to Ignitron. Use the
+//  resulting json to encode a preset only for the AMP init phase.
 vector<ByteVector> SparkMessage::send_hw_checksums_multi(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x2B;
