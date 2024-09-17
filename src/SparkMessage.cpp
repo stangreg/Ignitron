@@ -389,11 +389,14 @@ vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
     sub_cmd = 0x23;
 
     start_message(cmd, sub_cmd);
-    string serial_num = "S999C999B999";
+    // string serial_num = "S999C999B999";
+    string serial_num = "S5011G14709314C";
+
     // Spark App seems to send the F7 byte as part of the string in addition to the final F7 byte,
     // so we need to have a flexible add_prefixed_string method to increase lenght information by one
-    add_prefixed_string(serial_num, serial_num.length() + 1);
-    add_byte(0xF7);
+    // add_prefixed_string(serial_num, serial_num.length() + 1);
+    add_prefixed_string(serial_num);
+    // add_byte(0xF7);
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -456,15 +459,16 @@ vector<ByteVector> SparkMessage::send_hw_checksums_multi(byte msg_number) {
     add_byte(0x58);
      */
 
-    // 0d 18 4e 4c 5f 3b 04 7d 0c 60 08 4c 50
+    // 0d   18  4e 4c 5f 3b 04 7d  0c  60 08 4c 50
     // 8-bit indicator is here "0d" and "0c", so the numbers to get the 8th bit added as indicated (lsb)
     // 94 CC 8e 75 67 2a
     add_byte(0x98); // 1
     add_byte(0x4e); // 0
-    add_byte(0x8c); // 1
+    add_byte(0xcc); // 1
     add_byte(0xdf); // 1
     add_byte(0x3b); // 0
     add_byte(0x04); // 0
+
     add_byte(0x7d); // 0
     add_byte(0x60); // 0
     add_byte(0x08); // 0
@@ -524,7 +528,7 @@ vector<ByteVector> SparkMessage::create_preset(const Preset &preset_data,
         add_byte((byte)(num_p + 0x90));
         for (int p = 0; p < num_p; p++) {
             add_byte((byte)p);
-            add_byte((byte)'\x91');
+            add_byte((byte)0x91);
             add_float(curr_pedal_params[p].value);
         }
     }
