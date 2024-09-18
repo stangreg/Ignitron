@@ -451,16 +451,6 @@ vector<ByteVector> SparkMessage::send_hw_checksums_multi(byte msg_number) {
 
     start_message(cmd, sub_cmd);
 
-    // 0D 147D 4C07 5A58
-    /*
-    add_byte(0x94);
-    add_byte(0x7D);
-    add_byte(0xCC);
-    add_byte(0x87);
-    add_byte(0x5A);
-    add_byte(0x58);
-     */
-
     // 0d   18  4e 4c 5f 3b 04 7d  0c  60 08 4c 50
     // 8-bit indicator is here "0d" and "0c", so the numbers to get the 8th bit added as indicated (lsb)
     // 94 CC 8e 75 67 2a
