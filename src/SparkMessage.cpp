@@ -583,3 +583,22 @@ vector<ByteVector> SparkMessage::spark_config_after_intro(byte msg_number, byte 
     }
     return end_message(DIR_TO_SPARK, msg_number);
 }
+
+vector<ByteVector> SparkMessage::update_looper_settings(byte msg_number, LooperSetting setting) {
+
+    cmd = 0x01;
+    sub_cmd = 0x76;
+
+    start_message(cmd, sub_cmd);
+    if (setting.bpm >= 128) {
+        add_byte(0xCC);
+    }
+    add_byte(setting.bpm);
+    add_byte(setting.count);
+    add_byte(setting.bars);
+    add_onoff(setting.free_indicator);
+    add_onoff(setting.click);
+    add_onoff(setting.unknown_onoff);
+    add_byte(setting.unknown_byte);
+    return end_message(DIR_TO_SPARK,msg_number);
+}

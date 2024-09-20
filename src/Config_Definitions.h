@@ -97,8 +97,10 @@ const string VERSION = "1.7.0";
 #define INDEX_FX_REVERB 6
 
 // Spark button configs in APP mode
-#define SWITCH_MODE_FX 1
-#define SWITCH_MODE_PRESET 2
+#define BUTTON_MODE_FX 1
+#define BUTTON_MODE_PRESET 2
+#define BUTTON_MODE_LOOP_CONFIG 3
+#define BUTTON_MODE_LOOP_CONTROL 4
 
 // Spark operation modes
 #define SPARK_MODE_APP 1

@@ -153,7 +153,7 @@ int SparkDataControl::init(int opModeInput) {
 
 void SparkDataControl::switchOperationMode(int opMode) {
     operationMode_ = opMode;
-    buttonMode_ = SWITCH_MODE_PRESET;
+    buttonMode_ = BUTTON_MODE_PRESET;
     if (opMode == SPARK_MODE_APP) {
         bleKeyboard.end();
     } else if (opMode == SPARK_MODE_LOOPER) {
@@ -184,6 +184,11 @@ void SparkDataControl::checkForUpdates() {
     if (spark_ssr.isLooperSettingUpdated()) {
         looperSetting_ = spark_ssr.currentLooperSetting();
         spark_ssr.resetLooperSettingUpdateFlag();
+    }
+
+    if (looperSetting_.changePending) {
+        updateLooperSettings();
+        looperSetting_.changePending = false;
     }
 
     // Check if active preset has been updated
@@ -668,21 +673,39 @@ bool SparkDataControl::toggleButtonMode() {
     }
 
     Serial.print("Switching to ");
-    switch (buttonMode_) {
-    case SWITCH_MODE_FX:
-        Serial.println("PRESET mode");
-        buttonMode_ = SWITCH_MODE_PRESET;
-        break;
-    case SWITCH_MODE_PRESET:
-        Serial.println("FX mode");
-        buttonMode_ = SWITCH_MODE_FX;
-        updatePendingWithActive();
-        break;
-    default:
-        Serial.println("Unexpected mode. Defaulting to PRESET mode");
-        buttonMode_ = SWITCH_MODE_PRESET;
-        break;
-    } // SWITCH
+    if (operationMode_ == SPARK_MODE_APP) {
+        switch (buttonMode_) {
+        case BUTTON_MODE_FX:
+            Serial.println("PRESET mode");
+            buttonMode_ = BUTTON_MODE_PRESET;
+            break;
+        case BUTTON_MODE_PRESET:
+            Serial.println("FX mode");
+            buttonMode_ = BUTTON_MODE_FX;
+            updatePendingWithActive();
+            break;
+        default:
+            Serial.println("Unexpected mode. Defaulting to PRESET mode");
+            buttonMode_ = BUTTON_MODE_PRESET;
+            break;
+        } // SWITCH
+    } else if (operationMode_ == SPARK_MODE_SPK_LOOPER) {
+        switch (buttonMode_) {
+        case BUTTON_MODE_LOOP_CONTROL:
+            Serial.println("CONFIG mode");
+            buttonMode_ = BUTTON_MODE_LOOP_CONFIG;
+            break;
+        case BUTTON_MODE_LOOP_CONFIG:
+            Serial.println("CONTROL mode");
+            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+            updatePendingWithActive();
+            break;
+        default:
+            Serial.println("Unexpected mode. Defaulting to PRESET mode");
+            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+            break;
+        } // SWITCH
+    }
     return true;
 }
 
@@ -699,6 +722,7 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("LOOPER mode");
         if (sparkAmpName == AMP_NAME_SPARK_2) {
             newOperationMode = SPARK_MODE_SPK_LOOPER;
+            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
         } else {
             newOperationMode = SPARK_MODE_LOOPER;
         }
@@ -707,10 +731,12 @@ bool SparkDataControl::toggleLooperAppMode() {
     case SPARK_MODE_SPK_LOOPER:
         Serial.println("APP mode");
         newOperationMode = SPARK_MODE_APP;
+        buttonMode_ = BUTTON_MODE_PRESET;
         break;
     default:
         Serial.println("Unexpected mode. Defaulting to APP mode");
         newOperationMode = SPARK_MODE_APP;
+        buttonMode_ = BUTTON_MODE_PRESET;
         break;
     } // SWITCH
     switchOperationMode(newOperationMode);
@@ -863,6 +889,37 @@ bool SparkDataControl::configureLooper() {
     triggerCommand(current_msg);
     delay(100);
     return true;
+}
+
+void SparkDataControl::tapTempoButton() {
+
+    uint8_t now = millis();
+    uint8_t diff = now - lastTapButtonPressed_;
+    uint8_t last = now;
+    int entries;
+    uint8_t sum;
+    if (diff > tapButtonThreshold_) {
+        entries = 0;
+        sum = 0;
+    }
+    sum = sum + diff;
+    entries++;
+    int average = sum / entries;
+    DEBUG_PRINTF("Tap tempo: %d\n", average);
+    if (entries > 3) {
+        looperSetting_.setBpm(average);
+    }
+    /*
+        now = millis();
+        diff = now - last;
+        last = now;
+        sum = sum + diff;
+        entries++;
+
+        int average = sum / entries;
+
+        println("average = " + average);
+        */
 }
 
 void SparkDataControl::handleSendingAck(const ByteVector &blk) {
@@ -1139,4 +1196,9 @@ void SparkDataControl::setActiveHWPreset() {
         DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
         getCurrentPresetFromSpark();
     }
+}
+
+bool SparkDataControl::updateLooperSettings() {
+    current_msg = spark_msg.update_looper_settings(nextMessageNum, looperSetting_);
+    return triggerCommand(current_msg);
 }

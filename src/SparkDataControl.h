@@ -194,6 +194,8 @@ public:
     // TODO: testing init messages after connection
     bool configureLooper();
 
+    void tapTempoButton();
+
     // Functions for Looper/Keyboard mode
     void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
     void resetLastKeyboardButtonPressed();
@@ -217,10 +219,15 @@ private:
     string sparkModeFileName = "/config/SparkMode.config";
 
     // Button data
-    int buttonMode_ = SWITCH_MODE_PRESET;
+    int buttonMode_ = BUTTON_MODE_PRESET;
     uint8_t lastKeyboardButtonPressed_ = 0;
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;
+
+    uint8_t lastTapButtonPressed_ = 0;
+    const int tapButtonThreshold_ = 2000;
+    int tapEntries = 0;
+    uint8_t tapSum = 0;
 
     // PRESET variables
     static Preset activePreset_;
@@ -292,6 +299,8 @@ private:
     static void updatePendingWithActive();
     static void updateActiveWithPendingPreset();
     static void setActiveHWPreset();
+
+    static bool updateLooperSettings();
 };
 
 #endif /* SPARKDATACONTROL_H_ */

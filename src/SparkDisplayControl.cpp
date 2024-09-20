@@ -90,7 +90,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
     // Preset display
     display.setTextSize(4);
     string presetText = " ";
-    if (opMode == SPARK_MODE_APP && buttonMode == SWITCH_MODE_FX) {
+    if (opMode == SPARK_MODE_APP && buttonMode == BUTTON_MODE_FX) {
         // If in FX mode, show an "M" for manual mode
         presetText = "M";
     }
@@ -216,7 +216,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
         secondaryLinePreset = primaryLinePreset;
 
         // When we switched to FX mode, we always show the current selected preset
-        if (buttonMode == SWITCH_MODE_FX) {
+        if (buttonMode == BUTTON_MODE_FX) {
             secondaryLinePreset = activePreset;
         }
         if (!(secondaryLinePreset->isEmpty) || pendingBank > 0) {
@@ -397,7 +397,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
         showFX_SecondaryName();
 
         // in FX mode (manual mode) invert display
-        if (buttonMode == SWITCH_MODE_FX) {
+        if (buttonMode == BUTTON_MODE_FX) {
             display.invertDisplay(true);
         } else {
             display.invertDisplay(false);

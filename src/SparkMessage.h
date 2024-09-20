@@ -92,9 +92,9 @@ public:
     vector<ByteVector> send_response_72(byte msg_number);
 
     vector<ByteVector> spark_looper_command(byte msg_number, byte command);
-	vector<ByteVector> spark_config_after_intro(byte msg_number, byte command);
-	
-	
+    vector<ByteVector> spark_config_after_intro(byte msg_number, byte command);
+
+    vector<ByteVector> update_looper_settings(byte msg_number, LooperSetting setting);
 
     int &
     maxChunkSizeToSpark() {

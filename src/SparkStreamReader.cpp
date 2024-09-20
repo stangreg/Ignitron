@@ -458,6 +458,7 @@ void SparkStreamReader::read_looper_settings() {
 
     looperSetting_.bpm = bpm;
     looperSetting_.count_str = count_str;
+    looperSetting_.count = count_byte;
     looperSetting_.bars = bars;
     looperSetting_.free_indicator = free_indicator;
     looperSetting_.click = click;
@@ -645,9 +646,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             read_hardware_preset();
             break;
         default:
-            DEBUG_PRINT(SparkHelper::intToHex(_cmd).c_str());
-            DEBUG_PRINT(SparkHelper::intToHex(_sub_cmd).c_str());
-            DEBUG_PRINTLN(" not handled");
+            DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);
             DEBUG_PRINTVECTOR(msg);
             DEBUG_PRINTLN();
             break;
@@ -695,7 +694,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             read_looper_settings();
             break;
         default:
-            DEBUG_PRINTF("%x %x - not handled: ", _cmd, _sub_cmd);
+            DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);
             DEBUG_PRINTVECTOR(msg);
             DEBUG_PRINTLN();
             break;
@@ -711,7 +710,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
     } else {
         // unprocessed command (likely the initial ones sent from the app
 #ifdef DEBUG
-        DEBUG_PRINTF("Unprocessed: %x, %x - ", _cmd,
+        DEBUG_PRINTF("Unprocessed: %0x, %0x - ", _cmd,
                      _sub_cmd);
         DEBUG_PRINTVECTOR(msg);
         DEBUG_PRINTLN();

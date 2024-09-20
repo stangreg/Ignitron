@@ -43,6 +43,7 @@ private:
     static void btnPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnSpark2LooperHandler(BfButton *btn, BfButton::press_pattern_t pattern);
+    static void btnSpark2LooperConfigHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnBankHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnSwitchModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnDeletePresetHandler(BfButton *btn, BfButton::press_pattern_t pattern);
@@ -55,11 +56,15 @@ private:
                                          BfButton::press_pattern_t pattern);
     static void btnToggleLoopHandler(BfButton *btn,
                                      BfButton::press_pattern_t pattern);
+    static void btnToggleLoopConfigHandler(BfButton *btn,
+                                     BfButton::press_pattern_t pattern);
+
     static void btnToggleBTMode(BfButton *btn,
                                 BfButton::press_pattern_t pattern);
 
     static void configureLooperButtons();
-    static void configureSpark2LooperButtons();
+    static void configureSpark2LooperControlButtons();
+    static void configureSpark2LooperConfigButtons();
     static void configureAppButtonsPreset();
     static void configureAppButtonsFX();
     static void configureAmpButtons();

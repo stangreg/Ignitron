@@ -47,10 +47,10 @@ void SparkLEDControl::updateLEDs() {
     case SPARK_MODE_APP: {
         int buttonMode = spark_dc->buttonMode();
         // Show only active preset LED
-        if (buttonMode == SWITCH_MODE_PRESET) {
+        if (buttonMode == BUTTON_MODE_PRESET) {
             updateLED_APP_PresetMode();
             // For each effect, show which effect is active
-        } else if (buttonMode == SWITCH_MODE_FX) {
+        } else if (buttonMode == BUTTON_MODE_FX) {
             updateLED_APP_FXMode();
         }
     } break;

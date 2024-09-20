@@ -121,17 +121,70 @@ struct AckData {
 };
 
 struct LooperSetting {
-    int bpm;
-    string count_str;
-    int bars;
-    bool free_indicator;
-    bool click;
-    bool unknown_onoff;
-    byte unknown_byte;
+
+    int barsConfig[7] = {1, 2, 4, 8, 12, 16, -1};
+    int sizeOfBarsConfig = sizeof(barsConfig) / sizeof(int);
+
+    bool changePending = false;
+
+    int bpm = 120;
+    string count_str = "Straight";
+    byte count = 0x04;
+    int bars = 4;
+    int barsIndex = 2;
+    bool free_indicator = false;
+    bool click = true;
+
+    bool unknown_onoff = false;
+    byte unknown_byte = 0x60;
 
     string json;
     string text;
     string raw;
+
+    void reset() {
+        bpm = 120;
+        count = 0x04;
+        count_str = "Straight";
+        barsIndex = 2;
+        bars = barsConfig[barsIndex];
+        free_indicator = false;
+        unknown_onoff = false;
+        unknown_byte = 0x60;
+
+        changePending = true;
+    }
+
+    void cycleBars() {
+        barsIndex == (barsIndex + 1) % sizeOfBarsConfig;
+        bars = barsConfig[barsIndex];
+        if (bars == -1) {
+            bars = bpm / 4;
+            free_indicator = true;
+        }
+        changePending = true;
+    }
+
+    void toggleCount() {
+        if (count == 0x04) {
+            count = 0x03;
+            count_str = "Shuffle";
+        } else {
+            count = 0x04;
+            count_str = "Straight";
+        }
+        changePending = true;
+    }
+
+    void toggleClick() {
+        click = !(click);
+        changePending = true;
+    }
+
+    void setBpm(int _bpm) {
+        bpm = _bpm;
+        changePending = true;
+    }
 };
 
 #endif
