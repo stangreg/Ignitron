@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -105,6 +105,7 @@ const string VERSION = "1.7.0";
 #define SPARK_MODE_AMP 2
 #define SPARK_MODE_LOOPER 3
 #define SPARK_MODE_KEYBOARD 4
+#define SPARK_MODE_SPK_LOOPER 5
 
 #define BT_MODE_BLE 1
 #define BT_MODE_SERIAL 2
@@ -118,5 +119,16 @@ const string VERSION = "1.7.0";
 #define AMP_NAME_SPARK_MINI "Spark MINI"
 #define AMP_NAME_SPARK_GO "Spark GO"
 #define AMP_NAME_SPARK_2 "Spark 2"
+
+#define SPK_LOOPER_CMD_COUNTIN 0x02
+#define SPK_LOOPER_CMD_REC 0x04
+#define SPK_LOOPER_CMD_REC_2 0x07
+#define SPK_LOOPER_CMD_PLAY 0x08
+#define SPK_LOOPER_CMD_STOP 0x09
+#define SPK_LOOPER_CMD_DELETE 0x0A
+#define SPK_LOOPER_CMD_DUB 0x0B
+#define SPK_LOOPER_CMD_REC_STOP 0x0C
+#define SPK_LOOPER_CMD_UNDO 0x0D
+#define SPK_LOOPER_CMD_REDO 0x0E
 
 #endif /* CONFIG_DEFINITIONS_H_ */

@@ -560,3 +560,26 @@ vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
     add_byte(0x0F);
     return end_message(DIR_FROM_SPARK, msg_number);
 }
+
+vector<ByteVector> SparkMessage::spark_looper_command(byte msg_number, byte command) {
+
+    cmd = 0x01;
+    sub_cmd = 0x75;
+
+    start_message(cmd, sub_cmd);
+    add_byte(command);
+    return end_message(DIR_TO_SPARK, msg_number);
+}
+
+vector<ByteVector> SparkMessage::spark_config_after_intro(byte msg_number, byte command) {
+
+    cmd = 0x02;
+    sub_cmd = command;
+
+    start_message(cmd, sub_cmd);
+    if (command == 0x33) {
+        add_byte(0x00);
+        add_byte(0x0a);
+    }
+    return end_message(DIR_TO_SPARK, msg_number);
+}

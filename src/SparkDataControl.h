@@ -140,6 +140,10 @@ public:
         return operationMode_;
     }
 
+    LooperSetting *looperSetting() const {
+        return &looperSetting_;
+    }
+
     bool &isInitBoot() {
         return isInitBoot_;
     }
@@ -186,6 +190,9 @@ public:
     void decreaseBank();
     bool increasePresetLooper();
     bool decreasePresetLooper();
+    bool sparkLooperCommand(byte command);
+    // TODO: testing init messages after connection
+    bool configureLooper();
 
     // Functions for Looper/Keyboard mode
     void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
@@ -222,6 +229,8 @@ private:
     static int pendingBank_;
     static int activePresetNum_;
     static int pendingPresetNum_;
+
+    static LooperSetting looperSetting_;
 
     // Messages to send to Spark
     static vector<ByteVector> current_msg;

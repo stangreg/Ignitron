@@ -63,6 +63,7 @@ void SparkDisplayControl::showInitialMessage() {
         modeText = "AMP";
         break;
     case SPARK_MODE_LOOPER:
+    case SPARK_MODE_SPK_LOOPER:
         modeText = "LPR";
         break;
     case SPARK_MODE_KEYBOARD:
@@ -96,7 +97,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
     if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
         presetText = "*";
     }
-    if (opMode == SPARK_MODE_LOOPER) {
+    if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         // If in Looper mode, show an "L" for Looper mode
         presetText = "L";
     }
@@ -210,7 +211,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
         if (secondaryLineText.length() > text_scroll_limit) {
             secondaryLineText = secondaryLineText + text_filler + secondaryLineText;
         }
-    } else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
+    } else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
@@ -242,7 +243,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 
     display.setTextColor(SSD1306_WHITE);
     display.setTextSize(2);
-    if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) {
+    if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         drawCentreString(secondaryLineText.c_str(), secondaryLinePosY);
 
     } else if (opMode == SPARK_MODE_AMP) {
@@ -365,7 +366,7 @@ void SparkDisplayControl::showKeyboardLayout() {
 void SparkDisplayControl::update(bool isInitBoot) {
 
     display.clearDisplay();
-    if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER) && isInitBoot) {
+    if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) && isInitBoot) {
         showInitialMessage();
     } else if (opMode == SPARK_MODE_KEYBOARD) {
         if (spark_dc->keyboardChanged()) {

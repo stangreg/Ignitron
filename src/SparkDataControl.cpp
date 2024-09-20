@@ -33,6 +33,8 @@ int SparkDataControl::pendingPresetNum_ = 1;
 string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
+LooperSetting SparkDataControl::looperSetting_;
+
 vector<ByteVector> SparkDataControl::ack_msg;
 vector<ByteVector> SparkDataControl::current_msg;
 
@@ -171,7 +173,7 @@ void SparkDataControl::checkForUpdates() {
         msgQueue.pop();
     }
 
-    if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
+    if (spark_ssr.isPresetNumberUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER)) {
         if (pendingBank_ == 0) {
             DEBUG_PRINTLN("Preset number has changed, updating active preset");
             setActiveHWPreset();
@@ -179,13 +181,18 @@ void SparkDataControl::checkForUpdates() {
         spark_ssr.resetPresetNumberUpdateFlag();
     }
 
+    if (spark_ssr.isLooperSettingUpdated()) {
+        looperSetting_ = spark_ssr.currentLooperSetting();
+        spark_ssr.resetLooperSettingUpdateFlag();
+    }
+
     // Check if active preset has been updated
     // If so, update the preset variables
-    if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER)) {
+    if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER)) {
 
         // TODO Check if there needs to be a condition here
         DEBUG_PRINTLN("Preset has changed, updating active with current preset");
-        pendingPreset_ = spark_ssr.currentSetting();
+        pendingPreset_ = spark_ssr.currentPreset();
         updateActiveWithPendingPreset();
         spark_ssr.resetPresetUpdateFlag();
     }
@@ -316,7 +323,7 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
     int bnk = pendingBank_;
     pendingPresetNum_ = pre;
-    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
+    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER) {
         // Check if selected preset is equal to active preset.
         // In this case toggle the drive pedal only
         if (pre == activePresetNum_ && activeBank_ == pendingBank_ && !(activePreset_.isEmpty) && !isInitial) {
@@ -690,9 +697,14 @@ bool SparkDataControl::toggleLooperAppMode() {
     switch (operationMode_) {
     case SPARK_MODE_APP:
         Serial.println("LOOPER mode");
-        newOperationMode = SPARK_MODE_LOOPER;
+        if (sparkAmpName == AMP_NAME_SPARK_2) {
+            newOperationMode = SPARK_MODE_SPK_LOOPER;
+        } else {
+            newOperationMode = SPARK_MODE_LOOPER;
+        }
         break;
     case SPARK_MODE_LOOPER:
+    case SPARK_MODE_SPK_LOOPER:
         Serial.println("APP mode");
         newOperationMode = SPARK_MODE_APP;
         break;
@@ -735,7 +747,7 @@ bool SparkDataControl::processPresetSelect(int presetNum) {
         return false;
     }
 
-    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
+    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER) {
         switchPreset(presetNum, false);
     } else if (operationMode_ == SPARK_MODE_AMP) { // AMP mode
         processPresetEdit(presetNum);
@@ -745,7 +757,7 @@ bool SparkDataControl::processPresetSelect(int presetNum) {
 
 bool SparkDataControl::increasePresetLooper() {
 
-    if (!processAction() || operationMode_ != SPARK_MODE_LOOPER) {
+    if (!processAction() || (operationMode_ != SPARK_MODE_LOOPER && operationMode_ != SPARK_MODE_SPK_LOOPER)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
         return false;
     }
@@ -766,7 +778,7 @@ bool SparkDataControl::increasePresetLooper() {
 
 bool SparkDataControl::decreasePresetLooper() {
 
-    if (!processAction() || operationMode_ != SPARK_MODE_LOOPER) {
+    if (!processAction() || (operationMode_ != SPARK_MODE_LOOPER && operationMode_ != SPARK_MODE_SPK_LOOPER)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
         return false;
     }
@@ -783,6 +795,26 @@ bool SparkDataControl::decreasePresetLooper() {
         selectedPresetNum = activePresetNum_ - 1;
     }
     return switchPreset(selectedPresetNum, false);
+}
+
+// TODO: Looper functions
+// 08 = PLAY
+// 09 = STOP
+// 02 = RECORD (Initial) (count in?)
+// 04 = RECORD??
+// 07 = RECORD finished??
+// 0b = RECORD (Dub)
+// 0c = STOP RECORD
+// 0d = UNDO
+// 0e = REDO
+// 0a = DELETE
+
+bool SparkDataControl::sparkLooperCommand(byte command) {
+
+    current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
+    DEBUG_PRINTF("Spark Looper: %x\n", command);
+
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
@@ -806,6 +838,33 @@ bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
     return false;
 }
 
+// TEST function. There are some messages sent to the Spark 2 by the app
+// after connecting. These are resembled here to check if they influence how the looper works
+bool SparkDataControl::configureLooper() {
+
+    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x96);
+    DEBUG_PRINTF("Spark Looper: %x\n", 0x96);
+
+    triggerCommand(current_msg);
+    delay(100);
+    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x78);
+    DEBUG_PRINTF("Spark Looper: %x\n", 0x78);
+
+    triggerCommand(current_msg);
+    delay(100);
+    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x75);
+    DEBUG_PRINTF("Spark Looper: %x\n", 0x75);
+
+    triggerCommand(current_msg);
+    delay(100);
+    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x33);
+    DEBUG_PRINTF("Spark Looper: %x\n", 0x33);
+
+    triggerCommand(current_msg);
+    delay(100);
+    return true;
+}
+
 void SparkDataControl::handleSendingAck(const ByteVector &blk) {
     bool ackNeeded;
     byte seq, sub_cmd;
@@ -822,7 +881,7 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
         }
 
         DEBUG_PRINTLN("Sending acknowledgment");
-        if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER) {
+        if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER) {
             triggerCommand(ack_msg);
         } else if (operationMode_ == SPARK_MODE_AMP) {
             bleControl->notifyClients(ack_msg);
@@ -897,7 +956,7 @@ void SparkDataControl::handleAppModeResponse() {
             // otherwise it is a custom preset number and can be ignored
             if (lastMessageNumber != special_msg_num && spark_presetNumber >= 1 && spark_presetNumber <= 4) {
                 // check if this improves behavior, updating activePreset when new HW preset received
-                activePreset_ = spark_ssr.currentSetting();
+                activePreset_ = spark_ssr.currentPreset();
                 activePresetNum_ = spark_presetNumber;
                 activeBank_ = pendingBank_ = 0;
                 pendingPresetNum_ = activePresetNum_;
@@ -910,12 +969,12 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_PRESET) {
             DEBUG_PRINTLN("Last message was a preset change.");
-            Preset receivedPreset = spark_ssr.currentSetting();
+            Preset receivedPreset = spark_ssr.currentPreset();
             // This preset number is between 0 and 3!
             int presetNumber = receivedPreset.presetNumber + 1;
 
             if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || lastMessageNumber != special_msg_num) {
-                activePreset_ = spark_ssr.currentSetting();
+                activePreset_ = spark_ssr.currentPreset();
                 activePresetNum_ = presetNumber;
             }
             if (lastMessageNumber == special_msg_num) {
@@ -931,6 +990,16 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = spark_ssr.getAmpName();
             setAmpParameters();
+            printMessage = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
+            DEBUG_PRINTLN("New Looper setting received.");
+            printMessage = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_TAP_TEMPO) {
+            DEBUG_PRINTLN("New BPM setting received.");
             printMessage = true;
         }
 
@@ -1057,16 +1126,6 @@ void SparkDataControl::checkForMissingPresets(void *args) {
                         delay(1000);
                     }
                 }
-                // TODO Observation: Sometimes Ignitron fails to load a HW preset,
-                // as Spark GO does not send the full message
-                // switching to a different HW preset somehow
-                // fixes it! Does not happen if hte HW presets are the stock ones,
-                // seems only to affect certain custom presets
-                // Workaround below, but this would switch the preset to 3,
-                // no matter what was set before
-                // if (somePresetMissing){
-                //	switchPreset(3, true);
-                //}
             }
         }
     }
