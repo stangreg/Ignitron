@@ -140,7 +140,7 @@ public:
         return operationMode_;
     }
 
-    LooperSetting *looperSetting() const {
+    LooperSetting *looperSetting() {
         return &looperSetting_;
     }
 
@@ -224,10 +224,10 @@ private:
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;
 
-    uint8_t lastTapButtonPressed_ = 0;
+    unsigned long lastTapButtonPressed_ = 0;
     const int tapButtonThreshold_ = 2000;
     int tapEntries = 0;
-    uint8_t tapSum = 0;
+    int tapSum = 0;
 
     // PRESET variables
     static Preset activePreset_;

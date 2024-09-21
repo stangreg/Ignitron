@@ -153,11 +153,14 @@ int SparkDataControl::init(int opModeInput) {
 
 void SparkDataControl::switchOperationMode(int opMode) {
     operationMode_ = opMode;
-    buttonMode_ = BUTTON_MODE_PRESET;
+
     if (opMode == SPARK_MODE_APP) {
         bleKeyboard.end();
+        buttonMode_ = BUTTON_MODE_PRESET;
     } else if (opMode == SPARK_MODE_LOOPER) {
         bleKeyboard.start();
+    } else if (opMode == SPARK_MODE_SPK_LOOPER) {
+        buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
     }
     updatePendingWithActive();
 }
@@ -838,7 +841,7 @@ bool SparkDataControl::decreasePresetLooper() {
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
     current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
-    DEBUG_PRINTF("Spark Looper: %x\n", command);
+    DEBUG_PRINTF("Spark Looper: %0x\n", command);
 
     return triggerCommand(current_msg);
 }
@@ -869,22 +872,22 @@ bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
 bool SparkDataControl::configureLooper() {
 
     current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x96);
-    DEBUG_PRINTF("Spark Looper: %x\n", 0x96);
+    DEBUG_PRINTF("Spark Looper: %0x\n", 0x96);
 
     triggerCommand(current_msg);
     delay(100);
     current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x78);
-    DEBUG_PRINTF("Spark Looper: %x\n", 0x78);
+    DEBUG_PRINTF("Spark Looper: %0x\n", 0x78);
 
     triggerCommand(current_msg);
     delay(100);
     current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x75);
-    DEBUG_PRINTF("Spark Looper: %x\n", 0x75);
+    DEBUG_PRINTF("Spark Looper: %0x\n", 0x75);
 
     triggerCommand(current_msg);
     delay(100);
     current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x33);
-    DEBUG_PRINTF("Spark Looper: %x\n", 0x33);
+    DEBUG_PRINTF("Spark Looper: %0x\n", 0x33);
 
     triggerCommand(current_msg);
     delay(100);
@@ -893,33 +896,29 @@ bool SparkDataControl::configureLooper() {
 
 void SparkDataControl::tapTempoButton() {
 
-    uint8_t now = millis();
-    uint8_t diff = now - lastTapButtonPressed_;
-    uint8_t last = now;
-    int entries;
-    uint8_t sum;
+    int bpm;
+    unsigned long now = millis();
+    unsigned long diff = now - lastTapButtonPressed_;
+    DEBUG_PRINTF("Tap data: now = %u, lastTapButton = %u, diff = %u\n", now, lastTapButtonPressed_, diff);
+    lastTapButtonPressed_ = now;
+
     if (diff > tapButtonThreshold_) {
-        entries = 0;
-        sum = 0;
+        DEBUG_PRINTLN("Restarting tap calc");
+        tapEntries = 0;
+        tapSum = 0;
+        bpm = 0;
+    } else {
+        tapSum = tapSum + diff;
+        tapEntries++;
+        int averageTime = tapSum / tapEntries;
+        bpm = 60000 / averageTime;
+        bpm = min(bpm, 255);
+        bpm = max(30, bpm);
+        DEBUG_PRINTF("Tap tempo: %d, with %d as sum and %d entries. Average: %d\n", bpm, tapSum, tapEntries, averageTime);
     }
-    sum = sum + diff;
-    entries++;
-    int average = sum / entries;
-    DEBUG_PRINTF("Tap tempo: %d\n", average);
-    if (entries > 3) {
-        looperSetting_.setBpm(average);
+    if (tapEntries > 3 && bpm >= 30 && bpm <= 255) {
+        looperSetting_.setBpm(bpm);
     }
-    /*
-        now = millis();
-        diff = now - last;
-        last = now;
-        sum = sum + diff;
-        entries++;
-
-        int average = sum / entries;
-
-        println("average = " + average);
-        */
 }
 
 void SparkDataControl::handleSendingAck(const ByteVector &blk) {
@@ -1199,6 +1198,7 @@ void SparkDataControl::setActiveHWPreset() {
 }
 
 bool SparkDataControl::updateLooperSettings() {
+    DEBUG_PRINTF("Updating looper settings: %s\n", looperSetting_.json.c_str());
     current_msg = spark_msg.update_looper_settings(nextMessageNum, looperSetting_);
     return triggerCommand(current_msg);
 }

@@ -124,12 +124,11 @@ void SparkButtonHandler::configureSpark2LooperControlButtons() {
     btn_bank_up.onPress(btnSpark2LooperHandler);
     btn_preset3.onPressFor(btnSpark2LooperHandler, LONG_BUTTON_PRESS_TIME);
 
-    // Long press: switch Spark presets (will move across banks)
-    btn_bank_down.onPressFor(btnLooperPresetHandler, LONG_BUTTON_PRESS_TIME);
-    btn_bank_up.onPressFor(btnLooperPresetHandler, LONG_BUTTON_PRESS_TIME);
+    btn_bank_down.onPressFor(btnSpark2LooperHandler, LONG_BUTTON_PRESS_TIME);
 
     // Switch between APP and Looper mode
     btn_preset4.onPressFor(btnToggleLoopHandler, LONG_BUTTON_PRESS_TIME);
+    btn_bank_up.onPressFor(btnSwitchModeHandler, LONG_BUTTON_PRESS_TIME);
 
     // Reset Ignitron
     btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -144,11 +143,11 @@ void SparkButtonHandler::configureSpark2LooperConfigButtons() {
     btn_preset4.onPress(btnSpark2LooperConfigHandler);
     btn_bank_down.onPress(btnSpark2LooperConfigHandler);
     btn_bank_up.onPress(btnSpark2LooperConfigHandler);
-    btn_preset3.onPressFor(btnSpark2LooperConfigHandler, LONG_BUTTON_PRESS_TIME);
+    btn_bank_down.onPressFor(btnSpark2LooperConfigHandler, LONG_BUTTON_PRESS_TIME);
 
     // Switch between APP and Looper mode
     btn_preset4.onPressFor(btnToggleLoopHandler, LONG_BUTTON_PRESS_TIME);
-    btn_bank_up.onPressFor(btnToggleLoopConfigHandler, LONG_BUTTON_PRESS_TIME);
+    btn_bank_up.onPressFor(btnSwitchModeHandler, LONG_BUTTON_PRESS_TIME);
 
     // Reset Ignitron
     btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -295,25 +294,6 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
     configureButtons();
 }
 
-void SparkButtonHandler::btnToggleLoopConfigHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-    if (!spark_dc) {
-        Serial.println("SparkDataControl not setup yet,ignoring button press.");
-        return;
-    }
-    // Switch between APP mode and LOOPER mode
-    // Debug
-#ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
-    DEBUG_PRINT("Button pressed: ");
-    DEBUG_PRINTLN(pressed_btn_gpio);
-#endif
-
-    // Switch between APP and LOOPER mode
-    spark_dc->toggleLooperAppMode();
-    Serial.println("Re-initializing button config");
-    configureButtons();
-}
-
 void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
                                          BfButton::press_pattern_t pattern) {
 
@@ -390,7 +370,7 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
         break;
     case BfButton::LONG_PRESS:
         switch (pressed_btn_gpio) {
-        case BUTTON_PRESET3_GPIO:
+        case BUTTON_BANK_DOWN_GPIO:
             spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DELETE);
             break;
         }
@@ -415,32 +395,24 @@ void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::p
     case BfButton::SINGLE_PRESS:
         switch (pressed_btn_gpio) {
         case BUTTON_PRESET1_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_REC);
+            spark_dc->tapTempoButton();
             break;
         case BUTTON_PRESET2_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+            spark_dc->looperSetting()->cycleBars();
             break;
         case BUTTON_PRESET3_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_STOP);
+            spark_dc->looperSetting()->toggleCount();
             break;
         case BUTTON_PRESET4_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DUB);
-            break;
-        case BUTTON_BANK_DOWN_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_UNDO);
-            break;
-        case BUTTON_BANK_UP_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_REDO);
+            spark_dc->looperSetting()->toggleClick();
             break;
         }
         break;
     case BfButton::LONG_PRESS:
-        switch (pressed_btn_gpio) {
-        case BUTTON_PRESET3_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DELETE);
-            break;
-        }
+        spark_dc->looperSetting()->reset();
         break;
+    default:
+        Serial.println("Unknown button press.");
     }
 }
 

@@ -149,6 +149,7 @@ struct LooperSetting {
         barsIndex = 2;
         bars = barsConfig[barsIndex];
         free_indicator = false;
+        click = true;
         unknown_onoff = false;
         unknown_byte = 0x60;
 
@@ -156,11 +157,11 @@ struct LooperSetting {
     }
 
     void cycleBars() {
-        barsIndex == (barsIndex + 1) % sizeOfBarsConfig;
+        barsIndex = (barsIndex + 1) % sizeOfBarsConfig;
         bars = barsConfig[barsIndex];
-        if (bars == -1) {
+        free_indicator = (bars == -1) ? true : false;
+        if (free_indicator) {
             bars = bpm / 4;
-            free_indicator = true;
         }
         changePending = true;
     }

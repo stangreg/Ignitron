@@ -99,7 +99,11 @@ void SparkDisplayControl::showBankAndPresetNum() {
     }
     if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         // If in Looper mode, show an "L" for Looper mode
-        presetText = "L";
+        if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
+            presetText = "L";
+        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
+            presetText = "C";
+        }
     }
     presetText += selPresetStr.str();
     display.print(presetText.c_str());

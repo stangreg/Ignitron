@@ -56,9 +56,6 @@ private:
                                          BfButton::press_pattern_t pattern);
     static void btnToggleLoopHandler(BfButton *btn,
                                      BfButton::press_pattern_t pattern);
-    static void btnToggleLoopConfigHandler(BfButton *btn,
-                                     BfButton::press_pattern_t pattern);
-
     static void btnToggleBTMode(BfButton *btn,
                                 BfButton::press_pattern_t pattern);
 

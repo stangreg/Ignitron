@@ -706,7 +706,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         DEBUG_PRINTLN(last_message_num_);
         AckData ack = {last_message_num_, _cmd, _sub_cmd};
         acknowledgments.push_back(ack);
-        DEBUG_PRINTF("Acknowledgment for command %x %x\n", _cmd, _sub_cmd);
+        DEBUG_PRINTF("Acknowledgment for command %0x %0x\n", _cmd, _sub_cmd);
     } else {
         // unprocessed command (likely the initial ones sent from the app
 #ifdef DEBUG

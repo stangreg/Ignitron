@@ -109,6 +109,7 @@ private:
 
     boolean isValidBlockWithoutHeader(const ByteVector &blk);
 
+    // TODO Extract String building into own class to use it outside of this class.
     // Functions to create string representations of processed data
     void start_str();
     void end_str();
