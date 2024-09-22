@@ -4,7 +4,7 @@
  *  Created on: 23.08.2021
  *      Author: stangreg
  */
-
+// TODO Implement display for SparkLooperTimer in Spark2 Looper mode
 #include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,

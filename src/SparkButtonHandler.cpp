@@ -380,7 +380,6 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
 
 void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
 
-    // TODO Implement config buttons
     if (!spark_dc) {
         Serial.println("SparkDataControl not setup yet, ignoring button press.");
         return;

@@ -8,10 +8,13 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
+#include "CircularBuffer.h"
 #include "Config_Definitions.h"
 #include "SparkBLEControl.h"
 #include "SparkBLEKeyboard.h"
 #include "SparkKeyboardControl.h"
+#include "SparkLooperTimer.h"
+
 #include <Arduino.h>
 #include <queue>
 #include <stdexcept>
@@ -191,8 +194,6 @@ public:
     bool increasePresetLooper();
     bool decreasePresetLooper();
     bool sparkLooperCommand(byte command);
-    // TODO: testing init messages after connection
-    bool configureLooper();
 
     void tapTempoButton();
 
@@ -211,6 +212,7 @@ private:
     static SparkPresetBuilder presetBuilder;
     static SparkDisplayControl *spark_display;
     static SparkKeyboardControl *keyboardControl;
+    static SparkLooperTimer *sparkLooperTimer;
 
     SparkBLEKeyboard bleKeyboard;
     eSPIFFS fileSystem;
@@ -226,8 +228,8 @@ private:
 
     unsigned long lastTapButtonPressed_ = 0;
     const int tapButtonThreshold_ = 2000;
-    int tapEntries = 0;
-    int tapSum = 0;
+    static int tapEntrySize;
+    static CircularBuffer tapEntries;
 
     // PRESET variables
     static Preset activePreset_;

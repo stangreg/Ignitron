@@ -34,6 +34,8 @@ string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
 LooperSetting SparkDataControl::looperSetting_;
+int SparkDataControl::tapEntrySize = 5;
+CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
 
 vector<ByteVector> SparkDataControl::ack_msg;
 vector<ByteVector> SparkDataControl::current_msg;
@@ -60,6 +62,8 @@ SparkDataControl::SparkDataControl() {
     bleControl = new SparkBLEControl(this);
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
+    tapEntries = CircularBuffer(tapEntrySize);
+    sparkLooperTimer = new SparkLooperTimer();
 }
 
 SparkDataControl::~SparkDataControl() {
@@ -69,10 +73,14 @@ SparkDataControl::~SparkDataControl() {
         delete spark_display;
     if (keyboardControl)
         delete keyboardControl;
+    if (sparkLooperTimer)
+        delete sparkLooperTimer;
 }
 
 int SparkDataControl::init(int opModeInput) {
     operationMode_ = opModeInput;
+
+    tapEntries = CircularBuffer(tapEntrySize);
 
     string currentSparkModeFile;
     int sparkModeInput = 0;
@@ -198,7 +206,6 @@ void SparkDataControl::checkForUpdates() {
     // If so, update the preset variables
     if (spark_ssr.isPresetUpdated() && (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER)) {
 
-        // TODO Check if there needs to be a condition here
         DEBUG_PRINTLN("Preset has changed, updating active with current preset");
         pendingPreset_ = spark_ssr.currentPreset();
         updateActiveWithPendingPreset();
@@ -826,7 +833,7 @@ bool SparkDataControl::decreasePresetLooper() {
     return switchPreset(selectedPresetNum, false);
 }
 
-// TODO: Looper functions
+// TODO: Looper functions. Stop record missing (important for record and dub).
 // 08 = PLAY
 // 09 = STOP
 // 02 = RECORD (Initial) (count in?)
@@ -867,33 +874,6 @@ bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
     return false;
 }
 
-// TEST function. There are some messages sent to the Spark 2 by the app
-// after connecting. These are resembled here to check if they influence how the looper works
-bool SparkDataControl::configureLooper() {
-
-    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x96);
-    DEBUG_PRINTF("Spark Looper: %0x\n", 0x96);
-
-    triggerCommand(current_msg);
-    delay(100);
-    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x78);
-    DEBUG_PRINTF("Spark Looper: %0x\n", 0x78);
-
-    triggerCommand(current_msg);
-    delay(100);
-    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x75);
-    DEBUG_PRINTF("Spark Looper: %0x\n", 0x75);
-
-    triggerCommand(current_msg);
-    delay(100);
-    current_msg = spark_msg.spark_config_after_intro(nextMessageNum, 0x33);
-    DEBUG_PRINTF("Spark Looper: %0x\n", 0x33);
-
-    triggerCommand(current_msg);
-    delay(100);
-    return true;
-}
-
 void SparkDataControl::tapTempoButton() {
 
     int bpm;
@@ -904,20 +884,20 @@ void SparkDataControl::tapTempoButton() {
 
     if (diff > tapButtonThreshold_) {
         DEBUG_PRINTLN("Restarting tap calc");
-        tapEntries = 0;
-        tapSum = 0;
+        tapEntries.reset();
         bpm = 0;
     } else {
-        tapSum = tapSum + diff;
-        tapEntries++;
-        int averageTime = tapSum / tapEntries;
-        bpm = 60000 / averageTime;
-        bpm = min(bpm, 255);
-        bpm = max(30, bpm);
-        DEBUG_PRINTF("Tap tempo: %d, with %d as sum and %d entries. Average: %d\n", bpm, tapSum, tapEntries, averageTime);
-    }
-    if (tapEntries > 3 && bpm >= 30 && bpm <= 255) {
-        looperSetting_.setBpm(bpm);
+        tapEntries.add_element(diff);
+        if (tapEntries.size() > 3) {
+            int averageTime = tapEntries.averageValue();
+            if (averageTime > 0) {
+                bpm = 60000 / averageTime;
+                bpm = min(bpm, 255);
+                bpm = max(30, bpm);
+                DEBUG_PRINTF("Tap tempo: %d\n", bpm);
+                looperSetting_.setBpm(bpm);
+            }
+        }
     }
 }
 
