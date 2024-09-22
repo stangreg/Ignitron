@@ -13,6 +13,7 @@
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
 
 #include "SparkDataControl.h"
+#include "SparkLooperTimer.h"
 #include "SparkTypes.h"
 
 // OLED Screen config
@@ -28,6 +29,7 @@
 using namespace std;
 
 class SparkDataControl;
+class SparkLooperTimer;
 
 class SparkDisplayControl {
 public:

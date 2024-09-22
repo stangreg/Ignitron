@@ -12,7 +12,8 @@ SparkStreamReader SparkDataControl::spark_ssr;
 SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
-SparkKeyboardControl *SparkDataControl::keyboardControl;
+SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
+SparkLooperTimer *SparkDataControl::sparkLooperTimer = nullptr;
 
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<ByteVector> SparkDataControl::currentCommand;

@@ -36,6 +36,7 @@ using ByteVector = vector<byte>;
 
 class SparkBLEControl;
 class SparkDisplayControl;
+class SparkLooperTimer;
 
 class SparkDataControl {
 public:

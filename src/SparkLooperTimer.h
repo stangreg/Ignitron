@@ -15,6 +15,8 @@
 
 using namespace std;
 
+class SparkDataControl;
+
 class SparkLooperTimer {
 
 public:
@@ -30,20 +32,20 @@ public:
     void reset();
 
 private:
-    SparkDataControl *spark_dc;
-    LooperSetting *looperSetting;
+    static SparkDataControl *spark_dc;
+    static LooperSetting *looperSetting;
 
-    int currentBeat_ = 1;
-    int currentBar_ = 1;
+    static int currentBeat_;
+    static int currentBar_;
 
-    int totalBars_ = 4;
-    int beatsPerBar_ = 4;
+    static int totalBars_;
+    static int beatsPerBar_;
 
-    int bpm = 120;
+    static int bpm;
 
-    unsigned long beatInterval;
+    static int beatInterval_;
 
-    void increaseBeat();
+    static void increaseBeat();
 };
 
 #endif /* SPARKLOOPERTIMER_H_ */

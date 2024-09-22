@@ -1,5 +1,14 @@
 #include "SparkLooperTimer.h"
 
+SparkDataControl *SparkLooperTimer::spark_dc = nullptr;
+LooperSetting *SparkLooperTimer::looperSetting = nullptr;
+int SparkLooperTimer::currentBeat_ = 1;
+int SparkLooperTimer::currentBar_ = 1;
+int SparkLooperTimer::totalBars_ = 4;
+int SparkLooperTimer::bpm = 120;
+int SparkLooperTimer::beatsPerBar_ = 4;
+int SparkLooperTimer::beatInterval_ = 500;
+
 SparkLooperTimer::SparkLooperTimer() {
     spark_dc = nullptr;
     looperSetting = nullptr;
@@ -24,7 +33,7 @@ void SparkLooperTimer::init() {
     currentBar_ = 1;
     currentBeat_ = 1;
     bpm = looperSetting->bpm;
-    beatInterval = 60000 / bpm;
+    beatInterval_ = 60000 / bpm;
 }
 
 void SparkLooperTimer::start(void *args) {
@@ -32,9 +41,9 @@ void SparkLooperTimer::start(void *args) {
     while (true) {
         bpm = looperSetting->bpm;
         if (bpm > 0) {
-            beatInterval = 60000 / bpm;
+            beatInterval_ = 60000 / bpm;
         }
-        delay(beatInterval);
+        delay(beatInterval_);
         increaseBeat();
     }
 }
