@@ -56,6 +56,7 @@ private:
     int currentBTMode = 0;
     bool isBTConnected = false;
     KeyboardMapping currentKeyboard;
+    const SparkLooperTimer *sparkTimer;
 
     string primaryLineText;
     const Preset *primaryLinePreset;
@@ -104,6 +105,7 @@ private:
     void showBankAndPresetNum();
     void showPresetName();
     void showFX_SecondaryName();
+    void showLooperTimer();
     void updateTextPositions();
 
     void showPressedKey();

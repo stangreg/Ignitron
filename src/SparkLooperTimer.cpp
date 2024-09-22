@@ -27,7 +27,7 @@ void SparkLooperTimer::init() {
     beatInterval = 60000 / bpm;
 }
 
-void SparkLooperTimer::start() {
+void SparkLooperTimer::start(void *args) {
 
     while (true) {
         bpm = looperSetting->bpm;

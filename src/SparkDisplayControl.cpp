@@ -21,6 +21,7 @@ SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
     primaryLinePreset = nullptr;
     pendingPreset = nullptr;
     activePreset = nullptr;
+    sparkTimer = nullptr;
     presetEditMode = PRESET_EDIT_NONE;
 }
 SparkDisplayControl::~SparkDisplayControl() {
@@ -256,6 +257,16 @@ void SparkDisplayControl::showFX_SecondaryName() {
     }
 }
 
+void SparkDisplayControl::showLooperTimer() {
+    int currentBeat = sparkTimer->currentBeat();
+    int currentBar = sparkTimer->currentBar();
+
+    display.setCursor(0, 0);
+    display.print(currentBeat);
+    display.setCursor(display.width() - 24, 0);
+    display.print(currentBar);
+}
+
 void SparkDisplayControl::showConnection() {
     // Display the Connection symbols
     int xPosSymbol = (display.width() / 2.0) - 10;
@@ -395,16 +406,20 @@ void SparkDisplayControl::update(bool isInitBoot) {
         currentBTMode = spark_dc->currentBTMode();
 
         showConnection();
-        showBankAndPresetNum();
-        updateTextPositions();
-        showPresetName();
-        showFX_SecondaryName();
-
-        // in FX mode (manual mode) invert display
-        if (buttonMode == BUTTON_MODE_FX) {
-            display.invertDisplay(true);
+        if (opMode == SPARK_MODE_SPK_LOOPER) {
+            showLooperTimer();
         } else {
-            display.invertDisplay(false);
+            showBankAndPresetNum();
+            updateTextPositions();
+            showPresetName();
+            showFX_SecondaryName();
+
+            // in FX mode (manual mode) invert display
+            if (buttonMode == BUTTON_MODE_FX) {
+                display.invertDisplay(true);
+            } else {
+                display.invertDisplay(false);
+            }
         }
     }
     // logDisplay();

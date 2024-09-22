@@ -25,7 +25,7 @@ public:
     const int currentBeat() const { return currentBeat_; }
     const int currentBar() const { return currentBar_; }
     void init();
-    void start();
+    static void start(void *args);
     void stop();
     void reset();
 

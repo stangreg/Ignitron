@@ -126,6 +126,15 @@ int SparkDataControl::init(int opModeInput) {
             NULL,                   // Task handle.
             0                       // Core where the task should run
         );
+        // TODO Check if this is working. In worst case the start function is called once and exits
+        xTaskCreatePinnedToCore(
+            startLooperTimer,
+            "LooperTimer",
+            1000,
+            NULL,
+            0,
+            NULL,
+            0);
         break;
     case SPARK_MODE_AMP:
         pendingBank_ = 1;
@@ -1181,4 +1190,8 @@ bool SparkDataControl::updateLooperSettings() {
     DEBUG_PRINTF("Updating looper settings: %s\n", looperSetting_.json.c_str());
     current_msg = spark_msg.update_looper_settings(nextMessageNum, looperSetting_);
     return triggerCommand(current_msg);
+}
+
+void SparkDataControl::startLooperTimer(void *args) {
+    sparkLooperTimer->start(args);
 }

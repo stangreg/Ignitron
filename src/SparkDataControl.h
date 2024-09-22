@@ -303,6 +303,7 @@ private:
     static void setActiveHWPreset();
 
     static bool updateLooperSettings();
+    static void startLooperTimer(void *args);
 };
 
 #endif /* SPARKDATACONTROL_H_ */
