@@ -4,7 +4,7 @@
  *  Created on: 23.08.2021
  *      Author: stangreg
  */
-// TODO Implement display for SparkLooperTimer in Spark2 Looper mode
+// TODO Implement display for SparkLooperControl in Spark2 Looper mode
 #include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -21,7 +21,7 @@ SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
     primaryLinePreset = nullptr;
     pendingPreset = nullptr;
     activePreset = nullptr;
-    sparkTimer = nullptr;
+    sparkLooperControl = nullptr;
     presetEditMode = PRESET_EDIT_NONE;
 }
 SparkDisplayControl::~SparkDisplayControl() {
@@ -41,6 +41,7 @@ void SparkDisplayControl::init(int mode) {
     display.setTextColor(SSD1306_WHITE);
     display.setTextWrap(false);
     opMode = spark_dc->operationMode();
+    sparkLooperControl = spark_dc->looperControl();
 
     showInitialMessage();
     display.display();
@@ -77,37 +78,17 @@ void SparkDisplayControl::showInitialMessage() {
 }
 
 void SparkDisplayControl::showBankAndPresetNum() {
+
     // Display the bank and preset number
     display.setTextColor(SSD1306_WHITE);
+    display.setTextSize(4);
+
     // Configure numbers as strings
     ostringstream selBankStr;
     selBankStr << pendingBank;
 
     ostringstream selPresetStr;
     selPresetStr << activePresetNum;
-
-    display.setCursor(display.width() - 48, 0);
-
-    // Preset display
-    display.setTextSize(4);
-    string presetText = " ";
-    if (opMode == SPARK_MODE_APP && buttonMode == BUTTON_MODE_FX) {
-        // If in FX mode, show an "M" for manual mode
-        presetText = "M";
-    }
-    if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
-        presetText = "*";
-    }
-    if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
-        // If in Looper mode, show an "L" for Looper mode
-        if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
-            presetText = "L";
-        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
-            presetText = "C";
-        }
-    }
-    presetText += selPresetStr.str();
-    display.print(presetText.c_str());
 
     // Bank number display
     string bankDisplay = "";
@@ -121,6 +102,12 @@ void SparkDisplayControl::showBankAndPresetNum() {
 
     display.setCursor(0, 0);
     display.print(bankDisplay.c_str());
+
+    // Preset display
+    display.setCursor(display.width() - 24, 0);
+    string presetText = "";
+    presetText = selPresetStr.str();
+    display.print(presetText.c_str());
 }
 
 void SparkDisplayControl::showPresetName() {
@@ -171,7 +158,11 @@ void SparkDisplayControl::showPresetName() {
             // show only a generic name as we don't know the HW preset name upfront
         } else if (pendingBank == 0 && activeBank != pendingBank) {
             primaryLinePreset = activePreset;
-            primaryLineText = "Hardware Preset " + selPresetStr.str();
+            if (primaryLinePreset->isEmpty) {
+                primaryLineText = "Hardware Preset " + selPresetStr.str();
+            } else {
+                primaryLineText = primaryLinePreset->name;
+            }
             // Otherwise just show the active preset name
         } else {
             primaryLinePreset = activePreset;
@@ -258,13 +249,77 @@ void SparkDisplayControl::showFX_SecondaryName() {
 }
 
 void SparkDisplayControl::showLooperTimer() {
-    int currentBeat = sparkTimer->currentBeat();
-    int currentBar = sparkTimer->currentBar();
+    int currentBeat = sparkLooperControl->currentBeat();
+    int currentBar = sparkLooperControl->currentBar();
+    int totalBars = sparkLooperControl->totalBars();
+    int bpm = sparkLooperControl->bpm();
 
+    display.setTextSize(4);
     display.setCursor(0, 0);
-    display.print(currentBeat);
-    display.setCursor(display.width() - 24, 0);
     display.print(currentBar);
+    display.setCursor(display.width() - 24, 0);
+    display.print(currentBeat);
+
+    // Progress bar
+    int barHeight = 16;
+    int charWidth = 12;
+    int xPos = 0;
+    int xOffset = 16;
+    int yPos = 47;
+    // Reserve 2 characters for totalBars, 3 for BPM
+    int maxBarWidth = display.width() - 2 * charWidth;
+    int barWidth = (double)(currentBar)*maxBarWidth / totalBars;
+    int drawColor = SSD1306_WHITE;
+    display.fillRect(xPos, yPos, barWidth, barHeight, drawColor);
+
+    // Show BPM
+    int bpmXPos = display.width() - 60;
+    int bpmYPos = 17;
+    display.setCursor(bpmXPos, bpmYPos);
+    display.setTextSize(2);
+    display.print(bpm);
+
+    // Show total bars
+    display.setCursor(maxBarWidth + 2, yPos);
+    display.setTextSize(2);
+    display.print(totalBars);
+
+    // lines to separate the bars
+    int stepSize = 1;
+    if (totalBars > 25) {
+        stepSize = 2;
+    }
+    for (int i = 0; i < totalBars; i = i + stepSize) {
+        int xPos = (double)i * maxBarWidth / totalBars;
+        drawColor = xPos < barWidth ? SSD1306_BLACK : SSD1306_WHITE;
+        display.drawFastVLine(xPos, yPos, barHeight, drawColor);
+    }
+}
+
+void SparkDisplayControl::showModeModifier() {
+
+    display.setCursor(display.width() - 48, 0);
+
+    // Preset display
+    display.setTextSize(2);
+    string presetText = " ";
+
+    if (opMode == SPARK_MODE_APP && buttonMode == BUTTON_MODE_FX) {
+        // If in FX mode, show an "M" for manual mode
+        presetText = "M";
+    }
+    if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
+        presetText = "*";
+    }
+    if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
+        // If in Looper mode, show an "L" for Looper mode
+        if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
+            presetText = "L";
+        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
+            presetText = "C";
+        }
+    }
+    display.print(presetText.c_str());
 }
 
 void SparkDisplayControl::showConnection() {
@@ -404,12 +459,17 @@ void SparkDisplayControl::update(bool isInitBoot) {
         isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
         opMode = spark_dc->operationMode();
         currentBTMode = spark_dc->currentBTMode();
+        sparkLooperControl = spark_dc->looperControl();
 
         showConnection();
         if (opMode == SPARK_MODE_SPK_LOOPER) {
             showLooperTimer();
+            showModeModifier();
+            updateTextPositions();
+            showPresetName();
         } else {
             showBankAndPresetNum();
+            showModeModifier();
             updateTextPositions();
             showPresetName();
             showFX_SecondaryName();

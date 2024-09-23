@@ -13,7 +13,7 @@
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
 
 #include "SparkDataControl.h"
-#include "SparkLooperTimer.h"
+#include "SparkLooperControl.h"
 #include "SparkTypes.h"
 
 // OLED Screen config
@@ -29,7 +29,7 @@
 using namespace std;
 
 class SparkDataControl;
-class SparkLooperTimer;
+class SparkLooperControl;
 
 class SparkDisplayControl {
 public:
@@ -58,7 +58,7 @@ private:
     int currentBTMode = 0;
     bool isBTConnected = false;
     KeyboardMapping currentKeyboard;
-    const SparkLooperTimer *sparkTimer;
+    const SparkLooperControl *sparkLooperControl;
 
     string primaryLineText;
     const Preset *primaryLinePreset;
@@ -108,6 +108,7 @@ private:
     void showPresetName();
     void showFX_SecondaryName();
     void showLooperTimer();
+    void showModeModifier();
     void updateTextPositions();
 
     void showPressedKey();

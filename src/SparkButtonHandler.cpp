@@ -389,6 +389,8 @@ void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::p
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
+    SparkLooperControl *looperControl = spark_dc->looperControl();
+
     // Check if button has been pressed short or long
     switch (pattern) {
     case BfButton::SINGLE_PRESS:
@@ -397,18 +399,18 @@ void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::p
             spark_dc->tapTempoButton();
             break;
         case BUTTON_PRESET2_GPIO:
-            spark_dc->looperSetting()->cycleBars();
+            looperControl->changeSettingBars();
             break;
         case BUTTON_PRESET3_GPIO:
-            spark_dc->looperSetting()->toggleCount();
+            looperControl->toggleSettingCount();
             break;
         case BUTTON_PRESET4_GPIO:
-            spark_dc->looperSetting()->toggleClick();
+            looperControl->toggleSettingClick();
             break;
         }
         break;
     case BfButton::LONG_PRESS:
-        spark_dc->looperSetting()->reset();
+        looperControl->resetSetting();
         break;
     default:
         Serial.println("Unknown button press.");

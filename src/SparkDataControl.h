@@ -13,7 +13,7 @@
 #include "SparkBLEControl.h"
 #include "SparkBLEKeyboard.h"
 #include "SparkKeyboardControl.h"
-#include "SparkLooperTimer.h"
+#include "SparkLooperControl.h"
 
 #include <Arduino.h>
 #include <queue>
@@ -36,7 +36,6 @@ using ByteVector = vector<byte>;
 
 class SparkBLEControl;
 class SparkDisplayControl;
-class SparkLooperTimer;
 
 class SparkDataControl {
 public:
@@ -106,76 +105,36 @@ public:
     }
 
     void resetKeyboardChangeIndicator() { keyboardChanged_ = false; }
+
     // Return active or pending preset/bank, set/get active preset number
-    Preset *activePreset() const {
-        return &activePreset_;
-    }
-    Preset *pendingPreset() const {
-        return &pendingPreset_;
-    }
-    const int &activePresetNum() const {
-        return activePresetNum_;
-    }
+    Preset *activePreset() const { return &activePreset_; }
+    Preset *pendingPreset() const { return &pendingPreset_; }
+    const int &activePresetNum() const { return activePresetNum_; }
     // int& activePresetNum() {return activePresetNum_;}
-    const int &activeBank() const {
-        return activeBank_;
-    }
-    int &activeBank() {
-        return activeBank_;
-    }
+    const int &activeBank() const { return activeBank_; }
+    int &activeBank() { return activeBank_; }
+    const int &pendingBank() const { return pendingBank_; }
+    int &pendingBank() { return pendingBank_; }
+    const int numberOfBanks() const { return presetBuilder.getNumberOfBanks(); }
+    const Preset *appReceivedPreset() const { return &appReceivedPreset_; }
 
-    const int &pendingBank() const {
-        return pendingBank_;
-    }
+    const int &operationMode() const { return operationMode_; }
+    int &operationMode() { return operationMode_; }
 
-    int &pendingBank() {
-        return pendingBank_;
-    }
-    const int numberOfBanks() const {
-        return presetBuilder.getNumberOfBanks();
-    }
-    const Preset *appReceivedPreset() const {
-        return &appReceivedPreset_;
-    }
-    const int &operationMode() const {
-        return operationMode_;
-    }
-    int &operationMode() {
-        return operationMode_;
-    }
+    SparkLooperControl *looperControl() { return looperControl_; }
 
-    LooperSetting *looperSetting() {
-        return &looperSetting_;
-    }
+    bool &isInitBoot() { return isInitBoot_; }
 
-    bool &isInitBoot() {
-        return isInitBoot_;
-    }
-
-    const int currentBTMode() const {
-        return currentBTMode_;
-    }
-    const int presetNumToEdit() const {
-        return presetNumToEdit_;
-    }
-    const string responseMsg() const {
-        return responseMsg_;
-    }
-    const int presetEditMode() const {
-        return presetEditMode_;
-    }
+    const int currentBTMode() const { return currentBTMode_; }
+    const int presetNumToEdit() const { return presetNumToEdit_; }
+    const string responseMsg() const { return responseMsg_; }
+    const int presetEditMode() const { return presetEditMode_; }
 
     // Set/get button mode
-    const int &buttonMode() const {
-        return buttonMode_;
-    }
-    int &buttonMode() {
-        return buttonMode_;
-    }
+    const int &buttonMode() const { return buttonMode_; }
+    int &buttonMode() { return buttonMode_; }
 
-    bool &keyboardChanged() {
-        return keyboardChanged_;
-    }
+    bool &keyboardChanged() { return keyboardChanged_; }
 
     int getMaxChunkSize(int direction);
     int getMaxBlockSize(int direction);
@@ -213,7 +172,7 @@ private:
     static SparkPresetBuilder presetBuilder;
     static SparkDisplayControl *spark_display;
     static SparkKeyboardControl *keyboardControl;
-    static SparkLooperTimer *sparkLooperTimer;
+    static SparkLooperControl *looperControl_;
 
     SparkBLEKeyboard bleKeyboard;
     eSPIFFS fileSystem;
@@ -240,7 +199,7 @@ private:
     static int activePresetNum_;
     static int pendingPresetNum_;
 
-    static LooperSetting looperSetting_;
+    // static LooperSetting *looperSetting_;
 
     // Messages to send to Spark
     static vector<ByteVector> current_msg;

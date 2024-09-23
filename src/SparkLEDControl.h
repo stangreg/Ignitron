@@ -10,6 +10,7 @@
 
 #include "Config_Definitions.h"
 #include "SparkDataControl.h"
+#include "SparkLooperControl.h"
 #include <Arduino.h>
 
 using namespace std;

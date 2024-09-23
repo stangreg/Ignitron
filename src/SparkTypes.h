@@ -10,6 +10,7 @@
 
 #include "Config_Definitions.h"
 #include "SparkHelper.h"
+#include "StringBuilder.h"
 #include <Arduino.h>
 #include <array>
 #include <vector>
@@ -184,7 +185,31 @@ struct LooperSetting {
 
     void setBpm(int _bpm) {
         bpm = _bpm;
+        if (free_indicator) {
+            bars = bpm / 4;
+        }
         changePending = true;
+    }
+
+    string getJson() const {
+        StringBuilder sb;
+        sb.start_str();
+        sb.add_int("BPM", bpm);
+        sb.add_separator();
+        sb.add_str("Count", count_str);
+        sb.add_separator();
+        sb.add_int("Bars", bars);
+        sb.add_separator();
+        sb.add_bool("Free", free_indicator);
+        sb.add_separator();
+        sb.add_bool("Click", click);
+        sb.add_separator();
+        sb.add_bool("Unknown switch", unknown_onoff);
+        sb.add_separator();
+        sb.add_str("Unknown byte", SparkHelper::intToHex(unknown_byte));
+        sb.end_str();
+
+        return sb.getJson();
     }
 };
 

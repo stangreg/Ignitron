@@ -11,7 +11,7 @@ SparkStreamReader::SparkStreamReader() : message{}, unstructured_data{}, msg{}, 
 }
 
 string SparkStreamReader::getJson() {
-    return json;
+    return sb.getJson();
 }
 
 void SparkStreamReader::setMessage(const vector<ByteVector> &msg_) {
@@ -111,104 +111,6 @@ bool SparkStreamReader::read_onoff() {
     }
 }
 
-void SparkStreamReader::start_str() {
-    text = "";
-    json = "{";
-    raw = "";
-    // dict={};
-    indent = "";
-}
-
-void SparkStreamReader::end_str() {
-    json += "}";
-}
-
-void SparkStreamReader::add_indent() {
-    indent += "\t";
-}
-
-void SparkStreamReader::del_indent() {
-    indent.resize(indent.size() - 1);
-}
-
-void SparkStreamReader::add_separator() {
-    json += ", ";
-}
-
-void SparkStreamReader::add_newline() {
-    json += "\n";
-}
-
-void SparkStreamReader::add_python(string python_str) {
-    json += indent + python_str; // + "\n";
-}
-
-void SparkStreamReader::add_str(const string &a_title, const string &a_str, string nature) {
-    raw += a_str;
-    raw += " ";
-    char string_add[200] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%s%-20s: %s \n", indent.c_str(), a_title.c_str(), a_str.c_str());
-    text += string_add;
-    if (nature != "python") {
-        json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
-    }
-}
-
-void SparkStreamReader::add_int(const string &a_title, int an_int, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%d ", an_int);
-    raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %d\n", indent.c_str(), a_title.c_str(), an_int);
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %d", indent.c_str(), a_title.c_str(), an_int);
-        json += string_add;
-    }
-}
-
-void SparkStreamReader::add_float(const string &a_title, float a_float, string nature) {
-
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %2.4f\n", indent.c_str(), a_title.c_str(), a_float);
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s%2.4f", indent.c_str(), a_float);
-        json += string_add;
-    } else {
-        snprintf(string_add, size, "%s\"%s\": %2.4f", indent.c_str(), a_title.c_str(), a_float);
-        json += string_add;
-    }
-}
-
-void SparkStreamReader::add_float_pure(float a_float, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    raw += string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    text += string_add;
-    snprintf(string_add, size, "%2.4f", a_float);
-    json += string_add;
-}
-
-void SparkStreamReader::add_bool(const string &a_title, boolean a_bool, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%s ", a_bool ? "true" : "false");
-    raw += string_add;
-    snprintf(string_add, size, "%s%s: %-20s\n", indent.c_str(), a_title.c_str(), a_bool ? "true" : "false");
-    text += string_add;
-    if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %s", indent.c_str(), a_title.c_str(), a_bool ? "true" : "false");
-        json += string_add;
-    }
-}
-
 void SparkStreamReader::read_effect_parameter() {
     // Read object
     string effect = read_prefixed_string();
@@ -216,13 +118,13 @@ void SparkStreamReader::read_effect_parameter() {
     float val = read_float();
 
     // Build string representations
-    start_str();
-    add_str("Effect", effect);
-    add_separator();
-    add_int("Parameter", param);
-    add_separator();
-    add_float("Value", val);
-    end_str();
+    sb.start_str();
+    sb.add_str("Effect", effect);
+    sb.add_separator();
+    sb.add_int("Parameter", param);
+    sb.add_separator();
+    sb.add_float("Value", val);
+    sb.end_str();
 
     // Set values
     last_message_type_ = MSG_TYPE_FX_PARAM;
@@ -234,12 +136,12 @@ void SparkStreamReader::read_effect() {
     string effect2 = read_prefixed_string();
 
     // Build string representations
-    start_str();
-    add_str("OldEffect", effect1);
-    add_separator();
-    add_newline();
-    add_str("NewEffect", effect2);
-    end_str();
+    sb.start_str();
+    sb.add_str("OldEffect", effect1);
+    sb.add_separator();
+    sb.add_newline();
+    sb.add_str("NewEffect", effect2);
+    sb.end_str();
 
     // Set values
     last_message_type_ = MSG_TYPE_FX_CHANGE;
@@ -251,9 +153,9 @@ void SparkStreamReader::read_hardware_preset() {
     byte preset_num = read_byte() + 1;
 
     // Build string representations
-    start_str();
-    add_int("New HW Preset", preset_num);
-    end_str();
+    sb.start_str();
+    sb.add_int("New HW Preset", preset_num);
+    sb.end_str();
 
     // Set values
     currentPresetNumber_ = preset_num;
@@ -267,9 +169,9 @@ void SparkStreamReader::read_store_hardware_preset() {
     byte preset_num = read_byte() + 1;
 
     // Build string representations
-    start_str();
-    add_int("NewStoredPreset", preset_num);
-    end_str();
+    sb.start_str();
+    sb.add_int("NewStoredPreset", preset_num);
+    sb.end_str();
 
     // Set values
     last_message_type_ = MSG_TYPE_HWPRESET;
@@ -281,11 +183,11 @@ void SparkStreamReader::read_effect_onoff() {
     boolean isOn = read_onoff();
 
     // Build string representations
-    start_str();
-    add_str("Effect", effect);
-    add_separator();
-    add_bool("IsOn", isOn);
-    end_str();
+    sb.start_str();
+    sb.add_str("Effect", effect);
+    sb.add_separator();
+    sb.add_bool("IsOn", isOn);
+    sb.end_str();
 
     // Set values
     last_message_type_ = MSG_TYPE_FX_ONOFF;
@@ -323,31 +225,31 @@ void SparkStreamReader::read_preset() {
     currentPreset_.bpm = bpm;
     // Build string representations
     // DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
-    start_str();
-    add_int("PresetNumber", preset);
-    add_separator();
-    add_str("UUID", uuid);
-    add_separator();
-    add_newline();
-    add_str("Name", name);
-    add_separator();
-    add_str("Version", version);
-    add_separator();
-    add_str("Description", descr);
-    add_separator();
-    add_str("Icon", icon);
-    add_separator();
-    add_float("BPM", bpm, "python");
-    add_separator();
-    add_newline();
+    sb.start_str();
+    sb.add_int("PresetNumber", preset);
+    sb.add_separator();
+    sb.add_str("UUID", uuid);
+    sb.add_separator();
+    sb.add_newline();
+    sb.add_str("Name", name);
+    sb.add_separator();
+    sb.add_str("Version", version);
+    sb.add_separator();
+    sb.add_str("Description", descr);
+    sb.add_separator();
+    sb.add_str("Icon", icon);
+    sb.add_separator();
+    sb.add_float("BPM", bpm, "python");
+    sb.add_separator();
+    sb.add_newline();
     // DEBUG_PRINTF("Free memory after adds: %d\n", xPortGetFreeHeapSize());
     //  Read Pedal data (including string representations)
 
     // !!! number of pedals not used currently, assumed constant as 7 !!!
     // int num_effects = read_byte() - 0x90;
     // DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
-    add_python("\"Pedals\": [");
-    add_newline();
+    sb.add_python("\"Pedals\": [");
+    sb.add_newline();
     currentPreset_.pedals = {};
     for (int i = 0; i < currentPreset_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
         Pedal currentPedal = {};
@@ -358,15 +260,15 @@ void SparkStreamReader::read_preset() {
         boolean e_onoff = read_onoff();
         // DEBUG_PRINTF("  Pedal state: %s\n", e_onoff);
         currentPedal.isOn = e_onoff;
-        add_python("{");
-        add_str("Name", e_str);
-        add_separator();
-        add_bool("IsOn", e_onoff);
-        add_separator();
+        sb.add_python("{");
+        sb.add_str("Name", e_str);
+        sb.add_separator();
+        sb.add_bool("IsOn", e_onoff);
+        sb.add_separator();
         int num_p = read_byte() - char(0x90);
         // DEBUG_PRINTF("  Number of Parameters: %d\n", num_p);
         // DEBUG_PRINTF("Free memory before parameters: %d\n", xPortGetFreeHeapSize());
-        add_python("\"Parameters\":[");
+        sb.add_python("\"Parameters\":[");
         // Read parameters of current pedal
         currentPedal.parameters = {};
         for (int p = 0; p < num_p; p++) {
@@ -383,37 +285,38 @@ void SparkStreamReader::read_preset() {
             currentParameter.number = num;
             currentParameter.special = spec;
             currentParameter.value = val;
-            // add_int("Parameter", num, "python");
-            // add_str("Special", SparkHelper::intToHex(spec), "python");
-            // add_float("Value", val, "python");
-            add_float_pure(val, "python");
+            // sb.add_int("Parameter", num, "python");
+            // sb.add_str("Special", SparkHelper::intToHex(spec), "python");
+            // sb.add_float("Value", val, "python");
+            sb.add_float_pure(val, "python");
             if (p < num_p - 1) {
-                add_separator();
+                sb.add_separator();
             }
             currentPedal.parameters.push_back(currentParameter);
             // DEBUG_PRINTF("Free memory after reading preset: %d\n", xPortGetFreeHeapSize());
         }
 
-        add_python("]");
+        sb.add_python("]");
         // del_indent();
-        add_python("}");
+        sb.add_python("}");
         if (i < currentPreset_.numberOfPedals - 1) {
-            add_separator();
-            add_newline();
+            sb.add_separator();
+            sb.add_newline();
         }
         currentPreset_.pedals.push_back(currentPedal);
     }
-    add_python("],");
-    add_newline();
+    sb.add_python("],");
+    sb.add_newline();
     byte filler = read_byte();
     // DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
     currentPreset_.filler = filler;
-    add_str("Filler", SparkHelper::intToHex(filler));
-    add_newline();
-    end_str();
-    currentPreset_.text = text;
-    currentPreset_.raw = raw;
-    currentPreset_.json = json;
+    sb.add_str("Filler", SparkHelper::intToHex(filler));
+    sb.add_newline();
+    sb.end_str();
+    currentPreset_.text = sb.getText();
+    currentPreset_.raw = sb.getRaw();
+    ;
+    currentPreset_.json = sb.getJson();
     currentPreset_.isEmpty = false;
     isPresetUpdated_ = true;
     last_message_type_ = MSG_TYPE_PRESET;
@@ -440,21 +343,21 @@ void SparkStreamReader::read_looper_settings() {
     byte unknown_byte = read_byte();
 
     // Build string representations
-    start_str();
-    add_int("BPM", bpm);
-    add_separator();
-    add_str("Count", count_str);
-    add_separator();
-    add_int("Bars", bars);
-    add_separator();
-    add_bool("Free", free_indicator);
-    add_separator();
-    add_bool("Click", click);
-    add_separator();
-    add_bool("Unknown switch", unknown_onoff);
-    add_separator();
-    add_str("Unknown byte", SparkHelper::intToHex(unknown_byte));
-    end_str();
+    sb.start_str();
+    sb.add_int("BPM", bpm);
+    sb.add_separator();
+    sb.add_str("Count", count_str);
+    sb.add_separator();
+    sb.add_int("Bars", bars);
+    sb.add_separator();
+    sb.add_bool("Free", free_indicator);
+    sb.add_separator();
+    sb.add_bool("Click", click);
+    sb.add_separator();
+    sb.add_bool("Unknown switch", unknown_onoff);
+    sb.add_separator();
+    sb.add_str("Unknown byte", SparkHelper::intToHex(unknown_byte));
+    sb.end_str();
 
     looperSetting_.bpm = bpm;
     looperSetting_.count_str = count_str;
@@ -465,9 +368,9 @@ void SparkStreamReader::read_looper_settings() {
     looperSetting_.unknown_onoff = unknown_onoff;
     looperSetting_.unknown_byte = unknown_byte;
 
-    looperSetting_.json = json;
-    looperSetting_.text = text;
-    looperSetting_.raw = raw;
+    looperSetting_.json = sb.getJson();
+    looperSetting_.text = sb.getText();
+    looperSetting_.raw = sb.getRaw();
 
     isLooperSettingUpdated_ = true;
     last_message_type_ = MSG_TYPE_LOOPER_SETTING;
@@ -476,9 +379,9 @@ void SparkStreamReader::read_looper_settings() {
 void SparkStreamReader::read_tap_tempo() {
     float bpm = read_float();
 
-    start_str();
-    add_float("BPM", bpm, "python");
-    end_str();
+    sb.start_str();
+    sb.add_float("BPM", bpm, "python");
+    sb.end_str();
     last_message_type_ = MSG_TYPE_TAP_TEMPO;
 }
 
@@ -951,9 +854,9 @@ void SparkStreamReader::read_amp_name() {
     string ampName = read_prefixed_string();
 
     // Build string representations
-    start_str();
-    add_str("Amp Name", ampName);
-    end_str();
+    sb.start_str();
+    sb.add_str("Amp Name", ampName);
+    sb.end_str();
 
     // Set values
     last_message_type_ = MSG_TYPE_AMP_NAME;

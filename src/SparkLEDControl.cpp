@@ -132,25 +132,14 @@ void SparkLEDControl::updateLED_KEYBOARD() {
 
 void SparkLEDControl::updateLED_LooperMode() {
 
-    unsigned long currentMillis = millis();
-    unsigned long bpm = spark_dc->looperSetting()->bpm;
-    // one minute
-    unsigned long base_duration = 60000;
-
-    // interval is divided by two because the LED has to be switched on and off in one cycle.
-    tap_blinkInterval_ms = base_duration / ((bpm - 1) * 2);
-    if (currentMillis - previousMillis >= tap_blinkInterval_ms) {
-        // save the last time you blinked the LED
-        previousMillis = currentMillis;
-
-        allLedOff();
-        // if the LED is off turn it on and vice-versa:
-        if (ledState == LOW) {
-            ledState = HIGH;
-            switchLED(1, true);
-        } else {
-            ledState = LOW;
-        }
+    const bool onOff = spark_dc->looperControl()->beatOnOff();
+    allLedOff();
+    // if the LED is off turn it on and vice-versa:
+    if (onOff) {
+        ledState = HIGH;
+        switchLED(1, true);
+    } else {
+        ledState = LOW;
     }
 }
 

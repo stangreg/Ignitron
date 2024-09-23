@@ -13,7 +13,7 @@ SparkMessage SparkDataControl::spark_msg;
 SparkPresetBuilder SparkDataControl::presetBuilder;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
-SparkLooperTimer *SparkDataControl::sparkLooperTimer = nullptr;
+SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
 
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<ByteVector> SparkDataControl::currentCommand;
@@ -34,7 +34,7 @@ int SparkDataControl::pendingPresetNum_ = 1;
 string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
 
-LooperSetting SparkDataControl::looperSetting_;
+// LooperSetting *SparkDataControl::looperSetting_ = nullptr;
 int SparkDataControl::tapEntrySize = 5;
 CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
 
@@ -64,7 +64,7 @@ SparkDataControl::SparkDataControl() {
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
     tapEntries = CircularBuffer(tapEntrySize);
-    sparkLooperTimer = new SparkLooperTimer();
+    looperControl_ = new SparkLooperControl();
 }
 
 SparkDataControl::~SparkDataControl() {
@@ -74,8 +74,8 @@ SparkDataControl::~SparkDataControl() {
         delete spark_display;
     if (keyboardControl)
         delete keyboardControl;
-    if (sparkLooperTimer)
-        delete sparkLooperTimer;
+    if (looperControl_)
+        delete looperControl_;
 }
 
 int SparkDataControl::init(int opModeInput) {
@@ -203,13 +203,14 @@ void SparkDataControl::checkForUpdates() {
     }
 
     if (spark_ssr.isLooperSettingUpdated()) {
-        looperSetting_ = spark_ssr.currentLooperSetting();
+        looperControl_->setLooperSetting(spark_ssr.currentLooperSetting());
         spark_ssr.resetLooperSettingUpdateFlag();
     }
 
-    if (looperSetting_.changePending) {
+    const LooperSetting *looperSetting = looperControl_->looperSetting();
+    if (looperSetting->changePending) {
         updateLooperSettings();
-        looperSetting_.changePending = false;
+        looperControl_->resetChangePending();
     }
 
     // Check if active preset has been updated
@@ -752,6 +753,7 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("APP mode");
         newOperationMode = SPARK_MODE_APP;
         buttonMode_ = BUTTON_MODE_PRESET;
+        looperControl_->reset();
         break;
     default:
         Serial.println("Unexpected mode. Defaulting to APP mode");
@@ -905,7 +907,7 @@ void SparkDataControl::tapTempoButton() {
                 bpm = min(bpm, 255);
                 bpm = max(30, bpm);
                 DEBUG_PRINTF("Tap tempo: %d\n", bpm);
-                looperSetting_.setBpm(bpm);
+                looperControl_->changeSettingBpm(bpm);
             }
         }
     }
@@ -1148,6 +1150,8 @@ void SparkDataControl::readHWPreset(int num) {
 void SparkDataControl::resetStatus() {
     isInitBoot_ = true;
     presetBuilder.resetHWPresets();
+    operationMode_ = SPARK_MODE_APP;
+    buttonMode_ = BUTTON_MODE_PRESET;
     activePresetNum_ = pendingPresetNum_ = 1;
     activeBank_ = pendingBank_ = 0;
     nextMessageNum = 0x01;
@@ -1188,11 +1192,11 @@ void SparkDataControl::setActiveHWPreset() {
 }
 
 bool SparkDataControl::updateLooperSettings() {
-    DEBUG_PRINTF("Updating looper settings: %s\n", looperSetting_.json.c_str());
-    current_msg = spark_msg.update_looper_settings(nextMessageNum, looperSetting_);
+    DEBUG_PRINTF("Updating looper settings: %s\n", looperControl_->looperSetting()->getJson().c_str());
+    current_msg = spark_msg.update_looper_settings(nextMessageNum, looperControl_->looperSetting());
     return triggerCommand(current_msg);
 }
 
 void SparkDataControl::startLooperTimer(void *args) {
-    sparkLooperTimer->start(args);
+    looperControl_->start(args);
 }

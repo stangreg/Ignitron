@@ -15,6 +15,7 @@
 #include "Config_Definitions.h"
 #include "SparkHelper.h"
 #include "SparkTypes.h"
+#include "StringBuilder.h"
 
 using namespace std;
 using ByteVector = vector<byte>;
@@ -43,12 +44,7 @@ class SparkStreamReader {
     // -------------------------------------------
 
 private:
-    // String representations of processed data
-    string raw;
-    string text;
-    string indent;
-    string json;
-
+    StringBuilder sb;
     // Vector containing struct of cmd, sub_cmd, and payload
     vector<CmdData> message = {};
     // Unstructured input data, needs to go through structure_data first
@@ -108,21 +104,6 @@ private:
     boolean read_onoff();
 
     boolean isValidBlockWithoutHeader(const ByteVector &blk);
-
-    // TODO Extract String building into own class to use it outside of this class.
-    // Functions to create string representations of processed data
-    void start_str();
-    void end_str();
-    void add_indent();
-    void del_indent();
-    void add_separator();
-    void add_newline();
-    void add_python(string python_str);
-    void add_str(const string &a_title, const string &a_str, string nature = "all");
-    void add_int(const string &a_title, int an_int, string nature = "all");
-    void add_float(const string &a_title, float a_float, string nature = "all");
-    void add_float_pure(float a_float, string nature = "all");
-    void add_bool(const string &a_title, boolean a_bool, string nature = "all");
 
 public:
     // Constructors
