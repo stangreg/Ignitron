@@ -301,7 +301,7 @@ void SparkDisplayControl::showModeModifier() {
     display.setCursor(display.width() - 48, 0);
 
     // Preset display
-    display.setTextSize(2);
+    display.setTextSize(4);
     string presetText = " ";
 
     if (opMode == SPARK_MODE_APP && buttonMode == BUTTON_MODE_FX) {
@@ -313,6 +313,7 @@ void SparkDisplayControl::showModeModifier() {
     }
     if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         // If in Looper mode, show an "L" for Looper mode
+        display.setTextSize(2);
         if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
             presetText = "L";
         } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {

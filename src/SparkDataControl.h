@@ -190,6 +190,7 @@ private:
     const int tapButtonThreshold_ = 2000;
     static int tapEntrySize;
     static CircularBuffer tapEntries;
+    static bool recordStartFlag;
 
     // PRESET variables
     static Preset activePreset_;

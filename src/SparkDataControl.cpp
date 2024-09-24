@@ -37,6 +37,7 @@ byte SparkDataControl::nextMessageNum = 0x01;
 // LooperSetting *SparkDataControl::looperSetting_ = nullptr;
 int SparkDataControl::tapEntrySize = 5;
 CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
+bool SparkDataControl::recordStartFlag = false;
 
 vector<ByteVector> SparkDataControl::ack_msg;
 vector<ByteVector> SparkDataControl::current_msg;
@@ -125,17 +126,17 @@ int SparkDataControl::init(int opModeInput) {
             NULL,                   // Task input parameter
             0,                      // Priority of the task
             NULL,                   // Task handle.
-            0                       // Core where the task should run
+            1                       // Core where the task should run
         );
         // TODO Check if this is working. In worst case the start function is called once and exits
         xTaskCreatePinnedToCore(
             startLooperTimer,
             "LooperTimer",
-            1000,
+            10000,
             NULL,
             0,
             NULL,
-            0);
+            1);
         break;
     case SPARK_MODE_AMP:
         pendingBank_ = 1;
@@ -200,6 +201,13 @@ void SparkDataControl::checkForUpdates() {
             setActiveHWPreset();
         }
         spark_ssr.resetPresetNumberUpdateFlag();
+    }
+
+    if (recordStartFlag) {
+        if (looperControl_->currentBar() != 0) {
+            sparkLooperCommand(SPK_LOOPER_CMD_REC);
+            recordStartFlag = false;
+        }
     }
 
     if (spark_ssr.isLooperSettingUpdated()) {
@@ -753,7 +761,7 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("APP mode");
         newOperationMode = SPARK_MODE_APP;
         buttonMode_ = BUTTON_MODE_PRESET;
-        looperControl_->reset();
+        looperControl_->triggerReset();
         break;
     default:
         Serial.println("Unexpected mode. Defaulting to APP mode");
@@ -859,6 +867,13 @@ bool SparkDataControl::decreasePresetLooper() {
 
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
+    if (command == SPK_LOOPER_CMD_STOP) {
+        looperControl_->stop();
+    }
+    if (command == SPK_LOOPER_CMD_COUNTIN) {
+        looperControl_->start();
+        recordStartFlag = true;
+    }
     current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
     DEBUG_PRINTF("Spark Looper: %0x\n", command);
 
@@ -1198,5 +1213,5 @@ bool SparkDataControl::updateLooperSettings() {
 }
 
 void SparkDataControl::startLooperTimer(void *args) {
-    looperControl_->start(args);
+    looperControl_->run(args);
 }

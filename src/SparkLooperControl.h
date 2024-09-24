@@ -28,9 +28,10 @@ public:
     const int bpm() const { return looperSetting_.bpm; }
     const int beatOnOff() const { return beatOnOff_; }
     void init();
-    static void start(void *args);
+    static void run(void *args);
     void stop();
-    void reset();
+    void start();
+    void triggerReset() { resetTrigger_ = true; }
 
     void changeSettingBpm(int bpm) { looperSetting_.setBpm(bpm); }
     void changeSettingBars() { looperSetting_.cycleBars(); }
@@ -43,15 +44,22 @@ public:
 private:
     static LooperSetting looperSetting_;
 
+    static bool looperStarted;
+
     static int currentBeat_;
     static int currentBar_;
 
     static int beatsPerBar_;
+    static bool increaseBar_;
 
     static int beatInterval_;
     static bool beatOnOff_;
 
+    static bool resetTrigger_;
+
     static void increaseBeat();
+    static void reset();
+  
 };
 
 #endif /* SPARKLOOPERTIMER_H_ */

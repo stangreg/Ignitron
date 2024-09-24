@@ -349,7 +349,7 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
     case BfButton::SINGLE_PRESS:
         switch (pressed_btn_gpio) {
         case BUTTON_PRESET1_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_REC);
+            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_COUNTIN);
             break;
         case BUTTON_PRESET2_GPIO:
             spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
