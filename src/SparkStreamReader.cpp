@@ -272,6 +272,8 @@ void SparkStreamReader::read_effect_onoff() {
     string effect = read_prefixed_string();
     boolean isOn = read_onoff();
 
+    currentEffect_.name = effect;
+    currentEffect_.isOn = isOn;
     // Build string representations
     start_str();
     add_str("Effect", effect);
@@ -281,6 +283,7 @@ void SparkStreamReader::read_effect_onoff() {
 
     // Set values
     last_message_type_ = MSG_TYPE_FX_ONOFF;
+    isEffectUpdated_ = true;
 }
 
 void SparkStreamReader::read_preset() {
@@ -294,25 +297,25 @@ void SparkStreamReader::read_preset() {
     read_byte();
     byte preset = read_byte();
     // DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
-    currentSetting_.presetNumber = preset;
+    currentPreset_.presetNumber = preset;
     string uuid = read_string();
     // DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
-    currentSetting_.uuid = uuid;
+    currentPreset_.uuid = uuid;
     string name = read_string();
     // DEBUG_PRINTF("Read Name: %s\n", name.c_str());
-    currentSetting_.name = name;
+    currentPreset_.name = name;
     string version = read_string();
     // DEBUG_PRINTF("Read Version: %s\n", version.c_str());
-    currentSetting_.version = version;
+    currentPreset_.version = version;
     string descr = read_string();
     // DEBUG_PRINTF("Read Description: %s\n", descr.c_str());
-    currentSetting_.description = descr;
+    currentPreset_.description = descr;
     string icon = read_string();
     // DEBUG_PRINTF("Read Icon: %s\n", icon.c_str());
-    currentSetting_.icon = icon;
+    currentPreset_.icon = icon;
     float bpm = read_float();
     // DEBUG_PRINTF("Read BPM: %f\n", bpm);
-    currentSetting_.bpm = bpm;
+    currentPreset_.bpm = bpm;
     // Build string representations
     // DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
     start_str();
@@ -340,8 +343,8 @@ void SparkStreamReader::read_preset() {
     // DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
     add_python("\"Pedals\": [");
     add_newline();
-    currentSetting_.pedals = {};
-    for (int i = 0; i < currentSetting_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
+    currentPreset_.pedals = {};
+    for (int i = 0; i < currentPreset_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
         Pedal currentPedal = {};
         // DEBUG_PRINTF("Reading Pedal %d:\n", i);
         string e_str = read_string();
@@ -389,24 +392,24 @@ void SparkStreamReader::read_preset() {
         add_python("]");
         // del_indent();
         add_python("}");
-        if (i < currentSetting_.numberOfPedals - 1) {
+        if (i < currentPreset_.numberOfPedals - 1) {
             add_separator();
             add_newline();
         }
-        currentSetting_.pedals.push_back(currentPedal);
+        currentPreset_.pedals.push_back(currentPedal);
     }
     add_python("],");
     add_newline();
     byte filler = read_byte();
     // DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
-    currentSetting_.filler = filler;
+    currentPreset_.filler = filler;
     add_str("Filler", SparkHelper::intToHex(filler));
     add_newline();
     end_str();
-    currentSetting_.text = text;
-    currentSetting_.raw = raw;
-    currentSetting_.json = json;
-    currentSetting_.isEmpty = false;
+    currentPreset_.text = text;
+    currentPreset_.raw = raw;
+    currentPreset_.json = json;
+    currentPreset_.isEmpty = false;
     isPresetUpdated_ = true;
     last_message_type_ = MSG_TYPE_PRESET;
 }
@@ -586,6 +589,9 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         } else if (_sub_cmd == 0x11) {
             DEBUG_PRINTLN("03 11 - Reading amp name");
             read_amp_name();
+        } else if (_sub_cmd == 0x15) {
+            DEBUG_PRINTLN("03 15 - Reading effect on/off");
+            read_effect_onoff();
         } else if (_sub_cmd == 0x27) {
             DEBUG_PRINTLN("03 27 - Storing HW preset");
             read_store_hardware_preset();

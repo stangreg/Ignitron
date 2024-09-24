@@ -185,7 +185,7 @@ void SparkDataControl::checkForUpdates() {
 
         // TODO Check if there needs to be a condition here
         DEBUG_PRINTLN("Preset has changed, updating active with current preset");
-        pendingPreset_ = spark_ssr.currentSetting();
+        pendingPreset_ = spark_ssr.currentPreset();
         updateActiveWithPendingPreset();
         spark_ssr.resetPresetUpdateFlag();
     }
@@ -897,7 +897,7 @@ void SparkDataControl::handleAppModeResponse() {
             // otherwise it is a custom preset number and can be ignored
             if (lastMessageNumber != special_msg_num && spark_presetNumber >= 1 && spark_presetNumber <= 4) {
                 // check if this improves behavior, updating activePreset when new HW preset received
-                activePreset_ = spark_ssr.currentSetting();
+                activePreset_ = spark_ssr.currentPreset();
                 activePresetNum_ = spark_presetNumber;
                 activeBank_ = pendingBank_ = 0;
                 pendingPresetNum_ = activePresetNum_;
@@ -910,12 +910,12 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_PRESET) {
             DEBUG_PRINTLN("Last message was a preset change.");
-            Preset receivedPreset = spark_ssr.currentSetting();
+            Preset receivedPreset = spark_ssr.currentPreset();
             // This preset number is between 0 and 3!
             int presetNumber = receivedPreset.presetNumber + 1;
 
             if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || lastMessageNumber != special_msg_num) {
-                activePreset_ = spark_ssr.currentSetting();
+                activePreset_ = spark_ssr.currentPreset();
                 activePresetNum_ = presetNumber;
             }
             if (lastMessageNumber == special_msg_num) {
@@ -924,6 +924,18 @@ void SparkDataControl::handleAppModeResponse() {
                 spark_ssr.resetPresetUpdateFlag();
             }
 
+            printMessage = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_FX_ONOFF) {
+            DEBUG_PRINTLN("Last message was a effect change.");
+            Pedal receivedEffect = spark_ssr.currentEffect();
+            for (Pedal &pdl : activePreset_.pedals) {
+                if (pdl.name == receivedEffect.name) {
+                    pdl.isOn = receivedEffect.isOn;
+                }
+            }
+            updatePendingWithActive();
             printMessage = true;
         }
 
