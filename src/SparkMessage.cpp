@@ -381,6 +381,7 @@ vector<ByteVector> SparkMessage::turn_effect_onoff(byte msg_num, const string &p
     start_message(cmd, sub_cmd);
     add_prefixed_string(pedal);
     add_onoff(enable);
+    add_byte(0x00);
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
