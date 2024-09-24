@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.7.0";
+const string VERSION = "1.7.1";
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 25
@@ -124,7 +124,9 @@ const string VERSION = "1.7.0";
 
 #define SPK_LOOPER_CMD_COUNTIN 0x02
 #define SPK_LOOPER_CMD_REC 0x04
-#define SPK_LOOPER_CMD_REC_2 0x07
+#define SPK_LOOPER_CMD_STOPREC_AND_PLAY 0x05 //((unknown))
+#define SPK_LOOPER_CMD_RETRY 0x06
+#define SPK_LOOPER_CMD_REC_2 0x07 // (sent by Spark Amp after 0x05?)
 #define SPK_LOOPER_CMD_PLAY 0x08
 #define SPK_LOOPER_CMD_STOP 0x09
 #define SPK_LOOPER_CMD_DELETE 0x0A

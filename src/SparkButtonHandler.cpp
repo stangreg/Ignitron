@@ -355,16 +355,16 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
             spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
             break;
         case BUTTON_PRESET3_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_STOP);
+            spark_dc->sparkLooperCommandStopAll();
             break;
         case BUTTON_PRESET4_GPIO:
             spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DUB);
             break;
         case BUTTON_BANK_DOWN_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_UNDO);
+            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_STOPREC_AND_PLAY);
             break;
         case BUTTON_BANK_UP_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_REDO);
+            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_RETRY);
             break;
         }
         break;

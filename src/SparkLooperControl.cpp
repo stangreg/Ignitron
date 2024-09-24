@@ -35,11 +35,12 @@ void SparkLooperControl::run(void *args) {
         if (resetTrigger_) {
             reset();
         }
+
+        delay(beatInterval_ / 2);
+        beatOnOff_ = !(beatOnOff_);
+        delay(beatInterval_ / 2);
+        beatOnOff_ = !(beatOnOff_);
         if (looperStarted) {
-            delay(beatInterval_ / 2);
-            beatOnOff_ = !(beatOnOff_);
-            delay(beatInterval_ / 2);
-            beatOnOff_ = !(beatOnOff_);
             increaseBeat();
         } else {
             reset();
@@ -75,5 +76,3 @@ void SparkLooperControl::reset() {
     increaseBar_ = false;
     resetTrigger_ = false;
 }
-
-

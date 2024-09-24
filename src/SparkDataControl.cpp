@@ -853,29 +853,32 @@ bool SparkDataControl::decreasePresetLooper() {
     return switchPreset(selectedPresetNum, false);
 }
 
-// TODO: Looper functions. Stop record missing (important for record and dub).
-// 08 = PLAY
-// 09 = STOP
-// 02 = RECORD (Initial) (count in?)
-// 04 = RECORD??
+// TODO: Looper functions.
+// 02 = RECORD count in (done)
+// 04 = RECORD (done)
+// 05 = STOPREC + PLAY(??)
+// 06 = RETRY (followed by 02 and 04);
 // 07 = RECORD finished??
-// 0b = RECORD (Dub)
-// 0c = STOP RECORD
-// 0d = UNDO
-// 0e = REDO
-// 0a = DELETE
+// 08 = PLAY (done)
+// 09 = STOP (done)
+// 0b = RECORD (Dub) (done)
+// 0c = STOP RECORD (done)
+// 0d = UNDO (done)
+// 0e = REDO (done)
+// 0a = DELETE (done)
 
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
-    if (command == SPK_LOOPER_CMD_STOP) {
-        looperControl_->stop();
-    }
+    current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
+
+    DEBUG_PRINTF("Spark Looper: %0x\n", command);
     if (command == SPK_LOOPER_CMD_COUNTIN) {
         looperControl_->start();
         recordStartFlag = true;
     }
-    current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
-    DEBUG_PRINTF("Spark Looper: %0x\n", command);
+    if (command == SPK_LOOPER_CMD_PLAY) {
+        looperControl_->start();
+    }
 
     return triggerCommand(current_msg);
 }
@@ -1214,4 +1217,15 @@ bool SparkDataControl::updateLooperSettings() {
 
 void SparkDataControl::startLooperTimer(void *args) {
     looperControl_->run(args);
+}
+
+bool SparkDataControl::sparkLooperCommandStopAll() {
+    looperControl_->stop();
+    bool recStopReturn;
+    bool stopReturn;
+    current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_REC_STOP);
+    recStopReturn = triggerCommand(current_msg);
+    current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_STOP);
+    stopReturn = triggerCommand(current_msg);
+    return stopReturn && recStopReturn;
 }
