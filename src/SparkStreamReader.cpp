@@ -182,6 +182,8 @@ void SparkStreamReader::read_effect_onoff() {
     string effect = read_prefixed_string();
     boolean isOn = read_onoff();
 
+    currentEffect_.name = effect;
+    currentEffect_.isOn = isOn;
     // Build string representations
     sb.start_str();
     sb.add_str("Effect", effect);
@@ -191,6 +193,7 @@ void SparkStreamReader::read_effect_onoff() {
 
     // Set values
     last_message_type_ = MSG_TYPE_FX_ONOFF;
+    isEffectUpdated_ = true;
 }
 
 void SparkStreamReader::read_preset() {
@@ -581,8 +584,12 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x11:
             DEBUG_PRINTLN("03 11 - Reading amp name");
             read_amp_name();
-            break;
-        case 0x27:
+        }
+        else if (_sub_cmd == 0x15) {
+            DEBUG_PRINTLN("03 15 - Reading effect on/off");
+            read_effect_onoff();
+        }
+        else if (_sub_cmd == 0x27) {
             DEBUG_PRINTLN("03 27 - Storing HW preset");
             read_store_hardware_preset();
             break;

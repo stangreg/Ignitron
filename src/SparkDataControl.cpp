@@ -1048,6 +1048,18 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
         }
 
+        if (lastMessageType == MSG_TYPE_FX_ONOFF) {
+            DEBUG_PRINTLN("Last message was a effect change.");
+            Pedal receivedEffect = spark_ssr.currentEffect();
+            for (Pedal &pdl : activePreset_.pedals) {
+                if (pdl.name == receivedEffect.name) {
+                    pdl.isOn = receivedEffect.isOn;
+                }
+            }
+            updatePendingWithActive();
+            printMessage = true;
+        }
+
         if (lastMessageType == MSG_TYPE_AMP_NAME) {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = spark_ssr.getAmpName();

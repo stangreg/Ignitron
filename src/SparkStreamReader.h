@@ -60,11 +60,13 @@ private:
 
     // In case a preset was received from Spark, it is saved here. Can then be read by main program
     Preset currentPreset_;
+    Pedal currentEffect_;
     // Preset number. Can be retrieved by main program in case it has been updated by Spark Amp.
     int currentPresetNumber_ = 0;
     // Flags to indicate that either preset or presetNumber have been updated
     boolean isPresetUpdated_ = false;
     boolean isPresetNumberUpdated_ = false;
+    boolean isEffectUpdated_ = false;
     vector<AckData> acknowledgments;
     int last_message_type_ = 0;
     byte last_message_num_ = 0x00;
@@ -122,6 +124,8 @@ public:
     const boolean isPresetUpdated() const { return isPresetUpdated_; }
     const boolean isLooperSettingUpdated() const { return isLooperSettingUpdated_; }
     const LooperSetting currentLooperSetting() const { return looperSetting_; }
+    const Pedal currentEffect() const { return currentEffect_; }
+    const boolean isEffectUpdated() const { return isEffectUpdated_; }
 
     const int lastMessageType() const { return last_message_type_; }
     const byte lastMessageNum() const {
