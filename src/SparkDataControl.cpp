@@ -872,12 +872,8 @@ bool SparkDataControl::sparkLooperCommand(byte command) {
     current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
 
     DEBUG_PRINTF("Spark Looper: %0x\n", command);
-    if (command == SPK_LOOPER_CMD_COUNTIN) {
-        looperControl_->start();
-        recordStartFlag = true;
-    }
     if (command == SPK_LOOPER_CMD_PLAY) {
-        looperControl_->start();
+        // looperControl_->start();
     }
 
     return triggerCommand(current_msg);
@@ -1010,7 +1006,7 @@ void SparkDataControl::handleAppModeResponse() {
     byte lastMessageNumber = spark_ssr.lastMessageNum();
     DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
-    if (operationMode_ == SPARK_MODE_APP) {
+    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_SPK_LOOPER) {
         bool printMessage = false;
 
         if (lastMessageType == MSG_TYPE_HWPRESET) {
@@ -1067,6 +1063,12 @@ void SparkDataControl::handleAppModeResponse() {
         if (lastMessageType == MSG_TYPE_TAP_TEMPO) {
             DEBUG_PRINTLN("New BPM setting received.");
             printMessage = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_MEASURE) {
+            DEBUG_PRINTLN("Measure info received.");
+            // float currentMeasure = spark_ssr.getMeasure();
+            // looperControl_->setMeasure(currentMeasure);
         }
 
         if (msgStr.length() > 0 && printMessage) {
@@ -1221,6 +1223,7 @@ void SparkDataControl::startLooperTimer(void *args) {
 
 bool SparkDataControl::sparkLooperCommandStopAll() {
     looperControl_->stop();
+    looperControl_->reset();
     bool recStopReturn;
     bool stopReturn;
     current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_REC_STOP);
@@ -1228,4 +1231,27 @@ bool SparkDataControl::sparkLooperCommandStopAll() {
     current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_STOP);
     stopReturn = triggerCommand(current_msg);
     return stopReturn && recStopReturn;
+}
+
+bool SparkDataControl::sparkLooperRec() {
+    bool countIn = looperControl_->looperSetting()->click;
+    if (countIn) {
+        sparkLooperCommand(SPK_LOOPER_CMD_COUNTIN);
+        looperControl_->setCurrentBar(0);
+    }
+    looperControl_->start();
+    recordStartFlag = true;
+    return true;
+}
+
+bool SparkDataControl::sparkLooperRetry() {
+    sparkLooperCommand(SPK_LOOPER_CMD_RETRY);
+    bool countIn = looperControl_->looperSetting()->click;
+    return sparkLooperRec();
+}
+
+bool SparkDataControl::sparkLooperStopRecPlay() {
+    sparkLooperCommand(SPK_LOOPER_CMD_STOPREC_AND_PLAY);
+    sparkLooperCommand(SPK_LOOPER_CMD_REC_STOP);
+    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
 }

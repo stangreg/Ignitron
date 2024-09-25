@@ -385,13 +385,20 @@ void SparkStreamReader::read_tap_tempo() {
     last_message_type_ = MSG_TYPE_TAP_TEMPO;
 }
 
+void SparkStreamReader::read_measure() {
+    measure_ = read_float();
+
+    sb.start_str();
+    sb.add_float("Measure", measure_, "python");
+    sb.end_str();
+    last_message_type_ = MSG_TYPE_MEASURE;
+}
+
 boolean SparkStreamReader::structure_data(bool processHeader) {
 
     ByteVector block_content;
     block_content.clear();
     message.clear();
-
-    DEBUG_PRINTLN("Unstructured data:");
 
     for (auto block : unstructured_data) {
 
@@ -595,6 +602,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x76:
             DEBUG_PRINTLN("03 76 - Reading Looper settings");
             read_looper_settings();
+            break;
+        case 0x77:
+            DEBUG_PRINTLN("03 77 - Reading current measure");
+            read_measure();
             break;
         default:
             DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);

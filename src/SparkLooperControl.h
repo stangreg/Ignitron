@@ -31,6 +31,7 @@ public:
     static void run(void *args);
     void stop();
     void start();
+    static void reset();
     void triggerReset() { resetTrigger_ = true; }
 
     void changeSettingBpm(int bpm) { looperSetting_.setBpm(bpm); }
@@ -39,7 +40,9 @@ public:
     void toggleSettingCount() { looperSetting_.toggleCount(); }
     void resetSetting() { looperSetting_.reset(); }
     void setLooperSetting(LooperSetting setting) { looperSetting_ = setting; }
+    void setCurrentBar(int bar) { currentBar_ = bar; }
     void resetChangePending() { looperSetting_.changePending = false; }
+    void setMeasure(float measure);
 
 private:
     static LooperSetting looperSetting_;
@@ -58,8 +61,6 @@ private:
     static bool resetTrigger_;
 
     static void increaseBeat();
-    static void reset();
-  
 };
 
 #endif /* SPARKLOOPERTIMER_H_ */

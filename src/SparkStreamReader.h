@@ -28,6 +28,7 @@ using ByteVector = vector<byte>;
 #define MSG_TYPE_AMP_NAME 6
 #define MSG_TYPE_LOOPER_SETTING 7
 #define MSG_TYPE_TAP_TEMPO 8
+#define MSG_TYPE_MEASURE 9
 
 #define MSG_REQ_SERIAL = 11
 #define MSG_REQ_FW_VER = 12
@@ -69,6 +70,7 @@ private:
     byte last_message_num_ = 0x00;
     byte last_requested_preset = 0x00;
     string ampName_ = "";
+    float measure_;
     byte last_read_byte;
     const byte end_marker = 0xF7;
 
@@ -85,6 +87,7 @@ private:
     void read_preset();
     void read_looper_settings();
     void read_tap_tempo();
+    void read_measure();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);
@@ -128,6 +131,7 @@ public:
         return message;
     }
     string getAmpName() { return ampName_; }
+    float getMeasure() { return measure_; }
 
     void resetPresetNumberUpdateFlag();
     void resetPresetUpdateFlag();

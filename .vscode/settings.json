@@ -3,6 +3,9 @@
         "bitset": "cpp",
         "memory": "cpp",
         "random": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "*.tcc": "cpp",
+        "cstdlib": "cpp",
+        "regex": "cpp"
     }
 }

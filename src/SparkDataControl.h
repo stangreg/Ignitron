@@ -155,6 +155,9 @@ public:
     bool decreasePresetLooper();
     bool sparkLooperCommand(byte command);
     bool sparkLooperCommandStopAll();
+    bool sparkLooperRec();
+    bool sparkLooperRetry();
+    bool sparkLooperStopRecPlay();
 
     void tapTempoButton();
 
