@@ -584,12 +584,12 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x11:
             DEBUG_PRINTLN("03 11 - Reading amp name");
             read_amp_name();
-        }
-        else if (_sub_cmd == 0x15) {
+            break;
+        case 0x15:
             DEBUG_PRINTLN("03 15 - Reading effect on/off");
             read_effect_onoff();
-        }
-        else if (_sub_cmd == 0x27) {
+            break;
+        case 0x27:
             DEBUG_PRINTLN("03 27 - Storing HW preset");
             read_store_hardware_preset();
             break;
