@@ -29,12 +29,14 @@ using ByteVector = vector<byte>;
 #define MSG_TYPE_LOOPER_SETTING 7
 #define MSG_TYPE_TAP_TEMPO 8
 #define MSG_TYPE_MEASURE 9
+#define MSG_TYPE_LOOPER_COMMAND 10
+#define MSG_TYPE_LOOPER_STATUS 11
 
-#define MSG_REQ_SERIAL = 11
-#define MSG_REQ_FW_VER = 12
-#define MSG_REQ_PRESET_CHK = 13
-#define MSG_REQ_CURR_PRESET_NUM = 14
-#define MSG_REQ_CURR_PRESET = 15
+#define MSG_REQ_SERIAL = 21
+#define MSG_REQ_FW_VER = 22
+#define MSG_REQ_PRESET_CHK = 23
+#define MSG_REQ_CURR_PRESET_NUM = 24
+#define MSG_REQ_CURR_PRESET = 25
 
 #define MSG_PROCESS_RES_COMPLETE 1
 #define MSG_PROCESS_RES_INCOMPLETE 2
@@ -79,8 +81,12 @@ private:
     LooperSetting looperSetting_;
     boolean isLooperSettingUpdated_ = false;
 
+    byte lastLooperCommand_;
+    int numberOfLoops_;
+
     // Functions to process calls based on identified cmd/sub_cmd.
-    void read_amp_name();
+    void
+    read_amp_name();
     void read_effect_parameter();
     void read_effect();
     void read_effect_onoff();
@@ -88,6 +94,8 @@ private:
     void read_store_hardware_preset();
     void read_preset();
     void read_looper_settings();
+    void read_looper_command();
+    void read_looper_status();
     void read_tap_tempo();
     void read_measure();
 
@@ -107,6 +115,7 @@ private:
     string read_string();
     float read_float();
     boolean read_onoff();
+    unsigned int read_int16();
 
     boolean isValidBlockWithoutHeader(const ByteVector &blk);
 
@@ -126,6 +135,8 @@ public:
     const LooperSetting currentLooperSetting() const { return looperSetting_; }
     const Pedal currentEffect() const { return currentEffect_; }
     const boolean isEffectUpdated() const { return isEffectUpdated_; }
+    const byte lastLooperCommand() const { return lastLooperCommand_; }
+    const int numberOfLoops() const { return numberOfLoops_; }
 
     const int lastMessageType() const { return last_message_type_; }
     const byte lastMessageNum() const {

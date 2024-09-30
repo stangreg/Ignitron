@@ -137,9 +137,38 @@ void SparkLEDControl::updateLED_LooperMode() {
     // if the LED is off turn it on and vice-versa:
     if (onOff) {
         ledState = HIGH;
-        switchLED(1, true);
+        switchLED(SPK_LOOPER_BPM_LED_ID, true);
     } else {
         ledState = LOW;
+    }
+
+    const bool isRecRunning = spark_dc->looperControl()->isRecRunning();
+    if (isRecRunning) {
+        switchLED(SPK_LOOPER_REC_DUB_LED_ID, true);
+    } else {
+        switchLED(SPK_LOOPER_REC_DUB_LED_ID, false);
+    }
+
+    const bool isPlaying = spark_dc->looperControl()->isPlaying();
+    const bool isRecAvailable = spark_dc->looperControl()->isRecAvailable();
+
+    if (isPlaying) {
+        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, true);
+    } else if (isRecAvailable) {
+        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, onOff);
+    } else {
+        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, false);
+    }
+
+    // TODO: Check why LED is not on when Undo is available during Dub/Play. Seems that 0278 is ignored during play.
+    const bool canUndo = spark_dc->looperControl()->canUndo();
+    const bool canRedo = spark_dc->looperControl()->canRedo();
+    if (canRedo) {
+        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, false);
+    } else if (canUndo) {
+        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, true);
+    } else {
+        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, false);
     }
 }
 

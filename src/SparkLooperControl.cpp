@@ -9,6 +9,12 @@ bool SparkLooperControl::beatOnOff_ = true;
 bool SparkLooperControl::increaseBar_ = false;
 bool SparkLooperControl::resetTrigger_ = true;
 bool SparkLooperControl::looperStarted = false;
+bool SparkLooperControl::isRecRunning_ = false;
+bool SparkLooperControl::isRecAvailable_ = false;
+bool SparkLooperControl::isPlaying_ = false;
+bool SparkLooperControl::canRedo_ = false;
+bool SparkLooperControl::canUndo_ = false;
+int SparkLooperControl::loopCount_ = 0;
 
 SparkLooperControl::SparkLooperControl() {
     // looperSetting_ = new LooperSetting();
@@ -54,6 +60,16 @@ void SparkLooperControl::start() {
     looperStarted = true;
 }
 
+void SparkLooperControl::resetStatus() {
+    isRecRunning_ = false;
+    isRecAvailable_ = false;
+    isPlaying_ = false;
+    canUndo_ = false;
+    canRedo_ = false;
+    loopCount_ = 0;
+    reset();
+}
+
 void SparkLooperControl::setMeasure(float measure) {
     stop();
     int totalBeat = floor(measure * beatsPerBar_ * totalBars());
@@ -69,8 +85,21 @@ void SparkLooperControl::setMeasure(float measure) {
     // 1   1        1      1       2    2      2     2     3    3     3      3     4     4     4    4       5
 }
 
+string SparkLooperControl::getLooperStatus() {
+    string str = "{ ";
+    str = str + "Recording running: " + (isRecRunning_ ? "true" : "false");
+    str += ", ";
+    str = str + "Recording available: " + (isRecAvailable_ ? "true" : "false");
+    str += ", ";
+    str = str + "Is Playing: " + (isPlaying_ ? "true" : "false");
+    str += ", ";
+    str = str + "Redo available: " + (canRedo_ ? "true" : "false");
+    str += " }";
+    return str;
+}
+
 void SparkLooperControl::increaseBeat() {
-    DEBUG_PRINTLN("Beat increase");
+    // DEBUG_PRINTLN("Beat increase");
     int totalBars = looperSetting_.bars;
     currentBeat_ = currentBeat_ % beatsPerBar_ + 1;
     if (increaseBar_) {

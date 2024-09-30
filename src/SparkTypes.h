@@ -137,7 +137,7 @@ struct LooperSetting {
     bool click = true;
 
     bool unknown_onoff = false;
-    byte unknown_byte = 0x60;
+    unsigned int max_duration = 60000;
 
     string json;
     string text;
@@ -152,7 +152,7 @@ struct LooperSetting {
         free_indicator = false;
         click = true;
         unknown_onoff = false;
-        unknown_byte = 0x60;
+        max_duration = 60000;
 
         changePending = true;
     }
@@ -206,7 +206,7 @@ struct LooperSetting {
         sb.add_separator();
         sb.add_bool("Unknown switch", unknown_onoff);
         sb.add_separator();
-        sb.add_str("Unknown byte", SparkHelper::intToHex(unknown_byte));
+        sb.add_int("Max duration", max_duration);
         sb.end_str();
 
         return sb.getJson();

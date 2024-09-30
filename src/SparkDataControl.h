@@ -154,10 +154,26 @@ public:
     bool increasePresetLooper();
     bool decreasePresetLooper();
     bool sparkLooperCommand(byte command);
-    bool sparkLooperCommandStopAll();
+    bool sparkLooperStopAll();
+    bool sparkLooperStopPlaying();
+    bool sparkLooperPlay();
+
     bool sparkLooperRec();
+    bool sparkLooperDub();
     bool sparkLooperRetry();
+    bool sparkLooperStopRec();
+    bool sparkLooperUndo();
+    bool sparkLooperRedo();
+    bool sparkLooperDeleteAll();
     bool sparkLooperStopRecPlay();
+
+    bool sparkLooperPlayStop();
+    bool sparkLooperRecDub();
+    bool sparkLooperUndoRedo();
+
+    bool sparkLooperGetStatus();
+    bool sparkLooperGetConfig();
+    bool sparkLooperGetRecordStatus();
 
     void tapTempoButton();
 
@@ -195,6 +211,7 @@ private:
     static int tapEntrySize;
     static CircularBuffer tapEntries;
     static bool recordStartFlag;
+    static int lastLooperCommand_;
 
     // PRESET variables
     static Preset activePreset_;
@@ -269,6 +286,7 @@ private:
 
     static bool updateLooperSettings();
     static void startLooperTimer(void *args);
+    static void updateLooperCommand(byte lastCommand);
 };
 
 #endif /* SPARKDATACONTROL_H_ */

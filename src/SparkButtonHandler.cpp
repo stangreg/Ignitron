@@ -123,8 +123,7 @@ void SparkButtonHandler::configureSpark2LooperControlButtons() {
     btn_bank_down.onPress(btnSpark2LooperHandler);
     btn_bank_up.onPress(btnSpark2LooperHandler);
 
-    btn_bank_down.onPressFor(btnSpark2LooperHandler, LONG_BUTTON_PRESS_TIME);
-    btn_preset1.onPressFor(btnSpark2LooperHandler, LONG_BUTTON_PRESS_TIME);
+    btn_preset3.onPressFor(btnSpark2LooperHandler, LONG_BUTTON_PRESS_TIME);
 
     // Switch between APP and Looper mode
     btn_preset4.onPressFor(btnToggleLoopHandler, LONG_BUTTON_PRESS_TIME);
@@ -349,35 +348,31 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
     case BfButton::SINGLE_PRESS:
         switch (pressed_btn_gpio) {
         case BUTTON_PRESET1_GPIO:
-            spark_dc->sparkLooperRec();
+            spark_dc->sparkLooperRecDub();
             break;
         case BUTTON_PRESET2_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+            spark_dc->sparkLooperPlayStop();
             break;
         case BUTTON_PRESET3_GPIO:
-            spark_dc->sparkLooperCommandStopAll();
+            spark_dc->sparkLooperUndoRedo();
             break;
         case BUTTON_PRESET4_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DUB);
+            spark_dc->sparkLooperGetRecordStatus();
             break;
         case BUTTON_BANK_DOWN_GPIO:
-            spark_dc->sparkLooperStopRecPlay();
+            spark_dc->tapTempoButton();
             break;
         case BUTTON_BANK_UP_GPIO:
-            spark_dc->sparkLooperRetry();
+            spark_dc->sparkLooperGetStatus();
             break;
         }
         break;
     case BfButton::LONG_PRESS:
         switch (pressed_btn_gpio) {
-        case BUTTON_BANK_DOWN_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_DELETE);
-            break;
-        case BUTTON_PRESET1_GPIO:
-            spark_dc->sparkLooperCommand(SPK_LOOPER_CMD_UNDO);
+        case BUTTON_PRESET3_GPIO:
+            spark_dc->sparkLooperDeleteAll();
             break;
         }
-        break;
     }
 }
 
@@ -399,16 +394,16 @@ void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::p
     case BfButton::SINGLE_PRESS:
         switch (pressed_btn_gpio) {
         case BUTTON_PRESET1_GPIO:
-            spark_dc->tapTempoButton();
-            break;
-        case BUTTON_PRESET2_GPIO:
             looperControl->changeSettingBars();
             break;
-        case BUTTON_PRESET3_GPIO:
+        case BUTTON_PRESET2_GPIO:
             looperControl->toggleSettingCount();
             break;
-        case BUTTON_PRESET4_GPIO:
+        case BUTTON_PRESET3_GPIO:
             looperControl->toggleSettingClick();
+            break;
+        case BUTTON_BANK_DOWN_GPIO:
+            spark_dc->tapTempoButton();
             break;
         }
         break;

@@ -343,7 +343,7 @@ void SparkStreamReader::read_looper_settings() {
     bool free_indicator = read_onoff();
     bool click = read_onoff();
     bool unknown_onoff = read_onoff();
-    byte unknown_byte = read_byte();
+    unsigned int max_duration = read_int16();
 
     // Build string representations
     sb.start_str();
@@ -359,7 +359,7 @@ void SparkStreamReader::read_looper_settings() {
     sb.add_separator();
     sb.add_bool("Unknown switch", unknown_onoff);
     sb.add_separator();
-    sb.add_str("Unknown byte", SparkHelper::intToHex(unknown_byte));
+    sb.add_int("Max duration", max_duration);
     sb.end_str();
 
     looperSetting_.bpm = bpm;
@@ -369,7 +369,7 @@ void SparkStreamReader::read_looper_settings() {
     looperSetting_.free_indicator = free_indicator;
     looperSetting_.click = click;
     looperSetting_.unknown_onoff = unknown_onoff;
-    looperSetting_.unknown_byte = unknown_byte;
+    looperSetting_.max_duration = max_duration;
 
     looperSetting_.json = sb.getJson();
     looperSetting_.text = sb.getText();
@@ -377,6 +377,41 @@ void SparkStreamReader::read_looper_settings() {
 
     isLooperSettingUpdated_ = true;
     last_message_type_ = MSG_TYPE_LOOPER_SETTING;
+}
+
+void SparkStreamReader::read_looper_command() {
+
+    lastLooperCommand_ = read_byte();
+    DEBUG_PRINT("Received looper command: ");
+    DEBUG_PRINTVECTOR(msg);
+    DEBUG_PRINTLN();
+    last_message_type_ = MSG_TYPE_LOOPER_COMMAND;
+}
+
+void SparkStreamReader::read_looper_status() {
+    // 4C0404004242
+    int bpm = read_byte();
+    byte count = read_byte();
+    byte bars = read_byte();
+    numberOfLoops_ = read_byte();
+    bool unknownOnOff1 = read_byte();
+    bool unknownOnOff2 = read_byte();
+
+    sb.start_str();
+    sb.add_int("BPM", bpm);
+    sb.add_separator();
+    sb.add_int("Count", count);
+    sb.add_separator();
+    sb.add_int("Bars", bars);
+    sb.add_separator();
+    sb.add_int("Loops", numberOfLoops_);
+    sb.add_separator();
+    sb.add_str("Unknown OnOff1", SparkHelper::intToHex(unknownOnOff1));
+    sb.add_separator();
+    sb.add_str("Unknown OnOff2", SparkHelper::intToHex(unknownOnOff2));
+    sb.end_str();
+
+    last_message_type_ = MSG_TYPE_LOOPER_STATUS;
 }
 
 void SparkStreamReader::read_tap_tempo() {
@@ -606,6 +641,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             DEBUG_PRINTLN("03 63 - Reading Tap Tempo");
             read_tap_tempo();
             break;
+        case 0x75:
+            DEBUG_PRINTLN("03 75 - Reading Looper Record Status");
+            read_looper_command();
+            break;
         case 0x76:
             DEBUG_PRINTLN("03 76 - Reading Looper settings");
             read_looper_settings();
@@ -613,6 +652,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x77:
             DEBUG_PRINTLN("03 77 - Reading current measure");
             read_measure();
+            break;
+        case 0x78:
+            DEBUG_PRINTLN("03 78 - Reading current Looper status");
+            read_looper_status();
             break;
         default:
             DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);
@@ -630,12 +673,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         DEBUG_PRINTF("Acknowledgment for command %0x %0x\n", _cmd, _sub_cmd);
     } else {
         // unprocessed command (likely the initial ones sent from the app
-#ifdef DEBUG
         DEBUG_PRINTF("Unprocessed: %0x, %0x - ", _cmd,
                      _sub_cmd);
         DEBUG_PRINTVECTOR(msg);
         DEBUG_PRINTLN();
-#endif
     }
     return 1;
 }
@@ -741,10 +782,11 @@ int SparkStreamReader::processBlock(ByteVector &blk) {
     bool msg_to_spark = false;
     bool msg_from_spark = true;
 
-    DEBUG_PRINTLN("Processing block");
-    DEBUG_PRINTVECTOR(blk);
-    DEBUG_PRINTLN();
-
+    /*
+        DEBUG_PRINTLN("Processing block");
+        DEBUG_PRINTVECTOR(blk);
+        DEBUG_PRINTLN();
+    */
     // Process:
     // 1. Remove 01FE header if present
     // 2. Build command (response) vector by splitting blocks into F001...F7 blocks
@@ -861,6 +903,16 @@ bool SparkStreamReader::isValidBlockWithoutHeader(const ByteVector &blk) {
         return false;
 
     return true;
+}
+
+unsigned int SparkStreamReader::read_int16() {
+    // Read the following two bytes as INT
+    // INT is prefixed with 0xCD
+    byte prefix = read_byte();
+    byte major = read_byte();
+    byte minor = read_byte();
+    unsigned int result = (major << 8 | minor);
+    return result;
 }
 
 void SparkStreamReader::clearMessageBuffer() {

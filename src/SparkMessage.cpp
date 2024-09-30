@@ -271,6 +271,16 @@ void SparkMessage::add_onoff(boolean enable) {
     add_byte(b);
 }
 
+void SparkMessage::add_int16(unsigned int number) {
+    ByteVector bytepack;
+    // Converting number to 16 bit INT
+    bytepack.push_back(0xCD);
+    bytepack.push_back(number >> 8);
+    bytepack.push_back(number & 0xFF);
+
+    add_bytes(bytepack);
+}
+
 vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num) {
     // hardcoded message
     /*
@@ -596,7 +606,7 @@ vector<ByteVector> SparkMessage::update_looper_settings(byte msg_number, const L
         return message;
     }
 
-    DEBUG_PRINTF("LPSetting: BPM: %d, Count: %0x, Bars: %d, Free?: %d, Click: %d\n", setting->bpm, setting->count, setting->bars, setting->free_indicator, setting->click);
+    DEBUG_PRINTF("LPSetting: BPM: %d, Count: %0x, Bars: %d, Free?: %d, Click: %d, Max duration: %d\n ", setting->bpm, setting->count, setting->bars, setting->free_indicator, setting->click, setting->max_duration);
     start_message(cmd, sub_cmd);
     if (setting->bpm >= 128) {
         add_byte(0xCC);
@@ -607,7 +617,29 @@ vector<ByteVector> SparkMessage::update_looper_settings(byte msg_number, const L
     add_onoff(setting->free_indicator);
     add_onoff(setting->click);
     add_onoff(setting->unknown_onoff);
-    add_byte(setting->unknown_byte);
+    add_int16(setting->max_duration);
+
     message = end_message(DIR_TO_SPARK, msg_number);
     return message;
+}
+
+vector<ByteVector> SparkMessage::get_looper_status(byte msg_number) {
+    cmd = 0x02;
+    sub_cmd = 0x78;
+    start_message(cmd, sub_cmd);
+    return end_message(DIR_TO_SPARK, msg_number);
+}
+
+vector<ByteVector> SparkMessage::get_looper_config(byte msg_number) {
+    cmd = 0x02;
+    sub_cmd = 0x76;
+    start_message(cmd, sub_cmd);
+    return end_message(DIR_TO_SPARK, msg_number);
+}
+
+vector<ByteVector> SparkMessage::get_looper_record_status(byte msg_number) {
+    cmd = 0x02;
+    sub_cmd = 0x75;
+    start_message(cmd, sub_cmd);
+    return end_message(DIR_TO_SPARK, msg_number);
 }

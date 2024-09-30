@@ -38,8 +38,10 @@ byte SparkDataControl::nextMessageNum = 0x01;
 int SparkDataControl::tapEntrySize = 5;
 CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
 bool SparkDataControl::recordStartFlag = false;
+int SparkDataControl::lastLooperCommand_ = 0;
 
-vector<ByteVector> SparkDataControl::ack_msg;
+vector<ByteVector>
+    SparkDataControl::ack_msg;
 vector<ByteVector> SparkDataControl::current_msg;
 
 bool SparkDataControl::customPresetAckPending = false;
@@ -305,11 +307,11 @@ void SparkDataControl::bleNotificationCallback(
     // Triggered when data is received from Spark Amp in APP mode
     //  Transform data into ByteVetor and process
     ByteVector chunk(&pData[0], &pData[length]);
-    DEBUG_PRINT("Incoming block: ");
-    DEBUG_PRINTVECTOR(chunk);
-    DEBUG_PRINTLN();
-    // DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
-    //  Add incoming data to message queue for processing
+    // DEBUG_PRINT("Incoming block: ");
+    // DEBUG_PRINTVECTOR(chunk);
+    // DEBUG_PRINTLN();
+    //  DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
+    //   Add incoming data to message queue for processing
     msgQueue.push(chunk);
     // DEBUG_PRINTF("Seding back data via notify.");
     // vector<ByteVector> notifyVector = { chunk };
@@ -752,6 +754,11 @@ bool SparkDataControl::toggleLooperAppMode() {
         if (sparkAmpName == AMP_NAME_SPARK_2) {
             newOperationMode = SPARK_MODE_SPK_LOOPER;
             buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+            looperControl_->stop();
+            looperControl_->reset();
+            sparkLooperGetConfig();
+            sparkLooperGetStatus();
+
         } else {
             newOperationMode = SPARK_MODE_LOOPER;
         }
@@ -870,11 +877,8 @@ bool SparkDataControl::decreasePresetLooper() {
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
     current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
-
+    lastLooperCommand_ = command;
     DEBUG_PRINTF("Spark Looper: %0x\n", command);
-    if (command == SPK_LOOPER_CMD_PLAY) {
-        // looperControl_->start();
-    }
 
     return triggerCommand(current_msg);
 }
@@ -886,7 +890,9 @@ bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
 
 bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
     nextMessageNum++;
-    currentCommand.assign(msg.begin(), msg.end());
+    if (msg.size() > 0) {
+        currentCommand.assign(msg.begin(), msg.end());
+    }
     // spark_ssr.clearMessageBuffer();
     DEBUG_PRINTLN("Sending message via BT.");
     // spark_ssr.clearMessageBuffer();
@@ -1004,7 +1010,7 @@ void SparkDataControl::handleAppModeResponse() {
     string msgStr = spark_ssr.getJson();
     int lastMessageType = spark_ssr.lastMessageType();
     byte lastMessageNumber = spark_ssr.lastMessageNum();
-    DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
+    // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
     if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_SPK_LOOPER) {
         bool printMessage = false;
@@ -1072,6 +1078,21 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
         }
 
+        if (lastMessageType == MSG_TYPE_LOOPER_STATUS) {
+            DEBUG_PRINTLN("New Looper status received (reading only number of loops)");
+            int numOfLoops = spark_ssr.numberOfLoops();
+            looperControl_->loopCount() = numOfLoops;
+            if (numOfLoops > 0) {
+                looperControl_->isRecAvailable() = true;
+            }
+            printMessage = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_LOOPER_COMMAND) {
+            DEBUG_PRINTLN("New Looper command received.");
+            updateLooperCommand(spark_ssr.lastLooperCommand());
+        }
+
         if (lastMessageType == MSG_TYPE_TAP_TEMPO) {
             DEBUG_PRINTLN("New BPM setting received.");
             printMessage = true;
@@ -1104,6 +1125,7 @@ void SparkDataControl::handleAppModeResponse() {
 }
 
 void SparkDataControl::handleIncomingAck() {
+    // TODO: Store sent messages to process acks according to message
 
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
@@ -1145,6 +1167,11 @@ void SparkDataControl::handleIncomingAck() {
         if (lastAck.subcmd == 0x15) {
             updateActiveWithPendingPreset();
             Serial.println("OK");
+        }
+        if (lastAck.subcmd == 0x75) {
+            updateLooperCommand(lastLooperCommand_);
+            lastLooperCommand_ = 0;
+            Serial.println(looperControl_->getLooperStatus().c_str());
         }
     }
 }
@@ -1233,16 +1260,80 @@ void SparkDataControl::startLooperTimer(void *args) {
     looperControl_->run(args);
 }
 
-bool SparkDataControl::sparkLooperCommandStopAll() {
+void SparkDataControl::updateLooperCommand(byte lastCommand) {
+    DEBUG_PRINTF("Last looper command: %0d\n", lastCommand);
+    switch (lastCommand) {
+    case 0x02:
+        // Count in started
+        break;
+    case 0x04:
+        // Record started
+        looperControl_->isRecRunning() = true;
+        break;
+    case 0x05:
+        // To be analyzed
+        break;
+    case 0x06:
+        // Retry recording, maybe not required
+        break;
+    case 0x07:
+        // Recording finished
+        looperControl_->isRecRunning() = false;
+        looperControl_->isRecAvailable() = true;
+        break;
+    case 0x08:
+        // Play
+        looperControl_->isPlaying() = true;
+        break;
+    case 0x09:
+        // Stop
+        looperControl_->isPlaying() = false;
+        break;
+    case 0x0A:
+        // Delete
+        looperControl_->resetStatus();
+        break;
+    case 0x0B:
+        // Dub
+        looperControl_->isRecRunning() = true;
+        break;
+    case 0x0C:
+        // Stop Recording
+        looperControl_->isRecRunning() = false;
+        looperControl_->isRecAvailable() = true;
+        break;
+    case 0x0D:
+        // UNDO
+        looperControl_->canRedo() = true;
+        break;
+    case 0x0E:
+        looperControl_->canRedo() = false;
+        break;
+    default:
+        DEBUG_PRINTLN("Unknown looper command received.");
+        break;
+    }
+    Serial.println(looperControl_->getLooperStatus().c_str());
+}
+
+bool SparkDataControl::sparkLooperStopAll() {
+    bool recStopReturn = sparkLooperStopRec();
+    bool stopReturn = sparkLooperStopPlaying();
+    return stopReturn && recStopReturn;
+}
+
+bool SparkDataControl::sparkLooperStopPlaying() {
+    // looperControl_->isPlaying() = false;
     looperControl_->stop();
     looperControl_->reset();
-    bool recStopReturn;
-    bool stopReturn;
-    current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_REC_STOP);
-    recStopReturn = triggerCommand(current_msg);
-    current_msg = spark_msg.spark_looper_command(nextMessageNum, SPK_LOOPER_CMD_STOP);
-    stopReturn = triggerCommand(current_msg);
-    return stopReturn && recStopReturn;
+    sparkLooperGetStatus();
+    return sparkLooperCommand(SPK_LOOPER_CMD_STOP);
+}
+
+bool SparkDataControl::sparkLooperPlay() {
+    // looperControl_->isPlaying() = true;
+    looperControl_->start();
+    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
 }
 
 bool SparkDataControl::sparkLooperRec() {
@@ -1256,14 +1347,123 @@ bool SparkDataControl::sparkLooperRec() {
     return true;
 }
 
+bool SparkDataControl::sparkLooperDub() {
+    sparkLooperCommand(SPK_LOOPER_CMD_DUB);
+    // looperControl_->reset();
+    looperControl_->start();
+    // TODO remove this after implementing proper ACK behavior (see other TODO). This is a workaround!
+    looperControl_->isRecRunning() = true;
+    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+}
+
 bool SparkDataControl::sparkLooperRetry() {
     sparkLooperCommand(SPK_LOOPER_CMD_RETRY);
-    bool countIn = looperControl_->looperSetting()->click;
+    looperControl_->reset();
     return sparkLooperRec();
+}
+// TODO: Get Looper status on startup and set flags accordingly
+
+bool SparkDataControl::sparkLooperStopRec() {
+
+    bool retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_STOP);
+    sparkLooperGetStatus();
+    return retVal;
+}
+
+bool SparkDataControl::sparkLooperUndo() {
+    if (looperControl_->canUndo()) {
+        DEBUG_PRINTLN("UNDO possible");
+        return sparkLooperCommand(SPK_LOOPER_CMD_UNDO);
+    }
+    return true;
+}
+
+bool SparkDataControl::sparkLooperRedo() {
+    if (looperControl_->canRedo()) {
+        DEBUG_PRINTLN("REDO possible");
+        return sparkLooperCommand(SPK_LOOPER_CMD_REDO);
+    }
+    return true;
 }
 
 bool SparkDataControl::sparkLooperStopRecPlay() {
-    sparkLooperCommand(SPK_LOOPER_CMD_STOPREC_AND_PLAY);
-    sparkLooperCommand(SPK_LOOPER_CMD_REC_STOP);
-    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+    // sparkLooperCommand(SPK_LOOPER_CMD_STOPREC_AND_PLAY);
+    sparkLooperStopRec();
+    return sparkLooperPlay();
+}
+
+bool SparkDataControl::sparkLooperDeleteAll() {
+    return sparkLooperCommand(SPK_LOOPER_CMD_DELETE);
+}
+
+bool SparkDataControl::sparkLooperPlayStop() {
+    bool isRecRunning = looperControl_->isRecRunning();
+    bool isPlaying = looperControl_->isPlaying();
+    bool result = false;
+    if (isRecRunning) {
+        result = sparkLooperStopAll();
+    } else if (isPlaying) {
+        result = sparkLooperStopPlaying();
+    } else {
+        result = sparkLooperPlay();
+    }
+    return result;
+}
+
+bool SparkDataControl::sparkLooperRecDub() {
+    bool isRecRunning = looperControl_->isRecRunning();
+    bool isRecAvailable = looperControl_->isRecAvailable();
+    int status = 2 * isRecAvailable + isRecRunning;
+    bool result = false;
+
+    switch (status) {
+    case 0:
+        // not running and not available
+        result = sparkLooperRec();
+        break;
+    case 1:
+        // not available but running
+        result = sparkLooperStopRecPlay();
+        break;
+    case 2:
+        // available, not running
+        result = sparkLooperDub();
+        break;
+    case 3:
+        // running and available
+        result = sparkLooperStopRec();
+        break;
+    }
+    return result;
+}
+
+bool SparkDataControl::sparkLooperUndoRedo() {
+    // bool isRecRunning = looperControl_->isRecRunning();
+    bool isRecAvailable = looperControl_->isRecAvailable();
+    bool canRedo = looperControl_->canRedo();
+    if (canRedo) {
+        DEBUG_PRINTLN("REDO");
+        return sparkLooperRedo();
+    }
+    if (isRecAvailable) {
+        DEBUG_PRINTLN("UNDO");
+        return sparkLooperUndo();
+    }
+    return false;
+}
+
+bool SparkDataControl::sparkLooperGetStatus() {
+    bool retValue;
+    current_msg = spark_msg.get_looper_status(nextMessageNum);
+    return triggerCommand(current_msg);
+}
+
+bool SparkDataControl::sparkLooperGetConfig() {
+    current_msg = spark_msg.get_looper_config(nextMessageNum);
+    return triggerCommand(current_msg);
+}
+
+bool SparkDataControl::sparkLooperGetRecordStatus() {
+    current_msg = spark_msg.get_looper_record_status(nextMessageNum);
+    return triggerCommand(current_msg);
 }

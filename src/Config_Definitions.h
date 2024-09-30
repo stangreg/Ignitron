@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -126,7 +126,7 @@ const string VERSION = "1.7.1";
 #define SPK_LOOPER_CMD_REC 0x04
 #define SPK_LOOPER_CMD_STOPREC_AND_PLAY 0x05 //((unknown))
 #define SPK_LOOPER_CMD_RETRY 0x06
-#define SPK_LOOPER_CMD_REC_2 0x07 // (sent by Spark Amp after 0x05?)
+#define SPK_LOOPER_CMD_REC_COMPLETE 0x07
 #define SPK_LOOPER_CMD_PLAY 0x08
 #define SPK_LOOPER_CMD_STOP 0x09
 #define SPK_LOOPER_CMD_DELETE 0x0A
@@ -134,5 +134,10 @@ const string VERSION = "1.7.1";
 #define SPK_LOOPER_CMD_REC_STOP 0x0C
 #define SPK_LOOPER_CMD_UNDO 0x0D
 #define SPK_LOOPER_CMD_REDO 0x0E
+
+#define SPK_LOOPER_BPM_LED_ID 5
+#define SPK_LOOPER_REC_DUB_LED_ID 1
+#define SPK_LOOPER_PLAY_STOP_LED_ID 2
+#define SPK_LOOPER_UNDO_REDO_LED_ID 3
 
 #endif /* CONFIG_DEFINITIONS_H_ */

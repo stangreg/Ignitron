@@ -17,6 +17,7 @@
 #include <deque>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -64,6 +65,7 @@ private:
     void add_prefixed_string(const string &pack_str, int length_override = 0);
     void add_float(float flt);
     void add_onoff(boolean onoff);
+    void add_int16(unsigned int number);
     byte calculate_checksum(const ByteVector &chunk);
 
 public:
@@ -95,6 +97,9 @@ public:
     vector<ByteVector> spark_config_after_intro(byte msg_number, byte command);
 
     vector<ByteVector> update_looper_settings(byte msg_number, const LooperSetting *setting);
+    vector<ByteVector> get_looper_status(byte msg_number);
+    vector<ByteVector> get_looper_config(byte msg_number);
+    vector<ByteVector> get_looper_record_status(byte msg_number); // To test if that is correct
 
     int &
     maxChunkSizeToSpark() {
