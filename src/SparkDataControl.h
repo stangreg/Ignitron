@@ -165,7 +165,7 @@ public:
     bool sparkLooperUndo();
     bool sparkLooperRedo();
     bool sparkLooperDeleteAll();
-    bool sparkLooperStopRecPlay();
+    bool sparkLooperStopRecAndPlay();
 
     bool sparkLooperPlayStop();
     bool sparkLooperRecDub();

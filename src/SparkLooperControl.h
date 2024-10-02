@@ -72,7 +72,8 @@ private:
     static int beatsPerBar_;
     static bool increaseBar_;
 
-    static int beatInterval_;
+    static float beatInterval_;
+    static unsigned long lastBeatTimestamp;
     static bool beatOnOff_;
 
     static bool resetTrigger_;

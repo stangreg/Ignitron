@@ -1364,8 +1364,14 @@ bool SparkDataControl::sparkLooperRetry() {
 // TODO: Get Looper status on startup and set flags accordingly
 
 bool SparkDataControl::sparkLooperStopRec() {
-
-    bool retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_STOP);
+    bool isRecAvailable = looperControl_->isRecAvailable();
+    bool retVal = false;
+    if (isRecAvailable) {
+        retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_REC);
+        retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_COMPLETE);
+    } else {
+        retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_DUB);
+    }
     sparkLooperGetStatus();
     return retVal;
 }
@@ -1386,8 +1392,8 @@ bool SparkDataControl::sparkLooperRedo() {
     return true;
 }
 
-bool SparkDataControl::sparkLooperStopRecPlay() {
-    // sparkLooperCommand(SPK_LOOPER_CMD_STOPREC_AND_PLAY);
+bool SparkDataControl::sparkLooperStopRecAndPlay() {
+    // sparkLooperCommand(SPK_LOOPER_CMD_STOPREC);
     sparkLooperStopRec();
     return sparkLooperPlay();
 }
@@ -1423,7 +1429,7 @@ bool SparkDataControl::sparkLooperRecDub() {
         break;
     case 1:
         // not available but running
-        result = sparkLooperStopRecPlay();
+        result = sparkLooperStopRecAndPlay();
         break;
     case 2:
         // available, not running
