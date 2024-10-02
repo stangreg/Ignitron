@@ -1370,12 +1370,12 @@ bool SparkDataControl::sparkLooperRec() {
 }
 
 bool SparkDataControl::sparkLooperDub() {
-    sparkLooperCommand(SPK_LOOPER_CMD_DUB);
+    bool retValue = sparkLooperCommand(SPK_LOOPER_CMD_DUB);
     // looperControl_->reset();
     looperControl_->start();
-    // TODO remove this after implementing proper ACK behavior (see other TODO). This is a workaround!
-    // looperControl_->isRecRunning() = true;
-    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+    retValue = retValue && sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+    looperControl_->isPlaying() = true;
+    return retValue;
 }
 
 bool SparkDataControl::sparkLooperRetry() {
