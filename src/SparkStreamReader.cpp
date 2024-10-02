@@ -524,7 +524,11 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
             }
         }
         // DEBUG_PRINTLN("Converted to 8bit");
-        struct CmdData curr_data = {this_cmd, this_sub_cmd, data8bit};
+        CmdData curr_data;
+        curr_data.cmd = this_cmd;
+        curr_data.subcmd = this_sub_cmd;
+        curr_data.data = data8bit;
+
         chunk_8bit.push_back(curr_data);
 
         // now check for mult-chunk messages and collapse their data into a single message
@@ -550,7 +554,10 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
                 // if at last chunk of multi-chunk
                 if (this_chunk == num_chunks - 1) {
                     // DEBUG_PRINTLN("Last chunk to process");
-                    curr_data = {this_cmd, this_sub_cmd, concat_data};
+                    curr_data.cmd = this_cmd;
+                    curr_data.subcmd = this_sub_cmd;
+                    curr_data.data = concat_data;
+
                     message.push_back(curr_data);
                     concat_data = {};
                 }
@@ -594,7 +601,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             read_hardware_preset();
             break;
         default:
-            DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);
+            DEBUG_PRINTF("%02x %02x - not handled: ", _cmd, _sub_cmd);
             DEBUG_PRINTVECTOR(msg);
             DEBUG_PRINTLN();
             break;
@@ -658,7 +665,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             read_looper_status();
             break;
         default:
-            DEBUG_PRINTF("%0x %0x - not handled: ", _cmd, _sub_cmd);
+            DEBUG_PRINTF("%02x %02x - not handled: ", _cmd, _sub_cmd);
             DEBUG_PRINTVECTOR(msg);
             DEBUG_PRINTLN();
             break;
@@ -668,12 +675,16 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
     else if (_cmd == 0x04 || _cmd == 0x05) {
         DEBUG_PRINT("ACK number ");
         DEBUG_PRINTLN(last_message_num_);
-        AckData ack = {last_message_num_, _cmd, _sub_cmd};
+        byte detail = 0x00; // detail is only used for Acks received from Amp
+        AckData ack;
+        ack.msg_num = last_message_num_;
+        ack.cmd = _cmd;
+        ack.subcmd = _sub_cmd;
         acknowledgments.push_back(ack);
-        DEBUG_PRINTF("Acknowledgment for command %0x %0x\n", _cmd, _sub_cmd);
+        DEBUG_PRINTF("Acknowledgment for command %02x %02x\n", _cmd, _sub_cmd);
     } else {
         // unprocessed command (likely the initial ones sent from the app
-        DEBUG_PRINTF("Unprocessed: %0x, %0x - ", _cmd,
+        DEBUG_PRINTF("Unprocessed: %02x, %02x - ", _cmd,
                      _sub_cmd);
         DEBUG_PRINTVECTOR(msg);
         DEBUG_PRINTLN();
@@ -704,7 +715,7 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector &blk) {
 }
 
 AckData SparkStreamReader::getLastAckAndEmpty() {
-    AckData lastAck = {0x00, 0x00};
+    AckData lastAck;
     if (acknowledgments.size() > 0) {
         lastAck = acknowledgments.back();
         acknowledgments.clear();
@@ -846,7 +857,7 @@ int SparkStreamReader::processBlock(ByteVector &blk) {
     if (msg_last_block) {
         msg_last_block = false;
         setMessage(response);
-        DEBUG_PRINTLN("Response so far: ");
+        DEBUG_PRINT("Response so far: ");
         for (auto chunk : response) {
             DEBUG_PRINTVECTOR(chunk);
             DEBUG_PRINTLN();

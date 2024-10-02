@@ -100,13 +100,15 @@ struct Preset {
 };
 
 struct CmdData {
+    byte msg_num;
     byte cmd;
     byte subcmd;
     ByteVector data;
+    byte detail = 0;
 
     string toString() {
         string cmdStr;
-        cmdStr = "[" + SparkHelper::intToHex(cmd) + "], [" + SparkHelper::intToHex(subcmd) + "], [";
+        cmdStr = "[" + SparkHelper::intToHex(cmd) + "], [" + SparkHelper::intToHex(subcmd) + "], [" + SparkHelper::intToHex(detail) + "], [";
         for (byte by : data) {
             cmdStr += SparkHelper::intToHex(by).c_str();
         }
@@ -116,9 +118,10 @@ struct CmdData {
 };
 
 struct AckData {
-    byte msg_num;
-    byte cmd;
-    byte subcmd;
+    byte msg_num = 0x00;
+    byte cmd = 0x00;
+    byte subcmd = 0x00;
+    byte detail = 0x00;
 };
 
 struct LooperSetting {

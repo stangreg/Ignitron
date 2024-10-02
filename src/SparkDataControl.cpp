@@ -16,7 +16,8 @@ SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
 
 queue<ByteVector> SparkDataControl::msgQueue;
-deque<ByteVector> SparkDataControl::currentCommand;
+deque<CmdData> SparkDataControl::currentCommand;
+deque<AckData> SparkDataControl::pendingLooperAcks;
 
 Preset SparkDataControl::activePreset_;
 Preset SparkDataControl::pendingPreset_ = activePreset_;
@@ -38,11 +39,10 @@ byte SparkDataControl::nextMessageNum = 0x01;
 int SparkDataControl::tapEntrySize = 5;
 CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
 bool SparkDataControl::recordStartFlag = false;
-int SparkDataControl::lastLooperCommand_ = 0;
 
-vector<ByteVector>
+vector<CmdData>
     SparkDataControl::ack_msg;
-vector<ByteVector> SparkDataControl::current_msg;
+vector<CmdData> SparkDataControl::current_msg;
 
 bool SparkDataControl::customPresetAckPending = false;
 bool SparkDataControl::retrieveCurrentPreset = false;
@@ -877,8 +877,7 @@ bool SparkDataControl::decreasePresetLooper() {
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
     current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
-    lastLooperCommand_ = command;
-    DEBUG_PRINTF("Spark Looper: %0x\n", command);
+    DEBUG_PRINTF("Spark Looper: %02x\n", command);
 
     return triggerCommand(current_msg);
 }
@@ -888,17 +887,29 @@ bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
     return bleControl->writeBLE(msg, with_delay);
 }
 
-bool SparkDataControl::triggerCommand(vector<ByteVector> &msg) {
+bool SparkDataControl::triggerCommand(vector<CmdData> &msg) {
     nextMessageNum++;
     if (msg.size() > 0) {
         currentCommand.assign(msg.begin(), msg.end());
     }
     // spark_ssr.clearMessageBuffer();
     DEBUG_PRINTLN("Sending message via BT.");
+    return sendNextRequest();
     // spark_ssr.clearMessageBuffer();
+}
+
+bool SparkDataControl::sendNextRequest() {
     if (currentCommand.size() > 0) {
-        ByteVector firstBlock = currentCommand.front();
+        CmdData request = currentCommand.front();
+        ByteVector firstBlock = request.data;
+        AckData curr_request;
+        curr_request.cmd = request.cmd;
+        curr_request.subcmd = request.subcmd;
+        curr_request.detail = request.detail;
+        curr_request.msg_num = request.msg_num;
+
         if (sendMessageToBT(firstBlock)) {
+            pendingLooperAcks.push_back(curr_request);
             currentCommand.pop_front();
             return true;
         }
@@ -959,7 +970,7 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
 
 void SparkDataControl::handleAmpModeRequest() {
 
-    vector<ByteVector> msg;
+    vector<CmdData> msg;
     vector<CmdData> currentMessage = spark_ssr.lastMessage();
     byte currentMessageNum = spark_ssr.lastMessageNum();
     byte sub_cmd_ = currentMessage.back().subcmd;
@@ -1134,12 +1145,7 @@ void SparkDataControl::handleIncomingAck() {
         DEBUG_PRINTLN("Received intermediate ACK");
         if (lastAck.subcmd == 0x01) {
             // send next part of command on intermediate ACK
-            if (currentCommand.size() > 0) {
-                ByteVector nextBlock = currentCommand.front();
-                if (sendMessageToBT(nextBlock)) {
-                    currentCommand.pop_front();
-                }
-            }
+            sendNextRequest();
         }
     }
     if (lastAck.cmd == 0x04) {
@@ -1169,8 +1175,18 @@ void SparkDataControl::handleIncomingAck() {
             Serial.println("OK");
         }
         if (lastAck.subcmd == 0x75) {
-            updateLooperCommand(lastLooperCommand_);
-            lastLooperCommand_ = 0;
+            byte msg_num = lastAck.msg_num;
+            byte looperCommand;
+            for (auto it = pendingLooperAcks.begin(); it != pendingLooperAcks.end(); /*NOTE: no incrementation of the iterator here*/) {
+                byte it_msg_num = (*it).msg_num;
+                if (it_msg_num == msg_num) {
+                    looperCommand = (*it).detail;
+                    it = pendingLooperAcks.erase(it); // erase returns the next iterator
+                } else {
+                    ++it; // otherwise increment it by yourself
+                }
+            }
+            updateLooperCommand(looperCommand);
             Serial.println(looperControl_->getLooperStatus().c_str());
         }
     }
@@ -1261,7 +1277,7 @@ void SparkDataControl::startLooperTimer(void *args) {
 }
 
 void SparkDataControl::updateLooperCommand(byte lastCommand) {
-    DEBUG_PRINTF("Last looper command: %0d\n", lastCommand);
+    DEBUG_PRINTF("Last looper command: %02x\n", lastCommand);
     switch (lastCommand) {
     case 0x02:
         // Count in started
@@ -1317,23 +1333,29 @@ void SparkDataControl::updateLooperCommand(byte lastCommand) {
 }
 
 bool SparkDataControl::sparkLooperStopAll() {
-    bool recStopReturn = sparkLooperStopRec();
     bool stopReturn = sparkLooperStopPlaying();
+    bool recStopReturn = sparkLooperStopRec();
     return stopReturn && recStopReturn;
 }
 
 bool SparkDataControl::sparkLooperStopPlaying() {
     // looperControl_->isPlaying() = false;
-    looperControl_->stop();
-    looperControl_->reset();
-    sparkLooperGetStatus();
-    return sparkLooperCommand(SPK_LOOPER_CMD_STOP);
+    bool retValue = sparkLooperCommand(SPK_LOOPER_CMD_STOP);
+    if (retValue) {
+        looperControl_->stop();
+        looperControl_->reset();
+        sparkLooperGetStatus();
+    }
+    return retValue;
 }
 
 bool SparkDataControl::sparkLooperPlay() {
     // looperControl_->isPlaying() = true;
-    looperControl_->start();
-    return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+    if (!(looperControl_->isPlaying())) {
+        looperControl_->start();
+        return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
+    }
+    return true;
 }
 
 bool SparkDataControl::sparkLooperRec() {
@@ -1352,7 +1374,7 @@ bool SparkDataControl::sparkLooperDub() {
     // looperControl_->reset();
     looperControl_->start();
     // TODO remove this after implementing proper ACK behavior (see other TODO). This is a workaround!
-    looperControl_->isRecRunning() = true;
+    // looperControl_->isRecRunning() = true;
     return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
 }
 
@@ -1367,10 +1389,10 @@ bool SparkDataControl::sparkLooperStopRec() {
     bool isRecAvailable = looperControl_->isRecAvailable();
     bool retVal = false;
     if (isRecAvailable) {
+        retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_DUB);
+    } else {
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_REC);
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_COMPLETE);
-    } else {
-        retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_DUB);
     }
     sparkLooperGetStatus();
     return retVal;

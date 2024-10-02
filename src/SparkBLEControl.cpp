@@ -395,7 +395,7 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
     Serial.println(str.c_str());
 };
 
-void SparkBLEControl::notifyClients(const vector<ByteVector> &msg) {
+void SparkBLEControl::notifyClients(const vector<CmdData> &msg) {
     if (pServer) {
         NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
         if (pSvc) {
@@ -406,7 +406,7 @@ void SparkBLEControl::notifyClients(const vector<ByteVector> &msg) {
                     /*DEBUG_PRINTLN("Sending data:");
                     DEBUG_PRINTVECTOR(block);
                     DEBUG_PRINTLN();*/
-                    pChr->setValue(&block.data()[0], block.size());
+                    pChr->setValue(&block.data.data()[0], block.data.size());
                     pChr->notify();
                 }
                 DEBUG_PRINTLN("Clients notified.");
@@ -417,7 +417,8 @@ void SparkBLEControl::notifyClients(const vector<ByteVector> &msg) {
     if (btSerial && btSerial->hasClient()) {
         DEBUG_PRINTLN("Sending message via BT Serial:");
         for (auto chunk : msg) {
-            for (auto by : chunk) {
+            ByteVector chunkData = chunk.data;
+            for (auto by : chunkData) {
                 if (by < 16) {
                     DEBUG_PRINT("0");
                 }

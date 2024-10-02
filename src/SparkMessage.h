@@ -28,6 +28,7 @@ class SparkMessage {
 private:
     byte cmd;
     byte sub_cmd;
+    byte cmd_detail = 0;
     // data types for transformation
     ByteVector data;
     vector<ByteVector> split_data8;
@@ -49,13 +50,13 @@ private:
     bool with_header = true;
 
     void start_message(byte cmd_, byte sub_cmd_);
-    vector<ByteVector> end_message(int dir = DIR_TO_SPARK,
-                                   byte msg_number = 0x00);
+    vector<CmdData> end_message(int dir = DIR_TO_SPARK,
+                                byte msg_number = 0x00);
 
     void splitDataToChunks(int dir);
     void convertDataTo7Bit();
     void buildChunkData(byte msg_number);
-    vector<ByteVector> buildMessage(int dir);
+    vector<CmdData> buildMessage(int dir, byte msg_num = 0);
     // ByteVector end_message();
     void add_bytes(const ByteVector &bytes_8);
     void add_byte(byte by);
@@ -72,34 +73,34 @@ public:
     SparkMessage();
 
     // Command messages to send to Spark
-    vector<ByteVector> change_effect_parameter(byte msg_num, const string &pedal, int param, float val);
-    vector<ByteVector> change_effect(byte msg_num, const string &pedal1, const string &pedal2);
-    vector<ByteVector> change_hardware_preset(byte msg_num, int preset_num);
-    vector<ByteVector> turn_effect_onoff(byte msg_num, const string &pedal, boolean enable);
-    vector<ByteVector> create_preset(const Preset &preset_data, int dir = DIR_TO_SPARK, byte msg_num = 0x00);
-    vector<ByteVector> get_current_preset_num(byte msg_num);
-    vector<ByteVector> get_current_preset(byte msg_num, int hw_preset = -1);
-    vector<ByteVector> send_ack(byte seq, byte cmd_, int direction = DIR_TO_SPARK);
+    vector<CmdData> change_effect_parameter(byte msg_num, const string &pedal, int param, float val);
+    vector<CmdData> change_effect(byte msg_num, const string &pedal1, const string &pedal2);
+    vector<CmdData> change_hardware_preset(byte msg_num, int preset_num);
+    vector<CmdData> turn_effect_onoff(byte msg_num, const string &pedal, boolean enable);
+    vector<CmdData> create_preset(const Preset &preset_data, int dir = DIR_TO_SPARK, byte msg_num = 0x00);
+    vector<CmdData> get_current_preset_num(byte msg_num);
+    vector<CmdData> get_current_preset(byte msg_num, int hw_preset = -1);
+    vector<CmdData> send_ack(byte seq, byte cmd_, int direction = DIR_TO_SPARK);
 
-    vector<ByteVector> get_amp_name(byte msg_num);
-    vector<ByteVector> get_serial_number(byte msg_num);
-    vector<ByteVector> get_hw_checksums(byte msg_num);
-    vector<ByteVector> get_firmware_version(byte msg_num);
+    vector<CmdData> get_amp_name(byte msg_num);
+    vector<CmdData> get_serial_number(byte msg_num);
+    vector<CmdData> get_hw_checksums(byte msg_num);
+    vector<CmdData> get_firmware_version(byte msg_num);
 
-    vector<ByteVector> send_serial_number(byte msg_number);
-    vector<ByteVector> send_firmware_version(byte msg_number);
-    vector<ByteVector> send_hw_checksums(byte msg_number);
-    vector<ByteVector> send_hw_preset_number(byte msg_number);
-    vector<ByteVector> send_response_71(byte msg_number);
-    vector<ByteVector> send_response_72(byte msg_number);
+    vector<CmdData> send_serial_number(byte msg_number);
+    vector<CmdData> send_firmware_version(byte msg_number);
+    vector<CmdData> send_hw_checksums(byte msg_number);
+    vector<CmdData> send_hw_preset_number(byte msg_number);
+    vector<CmdData> send_response_71(byte msg_number);
+    vector<CmdData> send_response_72(byte msg_number);
 
-    vector<ByteVector> spark_looper_command(byte msg_number, byte command);
-    vector<ByteVector> spark_config_after_intro(byte msg_number, byte command);
+    vector<CmdData> spark_looper_command(byte msg_number, byte command);
+    vector<CmdData> spark_config_after_intro(byte msg_number, byte command);
 
-    vector<ByteVector> update_looper_settings(byte msg_number, const LooperSetting *setting);
-    vector<ByteVector> get_looper_status(byte msg_number);
-    vector<ByteVector> get_looper_config(byte msg_number);
-    vector<ByteVector> get_looper_record_status(byte msg_number); // To test if that is correct
+    vector<CmdData> update_looper_settings(byte msg_number, const LooperSetting *setting);
+    vector<CmdData> get_looper_status(byte msg_number);
+    vector<CmdData> get_looper_config(byte msg_number);
+    vector<CmdData> get_looper_record_status(byte msg_number); // To test if that is correct
 
     int &
     maxChunkSizeToSpark() {
