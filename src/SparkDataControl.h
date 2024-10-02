@@ -211,7 +211,6 @@ private:
     static int tapEntrySize;
     static CircularBuffer tapEntries;
     static bool recordStartFlag;
-    static int lastLooperCommand_;
 
     // PRESET variables
     static Preset activePreset_;
@@ -224,8 +223,8 @@ private:
     // static LooperSetting *looperSetting_;
 
     // Messages to send to Spark
-    static vector<ByteVector> current_msg;
-    static vector<ByteVector> ack_msg;
+    static vector<CmdData> current_msg;
+    static vector<CmdData> ack_msg;
     static bool customPresetAckPending;
     static bool retrieveCurrentPreset;
     static bool customPresetNumberChangePending;
@@ -254,14 +253,16 @@ private:
     static int updateInterval;
     static byte nextMessageNum;
     static queue<ByteVector> msgQueue;
-    static deque<ByteVector> currentCommand;
+    static deque<CmdData> currentCommand;
+    static deque<AckData> pendingLooperAcks;
 
     void processStorePresetRequest(int presetNum);
     void processDeletePresetRequest();
     void setPresetDeletionFlag();
     void updatePendingBankStatus();
     static bool sendMessageToBT(ByteVector &msg);
-    static bool triggerCommand(vector<ByteVector> &msg);
+    static bool triggerCommand(vector<CmdData> &msg);
+    static bool sendNextRequest();
 
     // Retrieves the current preset from Spark (required for HW presets)
     static bool getCurrentPresetFromSpark();

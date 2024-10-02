@@ -9,6 +9,7 @@
 #define SPARKBLECONTROL_H_
 
 #include "Config_Definitions.h"
+#include "SparkTypes.h"
 #include <Arduino.h>
 #include <BluetoothSerial.h>
 #include <NimBLEDevice.h>
@@ -151,7 +152,7 @@ public:
      * so that the Spark App can connect to Ignitron
      *
      */
-    void notifyClients(const vector<ByteVector> &msg);
+    void notifyClients(const vector<CmdData> &msg);
 
     void stopBLEServer();
 

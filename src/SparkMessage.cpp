@@ -118,9 +118,9 @@ void SparkMessage::buildChunkData(byte msg_number) {
     }
 }
 
-vector<ByteVector> SparkMessage::buildMessage(int dir) {
+vector<CmdData> SparkMessage::buildMessage(int dir, byte msg_num) {
 
-    vector<ByteVector> final_message = {};
+    vector<CmdData> final_message = {};
 
     int total_bytes_to_process = SparkHelper::dataVectorNumOfBytes(all_chunks);
     int block_prefix_size = with_header ? 16 : 0;
@@ -169,26 +169,30 @@ vector<ByteVector> SparkMessage::buildMessage(int dir) {
         data_to_split.erase(data_to_split.begin(), num_bytes);
         DEBUG_PRINTVECTOR(current_block);
         DEBUG_PRINTLN();
-        final_message.push_back(current_block);
+        CmdData data_item;
+        data_item.data = current_block;
+        data_item.cmd = cmd;
+        data_item.subcmd = sub_cmd;
+        data_item.detail = cmd_detail;
+        data_item.msg_num = msg_num;
+        final_message.push_back(data_item);
         current_block.clear();
     }
 
     DEBUG_PRINTLN("COMPLETE MESSAGE: ");
     for (auto block : final_message) {
-        DEBUG_PRINTVECTOR(block);
+        DEBUG_PRINTVECTOR(block.data);
         DEBUG_PRINTLN();
     }
 
     return final_message;
 }
 
-vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
+vector<CmdData> SparkMessage::end_message(int dir, byte msg_number) {
 
     DEBUG_PRINT("MESSAGE NUMBER: ");
     DEBUG_PRINT(msg_number);
     DEBUG_PRINTLN();
-
-    vector<ByteVector> finalMessage;
 
     // First split all data into chunks of defined maximum size
     splitDataToChunks(dir);
@@ -197,7 +201,7 @@ vector<ByteVector> SparkMessage::end_message(int dir, byte msg_number) {
     // build F001 chunks
     buildChunkData(msg_number);
     // build final message (with 01FE header if required)
-    return buildMessage(dir);
+    return buildMessage(dir, msg_number);
 }
 
 void SparkMessage::add_bytes(const ByteVector &bytes_8) {
@@ -281,7 +285,7 @@ void SparkMessage::add_int16(unsigned int number) {
     add_bytes(bytepack);
 }
 
-vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num) {
+vector<CmdData> SparkMessage::get_current_preset_num(byte msg_num) {
     // hardcoded message
     /*
     vector<ByteVector> msg;
@@ -298,7 +302,7 @@ vector<ByteVector> SparkMessage::get_current_preset_num(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset) {
+vector<CmdData> SparkMessage::get_current_preset(byte msg_num, int hw_preset) {
 
     cmd = 0x02;
     sub_cmd = 0x01;
@@ -320,7 +324,7 @@ vector<ByteVector> SparkMessage::get_current_preset(byte msg_num, int hw_preset)
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::change_effect_parameter(byte msg_num, const string &pedal, int param, float val) {
+vector<CmdData> SparkMessage::change_effect_parameter(byte msg_num, const string &pedal, int param, float val) {
     cmd = 0x01;
     sub_cmd = 0x04;
 
@@ -331,7 +335,7 @@ vector<ByteVector> SparkMessage::change_effect_parameter(byte msg_num, const str
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::change_effect(byte msg_num, const string &pedal1, const string &pedal2) {
+vector<CmdData> SparkMessage::change_effect(byte msg_num, const string &pedal1, const string &pedal2) {
     cmd = 0x01;
     sub_cmd = 0x06;
 
@@ -341,7 +345,7 @@ vector<ByteVector> SparkMessage::change_effect(byte msg_num, const string &pedal
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::change_hardware_preset(byte msg_num, int preset_num) {
+vector<CmdData> SparkMessage::change_hardware_preset(byte msg_num, int preset_num) {
     cmd = 0x01;
     sub_cmd = 0x38;
 
@@ -351,7 +355,7 @@ vector<ByteVector> SparkMessage::change_hardware_preset(byte msg_num, int preset
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::get_amp_name(byte msg_num) {
+vector<CmdData> SparkMessage::get_amp_name(byte msg_num) {
 
     cmd = 0x02;
     sub_cmd = 0x11;
@@ -360,7 +364,7 @@ vector<ByteVector> SparkMessage::get_amp_name(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::get_serial_number(byte msg_num) {
+vector<CmdData> SparkMessage::get_serial_number(byte msg_num) {
     cmd = 0x02;
     sub_cmd = 0x23;
 
@@ -368,7 +372,7 @@ vector<ByteVector> SparkMessage::get_serial_number(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::get_hw_checksums(byte msg_num) {
+vector<CmdData> SparkMessage::get_hw_checksums(byte msg_num) {
     cmd = 0x02;
     sub_cmd = 0x2a;
 
@@ -376,7 +380,7 @@ vector<ByteVector> SparkMessage::get_hw_checksums(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::get_firmware_version(byte msg_num) {
+vector<CmdData> SparkMessage::get_firmware_version(byte msg_num) {
     cmd = 0x02;
     sub_cmd = 0x2f;
 
@@ -384,7 +388,7 @@ vector<ByteVector> SparkMessage::get_firmware_version(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::turn_effect_onoff(byte msg_num, const string &pedal, boolean enable) {
+vector<CmdData> SparkMessage::turn_effect_onoff(byte msg_num, const string &pedal, boolean enable) {
     cmd = 0x01;
     sub_cmd = 0x15;
 
@@ -395,7 +399,7 @@ vector<ByteVector> SparkMessage::turn_effect_onoff(byte msg_num, const string &p
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
-vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
+vector<CmdData> SparkMessage::send_serial_number(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x23;
 
@@ -408,7 +412,7 @@ vector<ByteVector> SparkMessage::send_serial_number(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
+vector<CmdData> SparkMessage::send_firmware_version(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x2F;
 
@@ -424,7 +428,7 @@ vector<ByteVector> SparkMessage::send_firmware_version(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
+vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x2A;
 
@@ -454,7 +458,7 @@ vector<ByteVector> SparkMessage::send_hw_checksums(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
+vector<CmdData> SparkMessage::send_hw_preset_number(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x10;
 
@@ -465,8 +469,8 @@ vector<ByteVector> SparkMessage::send_hw_preset_number(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::create_preset(const Preset &preset_data,
-                                               int direction, byte msg_num) {
+vector<CmdData> SparkMessage::create_preset(const Preset &preset_data,
+                                            int direction, byte msg_num) {
 
     if (direction == DIR_TO_SPARK) {
         cmd = 0x01;
@@ -514,8 +518,8 @@ vector<ByteVector> SparkMessage::create_preset(const Preset &preset_data,
 }
 
 // This prepares a message to send an acknowledgement
-vector<ByteVector> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
-                                          int dir) {
+vector<CmdData> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
+                                       int dir) {
 
     byte cmd_ = 0x04;
 
@@ -535,7 +539,7 @@ byte SparkMessage::calculate_checksum(const ByteVector &chunk) {
     return (byte)current_sum;
 }
 
-vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
+vector<CmdData> SparkMessage::send_response_71(byte msg_number) {
 
     // f0 01 03 13 03 71 10 0c 04 01 02 4d 0e 51 05 4d 06 49 1d f7
     // 10 = 0 0 0 1 0 0 0 0 ==> 0 0 0 0 1 0 0 0
@@ -558,7 +562,7 @@ vector<ByteVector> SparkMessage::send_response_71(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
+vector<CmdData> SparkMessage::send_response_72(byte msg_number) {
 
     // f0 01 02 53 03 72 01 43 1e 00 0f f7
     cmd = 0x03;
@@ -572,17 +576,18 @@ vector<ByteVector> SparkMessage::send_response_72(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::spark_looper_command(byte msg_number, byte command) {
+vector<CmdData> SparkMessage::spark_looper_command(byte msg_number, byte command) {
 
     cmd = 0x01;
     sub_cmd = 0x75;
+    cmd_detail = command;
 
     start_message(cmd, sub_cmd);
     add_byte(command);
     return end_message(DIR_TO_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::spark_config_after_intro(byte msg_number, byte command) {
+vector<CmdData> SparkMessage::spark_config_after_intro(byte msg_number, byte command) {
 
     cmd = 0x02;
     sub_cmd = command;
@@ -595,18 +600,18 @@ vector<ByteVector> SparkMessage::spark_config_after_intro(byte msg_number, byte 
     return end_message(DIR_TO_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::update_looper_settings(byte msg_number, const LooperSetting *setting) {
+vector<CmdData> SparkMessage::update_looper_settings(byte msg_number, const LooperSetting *setting) {
 
     cmd = 0x01;
     sub_cmd = 0x76;
-    vector<ByteVector> message;
+    vector<CmdData> message;
 
     if (setting == nullptr) {
         Serial.println("Looper not set, ignoring");
         return message;
     }
 
-    DEBUG_PRINTF("LPSetting: BPM: %d, Count: %0x, Bars: %d, Free?: %d, Click: %d, Max duration: %d\n ", setting->bpm, setting->count, setting->bars, setting->free_indicator, setting->click, setting->max_duration);
+    DEBUG_PRINTF("LPSetting: BPM: %d, Count: %02x, Bars: %d, Free?: %d, Click: %d, Max duration: %d\n ", setting->bpm, setting->count, setting->bars, setting->free_indicator, setting->click, setting->max_duration);
     start_message(cmd, sub_cmd);
     if (setting->bpm >= 128) {
         add_byte(0xCC);
@@ -623,21 +628,21 @@ vector<ByteVector> SparkMessage::update_looper_settings(byte msg_number, const L
     return message;
 }
 
-vector<ByteVector> SparkMessage::get_looper_status(byte msg_number) {
+vector<CmdData> SparkMessage::get_looper_status(byte msg_number) {
     cmd = 0x02;
     sub_cmd = 0x78;
     start_message(cmd, sub_cmd);
     return end_message(DIR_TO_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::get_looper_config(byte msg_number) {
+vector<CmdData> SparkMessage::get_looper_config(byte msg_number) {
     cmd = 0x02;
     sub_cmd = 0x76;
     start_message(cmd, sub_cmd);
     return end_message(DIR_TO_SPARK, msg_number);
 }
 
-vector<ByteVector> SparkMessage::get_looper_record_status(byte msg_number) {
+vector<CmdData> SparkMessage::get_looper_record_status(byte msg_number) {
     cmd = 0x02;
     sub_cmd = 0x75;
     start_message(cmd, sub_cmd);
