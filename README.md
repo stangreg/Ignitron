@@ -2,7 +2,7 @@
   <img width="387" height="141" src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_logo_large.png">
 </p>
 
-An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE (iOS) and Bluetooth Serial (Android). Also works as a control device for a Looper app on the mobile.
+An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE (iOS) and Bluetooth Serial (Android). Also works as a control device for a Looper app on the mobile. **NEW: Ignitron also supports the built-in looper of Spark 2!**
 **Ignitron has been successfully tested with**
 
 * Spark 2
@@ -18,7 +18,8 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * **Toggle effects** for the selected preset
 * **Save new presets** to Ignitron via the Spark App
 * **Delete** stored presets
-* Control **Looper apps** on a mobile (and other apps which support bluetooth keyboard controls)
+* Control the **Spark 2 internal looper**. 
+* Control **Looper apps** on a mobile (actually *all* apps which support bluetooth keyboard controls)
 * Multiple BT keyboard layouts configurable
 
 Adding new presets to **Ignitron** can easily be done as it can also act like a Spark Amp. Simply connect to **Ignitron** with the Spark App and save new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
@@ -81,12 +82,12 @@ Amp mode and Keyboard mode can best be started by holding the respective button 
 A graphical overview of all modes with button mapping can be found [here](https://github.com/stangreg/Ignitron/blob/main/resources/ignitron-cheatsheet.pdf). (Thanks to [@itarozzi](https://www.github.com/itarozzi) for creating this.)
 
 ## APP mode
-In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper mode**). You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Bank down` button.
+In APP mode, the foot switches can be used to either switch between pre-saved presets (**Preset mode**), control all single effects in the selected preset (**Manual/FX mode**), or switch between presets while controlling an app on your mobile, e.g. a Looper app (**Looper (keyboard) mode**). If connected to a Spark 2 amp, the **Looper (amp) mode** will control the internal looper of the amp. You can easily toggle between **Preset mode** and **Manual/FX mode** by long pressing the `Bank-Up` button. To toggle between **Preset mode** and **Looper mode**, simply long-press the `Preset 4` button.
 
 When selecting **Preset mode**, four buttons are used to select presets, the other two buttons are used to navigate through the preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be toggled.\
 In **Manual/FX mode**, the user has direct access to all effects of the selected preset. Pressing a switch will toggle the respective FX type.\
-When **Looper mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD, and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
-
+When **Looper (keyboard) mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD, and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
+When **Looper (amp) mode** is activated, Ignitron will control the internal looper of the Spark 2 amp. The display will also show information on the looper settings and click. The amp looper settings can easily be changed using Ignitron.
 
 ### Button commands in APP mode:
 
@@ -115,7 +116,7 @@ When **Looper mode** is activated, Ignitron acts partially like a bluetooth keyb
 |`Bank up`   | Long          | Switch to Preset mode |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
-#### Looper mode (combined with Preset functionality)
+#### Looper (keyboard) mode (combined with Preset functionality)
 |Button      | Press pattern | Function           |
 |----------- | :-----------: | ------------------ |
 |`Preset 1`  | Short         | Sends character "1" (can be freely configured in app) |
@@ -140,6 +141,38 @@ Example Button setup (available commands depend on availability in the respectiv
 |`Preset 4`  | Mute current track |
 |`Bank down` | Switch to previous track |
 |`Bank up`   | Switch to next track |
+
+#### Looper (amp) mode (to control the Spark 2 looper)
+The preset buttons 1-3 mimick the three looper buttons on the amp, the LED status should match the LEDs on the amp.
+With long pressing the `Bank up` button, Ignitron will toggle between Looper control mode and Looper config mode. The current mode will be shown by a 'L' or 'C' in the display respectively.
+
+**Looper control mode**
+|Button      | Press pattern | Function           |
+|----------- | :-----------: | ------------------ |
+|`Preset 1`  | Short         | Record / Dub |
+|`Preset 2`  | Short         | Play / Stop |
+|`Preset 3`  | Short         | Undo / Redo |
+|`Preset 4`  | Short         | Read current Record status from amp (only needed for analysis) |
+|`Bank down` | Short         | Tap tempo (repeatedly press button to adjust the tempo) |
+|`Bank up`   | Short         | Read current looper settings from amp (only needed for analysis) |
+|`Preset 3` | Long          | Delete all loops (reset)  |
+|`Bank up` | Long          | Change to **Looper Config** mode  |
+|`Preset 4` | Long          | Switch to Preset mode |
+|`Preset 2`  | Long          | Restart **Ignitron**     |
+
+**Looper config mode**
+|Button      | Press pattern | Function           |
+|----------- | :-----------: | ------------------ |
+|`Preset 1`  | Short         | Change number of bars to be recorded |
+|`Preset 2`  | Short         | Change feel of loop (straight / shuffle) |
+|`Preset 3`  | Short         | Enable / Disable click |
+|`Preset 4`  | Short         | NO FUNCTION |
+|`Bank down` | Short         | Tap tempo (repeatedly press button to adjust the tempo) |
+|`Bank up`   | Short         | NO FUNCTION |
+|`Bank up` | Long          | Change to **Looper Control** mode  |
+|`Preset 4` | Long          | Switch to Preset mode |
+|`Preset 2`  | Long          | Restart **Ignitron**     |
+
 
 -----------------------------------------------
 

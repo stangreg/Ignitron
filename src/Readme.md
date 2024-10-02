@@ -67,9 +67,7 @@ in the `_hidReportDescriptor` array.
 This will cause Ignitron to be treated like a **keypad** instead of a **keyboard**, which keeps your phone's keyboard active.
 
 ## Installing Firmware and data files
-**Note:** With Arduino IDE version 2.x, plugins are not supported. This means you need to install Arduino IDE 1.8.x to follow the steps in this paragraph. Both versions 1.8.x and 2.x can be installed in parallel, so version 2.x can be used for development and version 1.8.x to use the plugins.
-
-After building and installing the firmware on the board, it is required to also transfer the data directory to the board. In order to do so, you need to install the add-in `ESP32 Sketch Data Upload` to the **Arduino IDE**. Open the Ignitron sketch in the Arduino IDE and select `Data Upload` from the Tools menu. Please make sure to set the board settings correctly before uploading (see above). Unfortunately, there is no possibility to upload the data folder using Sloeber.
+After building and installing the firmware on the board, it is required to also transfer the data directory to the board. In order to do so, use the PlatformIO targets 'Build Filesystem Image' and 'Upload Filesystem image'. You might need to specify the correct partitioning in the platformio.ini file. Please make sure to set the board settings correctly before uploading (see above). 
 
 In case you don't like the default presets, you can delete the presets you don't want, and also change the file *PresetList.txt* accordingly. This file contains the file names of the presets to use. Lines starting with `--` are ignored.
 
