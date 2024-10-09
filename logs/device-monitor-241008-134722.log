@@ -1,0 +1,48 @@
+OT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:5564
+load:0x40078000,len:0
+load:0x40078000,len:13756
+entry 0x40078fb4
+[0;32mI (28) boot: ESP-IDF v3.0.3 2nd stage bootloader[0m
+[0;32mI (28) boot: compile time 08:53:32[0m
+[0;32mI (31) boot: Enabling RNG early entropy source...[0m
+[0;32mI (33) boot: SPI Speed      : 40MHz[0m
+[0;32mI (37) boot: SPI Mode       : DIO[0m
+[0;32mI (41) boot: SPI Flash Size : 4MB[0m
+[0;32mI (45) boot: Partition Table:[0m
+[0;32mI (49) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (63) boot:  1 otadata          OTA data         01 00 00010000 00002000[0m
+[0;32mI (71) boot:  2 nvs              WiFi data        01 02 00012000 0000e000[0m
+[0;32mI (78) boot:  3 at_customize     unknown          40 00 00020000 000e0000[0m
+[0;32mI (86) boot:  4 ota_0            OTA app          00 10 00100000 00180000[0m
+[0;32mI (93) boot:  5 ota_1            OTA app          00 11 00280000 00180000[0m
+[0;32mI (101) boot: End of partition table[0m
+[0;32mI (105) boot: No factory image, trying OTA 0[0m
+[0;32mI (110) esp_image: segment 0: paddr=0x00100020 vaddr=0x3f400020 size=0x200f4 (131316) map[0m
+[0;32mI (165) esp_image: segment 1: paddr=0x0012011c vaddr=0x3ffc0000 size=0x02d6c ( 11628) load[0m
+[0;32mI (170) esp_image: segment 2: paddr=0x00122e90 vaddr=0x40080000 size=0x00400 (  1024) load[0m
+[0;32mI (172) esp_image: segment 3: paddr=0x00123298 vaddr=0x40080400 size=0x0cd78 ( 52600) load[0m
+[0;32mI (203) esp_image: segment 4: paddr=0x00130018 vaddr=0x400d0018 size=0xdf390 (914320) map[0m
+[0;32mI (523) esp_image: segment 5: paddr=0x0020f3b0 vaddr=0x4008d178 size=0x01f14 (  7956) load[0m
+[0;32mI (527) esp_image: segment 6: paddr=0x002112cc vaddr=0x400c0000 size=0x00064 (   100) load[0m
+[0;32mI (539) boot: Loaded app from partition at offset 0x100000[0m
+[0;32mI (539) boot: Disabling RNG early entropy source...[0m
+Bin version(Wroom32):1.1.2
+I (659) wifi: wifi firmware version: de47fad
+I (659) wifi: config NVS flash: enabled
+I (659) wifi: config nano formating: disabled
+I (672) wifi: Init dynamic tx buffer num: 32
+I (672) wifi: Init data frame dynamic rx buffer num: 32
+I (673) wifi: Init management frame dynamic rx buffer num: 32
+I (677) wifi: wifi driver task: 3ffdecc0, prio:23, stack:3584
+I (682) wifi: Init static rx buffer num: 10
+I (686) wifi: Init dynamic rx buffer num: 32
+I (690) wifi: wifi power manager task: 0x3ffdfd8c prio: 21 stack: 2560
+I (759) wifi: mode : softAP (bc:dd:c2:cc:7b:41)
+I (767) wifi: mode : sta (bc:dd:c2:cc:7b:40) + softAP (bc:dd:c2:cc:7b:41)
+I (770) wifi: mode : softAP (bc:dd:c2:cc:7b:41)
