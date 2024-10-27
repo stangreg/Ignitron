@@ -59,8 +59,8 @@ const string VERSION = "1.7.1";
 #define LED_PRESET3_GPIO 26
 #define LED_DELAY_GPIO 26
 
-#define LED_PRESET4_GPIO 15
-#define LED_REVERB_GPIO 15
+#define LED_PRESET4_GPIO 13
+#define LED_REVERB_GPIO 13
 
 #define LED_BANK_DOWN_GPIO 27
 #define LED_NOISEGATE_GPIO 27
