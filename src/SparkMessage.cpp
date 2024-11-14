@@ -488,7 +488,12 @@ vector<CmdData> SparkMessage::create_preset(const Preset &preset_data,
         add_byte(0x00);
     }
     add_long_string(preset_data.uuid);
-    add_string(preset_data.name);
+    string name = preset_data.name;
+    if (name.size() > 31) {
+        add_long_string(name);
+    } else {
+        add_string(name);
+    }
     add_string(preset_data.version);
     string descr = preset_data.description;
     if (descr.size() > 31) {
