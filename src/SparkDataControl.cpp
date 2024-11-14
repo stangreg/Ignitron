@@ -1393,6 +1393,7 @@ bool SparkDataControl::sparkLooperStopRec() {
     } else {
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_REC);
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_COMPLETE);
+        looperControl_->reset();
     }
     sparkLooperGetStatus();
     return retVal;
