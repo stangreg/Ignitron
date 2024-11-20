@@ -7,5 +7,6 @@
         "*.tcc": "cpp",
         "cstdlib": "cpp",
         "regex": "cpp"
-    }
+    },
+    "cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe"
 }
