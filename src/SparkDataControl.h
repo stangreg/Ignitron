@@ -67,6 +67,10 @@ public:
     bool getFirmwareVersion();
     bool getHWChecksums();
     bool getCurrentPreset(int num);
+    static bool getCurrentPresetFromSpark();
+    static void readHWPreset(int num);
+    
+
     // Switch to a selected preset of the current bank
     bool switchPreset(int pre, bool isInitial);
 
@@ -106,11 +110,11 @@ public:
 
     void resetKeyboardChangeIndicator() { keyboardChanged_ = false; }
 
-    const bool ampNameReceived() const {return ampNameReceived_;}
-    const bool allHWPresetsAvailable() const {return allHWPresetsAvailable_;}
-        // Return active or pending preset/bank, set/get active preset number
-        Preset *
-        activePreset() const { return &activePreset_; }
+    const bool ampNameReceived() const { return ampNameReceived_; }
+    const bool allHWPresetsAvailable() const { return allHWPresetsAvailable_; }
+    // Return active or pending preset/bank, set/get active preset number
+    Preset *
+    activePreset() const { return &activePreset_; }
     Preset *pendingPreset() const { return &pendingPreset_; }
     const int &activePresetNum() const { return activePresetNum_; }
     const int &pendingPresetNum() const { return pendingPresetNum_; }
@@ -274,7 +278,6 @@ private:
     static bool sendNextRequest();
 
     // Retrieves the current preset from Spark (required for HW presets)
-    static bool getCurrentPresetFromSpark();
     static void setAmpParameters();
 
     static bool processAction();
@@ -286,7 +289,6 @@ private:
     static void handleIncomingAck();
 
     // Read in all HW presets
-    static void readHWPreset(int num);
     void readOpModeFromFile();
     void readBTModeFromFile();
     static void readLastPresetFromFile();

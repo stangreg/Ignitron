@@ -319,9 +319,10 @@ void SparkDataControl::processSparkData(ByteVector &blk) {
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
     int hw_preset = -1;
-    if (pendingBank_ == 0) {
+    // TODO: Check if that can be left out
+    /*if (pendingBank_ == 0) {
         hw_preset = activePresetNum_;
-    }
+    }*/
     current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
     DEBUG_PRINTLN("Getting current preset from Spark");
 
@@ -1031,7 +1032,10 @@ void SparkDataControl::handleAppModeResponse() {
                 activeBank_ = pendingBank_ = 0;
                 pendingPresetNum_ = activePresetNum_;
                 writeLastPresetToFile();
-
+                /* TODO: IMPORTANT: When preset is changed at AMP (0338), we need to read the current preset and update the bank/preset.
+                            If preset number was requested by us (0310), we need to compare if the current preset is the same as the number of the current HW preset number.
+                            In case it is the same, we need to update the bank/preset number, otherwise stay as is.
+                */
             } else {
                 DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
             }
@@ -1047,6 +1051,9 @@ void SparkDataControl::handleAppModeResponse() {
             if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || lastMessageNumber != special_msg_num) {
                 activePreset_ = spark_ssr.currentPreset();
                 activePresetNum_ = presetNumber;
+            }
+            if (presetNumber == 128) {
+                activePreset_ = spark_ssr.currentPreset();
             }
             if (lastMessageNumber == special_msg_num) {
                 DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
@@ -1255,6 +1262,7 @@ void SparkDataControl::readLastPresetFromFile() {
     sparkModeStream >> pendingBank_ >> pendingPresetNum_;
     // DEBUG_PRINTF("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
     Serial.printf("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
+    // TODO: Check if this can be removed without crashing
     pendingPreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
 }
 

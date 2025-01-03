@@ -310,6 +310,15 @@ void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
     spark_dc->toggleBTMode();
 }
 
+void SparkButtonHandler::btnTESTHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
+    DEBUG_PRINTLN("TEST funcction: Get current preset from Spark");
+    if (!spark_dc) {
+        Serial.println("SparkDataControl not setup yet, ignoring button press.");
+        return;
+    }
+    spark_dc->getCurrentPresetFromSpark();
+}
+
 void SparkButtonHandler::btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
 
     if (!spark_dc) {

@@ -309,7 +309,7 @@ vector<CmdData> SparkMessage::get_current_preset(byte msg_num, int hw_preset) {
     DEBUG_PRINTF("Getting preset with message number %s\n", SparkHelper::intToHex(msg_num).c_str());
     start_message(cmd, sub_cmd);
     if (hw_preset == -1) {
-        add_byte(0x10);
+        add_byte(0x01);
         add_byte(0x00);
     } else {
         add_byte(0x00);

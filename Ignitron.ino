@@ -96,19 +96,20 @@ void loop() {
             // TEST: spark_dc.getSerialNumber();
             spark_dc.getAmpName();
             DEBUG_PRINTLN("Trying to communicate");
-            spark_dc.isInitBoot() = false;
             while (!(spark_dc.allHWPresetsAvailable())) {
                 spark_dc.checkForUpdates();
                 // Reading button input
                 spark_bh.readButtons();
                 // Update LED status
-                spark_led.updateLEDs();
+                // spark_led.updateLEDs();
                 // Update display
-                spark_display.update();
+                spark_display.update(spark_dc.isInitBoot());
             }
-
             // DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-            spark_dc.switchPreset(spark_dc.pendingPresetNum(), true);
+            // spark_dc.switchPreset(spark_dc.pendingPresetNum(), true);
+            spark_dc.getCurrentPresetFromSpark();
+            // spark_dc.getCurrentPresetNum();
+            spark_dc.isInitBoot() = false;
             // spark_dc.configureLooper();
         }
     }

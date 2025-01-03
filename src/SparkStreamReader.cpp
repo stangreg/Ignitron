@@ -154,12 +154,14 @@ void SparkStreamReader::read_hardware_preset() {
 
     // Build string representations
     sb.start_str();
-    sb.add_int("New HW Preset", preset_num);
+    sb.add_int("New HW Preset number", preset_num);
     sb.end_str();
 
     // Set values
+    if (preset_num != currentPresetNumber_) {
+        isPresetNumberUpdated_ = true;
+    }
     currentPresetNumber_ = preset_num;
-    isPresetNumberUpdated_ = true;
     last_message_type_ = MSG_TYPE_HWPRESET;
 }
 
@@ -857,7 +859,7 @@ int SparkStreamReader::processBlock(ByteVector &blk) {
     if (msg_last_block) {
         msg_last_block = false;
         setMessage(response);
-        DEBUG_PRINT("Response so far: ");
+        DEBUG_PRINT("Response received: ");
         for (auto chunk : response) {
             DEBUG_PRINTVECTOR(chunk);
             DEBUG_PRINTLN();
