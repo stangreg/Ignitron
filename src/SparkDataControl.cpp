@@ -15,6 +15,9 @@ SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
 
+eSPIFFS SparkDataControl::fileSystem;
+string SparkDataControl::sparkPresetFileName = "/config/SparkPreset.config";
+
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<CmdData> SparkDataControl::currentCommand;
 deque<AckData> SparkDataControl::pendingLooperAcks;
@@ -34,6 +37,9 @@ int SparkDataControl::activePresetNum_ = 1;
 int SparkDataControl::pendingPresetNum_ = 1;
 string SparkDataControl::responseMsg_ = "";
 byte SparkDataControl::nextMessageNum = 0x01;
+
+bool SparkDataControl::ampNameReceived_ = false;
+bool SparkDataControl::allHWPresetsAvailable_ = false;
 
 // LooperSetting *SparkDataControl::looperSetting_ = nullptr;
 int SparkDataControl::tapEntrySize = 5;
@@ -86,25 +92,11 @@ int SparkDataControl::init(int opModeInput) {
 
     tapEntries = CircularBuffer(tapEntrySize);
 
-    string currentSparkModeFile;
-    int sparkModeInput = 0;
     // Creating vector of presets
     presetBuilder.initializePresetListFromFS();
 
-    fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
-
-    stringstream sparkModeStream(currentSparkModeFile);
-    string line;
-    string currentBTModeFile;
-    stringstream btModeStream;
-
-    while (getline(sparkModeStream, line)) {
-        sparkModeInput = (int)(line[0] - '0'); // was: stoi(line);
-    }
-    if (sparkModeInput != 0) {
-        operationMode_ = sparkModeInput;
-        // Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
-    }
+    readOpModeFromFile();
+    readLastPresetFromFile();
 
     // Define MAC address required for keyboard
     uint8_t mac_keyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
@@ -143,13 +135,7 @@ int SparkDataControl::init(int opModeInput) {
     case SPARK_MODE_AMP:
         pendingBank_ = 1;
         activeBank_ = 1;
-        fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
-        btModeStream.str(currentBTModeFile);
-
-        while (getline(btModeStream, line)) {
-            currentBTMode_ = (int)(line[0] - '0'); // was: stoi(line);
-        }
-
+        readBTModeFromFile();
         if (currentBTMode_ == BT_MODE_BLE) {
             bleControl->startServer();
         } else if (currentBTMode_ == BT_MODE_SERIAL) {
@@ -290,10 +276,7 @@ int SparkDataControl::getNumberOfBanks() {
 }
 
 bool SparkDataControl::isAmpConnected() {
-    if (bleControl->isAmpConnected()) {
-        return true;
-    }
-    return false;
+    return bleControl->isAmpConnected();
 }
 
 bool SparkDataControl::isAppConnected() {
@@ -355,6 +338,7 @@ void SparkDataControl::updatePendingWithActive() {
 }
 bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
+    DEBUG_PRINTLN("Entering swithPreset()");
     bool retValue = false;
 
     int bnk = pendingBank_;
@@ -377,7 +361,12 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
             }
             // Switch to custom preset
             else {
+                DEBUG_PRINTLN("Changing preset..");
                 pendingPreset_ = presetBuilder.getPreset(bnk, pre);
+                if (activePreset_.isEmpty) {
+                    Serial.println("Active preset empty, initializing.");
+                    activePreset_ = pendingPreset_;
+                }
                 if (pendingPreset_.isEmpty) {
                     Serial.println("Empty preset, skipping further processing");
                     return false;
@@ -395,6 +384,8 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
     if (retValue == true) {
         activeBank_ = bnk;
         activePresetNum_ = pre;
+        Serial.println("Writing current Preset to file.");
+        writeLastPresetToFile();
     }
 
     return retValue;
@@ -645,13 +636,13 @@ bool SparkDataControl::toggleEffect(int fx_identifier) {
         Serial.println("Not connected to Spark Amp or in AMP mode, doing nothing.");
         return false;
     }
-    if (!activePreset_.isEmpty) {
-        string fx_name = activePreset_.pedals[fx_identifier].name;
-        bool fx_isOn = activePreset_.pedals[fx_identifier].isOn;
-
-        return switchEffectOnOff(fx_name, fx_isOn ? false : true);
+    if (activePreset_.isEmpty) {
+        return false;
     }
-    return false;
+    string fx_name = activePreset_.pedals[fx_identifier].name;
+    bool fx_isOn = activePreset_.pedals[fx_identifier].isOn;
+
+    return switchEffectOnOff(fx_name, fx_isOn ? false : true);
 }
 
 bool SparkDataControl::getAmpName() {
@@ -1039,6 +1030,7 @@ void SparkDataControl::handleAppModeResponse() {
                 activePresetNum_ = spark_presetNumber;
                 activeBank_ = pendingBank_ = 0;
                 pendingPresetNum_ = activePresetNum_;
+                writeLastPresetToFile();
 
             } else {
                 DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
@@ -1082,6 +1074,7 @@ void SparkDataControl::handleAppModeResponse() {
             sparkAmpName = spark_ssr.getAmpName();
             setAmpParameters();
             printMessage = true;
+            // ampNameReceived_ = true;
         }
 
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
@@ -1222,13 +1215,65 @@ void SparkDataControl::readHWPreset(int num) {
     triggerCommand(current_msg);
 }
 
+void SparkDataControl::readOpModeFromFile() {
+    string currentSparkModeFile;
+    int sparkModeInput = 0;
+
+    fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
+
+    stringstream sparkModeStream(currentSparkModeFile);
+    string line;
+
+    while (getline(sparkModeStream, line)) {
+        sparkModeInput = (int)(line[0] - '0'); // was: stoi(line);
+    }
+    if (sparkModeInput != 0) {
+        operationMode_ = sparkModeInput;
+        // Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
+    }
+}
+
+void SparkDataControl::readBTModeFromFile() {
+    string currentBTModeFile;
+    stringstream btModeStream;
+    string line;
+    fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
+    btModeStream.str(currentBTModeFile);
+
+    while (getline(btModeStream, line)) {
+        currentBTMode_ = (int)(line[0] - '0'); // was: stoi(line);
+    }
+}
+
+void SparkDataControl::readLastPresetFromFile() {
+    string lastPresetFile;
+
+    fileSystem.openFromFile(sparkPresetFileName.c_str(), lastPresetFile);
+
+    stringstream sparkModeStream(lastPresetFile);
+
+    sparkModeStream >> pendingBank_ >> pendingPresetNum_;
+    // DEBUG_PRINTF("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
+    Serial.printf("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
+    pendingPreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
+}
+
+void SparkDataControl::writeLastPresetToFile() {
+    // Save currentPreset to file
+    string currentPresetString = to_string(activeBank_) + " " + to_string(activePresetNum_);
+    Serial.printf("Preset saved: %s\n", currentPresetString.c_str());
+    fileSystem.saveToFile(sparkPresetFileName.c_str(), currentPresetString);
+}
+
 void SparkDataControl::resetStatus() {
-    isInitBoot_ = true;
+    // isInitBoot_ = true;
     presetBuilder.resetHWPresets();
     operationMode_ = SPARK_MODE_APP;
     buttonMode_ = BUTTON_MODE_PRESET;
-    activePresetNum_ = pendingPresetNum_ = 1;
-    activeBank_ = pendingBank_ = 0;
+    // activePresetNum_ = pendingPresetNum_ = 1;
+    readLastPresetFromFile();
+    activePresetNum_ = pendingPresetNum_;
+    activeBank_ = pendingBank_;
     nextMessageNum = 0x01;
     customPresetAckPending = false;
     retrieveCurrentPreset = false;
@@ -1236,6 +1281,8 @@ void SparkDataControl::resetStatus() {
     sparkAmpType = AMP_TYPE_40;
     sparkAmpName = "Spark 40";
     with_delay = false;
+    allHWPresetsAvailable_ = false;
+    init(operationMode_);
 }
 
 void SparkDataControl::checkForMissingPresets(void *args) {
@@ -1245,12 +1292,20 @@ void SparkDataControl::checkForMissingPresets(void *args) {
         if (currentTime - lastUpdateCheck > updateInterval) {
             lastUpdateCheck = currentTime;
             if (bleControl->isAmpConnected()) {
+                // DEBUG_PRINTLN("Checking missing HW presets");
+                bool isAnyMissing = false;
                 for (int num = 1; num <= 4; num++) {
-                    if (presetBuilder.isHWPresetMissing(num)) {
+                    // DEBUG_PRINTF("Checking missing HW preset %d.\n", num);
+                    bool isCurrentMissing = presetBuilder.isHWPresetMissing(num);
+                    if (isCurrentMissing) {
+                        // if (presetBuilder.isHWPresetMissing(num)) {
+                        DEBUG_PRINTF("%d is missing.\n", num);
                         readHWPreset(num);
                         delay(1000);
                     }
+                    isAnyMissing = isAnyMissing || isCurrentMissing;
                 }
+                allHWPresetsAvailable_ = !(isAnyMissing);
             }
         }
     }

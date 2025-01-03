@@ -215,6 +215,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
         if (buttonMode == BUTTON_MODE_FX) {
             secondaryLinePreset = activePreset;
         }
+
         if (!(secondaryLinePreset->isEmpty) || pendingBank > 0) {
             // Iterate through the corresponding preset's pedals and show indicators if switched on
             for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored

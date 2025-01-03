@@ -94,12 +94,22 @@ void loop() {
             // This is only done once after the connection has been established
             // Read AMP name to determine special parameters
             // TEST: spark_dc.getSerialNumber();
-            DEBUG_PRINTLN("Trying to communicate");
             spark_dc.getAmpName();
-            // DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-            spark_dc.switchPreset(1, true);
-            //spark_dc.configureLooper();
+            DEBUG_PRINTLN("Trying to communicate");
             spark_dc.isInitBoot() = false;
+            while (!(spark_dc.allHWPresetsAvailable())) {
+                spark_dc.checkForUpdates();
+                // Reading button input
+                spark_bh.readButtons();
+                // Update LED status
+                spark_led.updateLEDs();
+                // Update display
+                spark_display.update();
+            }
+
+            // DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
+            spark_dc.switchPreset(spark_dc.pendingPresetNum(), true);
+            // spark_dc.configureLooper();
         }
     }
 

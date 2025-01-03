@@ -68,7 +68,7 @@ public:
     bool getHWChecksums();
     bool getCurrentPreset(int num);
     // Switch to a selected preset of the current bank
-    static bool switchPreset(int pre, bool isInitial);
+    bool switchPreset(int pre, bool isInitial);
 
     // Switch effect on/off
     static bool switchEffectOnOff(const string &fx_name, bool enable);
@@ -106,10 +106,15 @@ public:
 
     void resetKeyboardChangeIndicator() { keyboardChanged_ = false; }
 
-    // Return active or pending preset/bank, set/get active preset number
-    Preset *activePreset() const { return &activePreset_; }
+    const bool ampNameReceived() const {return ampNameReceived_;}
+    const bool allHWPresetsAvailable() const {return allHWPresetsAvailable_;}
+        // Return active or pending preset/bank, set/get active preset number
+        Preset *
+        activePreset() const { return &activePreset_; }
     Preset *pendingPreset() const { return &pendingPreset_; }
     const int &activePresetNum() const { return activePresetNum_; }
+    const int &pendingPresetNum() const { return pendingPresetNum_; }
+
     // int& activePresetNum() {return activePresetNum_;}
     const int &activeBank() const { return activeBank_; }
     int &activeBank() { return activeBank_; }
@@ -195,10 +200,12 @@ private:
     static SparkLooperControl *looperControl_;
 
     SparkBLEKeyboard bleKeyboard;
-    eSPIFFS fileSystem;
+    static eSPIFFS fileSystem;
 
+    // TODO: Check if that could be put into one file
     string btModeFileName = "/config/BTMode.config";
     string sparkModeFileName = "/config/SparkMode.config";
+    static string sparkPresetFileName;
 
     // Button data
     int buttonMode_ = BUTTON_MODE_PRESET;
@@ -219,6 +226,8 @@ private:
     static int pendingBank_;
     static int activePresetNum_;
     static int pendingPresetNum_;
+    static bool ampNameReceived_;
+    static bool allHWPresetsAvailable_;
 
     // static LooperSetting *looperSetting_;
 
@@ -278,8 +287,13 @@ private:
 
     // Read in all HW presets
     static void readHWPreset(int num);
+    void readOpModeFromFile();
+    void readBTModeFromFile();
+    static void readLastPresetFromFile();
+    static void writeLastPresetToFile();
 
-    static void checkForMissingPresets(void *args);
+    static void
+    checkForMissingPresets(void *args);
     static void updatePendingPreset(int bnk);
     static void updatePendingWithActive();
     static void updateActiveWithPendingPreset();
