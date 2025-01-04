@@ -852,7 +852,7 @@ bool SparkDataControl::decreasePresetLooper() {
     return switchPreset(selectedPresetNum, false);
 }
 
-// TODO: Looper functions.
+// Looper functions.
 // 02 = RECORD count in (done)
 // 04 = RECORD (done)
 // 05 = STOPREC + PLAY(??)
@@ -1136,8 +1136,7 @@ void SparkDataControl::handleAppModeResponse() {
 }
 
 void SparkDataControl::handleIncomingAck() {
-    // TODO: Store sent messages to process acks according to message
-
+    
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
     AckData lastAck = spark_ssr.getLastAckAndEmpty();

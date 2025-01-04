@@ -1,5 +1,5 @@
 #include "SparkLooperControl.h"
-// TODO Reset bar and currnet beat count when switching to Looper mode
+// TODO Reset bar and current beat count when switching to Looper mode
 LooperSetting SparkLooperControl::looperSetting_;
 int SparkLooperControl::currentBeat_ = 1;
 int SparkLooperControl::currentBar_ = 1;

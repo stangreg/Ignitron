@@ -206,7 +206,7 @@ private:
     SparkBLEKeyboard bleKeyboard;
     static eSPIFFS fileSystem;
 
-    // TODO: Check if that could be put into one file
+    // TODO: Put settings into proper config file
     string btModeFileName = "/config/BTMode.config";
     string sparkModeFileName = "/config/SparkMode.config";
     static string sparkPresetFileName;
