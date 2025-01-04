@@ -8,18 +8,12 @@
 #include "SparkButtonHandler.h"
 
 // Intialize buttons
-BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET2_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET3_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET4_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_DOWN_GPIO,
-                                           false, HIGH);
-BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false,
-                                         HIGH);
+BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET2_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET3_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET4_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_DOWN_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false, HIGH);
 
 // Initialize SparkDataControl;
 SparkDataControl *SparkButtonHandler::spark_dc = nullptr;
@@ -205,7 +199,7 @@ void SparkButtonHandler::configureAmpButtons() {
     // Delete stored preset
     btn_bank_down.onPressFor(btnDeletePresetHandler, LONG_BUTTON_PRESS_TIME);
     // Switch between BT / BLE mode (only works once, then will cause crash)
-    btn_bank_up.onPressFor(btnToggleBTMode, LONG_BUTTON_PRESS_TIME);
+    btn_bank_up.onPressFor(btnToggleBTModeHandler, LONG_BUTTON_PRESS_TIME);
 
     // Reset Ignitron
     btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -293,8 +287,8 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
     configureButtons();
 }
 
-void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
-                                         BfButton::press_pattern_t pattern) {
+void SparkButtonHandler::btnToggleBTModeHandler(BfButton *btn,
+                                                BfButton::press_pattern_t pattern) {
 
     if (!spark_dc) {
         Serial.println("SparkDataControl not setup yet, ignoring button press.");
