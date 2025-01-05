@@ -469,7 +469,7 @@ vector<CmdData> SparkMessage::send_hw_preset_number(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<CmdData> SparkMessage::create_preset(const Preset &preset_data,
+vector<CmdData> SparkMessage::change_preset(const Preset &preset_data,
                                             int direction, byte msg_num) {
 
     if (direction == DIR_TO_SPARK) {

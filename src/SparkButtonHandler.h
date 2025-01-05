@@ -10,6 +10,7 @@
 
 #include "Config_Definitions.h"
 #include "SparkDataControl.h"
+#include "SparkPresetControl.h"
 #include "SparkTypes.h"
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
 
@@ -37,6 +38,7 @@ private:
     static BfButton btn_bank_down;
 
     static SparkDataControl *spark_dc;
+    static SparkPresetControl &presetControl;
     static KeyboardMapping currentKeyboard;
 
     // BUTTON Handlers

@@ -9,13 +9,11 @@
 
 SparkLEDControl::SparkLEDControl() {
     spark_dc = nullptr;
-    activePreset = nullptr;
     init();
 }
 
 SparkLEDControl::SparkLEDControl(SparkDataControl *dc) {
     spark_dc = dc;
-    activePreset = nullptr;
     init();
 }
 
@@ -37,8 +35,8 @@ void SparkLEDControl::init() {
 void SparkLEDControl::updateLEDs() {
 
     operationMode = spark_dc->operationMode();
-    activePreset = spark_dc->activePreset();
-    activePresetNum = spark_dc->activePresetNum();
+    activePreset = SparkPresetControl::getInstance().activePreset();
+    activePresetNum = SparkPresetControl::getInstance().activePresetNum();
 
     switch (operationMode) {
 
@@ -72,14 +70,14 @@ void SparkLEDControl::updateLED_APP_PresetMode() {
 }
 
 void SparkLEDControl::updateLED_APP_FXMode() {
-    if (!activePreset->isEmpty) {
+    if (!activePreset.isEmpty) {
         for (int btn_number = 1; btn_number <= 6; btn_number++) {
             int fxIndex = SparkHelper::getFXIndexFromButtonNumber(btn_number);
             /*if( fxIndex == -1){
                 Serial.println("Invalid FX index found!");
                 return;
             }*/
-            Pedal current_fx = activePreset->pedals[fxIndex];
+            Pedal current_fx = activePreset.pedals[fxIndex];
             switchLED(btn_number, current_fx.isOn);
         }
     }
@@ -88,8 +86,8 @@ void SparkLEDControl::updateLED_APP_FXMode() {
 void SparkLEDControl::updateLED_AMP() {
     unsigned long currentMillis = millis();
 
-    int presetNumToEdit = spark_dc->presetNumToEdit();
-    const int presetEditMode = spark_dc->presetEditMode();
+    int presetNumToEdit = SparkPresetControl::getInstance().presetNumToEdit();
+    const int presetEditMode = SparkPresetControl::getInstance().presetEditMode();
 
     if (presetEditMode != PRESET_EDIT_NONE) {
 

@@ -11,6 +11,7 @@
 #include "Config_Definitions.h"
 #include "SparkDataControl.h"
 #include "SparkLooperControl.h"
+#include "SparkPresetControl.h"
 #include <Arduino.h>
 
 using namespace std;
@@ -33,7 +34,7 @@ private:
     KeyboardMapping mapping;
 
     int operationMode = SPARK_MODE_APP;
-    Preset *activePreset;
+    Preset activePreset;
     int activePresetNum = 1;
 
     // For blinking mode

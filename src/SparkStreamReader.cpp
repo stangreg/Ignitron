@@ -7,7 +7,7 @@
 
 #include "SparkStreamReader.h"
 
-SparkStreamReader::SparkStreamReader() : message{}, unstructured_data{}, msg{}, msg_pos(0) {
+SparkStreamReader::SparkStreamReader() : message{}, unstructured_data{}, msg_data{}, msg_pos(0) {
 }
 
 string SparkStreamReader::getJson() {
@@ -19,25 +19,9 @@ void SparkStreamReader::setMessage(const vector<ByteVector> &msg_) {
     message.clear();
 }
 
-void SparkStreamReader::resetPresetNumberUpdateFlag() {
-    isPresetNumberUpdated_ = false;
-}
-
-void SparkStreamReader::resetPresetUpdateFlag() {
-    isPresetUpdated_ = false;
-}
-
-void SparkStreamReader::resetLooperSettingUpdateFlag() {
-    isLooperSettingUpdated_ = false;
-}
-
-void SparkStreamReader::resetLastMessageType() {
-    last_message_type_ = 0;
-}
-
 byte SparkStreamReader::read_byte() {
     byte a_byte;
-    a_byte = msg[msg_pos];
+    a_byte = msg_data[msg_pos];
     msg_pos += 1;
     return a_byte;
 }
@@ -127,7 +111,7 @@ void SparkStreamReader::read_effect_parameter() {
     sb.end_str();
 
     // Set values
-    last_message_type_ = MSG_TYPE_FX_PARAM;
+    statusObject.lastMessageType() = MSG_TYPE_FX_PARAM;
 }
 
 void SparkStreamReader::read_effect() {
@@ -144,7 +128,7 @@ void SparkStreamReader::read_effect() {
     sb.end_str();
 
     // Set values
-    last_message_type_ = MSG_TYPE_FX_CHANGE;
+    statusObject.lastMessageType() = MSG_TYPE_FX_CHANGE;
 }
 
 void SparkStreamReader::read_hardware_preset() {
@@ -158,11 +142,11 @@ void SparkStreamReader::read_hardware_preset() {
     sb.end_str();
 
     // Set values
-    if (preset_num != currentPresetNumber_) {
-        isPresetNumberUpdated_ = true;
+    if (preset_num != statusObject.currentPresetNumber()) {
+        statusObject.isPresetNumberUpdated() = true;
     }
-    currentPresetNumber_ = preset_num;
-    last_message_type_ = MSG_TYPE_HWPRESET;
+    statusObject.currentPresetNumber() = preset_num;
+    statusObject.lastMessageType() = MSG_TYPE_HWPRESET;
 }
 
 void SparkStreamReader::read_store_hardware_preset() {
@@ -176,7 +160,7 @@ void SparkStreamReader::read_store_hardware_preset() {
     sb.end_str();
 
     // Set values
-    last_message_type_ = MSG_TYPE_HWPRESET;
+    statusObject.lastMessageType() = MSG_TYPE_HWPRESET;
 }
 
 void SparkStreamReader::read_effect_onoff() {
@@ -184,8 +168,8 @@ void SparkStreamReader::read_effect_onoff() {
     string effect = read_prefixed_string();
     boolean isOn = read_onoff();
 
-    currentEffect_.name = effect;
-    currentEffect_.isOn = isOn;
+    statusObject.currentEffect().name = effect;
+    statusObject.currentEffect().isOn = isOn;
     // Build string representations
     sb.start_str();
     sb.add_str("Effect", effect);
@@ -194,8 +178,8 @@ void SparkStreamReader::read_effect_onoff() {
     sb.end_str();
 
     // Set values
-    last_message_type_ = MSG_TYPE_FX_ONOFF;
-    isEffectUpdated_ = true;
+    statusObject.lastMessageType() = MSG_TYPE_FX_ONOFF;
+    statusObject.isEffectUpdated() = true;
 }
 
 void SparkStreamReader::read_preset() {
@@ -203,31 +187,33 @@ void SparkStreamReader::read_preset() {
     // DEBUG_PRINTF("Free memory before reading preset: %d\n", xPortGetFreeHeapSize());
 
     DEBUG_PRINTLN("Parsing message:");
-    DEBUG_PRINTVECTOR(msg);
+    DEBUG_PRINTVECTOR(msg_data);
     DEBUG_PRINTLN();
+
+    Preset &currentPreset = statusObject.currentPreset();
 
     read_byte();
     byte preset = read_byte();
     // DEBUG_PRINTF("Read PresetNumber: %d\n", preset);
-    currentPreset_.presetNumber = preset;
+    currentPreset.presetNumber = preset;
     string uuid = read_string();
     // DEBUG_PRINTF("Read UUID: %s\n", uuid.c_str());
-    currentPreset_.uuid = uuid;
+    currentPreset.uuid = uuid;
     string name = read_string();
     // DEBUG_PRINTF("Read Name: %s\n", name.c_str());
-    currentPreset_.name = name;
+    currentPreset.name = name;
     string version = read_string();
     // DEBUG_PRINTF("Read Version: %s\n", version.c_str());
-    currentPreset_.version = version;
+    currentPreset.version = version;
     string descr = read_string();
     // DEBUG_PRINTF("Read Description: %s\n", descr.c_str());
-    currentPreset_.description = descr;
+    currentPreset.description = descr;
     string icon = read_string();
     // DEBUG_PRINTF("Read Icon: %s\n", icon.c_str());
-    currentPreset_.icon = icon;
+    currentPreset.icon = icon;
     float bpm = read_float();
     // DEBUG_PRINTF("Read BPM: %f\n", bpm);
-    currentPreset_.bpm = bpm;
+    currentPreset.bpm = bpm;
     // Build string representations
     // DEBUG_PRINTF("Free memory before adds: %d\n", xPortGetFreeHeapSize());
     sb.start_str();
@@ -255,8 +241,9 @@ void SparkStreamReader::read_preset() {
     // DEBUG_PRINTF("Read Number of effects: %d\n", num_effects);
     sb.add_python("\"Pedals\": [");
     sb.add_newline();
-    currentPreset_.pedals = {};
-    for (int i = 0; i < currentPreset_.numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
+    currentPreset.pedals = {};
+    int numberOfPedals = currentPreset.numberOfPedals;
+    for (int i = 0; i < numberOfPedals; i++) { // Fixed to 7, but could maybe also be derived from num_effects?
         Pedal currentPedal = {};
         // DEBUG_PRINTF("Reading Pedal %d:\n", i);
         string e_str = read_string();
@@ -304,33 +291,33 @@ void SparkStreamReader::read_preset() {
         sb.add_python("]");
         // del_indent();
         sb.add_python("}");
-        if (i < currentPreset_.numberOfPedals - 1) {
+        if (i < numberOfPedals - 1) {
             sb.add_separator();
             sb.add_newline();
         }
-        currentPreset_.pedals.push_back(currentPedal);
+        currentPreset.pedals.push_back(currentPedal);
     }
     sb.add_python("],");
     sb.add_newline();
     byte filler = read_byte();
     // DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
-    currentPreset_.filler = filler;
+    currentPreset.filler = filler;
     sb.add_str("Filler", SparkHelper::intToHex(filler));
     sb.add_newline();
     sb.end_str();
-    currentPreset_.text = sb.getText();
-    currentPreset_.raw = sb.getRaw();
-    ;
-    currentPreset_.json = sb.getJson();
-    currentPreset_.isEmpty = false;
-    isPresetUpdated_ = true;
-    last_message_type_ = MSG_TYPE_PRESET;
+    currentPreset.text = sb.getText();
+    currentPreset.raw = sb.getRaw();
+    currentPreset.json = sb.getJson();
+    currentPreset.isEmpty = false;
+
+    statusObject.isPresetUpdated() = true;
+    statusObject.lastMessageType() = MSG_TYPE_PRESET;
 }
 
 void SparkStreamReader::read_looper_settings() {
 
     DEBUG_PRINT("Reading looper settings:");
-    DEBUG_PRINTVECTOR(msg);
+    DEBUG_PRINTVECTOR(msg_data);
     DEBUG_PRINTLN();
 
     int bpm = read_byte();
@@ -364,30 +351,31 @@ void SparkStreamReader::read_looper_settings() {
     sb.add_int("Max duration", max_duration);
     sb.end_str();
 
-    looperSetting_.bpm = bpm;
-    looperSetting_.count_str = count_str;
-    looperSetting_.count = count_byte;
-    looperSetting_.bars = bars;
-    looperSetting_.free_indicator = free_indicator;
-    looperSetting_.click = click;
-    looperSetting_.unknown_onoff = unknown_onoff;
-    looperSetting_.max_duration = max_duration;
+    LooperSetting &looperSetting = statusObject.currentLooperSetting();
+    looperSetting.bpm = bpm;
+    looperSetting.count_str = count_str;
+    looperSetting.count = count_byte;
+    looperSetting.bars = bars;
+    looperSetting.free_indicator = free_indicator;
+    looperSetting.click = click;
+    looperSetting.unknown_onoff = unknown_onoff;
+    looperSetting.max_duration = max_duration;
 
-    looperSetting_.json = sb.getJson();
-    looperSetting_.text = sb.getText();
-    looperSetting_.raw = sb.getRaw();
+    looperSetting.json = sb.getJson();
+    looperSetting.text = sb.getText();
+    looperSetting.raw = sb.getRaw();
 
-    isLooperSettingUpdated_ = true;
-    last_message_type_ = MSG_TYPE_LOOPER_SETTING;
+    statusObject.isLooperSettingUpdated() = true;
+    statusObject.lastMessageType() = MSG_TYPE_LOOPER_SETTING;
 }
 
 void SparkStreamReader::read_looper_command() {
 
-    lastLooperCommand_ = read_byte();
+    statusObject.lastLooperCommand() = read_byte();
     DEBUG_PRINT("Received looper command: ");
-    DEBUG_PRINTVECTOR(msg);
+    DEBUG_PRINTVECTOR(msg_data);
     DEBUG_PRINTLN();
-    last_message_type_ = MSG_TYPE_LOOPER_COMMAND;
+    statusObject.lastMessageType() = MSG_TYPE_LOOPER_COMMAND;
 }
 
 void SparkStreamReader::read_looper_status() {
@@ -395,7 +383,8 @@ void SparkStreamReader::read_looper_status() {
     int bpm = read_byte();
     byte count = read_byte();
     byte bars = read_byte();
-    numberOfLoops_ = read_byte();
+    int numberOfLoops = read_byte();
+    statusObject.numberOfLoops() = numberOfLoops;
     bool unknownOnOff1 = read_byte();
     bool unknownOnOff2 = read_byte();
 
@@ -406,14 +395,14 @@ void SparkStreamReader::read_looper_status() {
     sb.add_separator();
     sb.add_int("Bars", bars);
     sb.add_separator();
-    sb.add_int("Loops", numberOfLoops_);
+    sb.add_int("Loops", numberOfLoops);
     sb.add_separator();
     sb.add_str("Unknown OnOff1", SparkHelper::intToHex(unknownOnOff1));
     sb.add_separator();
     sb.add_str("Unknown OnOff2", SparkHelper::intToHex(unknownOnOff2));
     sb.end_str();
 
-    last_message_type_ = MSG_TYPE_LOOPER_STATUS;
+    statusObject.lastMessageType() = MSG_TYPE_LOOPER_STATUS;
 }
 
 void SparkStreamReader::read_tap_tempo() {
@@ -422,16 +411,17 @@ void SparkStreamReader::read_tap_tempo() {
     sb.start_str();
     sb.add_float("BPM", bpm, "python");
     sb.end_str();
-    last_message_type_ = MSG_TYPE_TAP_TEMPO;
+    statusObject.lastMessageType() = MSG_TYPE_TAP_TEMPO;
 }
 
 void SparkStreamReader::read_measure() {
-    measure_ = read_float();
+    float measure = read_float();
+    statusObject.measure() = measure;
 
     sb.start_str();
-    sb.add_float("Measure", measure_, "python");
+    sb.add_float("Measure", measure, "python");
     sb.end_str();
-    last_message_type_ = MSG_TYPE_MEASURE;
+    statusObject.lastMessageType() = MSG_TYPE_MEASURE;
 }
 
 boolean SparkStreamReader::structure_data(bool processHeader) {
@@ -498,7 +488,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 
     vector<CmdData> chunk_8bit = {};
     for (auto chunk : chunks) {
-        last_message_num_ = chunk[2];
+        statusObject.lastMessageNum() = chunk[2];
         byte this_cmd = chunk[4];
         byte this_sub_cmd = chunk[5];
         ByteVector data7bit = {};
@@ -574,7 +564,7 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 }
 
 void SparkStreamReader::set_interpreter(const ByteVector &_msg) {
-    msg = _msg;
+    msg_data = _msg;
     msg_pos = 0;
 }
 
@@ -604,7 +594,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             break;
         default:
             DEBUG_PRINTF("%02x %02x - not handled: ", _cmd, _sub_cmd);
-            DEBUG_PRINTVECTOR(msg);
+            DEBUG_PRINTVECTOR(msg_data);
             DEBUG_PRINTLN();
             break;
         }
@@ -668,7 +658,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             break;
         default:
             DEBUG_PRINTF("%02x %02x - not handled: ", _cmd, _sub_cmd);
-            DEBUG_PRINTVECTOR(msg);
+            DEBUG_PRINTVECTOR(msg_data);
             DEBUG_PRINTLN();
             break;
         }
@@ -676,19 +666,20 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
     // Acknowledgement
     else if (_cmd == 0x04 || _cmd == 0x05) {
         DEBUG_PRINT("ACK number ");
-        DEBUG_PRINTLN(last_message_num_);
+        byte lastMessageNum = statusObject.lastMessageNum();
+        DEBUG_PRINTLN(lastMessageNum);
         byte detail = 0x00; // detail is only used for Acks received from Amp
         AckData ack;
-        ack.msg_num = last_message_num_;
+        ack.msg_num = lastMessageNum;
         ack.cmd = _cmd;
         ack.subcmd = _sub_cmd;
-        acknowledgments.push_back(ack);
+        statusObject.acknowledgments().push_back(ack);
         DEBUG_PRINTF("Acknowledgment for command %02x %02x\n", _cmd, _sub_cmd);
     } else {
         // unprocessed command (likely the initial ones sent from the app
         DEBUG_PRINTF("Unprocessed: %02x, %02x - ", _cmd,
                      _sub_cmd);
-        DEBUG_PRINTVECTOR(msg);
+        DEBUG_PRINTVECTOR(msg_data);
         DEBUG_PRINTLN();
     }
     return 1;
@@ -700,7 +691,8 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector &blk) {
         return tuple<bool, byte, byte>(false, 0, 0);
     }
     byte direction[2] = {blk[4], blk[5]};
-    last_message_num_ = blk[18];
+    byte lastMessageNum = blk[18];
+    statusObject.lastMessageNum() = lastMessageNum;
     byte cmd = blk[20];
     byte sub_cmd = blk[21];
 
@@ -709,7 +701,7 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector &blk) {
     if (msg_to_spark_comp == 0) {
         if (cmd == 0x01 && sub_cmd != 0x04) {
             // the app sent a message that needs a response
-            return tuple<bool, byte, byte>(true, last_message_num_, sub_cmd);
+            return tuple<bool, byte, byte>(true, lastMessageNum, sub_cmd);
         }
     }
 
@@ -718,6 +710,7 @@ tuple<bool, byte, byte> SparkStreamReader::needsAck(const ByteVector &blk) {
 
 AckData SparkStreamReader::getLastAckAndEmpty() {
     AckData lastAck;
+    vector<AckData> acknowledgments = statusObject.acknowledgments();
     if (acknowledgments.size() > 0) {
         lastAck = acknowledgments.back();
         acknowledgments.clear();
@@ -942,6 +935,6 @@ void SparkStreamReader::read_amp_name() {
     sb.end_str();
 
     // Set values
-    last_message_type_ = MSG_TYPE_AMP_NAME;
-    ampName_ = ampName;
+    statusObject.lastMessageType() = MSG_TYPE_AMP_NAME;
+    statusObject.ampName() = ampName;
 }

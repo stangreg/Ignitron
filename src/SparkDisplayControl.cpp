@@ -16,11 +16,6 @@ SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
     // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
     spark_dc = dc;
-    presetFromApp = nullptr;
-    secondaryLinePreset = nullptr;
-    primaryLinePreset = nullptr;
-    pendingPreset = nullptr;
-    activePreset = nullptr;
     sparkLooperControl = nullptr;
     presetEditMode = PRESET_EDIT_NONE;
 }
@@ -112,7 +107,7 @@ void SparkDisplayControl::showBankAndPresetNum() {
 
 void SparkDisplayControl::showPresetName() {
 
-    const string msg = spark_dc->responseMsg();
+    const string msg = SparkPresetControl::getInstance().responseMsg();
     ostringstream selPresetStr;
     selPresetStr << activePresetNum;
 
@@ -137,7 +132,7 @@ void SparkDisplayControl::showPresetName() {
     if (msg != "") { // message to show for some time
         previousMillis = millis();
         primaryLineText = msg;
-        spark_dc->resetPresetEditResponse();
+        SparkPresetControl::getInstance().resetPresetEditResponse();
         showMsgFlag = true;
     }
     if (showMsgFlag) {
@@ -152,21 +147,21 @@ void SparkDisplayControl::showPresetName() {
         // is not the active one, show the pending preset name
         if (pendingBank != 0 && activeBank != pendingBank) {
             primaryLinePreset = pendingPreset;
-            primaryLineText = primaryLinePreset->name;
+            primaryLineText = primaryLinePreset.name;
 
             // if the bank is the HW one and is not the active one
             // show only a generic name as we don't know the HW preset name upfront
         } else if (pendingBank == 0 && activeBank != pendingBank) {
             primaryLinePreset = activePreset;
-            if (primaryLinePreset->isEmpty) {
+            if (primaryLinePreset.isEmpty) {
                 primaryLineText = "Hardware Preset " + selPresetStr.str();
             } else {
-                primaryLineText = primaryLinePreset->name;
+                primaryLineText = primaryLinePreset.name;
             }
             // Otherwise just show the active preset name
         } else {
             primaryLinePreset = activePreset;
-            primaryLineText = primaryLinePreset->name;
+            primaryLineText = primaryLinePreset.name;
         }
         // Reset scroll timer
         if (primaryLineText != previous_text1) {
@@ -190,8 +185,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
     secondaryLineText = "";
     if (opMode == SPARK_MODE_AMP) {
         // displayPreset = presetFromApp;
-        if (!(presetFromApp->isEmpty)) {
-            secondaryLineText = presetFromApp->name;
+        if (!(presetFromApp.isEmpty)) {
+            secondaryLineText = presetFromApp.name;
             // Reset scroll timer
             if (secondaryLineText != previous_text2) {
                 text_row_2_timestamp = millis();
@@ -216,7 +211,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
             secondaryLinePreset = activePreset;
         }
 
-        if (!(secondaryLinePreset->isEmpty) || pendingBank > 0) {
+        if (!(secondaryLinePreset.isEmpty) || pendingBank > 0) {
             // Iterate through the corresponding preset's pedals and show indicators if switched on
             for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored
                 if (i != 3) {             // Amp is on position 3, ignore
@@ -226,7 +221,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
                     string fx_indicators_off[] = {" ", "  ", "  ", " ", "  ", "  ", " "};
 
                     string currPedalStatus;
-                    Pedal currPedal = secondaryLinePreset->pedals[i];
+                    Pedal currPedal = secondaryLinePreset.pedals[i];
                     currPedalStatus =
                         currPedal.isOn ? fx_indicators_on[i] : fx_indicators_off[i];
                     secondaryLineText += currPedalStatus;
@@ -450,14 +445,14 @@ void SparkDisplayControl::update(bool isInitBoot) {
         showKeyboardLayout();
     } else {
         display.setTextWrap(false);
-        activeBank = spark_dc->activeBank();
-        pendingBank = spark_dc->pendingBank();
-        activePreset = spark_dc->activePreset();
-        pendingPreset = spark_dc->pendingPreset();
+        activeBank = SparkPresetControl::getInstance().activeBank();
+        pendingBank = SparkPresetControl::getInstance().pendingBank();
+        activePreset = SparkPresetControl::getInstance().activePreset();
+        pendingPreset = SparkPresetControl::getInstance().pendingPreset();
         buttonMode = spark_dc->buttonMode();
-        activePresetNum = spark_dc->activePresetNum();
-        presetFromApp = spark_dc->appReceivedPreset();
-        presetEditMode = spark_dc->presetEditMode();
+        activePresetNum = SparkPresetControl::getInstance().activePresetNum();
+        presetFromApp = SparkPresetControl::getInstance().appReceivedPreset();
+        presetEditMode = SparkPresetControl::getInstance().presetEditMode();
         isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
         opMode = spark_dc->operationMode();
         currentBTMode = spark_dc->currentBTMode();
@@ -565,9 +560,9 @@ void SparkDisplayControl::logDisplay() {
         DEBUG_PRINTLN("Current Preset settings:");
         DEBUG_PRINTF("Primary line   : %s\n", primaryLineText.c_str());
         DEBUG_PRINTF("Secondary line : %s\n", secondaryLineText.c_str());
-        if (activePreset != nullptr && pendingPreset != nullptr) {
-            DEBUG_PRINTF("Act Preset empty? : %s\n", activePreset->isEmpty ? "true" : "false");
-            DEBUG_PRINTF("Pen Preset empty? : %s\n", pendingPreset->isEmpty ? "true" : "false");
+        if (!(activePreset.isEmpty) && !(pendingPreset.isEmpty)) {
+            DEBUG_PRINTF("Act Preset empty? : %s\n", activePreset.isEmpty ? "true" : "false");
+            DEBUG_PRINTF("Pen Preset empty? : %s\n", pendingPreset.isEmpty ? "true" : "false");
         }
         lastLogTimestamp = millis();
     }
