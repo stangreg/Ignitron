@@ -1,5 +1,5 @@
 /*
- * SparkBLEControl.h
+ * SparkBTControl.h
  *
  *  Created on: 19.08.2021
  *      Author: stangreg
@@ -29,14 +29,14 @@ class SparkDataControl;
 // Forward declaration of Callbacks classes, does nothing special, only default actions
 // class ClientCallbacks: public NimBLEClientCallbacks {};
 
-class SparkBLEControl : public NimBLEAdvertisedDeviceCallbacks,
-                        NimBLECharacteristicCallbacks,
-                        NimBLEServerCallbacks,
-                        NimBLEClientCallbacks {
+class SparkBTControl : public NimBLEAdvertisedDeviceCallbacks,
+                       NimBLECharacteristicCallbacks,
+                       NimBLEServerCallbacks,
+                       NimBLEClientCallbacks {
 public:
-    SparkBLEControl();
-    SparkBLEControl(SparkDataControl *dc);
-    virtual ~SparkBLEControl();
+    SparkBTControl();
+    SparkBTControl(SparkDataControl *dc);
+    virtual ~SparkBTControl();
 
     /**
      * @brief  Checks if a Spark amp has been found to connect

@@ -10,7 +10,7 @@
 
 #include "CircularBuffer.h"
 #include "Config_Definitions.h"
-#include "SparkBLEControl.h"
+#include "SparkBTControl.h"
 #include "SparkBLEKeyboard.h"
 #include "SparkKeyboardControl.h"
 #include "SparkLooperControl.h"
@@ -31,7 +31,7 @@
 using namespace std;
 using ByteVector = vector<byte>;
 
-class SparkBLEControl;
+class SparkBTControl;
 class SparkDisplayControl;
 
 class SparkDataControl {
@@ -157,7 +157,7 @@ public:
 private:
     static int operationMode_;
 
-    static SparkBLEControl *bleControl;
+    static SparkBTControl *bleControl;
     static SparkStreamReader spark_ssr;
     static SparkStatus &statusObject;
     static SparkMessage spark_msg;
@@ -232,7 +232,6 @@ private:
     static bool updateLooperSettings();
     static void startLooperTimer(void *args);
     static void updateLooperCommand(byte lastCommand);
-
 };
 
 #endif /* SPARKDATACONTROL_H_ */

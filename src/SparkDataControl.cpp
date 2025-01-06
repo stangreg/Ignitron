@@ -7,7 +7,7 @@
 
 #include "SparkDataControl.h"
 
-SparkBLEControl *SparkDataControl::bleControl = nullptr;
+SparkBTControl *SparkDataControl::bleControl = nullptr;
 SparkStreamReader SparkDataControl::spark_ssr;
 SparkStatus &SparkDataControl::statusObject = SparkStatus::getInstance();
 SparkMessage SparkDataControl::spark_msg;
@@ -50,7 +50,7 @@ byte SparkDataControl::special_msg_num = 0xEE;
 
 SparkDataControl::SparkDataControl() {
     // init();
-    bleControl = new SparkBLEControl(this);
+    bleControl = new SparkBTControl(this);
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
     tapEntries = CircularBuffer(tapEntrySize);
@@ -760,7 +760,7 @@ bool SparkDataControl::checkBLEConnection() {
         if (bleControl->connectToServer()) {
             bleControl->subscribeToNotifications(&bleNotificationCallback);
             Serial.println("BLE connection to Spark established.");
-            delay(2000);
+            //delay(2000);
             return true;
         } else {
             Serial.println("Failed to connect, starting scan");

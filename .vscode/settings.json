@@ -6,6 +6,11 @@
         "optional": "cpp",
         "*.tcc": "cpp",
         "cstdlib": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "unordered_map": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp"
     }
 }

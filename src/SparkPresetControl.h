@@ -22,7 +22,7 @@ public:
 
     // Return active or pending preset/bank, set/get active preset number
     const Preset &activePreset() const { return activePreset_; }
-    Preset &pendingPreset() { return pendingPreset_; }
+    const Preset &pendingPreset() const { return pendingPreset_; }
     const int &activePresetNum() const { return activePresetNum_; }
     const int &pendingPresetNum() const { return pendingPresetNum_; }
 
@@ -79,7 +79,7 @@ private:
     Preset pendingPreset_ = activePreset_;
     int activeBank_ = 0;
     int pendingBank_ = 0;
-    int activePresetNum_ = 1;
+    int activePresetNum_ = 3;
     int pendingPresetNum_ = 1;
     bool allHWPresetsAvailable_ = false;
 

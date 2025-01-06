@@ -16,10 +16,6 @@ SparkPresetControl &SparkPresetControl::getInstance() {
 void SparkPresetControl::init() {
 
     int operationMode = sparkDC->operationMode();
-    // Creating vector of presets
-    presetBuilder.initializePresetListFromFS();
-    readLastPresetFromFile();
-
     if (operationMode == SPARK_MODE_APP) {
         xTaskCreatePinnedToCore(
             checkForMissingPresets, // Function to implement the task
@@ -63,7 +59,7 @@ void SparkPresetControl::getMissingHWPresets() {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(1000);
+                    delay(500);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -75,8 +71,9 @@ void SparkPresetControl::getMissingHWPresets() {
 void SparkPresetControl::resetStatus() {
 
     presetBuilder.resetHWPresets();
-    readLastPresetFromFile();
-    // activePresetNum_ = pendingPresetNum_ = 1;
+    // readLastPresetFromFile();
+    //  activePresetNum_ = pendingPresetNum_ = 1;
+    //  Do we need to read the current amp preset here?
     activePresetNum_ = pendingPresetNum_;
     activeBank_ = pendingBank_;
     allHWPresetsAvailable_ = false;
@@ -99,8 +96,12 @@ void SparkPresetControl::checkForUpdates(int operationMode) {
         (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER)) {
 
         DEBUG_PRINTLN("Preset has changed, updating active with current preset");
+        activePreset_ = statusObject.currentPreset();
+        updatePendingWithActive();
+        /*
         pendingPreset_ = statusObject.currentPreset();
         updateActiveWithPendingPreset();
+        */
         statusObject.resetPresetUpdateFlag();
     }
 }
@@ -166,9 +167,9 @@ void SparkPresetControl::updatePendingBankStatus() {
 
     int operationMode = sparkDC->operationMode();
 
-    if (pendingBank_ != 0) {
-        updatePendingPreset(pendingBank_);
-    }
+    // if (pendingBank_ != 0) {
+    updatePendingPreset(pendingBank_);
+    //}
     if (operationMode == SPARK_MODE_AMP) {
         activeBank_ = pendingBank_;
         updateActiveWithPendingPreset();
@@ -203,9 +204,10 @@ void SparkPresetControl::writeLastPresetToFile() {
 
 void SparkPresetControl::checkForMissingPresets(void *args) {
     SparkPresetControl *presetControl = (SparkPresetControl *)args;
-    delay(3000);
+    // delay(3000);
     while (true) {
         presetControl->getMissingHWPresets();
+        delay(1000);
     }
 }
 
@@ -273,7 +275,7 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
         activeBank_ = bnk;
         activePresetNum_ = pre;
         Serial.println("Writing current Preset to file.");
-        writeLastPresetToFile();
+        // writeLastPresetToFile();
     }
 
     return retValue;
@@ -286,7 +288,7 @@ void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
     activePresetNum_ = presetNum;
     activeBank_ = pendingBank_ = 0;
     pendingPresetNum_ = activePresetNum_;
-    writeLastPresetToFile();
+    // writeLastPresetToFile();
     /* TODO: IMPORTANT: When preset is changed at AMP (0338), we need to read the current preset and update the bank/preset.
                 If preset number was requested by us (0310), we need to compare if the current preset is the same as the number of the current HW preset number.
                 In case it is the same, we need to update the bank/preset number, otherwise stay as is.
@@ -331,14 +333,20 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
     int presetNumber = receivedPreset.presetNumber + 1;
 
     if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || !isSpecial) {
+        DEBUG_PRINTLN("Updating activePreset...");
         activePreset_ = statusObject.currentPreset();
-        activePresetNum_ = presetNumber;
+        string uuid = receivedPreset.uuid;
+        pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
+        activeBank_ = std::get<0>(bankPreset);
+        activePresetNum_ = std::get<1>(bankPreset);
+        DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
+        updatePendingWithActive();
     }
     // TODO: Not confirmed that this works. Issue: Reading preset from Spark and set Ignitron accordingly.
     // In case we have a custom preset (how to check? Compare with HW presets?)
-    if (presetNumber == 128) {
+    /*if (presetNumber == 128) {
         activePreset_ = statusObject.currentPreset();
-    }
+    }*/
     if (isSpecial) {
         DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
         presetBuilder.insertHWPreset(presetNumber - 1, receivedPreset);

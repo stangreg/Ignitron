@@ -7,7 +7,14 @@
 
 #include "SparkPresetBuilder.h"
 
+void SparkPresetBuilder::updatePresetListUUID(int bnk, int pre, string uuid) {
+    presetUUIDs[uuid] = make_pair(bnk, pre);
+}
+
 SparkPresetBuilder::SparkPresetBuilder() : presetBanksNames{} {
+    // Creating vector of presets
+    initializePresetListFromFS();
+    buildPresetUUIDs();
     resetHWPresets();
 }
 
@@ -124,6 +131,17 @@ void SparkPresetBuilder::initializePresetListFromFS() {
     }
 }
 
+void SparkPresetBuilder::buildPresetUUIDs() {
+
+    for (int bnk = 1; bnk <= getNumberOfBanks(); bnk++) {
+        for (int pre = 1; pre <= PRESETS_PER_BANK; pre++) {
+            Preset tmpPreset = getPreset(bnk, pre);
+            string uuid = tmpPreset.uuid;
+            presetUUIDs[uuid] = make_pair(bnk, pre);
+        }
+    }
+}
+
 Preset SparkPresetBuilder::getPreset(int bank, int pre) {
     Preset retPreset{};
     if (pre > PRESETS_PER_BANK) {
@@ -138,6 +156,7 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre) {
     if (bank == 0) {
         return hwPresets.at(pre - 1);
     }
+    // TODO check if pre is in bounds
     string presetFilename = "/" + presetBanksNames[bank - 1][pre - 1];
     string presetJsonString;
     if (fileSystem.openFromFile(&presetFilename[0], presetJsonString)) {
@@ -147,6 +166,18 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre) {
         Serial.printf("Error while opening file %s, returning empty preset.", presetFilename.c_str());
         return retPreset;
     }
+}
+
+pair<int, int> SparkPresetBuilder::getBankPresetNumFromUUID(string uuid) {
+    pair<int, int> result;
+    try {
+        result = presetUUIDs.at(uuid);
+        DEBUG_PRINTF("Found UUID %s as preset %d - %d", uuid.c_str(), std::get<0>(result), std::get<1>(result));
+    } catch (std::out_of_range exception) {
+        Serial.print("Preset not found.");
+        result = make_pair(0, 0);
+    }
+    return result;
 }
 
 const int SparkPresetBuilder::getNumberOfBanks() const {
@@ -295,6 +326,8 @@ void SparkPresetBuilder::insertHWPreset(int number, const Preset &preset) {
         return;
     }
     hwPresets.at(number) = preset;
+    string uuid = preset.uuid;
+    updatePresetListUUID(0, number + 1, uuid);
 }
 
 void SparkPresetBuilder::resetHWPresets() {

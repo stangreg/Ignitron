@@ -1,29 +1,29 @@
 /*
- * SparkBLEControl.cpp
+ * SparkBTControl.cpp
  *
  *  Created on: 19.08.2021
  *      Author: stangreg
  */
 
-#include "SparkBLEControl.h"
+#include "SparkBTControl.h"
 
-bool SparkBLEControl::isAppConnectedSerial_ = false;
+bool SparkBTControl::isAppConnectedSerial_ = false;
 
-// ClientCallbacks SparkBLEControl::clientCB;
+// ClientCallbacks SparkBTControl::clientCB;
 
-SparkBLEControl::SparkBLEControl() {
+SparkBTControl::SparkBTControl() {
     // advDevCB = new AdvertisedDeviceCallbacks();
     advDevice = nullptr;
     spark_dc = nullptr;
 }
 
-SparkBLEControl::SparkBLEControl(SparkDataControl *dc) {
+SparkBTControl::SparkBTControl(SparkDataControl *dc) {
     // advDevCB = new AdvertisedDeviceCallbacks();
     advDevice = nullptr;
     spark_dc = dc;
 }
 
-SparkBLEControl::~SparkBLEControl() {
+SparkBTControl::~SparkBTControl() {
     Serial.println("Deleting BLE objects");
     if (advDevice) {
         delete advDevice;
@@ -36,7 +36,7 @@ SparkBLEControl::~SparkBLEControl() {
 }
 
 // Initializing BLE connection with NimBLE
-void SparkBLEControl::initBLE(notify_callback notifyCallback) {
+void SparkBTControl::initBLE(notify_callback notifyCallback) {
     // NimBLEDevice::init("");
     advDevice = new NimBLEAdvertisedDevice();
     notifyCB = notifyCallback;
@@ -65,21 +65,21 @@ void SparkBLEControl::initBLE(notify_callback notifyCallback) {
     pScan->start(scanTime, scanEndedCB);
 }
 
-void SparkBLEControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
+void SparkBTControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
     advDevice = device;
 }
 
-void SparkBLEControl::scanEndedCB(NimBLEScanResults results) {
+void SparkBTControl::scanEndedCB(NimBLEScanResults results) {
     Serial.println("Scan ended.");
 }
 
-void SparkBLEControl::startScan() {
+void SparkBTControl::startScan() {
     NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
     Serial.println("Scan initiated");
     spark_dc->resetStatus();
 }
 
-bool SparkBLEControl::connectToServer() {
+bool SparkBTControl::connectToServer() {
     /** Check if we have a client we should reuse first **/
     if (NimBLEDevice::getClientListSize()) {
         /** Special case when we already know this device, we send false as the
@@ -148,7 +148,7 @@ bool SparkBLEControl::connectToServer() {
     return true;
 }
 
-bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
+bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
 
     // Subscribe to notifications from Spark
     NimBLERemoteService *pSvc = nullptr;
@@ -198,7 +198,7 @@ bool SparkBLEControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBLEControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
+bool SparkBTControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
     // DEBUG_PRINTLN("Sending message:");
     // DEBUG_PRINTVECTOR(cmd);
     // DEBUG_PRINTLN();
@@ -266,7 +266,7 @@ bool SparkBLEControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) 
     }
 }
 
-void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
+void SparkBTControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
 
     if (advertisedDevice->isAdvertisingService(
             NimBLEUUID(SPARK_BLE_SERVICE_UUID))) {
@@ -282,7 +282,7 @@ void SparkBLEControl::onResult(NimBLEAdvertisedDevice *advertisedDevice) {
     }
 }
 
-void SparkBLEControl::startServer() {
+void SparkBTControl::startServer() {
     Serial.println("Starting NimBLE Server");
 
     /** sets device name */
@@ -360,7 +360,7 @@ void SparkBLEControl::startServer() {
     Serial.println("Advertising Started");
 }
 
-void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
+void SparkBTControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 
     // This method will be triggered if receiving data in AMP mode.
     DEBUG_PRINT(pCharacteristic->getUUID().toString().c_str());
@@ -377,8 +377,8 @@ void SparkBLEControl::onWrite(NimBLECharacteristic *pCharacteristic) {
     spark_dc->processSparkData(byteVector);
 }
 
-void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
-                                  ble_gap_conn_desc *desc, uint16_t subValue) {
+void SparkBTControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
+                                 ble_gap_conn_desc *desc, uint16_t subValue) {
     string str = "Address: ";
     str += string(NimBLEAddress(desc->peer_ota_addr)).c_str();
     if (subValue == 0) {
@@ -395,7 +395,7 @@ void SparkBLEControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
     Serial.println(str.c_str());
 };
 
-void SparkBLEControl::notifyClients(const vector<CmdData> &msg) {
+void SparkBTControl::notifyClients(const vector<CmdData> &msg) {
     if (pServer) {
         NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
         if (pSvc) {
@@ -431,15 +431,15 @@ void SparkBLEControl::notifyClients(const vector<CmdData> &msg) {
     }
 }
 
-void SparkBLEControl::onConnect(NimBLEServer *pServer_,
-                                ble_gap_conn_desc *desc) {
+void SparkBTControl::onConnect(NimBLEServer *pServer_,
+                               ble_gap_conn_desc *desc) {
     isAppConnectedBLE_ = true;
     Serial.println("Multi-connect support: start advertising");
     //	pServer->updateConnParams(desc->conn_handle, 40, 80, 5, 51);
     NimBLEDevice::startAdvertising();
 }
 
-void SparkBLEControl::onDisconnect(NimBLEServer *pServer_) {
+void SparkBTControl::onDisconnect(NimBLEServer *pServer_) {
     Serial.println("Client disconnected");
     isAppConnectedBLE_ = false;
     notificationCount = 0;
@@ -447,7 +447,7 @@ void SparkBLEControl::onDisconnect(NimBLEServer *pServer_) {
     NimBLEDevice::startAdvertising();
 }
 
-void SparkBLEControl::onDisconnect(NimBLEClient *pClient_) {
+void SparkBTControl::onDisconnect(NimBLEClient *pClient_) {
     isAmpConnected_ = false;
     isConnectionFound_ = false;
     if (!(NimBLEDevice::getScan()->isScanning())) {
@@ -456,7 +456,7 @@ void SparkBLEControl::onDisconnect(NimBLEClient *pClient_) {
     NimBLEClientCallbacks::onDisconnect(pClient_);
 }
 
-void SparkBLEControl::stopScan() {
+void SparkBTControl::stopScan() {
     if (isScanning()) {
         Serial.println("Scan stopped");
         NimBLEDevice::getScan()->stop();
@@ -465,7 +465,7 @@ void SparkBLEControl::stopScan() {
     }
 }
 
-void SparkBLEControl::serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
+void SparkBTControl::serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
     if (event == ESP_SPP_SRV_OPEN_EVT) {
         Serial.println("Client Connected");
         isAppConnectedSerial_ = true;
@@ -476,7 +476,7 @@ void SparkBLEControl::serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_
     }
 }
 
-void SparkBLEControl::startBTSerial() {
+void SparkBTControl::startBTSerial() {
     btSerial = new BluetoothSerial();
     btSerial->register_callback(serialCallback);
     // btStart();
@@ -489,7 +489,7 @@ void SparkBLEControl::startBTSerial() {
     }
 }
 
-void SparkBLEControl::stopBTSerial() {
+void SparkBTControl::stopBTSerial() {
     // Stop Bluetooth Serial
     btSerial->end();
     delete btSerial;
@@ -497,7 +497,7 @@ void SparkBLEControl::stopBTSerial() {
     Serial.println("BT Serial stopped");
 }
 
-void SparkBLEControl::stopBLEServer() {
+void SparkBTControl::stopBLEServer() {
 
     if (pServer) {
         Serial.println("Switching off BLE server");

@@ -108,8 +108,6 @@ void SparkDisplayControl::showBankAndPresetNum() {
 void SparkDisplayControl::showPresetName() {
 
     const string msg = SparkPresetControl::getInstance().responseMsg();
-    ostringstream selPresetStr;
-    selPresetStr << activePresetNum;
 
     // Rectangle color for preset name
     int rectColor;
@@ -145,24 +143,13 @@ void SparkDisplayControl::showPresetName() {
         display.setCursor(display_x1, 32);
         // If bank is not HW preset bank and the currently selected bank
         // is not the active one, show the pending preset name
-        if (pendingBank != 0 && activeBank != pendingBank) {
+        if (activeBank != pendingBank) {
             primaryLinePreset = pendingPreset;
-            primaryLineText = primaryLinePreset.name;
-
-            // if the bank is the HW one and is not the active one
-            // show only a generic name as we don't know the HW preset name upfront
-        } else if (pendingBank == 0 && activeBank != pendingBank) {
-            primaryLinePreset = activePreset;
-            if (primaryLinePreset.isEmpty) {
-                primaryLineText = "Hardware Preset " + selPresetStr.str();
-            } else {
-                primaryLineText = primaryLinePreset.name;
-            }
-            // Otherwise just show the active preset name
         } else {
             primaryLinePreset = activePreset;
-            primaryLineText = primaryLinePreset.name;
         }
+        primaryLineText = primaryLinePreset.name;
+
         // Reset scroll timer
         if (primaryLineText != previous_text1) {
             text_row_1_timestamp = millis();
@@ -444,31 +431,29 @@ void SparkDisplayControl::update(bool isInitBoot) {
         showPressedKey();
         showKeyboardLayout();
     } else {
+        SparkPresetControl &presetControl = SparkPresetControl::getInstance();
         display.setTextWrap(false);
-        activeBank = SparkPresetControl::getInstance().activeBank();
-        pendingBank = SparkPresetControl::getInstance().pendingBank();
-        activePreset = SparkPresetControl::getInstance().activePreset();
-        pendingPreset = SparkPresetControl::getInstance().pendingPreset();
+        activeBank = presetControl.activeBank();
+        pendingBank = presetControl.pendingBank();
+        activePreset = presetControl.activePreset();
+        pendingPreset = presetControl.pendingPreset();
         buttonMode = spark_dc->buttonMode();
-        activePresetNum = SparkPresetControl::getInstance().activePresetNum();
-        presetFromApp = SparkPresetControl::getInstance().appReceivedPreset();
-        presetEditMode = SparkPresetControl::getInstance().presetEditMode();
+        activePresetNum = presetControl.activePresetNum();
+        presetFromApp = presetControl.appReceivedPreset();
+        presetEditMode = presetControl.presetEditMode();
         isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
         opMode = spark_dc->operationMode();
         currentBTMode = spark_dc->currentBTMode();
         sparkLooperControl = spark_dc->looperControl();
 
         showConnection();
+        showModeModifier();
+        updateTextPositions();
+        showPresetName();
         if (opMode == SPARK_MODE_SPK_LOOPER) {
             showLooperTimer();
-            showModeModifier();
-            updateTextPositions();
-            showPresetName();
         } else {
             showBankAndPresetNum();
-            showModeModifier();
-            updateTextPositions();
-            showPresetName();
             showFX_SecondaryName();
 
             // in FX mode (manual mode) invert display

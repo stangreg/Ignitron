@@ -39,17 +39,22 @@ class SparkPresetBuilder {
 
 private:
     vector<vector<string>> presetBanksNames;
+    std::map<string, pair<int, int>> presetUUIDs;
     vector<Preset> hwPresets;
     eSPIFFS fileSystem;
     const char *presetListFileName = "/PresetList.txt";
     bool deletePresetFile(int bnk, int pre);
+    void updatePresetListUUID(int bnk, int pre, string uuid);
+    void initializePresetListFromFS();
+    void buildPresetUUIDs();
 
 public:
     SparkPresetBuilder();
     // string getJsonFromPreset(preset pset);
-    void initializePresetListFromFS();
+    
     void resetHWPresets();
     Preset getPreset(int bank, int preset);
+    pair<int, int> getBankPresetNumFromUUID(string uuid);
     const int getNumberOfBanks() const;
     Preset getPresetFromJson(char *json);
     int storePreset(Preset newPreset, int bnk, int pre);
