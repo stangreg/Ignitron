@@ -98,7 +98,7 @@ void loop() {
             // TEST: spark_dc.getSerialNumber();
             spark_dc.getAmpName();
             DEBUG_PRINTLN("Trying to communicate");
-            while (!(presetControl.allHWPresetsAvailable())) {
+            /*while (!(presetControl.allHWPresetsAvailable())) {
                 spark_dc.checkForUpdates();
                 // Reading button input
                 spark_bh.readButtons();
@@ -106,7 +106,7 @@ void loop() {
                 // spark_led.updateLEDs();
                 // Update display
                 spark_display.update(spark_dc.isInitBoot());
-            }
+            }*/
             // DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
             // spark_dc.switchPreset(spark_dc.pendingPresetNum(), true);
             spark_dc.getCurrentPresetFromSpark();

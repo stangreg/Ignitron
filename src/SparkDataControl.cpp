@@ -279,7 +279,6 @@ void SparkDataControl::resetStatus() {
     sparkAmpName = "Spark 40";
     with_delay = false;
     SparkPresetControl::getInstance().resetStatus();
-    init(operationMode_);
 }
 
 /////////////////////////////////////////////////////////
@@ -760,7 +759,7 @@ bool SparkDataControl::checkBLEConnection() {
         if (bleControl->connectToServer()) {
             bleControl->subscribeToNotifications(&bleNotificationCallback);
             Serial.println("BLE connection to Spark established.");
-            //delay(2000);
+            // delay(2000);
             return true;
         } else {
             Serial.println("Failed to connect, starting scan");

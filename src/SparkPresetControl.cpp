@@ -332,7 +332,10 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
     Preset receivedPreset = statusObject.currentPreset();
     int presetNumber = receivedPreset.presetNumber + 1;
 
-    if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || !isSpecial) {
+    // in case the preset is a HW preset and the current selected one,
+    // (or not coming from the background process to retrieve missing presets)
+    // if ((activePresetNum_ == presetNumber && pendingBank_ == 0) || !isSpecial) {
+    if (!isSpecial) {
         DEBUG_PRINTLN("Updating activePreset...");
         activePreset_ = statusObject.currentPreset();
         string uuid = receivedPreset.uuid;
@@ -342,15 +345,18 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
         DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
         updatePendingWithActive();
     }
-    // TODO: Not confirmed that this works. Issue: Reading preset from Spark and set Ignitron accordingly.
-    // In case we have a custom preset (how to check? Compare with HW presets?)
-    /*if (presetNumber == 128) {
-        activePreset_ = statusObject.currentPreset();
-    }*/
+
     if (isSpecial) {
         DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
         presetBuilder.insertHWPreset(presetNumber - 1, receivedPreset);
         statusObject.resetPresetUpdateFlag();
+        // Check if the received preset matches with the current active preset (=> update the number)
+        DEBUG_PRINTLN("Updating (special message)...");
+        string uuid = activePreset_.uuid;
+        pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
+        activeBank_ = std::get<0>(bankPreset);
+        activePresetNum_ = std::get<1>(bankPreset);
+        DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
     }
 }
 
