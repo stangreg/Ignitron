@@ -385,12 +385,8 @@ bool SparkDataControl::processAction() {
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
     int hw_preset = -1;
-    // TODO: Check if that can be left out
-    /*if (pendingBank_ == 0) {
-        hw_preset = activePresetNum_;
-    }*/
     current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
-    DEBUG_PRINTLN("Getting current preset from Spark");
+    Serial.println("Getting current preset from Spark");
 
     return triggerCommand(current_msg);
 }
@@ -613,10 +609,10 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_PRESET) {
             DEBUG_PRINTLN("Last message was a preset change.");
+            printMessage = true;
             // This preset number is between 0 and 3!
             bool isSpecial = lastMessageNumber == special_msg_num;
             SparkPresetControl::getInstance().updateFromSparkResponsePreset(isSpecial);
-            printMessage = true;
         }
 
         if (lastMessageType == MSG_TYPE_FX_ONOFF) {

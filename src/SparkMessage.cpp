@@ -316,7 +316,7 @@ vector<CmdData> SparkMessage::get_current_preset(byte msg_num, int hw_preset) {
         add_byte((byte)hw_preset - 1);
     }
 
-    // add trailing 30 bytes of 00
+    // add trailing 30 bytes of 00, seems to be optional
     /* for (int i = 0; i < 30; i++) {
          add_byte(0x00);
      }*/

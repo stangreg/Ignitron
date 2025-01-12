@@ -59,7 +59,7 @@ void SparkPresetControl::getMissingHWPresets() {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(500);
+                    delay(1000);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -204,7 +204,7 @@ void SparkPresetControl::writeLastPresetToFile() {
 
 void SparkPresetControl::checkForMissingPresets(void *args) {
     SparkPresetControl *presetControl = (SparkPresetControl *)args;
-    // delay(3000);
+    delay(3000);
     while (true) {
         presetControl->getMissingHWPresets();
         delay(1000);
@@ -212,7 +212,8 @@ void SparkPresetControl::checkForMissingPresets(void *args) {
 }
 
 void SparkPresetControl::updatePendingPreset(int bnk) {
-    pendingPreset_ = getPreset(bnk, activePresetNum_);
+    int presetNum = activePresetNum_ == 0 ? 1 : activePresetNum_;
+    pendingPreset_ = getPreset(bnk, presetNum);
 }
 
 void SparkPresetControl::updatePendingWithActive() {
@@ -274,8 +275,6 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
     if (retValue == true) {
         activeBank_ = bnk;
         activePresetNum_ = pre;
-        Serial.println("Writing current Preset to file.");
-        // writeLastPresetToFile();
     }
 
     return retValue;

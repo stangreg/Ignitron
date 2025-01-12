@@ -294,7 +294,8 @@ void SparkDisplayControl::showModeModifier() {
     if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
         presetText = "*";
     }
-    if (opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
+    // Spark 2 built-in Looper
+    if (opMode == SPARK_MODE_SPK_LOOPER) {
         // If in Looper mode, show an "L" for Looper mode
         display.setTextSize(2);
         if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
@@ -302,6 +303,11 @@ void SparkDisplayControl::showModeModifier() {
         } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
             presetText = "C";
         }
+    }
+    // Looper app
+    if (opMode == SPARK_MODE_LOOPER) {
+        // If in Looper mode, show an "L" for Looper mode
+        presetText = "L";
     }
     display.print(presetText.c_str());
 }
