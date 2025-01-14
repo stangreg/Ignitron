@@ -83,6 +83,16 @@ struct Preset {
         isEmpty = true;
     }
 
+    bool isEqual(Preset *otherPreset) {
+        string compareStringThis = name + uuid;
+        string compareStringOther = otherPreset->name + otherPreset->uuid;
+
+        if (compareStringThis.compare(compareStringOther) == 0) {
+            return true;
+        }
+        return false;
+    }
+
     string json;
     // Raw and text might not be filled (when read from the stored presets).
     string raw;

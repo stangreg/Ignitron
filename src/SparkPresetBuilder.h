@@ -10,8 +10,8 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <FS.h>
 #include <Effortless_SPIFFS.h>
+#include <FS.h>
 #include <algorithm>
 #include <regex>
 
@@ -32,33 +32,36 @@
 #define DELETE_PRESET_ERROR_OPEN 3
 #define DELETE_PRESET_UNKNOWN_ERROR 4
 
-
 using namespace std;
 using ByteVector = vector<byte>;
 
-class SparkPresetBuilder{
+class SparkPresetBuilder {
 
 private:
-	vector<vector<string>> presetBanksNames;
-	vector<Preset> hwPresets;
-	eSPIFFS fileSystem;
-	const char* presetListFileName = "/PresetList.txt";
-	bool deletePresetFile(int bnk, int pre);
+    vector<vector<string>> presetBanksNames;
+    std::map<string, pair<int, int>> presetUUIDs;
+    vector<Preset> hwPresets;
+    eSPIFFS fileSystem;
+    const char *presetListFileName = "/PresetList.txt";
+    bool deletePresetFile(int bnk, int pre);
+    void updatePresetListUUID(int bnk, int pre, string uuid);
+    void initializePresetListFromFS();
+    void buildPresetUUIDs();
 
 public:
-	SparkPresetBuilder();
-	//string getJsonFromPreset(preset pset);
-	void initializePresetListFromFS();
-	void resetHWPresets();
-	Preset getPreset(int bank, int preset);
-	int getNumberOfBanks();
-	Preset getPresetFromJson(char* json);
-	int storePreset(Preset newPreset, int bnk, int pre);
-	int deletePreset(int bnk, int pre);
+    SparkPresetBuilder();
+    // string getJsonFromPreset(preset pset);
+    
+    void resetHWPresets();
+    Preset getPreset(int bank, int preset);
+    pair<int, int> getBankPresetNumFromUUID(string uuid);
+    const int getNumberOfBanks() const;
+    Preset getPresetFromJson(char *json);
+    int storePreset(Preset newPreset, int bnk, int pre);
+    int deletePreset(int bnk, int pre);
 
-	void insertHWPreset(int number, const Preset& preset);
-	bool isHWPresetMissing(int num);
-
+    void insertHWPreset(int number, const Preset &preset);
+    bool isHWPresetMissing(int num);
 };
 
 #endif

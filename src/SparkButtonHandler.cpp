@@ -8,21 +8,16 @@
 #include "SparkButtonHandler.h"
 
 // Intialize buttons
-BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET2_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET3_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET4_GPIO, false,
-                                         HIGH);
-BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_DOWN_GPIO,
-                                           false, HIGH);
-BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false,
-                                         HIGH);
+BfButton SparkButtonHandler::btn_preset1(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET1_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset2(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET2_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset3(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET3_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_preset4(BfButton::STANDALONE_DIGITAL, BUTTON_PRESET4_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_bank_down(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_DOWN_GPIO, false, HIGH);
+BfButton SparkButtonHandler::btn_bank_up(BfButton::STANDALONE_DIGITAL, BUTTON_BANK_UP_GPIO, false, HIGH);
 
 // Initialize SparkDataControl;
 SparkDataControl *SparkButtonHandler::spark_dc = nullptr;
+SparkPresetControl &SparkButtonHandler::presetControl = SparkPresetControl::getInstance();
 KeyboardMapping SparkButtonHandler::currentKeyboard;
 
 SparkButtonHandler::SparkButtonHandler() {
@@ -205,7 +200,7 @@ void SparkButtonHandler::configureAmpButtons() {
     // Delete stored preset
     btn_bank_down.onPressFor(btnDeletePresetHandler, LONG_BUTTON_PRESS_TIME);
     // Switch between BT / BLE mode (only works once, then will cause crash)
-    btn_bank_up.onPressFor(btnToggleBTMode, LONG_BUTTON_PRESS_TIME);
+    btn_bank_up.onPressFor(btnToggleBTModeHandler, LONG_BUTTON_PRESS_TIME);
 
     // Reset Ignitron
     btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -293,8 +288,8 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
     configureButtons();
 }
 
-void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
-                                         BfButton::press_pattern_t pattern) {
+void SparkButtonHandler::btnToggleBTModeHandler(BfButton *btn,
+                                                BfButton::press_pattern_t pattern) {
 
     if (!spark_dc) {
         Serial.println("SparkDataControl not setup yet, ignoring button press.");
@@ -308,6 +303,15 @@ void SparkButtonHandler::btnToggleBTMode(BfButton *btn,
 #endif
 
     spark_dc->toggleBTMode();
+}
+
+void SparkButtonHandler::btnTESTHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
+    DEBUG_PRINTLN("TEST funcction: Get current preset from Spark");
+    if (!spark_dc) {
+        Serial.println("SparkDataControl not setup yet, ignoring button press.");
+        return;
+    }
+    spark_dc->getCurrentPresetFromSpark();
 }
 
 void SparkButtonHandler::btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
@@ -430,7 +434,7 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
 
     // Change selected preset
     int selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
-    spark_dc->processPresetSelect(selectedPresetNum);
+    presetControl.processPresetSelect(selectedPresetNum);
 }
 
 // Buttons to change the preset banks in preset mode and some other FX in FX mode
@@ -447,9 +451,9 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
     DEBUG_PRINTLN(pressed_btn_gpio);
 
     if (pressed_btn_gpio == BUTTON_BANK_DOWN_GPIO) {
-        spark_dc->decreaseBank();
+        presetControl.decreaseBank();
     } else if (pressed_btn_gpio == BUTTON_BANK_UP_GPIO) {
-        spark_dc->increaseBank();
+        presetControl.increaseBank();
     }
 }
 
@@ -487,7 +491,7 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
 
-    spark_dc->handleDeletePreset();
+    presetControl.handleDeletePreset();
 }
 
 void SparkButtonHandler::btnResetHandler(BfButton *btn,

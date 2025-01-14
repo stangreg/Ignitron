@@ -14,29 +14,12 @@
 
 #include "Config_Definitions.h"
 #include "SparkHelper.h"
+#include "SparkStatus.h"
 #include "SparkTypes.h"
 #include "StringBuilder.h"
 
 using namespace std;
 using ByteVector = vector<byte>;
-
-#define MSG_TYPE_PRESET 1
-#define MSG_TYPE_HWPRESET 2
-#define MSG_TYPE_FX_ONOFF 3
-#define MSG_TYPE_FX_CHANGE 4
-#define MSG_TYPE_FX_PARAM 5
-#define MSG_TYPE_AMP_NAME 6
-#define MSG_TYPE_LOOPER_SETTING 7
-#define MSG_TYPE_TAP_TEMPO 8
-#define MSG_TYPE_MEASURE 9
-#define MSG_TYPE_LOOPER_COMMAND 10
-#define MSG_TYPE_LOOPER_STATUS 11
-
-#define MSG_REQ_SERIAL = 21
-#define MSG_REQ_FW_VER = 22
-#define MSG_REQ_PRESET_CHK = 23
-#define MSG_REQ_CURR_PRESET_NUM = 24
-#define MSG_REQ_CURR_PRESET = 25
 
 #define MSG_PROCESS_RES_COMPLETE 1
 #define MSG_PROCESS_RES_INCOMPLETE 2
@@ -48,45 +31,24 @@ class SparkStreamReader {
 
 private:
     StringBuilder sb;
+    SparkStatus &statusObject = SparkStatus::getInstance();
     // Vector containing struct of cmd, sub_cmd, and payload
     vector<CmdData> message = {};
     // Unstructured input data, needs to go through structure_data first
     vector<ByteVector> unstructured_data = {};
 
     // payload of a CmdData object to be interpreted. msg_pos is pointing at the next byte to read
-    ByteVector msg;
+    ByteVector msg_data;
     int msg_pos;
     // indicator if a block received is the last one
     bool msg_last_block = false;
     vector<ByteVector> response;
 
-    // In case a preset was received from Spark, it is saved here. Can then be read by main program
-    Preset currentPreset_;
-    Pedal currentEffect_;
-    // Preset number. Can be retrieved by main program in case it has been updated by Spark Amp.
-    int currentPresetNumber_ = 0;
-    // Flags to indicate that either preset or presetNumber have been updated
-    boolean isPresetUpdated_ = false;
-    boolean isPresetNumberUpdated_ = false;
-    boolean isEffectUpdated_ = false;
-    vector<AckData> acknowledgments;
-    int last_message_type_ = 0;
-    byte last_message_num_ = 0x00;
-    byte last_requested_preset = 0x00;
-    string ampName_ = "";
-    float measure_;
     byte last_read_byte;
     const byte end_marker = 0xF7;
 
-    LooperSetting looperSetting_;
-    boolean isLooperSettingUpdated_ = false;
-
-    byte lastLooperCommand_;
-    int numberOfLoops_;
-
     // Functions to process calls based on identified cmd/sub_cmd.
-    void
-    read_amp_name();
+    void read_amp_name();
     void read_effect_parameter();
     void read_effect();
     void read_effect_onoff();
@@ -120,38 +82,14 @@ private:
     boolean isValidBlockWithoutHeader(const ByteVector &blk);
 
 public:
-    // Constructors
     SparkStreamReader();
+
     // setting the messag so it can be structured and interpreted
     void setMessage(const vector<ByteVector> &msg_);
+    const vector<CmdData> lastMessage() const { return message; }
+
     string getJson();
 
-    // Preset related methods to make information public
-    const Preset currentPreset() const { return currentPreset_; }
-    const int currentPresetNumber() const { return currentPresetNumber_; }
-    const boolean isPresetNumberUpdated() const { return isPresetNumberUpdated_; }
-    const boolean isPresetUpdated() const { return isPresetUpdated_; }
-    const boolean isLooperSettingUpdated() const { return isLooperSettingUpdated_; }
-    const LooperSetting currentLooperSetting() const { return looperSetting_; }
-    const Pedal currentEffect() const { return currentEffect_; }
-    const boolean isEffectUpdated() const { return isEffectUpdated_; }
-    const byte lastLooperCommand() const { return lastLooperCommand_; }
-    const int numberOfLoops() const { return numberOfLoops_; }
-
-    const int lastMessageType() const { return last_message_type_; }
-    const byte lastMessageNum() const {
-        return last_message_num_;
-    }
-    const vector<CmdData> lastMessage() const {
-        return message;
-    }
-    string getAmpName() { return ampName_; }
-    float getMeasure() { return measure_; }
-
-    void resetPresetNumberUpdateFlag();
-    void resetPresetUpdateFlag();
-    void resetLooperSettingUpdateFlag();
-    void resetLastMessageType();
     tuple<boolean, byte, byte> needsAck(const ByteVector &block);
     int processBlock(ByteVector &block);
     AckData getLastAckAndEmpty();

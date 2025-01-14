@@ -14,6 +14,7 @@
 
 #include "SparkDataControl.h"
 #include "SparkLooperControl.h"
+#include "SparkPresetControl.h"
 #include "SparkTypes.h"
 
 // OLED Screen config
@@ -47,9 +48,9 @@ private:
     SparkDataControl *spark_dc;
     int activeBank = 1;
     int pendingBank = 1;
-    const Preset *activePreset;
-    const Preset *pendingPreset;
-    const Preset *presetFromApp;
+    Preset activePreset;
+    Preset pendingPreset;
+    Preset presetFromApp;
     int presetEditMode;
     int buttonMode = 1;
     int activePresetNum = 1;
@@ -61,9 +62,9 @@ private:
     const SparkLooperControl *sparkLooperControl;
 
     string primaryLineText;
-    const Preset *primaryLinePreset;
+    Preset primaryLinePreset;
     string secondaryLineText;
-    const Preset *secondaryLinePreset;
+    Preset secondaryLinePreset;
     string currentBTModeText;
 
     string lowerButtonsShort;

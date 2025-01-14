@@ -41,7 +41,7 @@ A (rudimentary and incomplete) doxygen documentation has been created [here](htt
 | Class/File | Function |
 |---|---|
 | Ignitron.ino | Basic .ino file which only provides the setup() and loop() functions. It invokes the other control classes (see below) and controls the execution loop |
-| SparkBLEControl | Controls the communication via Bluetooth LE protocol. Holds the connections to the Spark Amp and the App. |
+| SparkBTControl | Controls the communication via Bluetooth LE and Serial protocol. Holds the connections to the Spark Amp and the App. |
 | SparkBLEKeyboard | BLE Keyboard class, inherited from BleKeyboard. Adds start method to enable/disable easily |
 | SparkButtonHandler | Registers HW button presses and delegates execution to the control classes. |
 | **SparkDataControl** | **This is the core control class. It controls data flow and status across all other control classes.** |
@@ -50,6 +50,8 @@ A (rudimentary and incomplete) doxygen documentation has been created [here](htt
 | SparkLEDControl | Controls the LEDs depending on current status |
 | SparkMessage | Builds command messages to be sent to the Spark Amp via BLE |
 | SparkPresetBuilder | This transforms JSON file input to presets and vice versa, also builds the preset banks. |
+| SparkPresetControl | Manages current status of active and pending presets and switching between presets. |
+| SparkStatus | Holds the current messages received from the app (preset, number, looper status etc.). |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
 | SparkTypes | Container class to hold Preset and CommandData structs |
 | Config_Definitions | Configuration items to map LEDs and buttons to GPIOs, enable DEBUG mode, and other technical definitions |

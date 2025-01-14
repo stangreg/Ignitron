@@ -5,3 +5,4 @@
 .vscode/ipch
 *.log
 *.cpp
+node_modules/

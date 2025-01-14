@@ -10,6 +10,7 @@
 #include "src/SparkDataControl.h"
 #include "src/SparkDisplayControl.h"
 #include "src/SparkLEDControl.h"
+#include "src/SparkPresetControl.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ SparkDataControl spark_dc;
 SparkButtonHandler spark_bh;
 SparkLEDControl spark_led;
 SparkDisplayControl spark_display;
+SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
 unsigned long lastInitialPresetTimestamp = 0;
 unsigned long currentTimestamp = 0;
@@ -94,12 +96,13 @@ void loop() {
             // This is only done once after the connection has been established
             // Read AMP name to determine special parameters
             // TEST: spark_dc.getSerialNumber();
-            DEBUG_PRINTLN("Trying to communicate");
             spark_dc.getAmpName();
-            // DEBUG_PRINTLN("Initial boot, setting preset to HW 1");
-            spark_dc.switchPreset(1, true);
-            //spark_dc.configureLooper();
+            DEBUG_PRINTLN("Trying to communicate");
+            delay(500);
+            spark_dc.getCurrentPresetFromSpark();
+            // spark_dc.getCurrentPresetNum();
             spark_dc.isInitBoot() = false;
+            // spark_dc.configureLooper();
         }
     }
 

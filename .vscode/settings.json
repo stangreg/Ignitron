@@ -6,7 +6,11 @@
         "optional": "cpp",
         "*.tcc": "cpp",
         "cstdlib": "cpp",
-        "regex": "cpp"
-    },
-    "cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe"
+        "regex": "cpp",
+        "unordered_map": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp"
+    }
 }

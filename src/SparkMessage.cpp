@@ -309,14 +309,14 @@ vector<CmdData> SparkMessage::get_current_preset(byte msg_num, int hw_preset) {
     DEBUG_PRINTF("Getting preset with message number %s\n", SparkHelper::intToHex(msg_num).c_str());
     start_message(cmd, sub_cmd);
     if (hw_preset == -1) {
-        add_byte(0x10);
+        add_byte(0x01);
         add_byte(0x00);
     } else {
         add_byte(0x00);
         add_byte((byte)hw_preset - 1);
     }
 
-    // add trailing 30 bytes of 00
+    // add trailing 30 bytes of 00, seems to be optional
     /* for (int i = 0; i < 30; i++) {
          add_byte(0x00);
      }*/
@@ -469,7 +469,7 @@ vector<CmdData> SparkMessage::send_hw_preset_number(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<CmdData> SparkMessage::create_preset(const Preset &preset_data,
+vector<CmdData> SparkMessage::change_preset(const Preset &preset_data,
                                             int direction, byte msg_num) {
 
     if (direction == DIR_TO_SPARK) {
