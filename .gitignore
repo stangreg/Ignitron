@@ -6,3 +6,5 @@
 *.log
 *.cpp
 node_modules/
+logs/
+.venv/
