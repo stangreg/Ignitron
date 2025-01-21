@@ -45,6 +45,10 @@ int SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = "Spark 2";
 bool SparkDataControl::with_delay = false;
 
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+int SparkDataControl::batteryLevel_ = BATTERY_LEVEL_0;
+#endif
+
 bool SparkDataControl::isInitBoot_ = true;
 byte SparkDataControl::special_msg_num = 0xEE;
 
@@ -269,6 +273,25 @@ void SparkDataControl::readBTModeFromFile() {
     }
 }
 
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+void SparkDataControl::updateBatteryLevel() {
+    const int analogReading = analogRead(BATTERY_VOLTAGE_ADC_PIN);
+    // analogReading ranges from 0 to 4095
+    // 0V = 0, 3.3V = 4095
+    float analogVoltage = (analogReading / 4095.0) * 3.3;
+    float batteryVoltage = analogVoltage / VOLTAGE_DIVIDER_R1 * (VOLTAGE_DIVIDER_R1 + VOLTAGE_DIVIDER_R2);
+
+    // Set battery level
+    batteryLevel_ = batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10
+                        ? BATTERY_LEVEL_0
+                    : batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50
+                        ? BATTERY_LEVEL_1
+                    : batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90
+                        ? BATTERY_LEVEL_2
+                        : BATTERY_LEVEL_3;
+}
+#endif
+
 void SparkDataControl::resetStatus() {
     // isInitBoot_ = true;
     operationMode_ = SPARK_MODE_APP;
@@ -279,6 +302,9 @@ void SparkDataControl::resetStatus() {
     sparkAmpName = "Spark 40";
     with_delay = false;
     SparkPresetControl::getInstance().resetStatus();
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    batteryLevel_ = BATTERY_LEVEL_0;
+#endif
 }
 
 /////////////////////////////////////////////////////////

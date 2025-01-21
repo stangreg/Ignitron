@@ -112,6 +112,10 @@ void loop() {
     }
     // Reading button input
     spark_bh.readButtons();
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    // Update battery level
+    spark_dc.updateBatteryLevel();
+#endif
     // Update LED status
     spark_led.updateLEDs();
     // Update display
