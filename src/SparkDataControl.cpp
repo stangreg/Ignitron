@@ -302,9 +302,6 @@ void SparkDataControl::resetStatus() {
     sparkAmpName = "Spark 40";
     with_delay = false;
     SparkPresetControl::getInstance().resetStatus();
-#ifdef ENABLE_BATTERY_STATUS_INDICATOR
-    batteryLevel_ = BATTERY_LEVEL_0;
-#endif
 }
 
 /////////////////////////////////////////////////////////
