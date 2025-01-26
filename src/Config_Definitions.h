@@ -25,7 +25,54 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.7.1";
+const string VERSION = "1.7.2";
+
+// Battery indicator
+// Note: This battery is for the Ignitron controller, not the Spark amp.
+//
+// As ESP32 only support ADC input less than 3.3V, will use a voltage divider built by two
+// simple resistors in serial to pull down the voltage ESP32's ADC pin receives.
+//
+// Connection:
+//   GND(Battery-) - resistor 1 - resistor 2 - Battery+
+//   ESP ADC pin________________|
+//
+// ESP32 ADC pin support ADC input in 0V to 3.3V, choose the right combination of the resistors,
+// make sure the maximum voltage ESP32 receives on voltage pin is less than 3.3V.
+// For example, for a 3S Li-ion Battery pack, battery voltage ranges from 9V to 12.6V,
+// choosing 5.1k ohm resistor for resistor 1, and 15k ohm resistor for resistor 2,
+// so: VoltageOnADCPin = BatteryVoltage / (5.1k + 15k) * 5.1k
+// When battery is full, VoltageOnADCPin = 12.6V / (5.1k + 15k) * 5.1k ~= 3.197V < 3.3V,
+// so this voltage divider setting is suitable for this need.
+
+// #define ENABLE_BATTERY_STATUS_INDICATOR
+
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+#define BATTERY_VOLTAGE_ADC_PIN 36
+#define BATTERY_LEVEL_0 0 // 0-10%
+#define BATTERY_LEVEL_1 1 // 10-50%
+#define BATTERY_LEVEL_2 2 // 50-90%
+#define BATTERY_LEVEL_3 3 // 90-100%
+
+#define BATTERY_TYPE_LI_ION 0
+#define BATTERY_TYPE_LI_FE_PO4 1
+
+#define BATTERY_TYPE BATTERY_TYPE_LI_ION // Choose from BATTERY_TYPE_LI_ION or BATTERY_TYPE_LI_FE_PO4
+#define BATTERY_CELLS 3
+#define VOLTAGE_DIVIDER_R1 (5.1 * 1000) // 5.1k ohm
+#define VOLTAGE_DIVIDER_R2 (15 * 1000)  // 15k ohm
+
+#if BATTERY_TYPE == BATTERY_TYPE_LI_ION
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_CELLS * 4.1)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_CELLS * 3.7)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_CELLS * 3.3)
+#elif BATTERY_TYPE == BATTERY_TYPE_LI_FE_PO4
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_CELLS * 3.35)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_CELLS * 3.26)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_CELLS * 3.0)
+#endif
+
+#endif
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 23

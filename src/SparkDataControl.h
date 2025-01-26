@@ -105,6 +105,10 @@ public:
 
     const int currentBTMode() const { return currentBTMode_; }
 
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    const int batteryLevel() const { return batteryLevel_;}
+#endif
+
     // Set/get button mode
     const int &buttonMode() const { return buttonMode_; }
     int &buttonMode() { return buttonMode_; }
@@ -153,6 +157,11 @@ public:
     void resetLastKeyboardButtonPressed();
 
     void restartESP(bool resetSparkMode = false);
+
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    // Battery level
+    void updateBatteryLevel();
+#endif
 
 private:
     static int operationMode_;
@@ -203,8 +212,13 @@ private:
     static string sparkAmpName;
     static bool with_delay;
 
-    // keep track which HW presets have been read so far
-    static bool isInitBoot_;
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    // Battery level
+    static int batteryLevel_;
+#endif
+
+        // keep track which HW presets have been read so far
+        static bool isInitBoot_;
     static byte special_msg_num;
 
     static byte nextMessageNum;

@@ -8,7 +8,7 @@
 #include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                              &Wire, OLED_RESET);
+    &Wire, OLED_RESET);
 
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
@@ -48,7 +48,7 @@ void SparkDisplayControl::init(int mode) {
 
 void SparkDisplayControl::showInitialMessage() {
     display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
-                       SSD1306_WHITE);
+        SSD1306_WHITE);
     display.setTextSize(2);
 
     string modeText;
@@ -336,10 +336,47 @@ void SparkDisplayControl::showConnection() {
     display.setCursor(xPosText, yPosText);
     display.print(currentBTModeText.c_str());
 
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+    // If enable battery SOC, move the BT symbol to the left
+    xPosSymbol -= 5;
+#endif
+
     if (isBTConnected) {
         display.drawBitmap(xPosSymbol, yPosSymbol, epd_bitmap_bt_logo, symbolWidth, symbolHeight, color);
     }
 }
+
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+// Show battery status indicator with a voltage divider
+// 0-4095 for 0v-3.3v
+void SparkDisplayControl::showBatterySymbol() {
+    // Display the Battery symbols
+    int xPosSymbol = (display.width() / 2.0);
+    int yPosSymbol = 11;
+    int symbolWidth = 9;
+    int symbolHeight = 15;
+
+    uint16_t color = SSD1306_WHITE;
+    const unsigned char *battery_icon;
+    switch (batteryLevel) {
+        case BATTERY_LEVEL_0:
+            battery_icon = epd_bitmap_battery_level_0;
+            break;
+        case BATTERY_LEVEL_1:
+            battery_icon = epd_bitmap_battery_level_1;
+            break;
+        case BATTERY_LEVEL_2:
+            battery_icon = epd_bitmap_battery_level_2;
+            break;
+        case BATTERY_LEVEL_3:
+        default:
+            battery_icon = epd_bitmap_battery_level_3;
+            break;
+    }
+
+    display.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);
+}
+#endif
 
 void SparkDisplayControl::showPressedKey() {
 
@@ -380,8 +417,8 @@ void SparkDisplayControl::initKeyboardLayoutStrings() {
     lowerButtonsLong = currentKeyboard.keyboardLongPress[0].display.append(spacerText).append(currentKeyboard.keyboardLongPress[1].display).append(spacerText).append(currentKeyboard.keyboardLongPress[2].display).append(spacerText).append(currentKeyboard.keyboardLongPress[3].display);
 
     upperButtonsLong = currentKeyboard.keyboardLongPress[4].display
-                           //.append(spacerText)
-                           .append(currentKeyboard.keyboardLongPress[5].display);
+        //.append(spacerText)
+        .append(currentKeyboard.keyboardLongPress[5].display);
 }
 
 void SparkDisplayControl::showKeyboardLayout() {
@@ -453,6 +490,10 @@ void SparkDisplayControl::update(bool isInitBoot) {
         sparkLooperControl = spark_dc->looperControl();
 
         showConnection();
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+        batteryLevel = spark_dc->batteryLevel();
+        showBatterySymbol();
+#endif
         showModeModifier();
         updateTextPositions();
         showPresetName();
@@ -509,7 +550,7 @@ void SparkDisplayControl::updateTextPositions() {
 }
 
 void SparkDisplayControl::drawCentreString(const char *buf,
-                                           int y, int offset) {
+    int y, int offset) {
     int16_t x1, y1;
     uint16_t w, h;
     int displayMid = display.width() / 2;
@@ -520,7 +561,7 @@ void SparkDisplayControl::drawCentreString(const char *buf,
 }
 
 void SparkDisplayControl::drawRightAlignedString(const char *buf,
-                                                 int y, int offset) {
+    int y, int offset) {
     int16_t x1, y1;
     uint16_t w, h;
     int x = 0;
