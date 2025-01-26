@@ -54,7 +54,7 @@ A (rudimentary and incomplete) doxygen documentation has been created [here](htt
 | SparkStatus | Holds the current messages received from the app (preset, number, looper status etc.). |
 | SparkStreamReader | Decoding of received data from Spark Amp or Spark App for further processing |
 | SparkTypes | Container class to hold Preset and CommandData structs |
-| Config_Definitions | Configuration items to map LEDs and buttons to GPIOs, enable DEBUG mode, and other technical definitions |
+| Config_Definitions | Configuration items to map LEDs and buttons to GPIOs, enable DEBUG mode, enable additional features, and other technical definitions |
 
 ## Building the code
 After setting up the project in the IDE, the code should build with the standard tool chain.
@@ -74,3 +74,25 @@ After building and installing the firmware on the board, it is required to also 
 In case you don't like the default presets, you can delete the presets you don't want, and also change the file *PresetList.txt* accordingly. This file contains the file names of the presets to use. Lines starting with `--` are ignored.
 
 **Note:** Be aware that when storing or deleting a preset to Ignitron using the AMP mode, the file is automatically rewritten, so custom commented lines will be removed.
+
+## Additional Features
+
+### Battery Indicator
+
+Starting from version 1.7.2, Ignitron can be powered by an internal battery pack and displays the remaining capacity on the LED screen.
+
+Benefits of using an internal battery:
+
+- No AC adapter, fewer cables, and no buzzing from the AC adapter.
+- Can use the battery to power other pedals.
+
+To enable this feature:
+
+1. Follow the battery indicator section of the hardware guide in [hardware/README.md](../hardware/README.md#battery-indicator) and wire the hardware components.
+2. Go to [src/Config_Definitions.h](Config_Definitions.h) and uncomment `#define ENABLE_BATTERY_STATUS_INDICATOR` by removing the `//` at the beginning of that line.
+3. Select the type of battery you are using. The default settings are for Li-ion batteries. If you are using LiFePO4 batteries, change the `#define BATTERY_TYPE` line to `#define BATTERY_TYPE BATTERY_TYPE_LI_FE_PO4`.
+4. Select the series type. The default is for 3S batteries. Change the `#define BATTERY_CELLS` line to `#define BATTERY_CELLS 2` if you are using a 2S battery pack.
+5. If you have custom resistors for the voltage divider, change `#define VOLTAGE_DIVIDER_R1` and `#define VOLTAGE_DIVIDER_R2` accordingly.
+6. Build and flash the ESP32 with the new settings.
+
+There will be a battery indicator in APP Mode with four states for different levels: 0-10%, 10-50%, 50-90%, 90-100%.
