@@ -251,12 +251,20 @@ bool SparkBTControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
                 //}  // if can write
             } // if pChr
             else {
-                Serial.printf("Characteristic %s not found.\n",
+                Serial.printf("Characteristic %s not found. Disconnecting client.\n",
                               SPARK_BLE_WRITE_CHAR_UUID);
+                // Disconnect if write failed
+                pClient->disconnect();
+                isAmpConnected_ = false;
+                return false;
             }
         } // if pSvc
         else {
-            Serial.printf("%s service not found.\n", SPARK_BLE_SERVICE_UUID);
+            Serial.printf("%s service not found. Disconnecting client.\n", SPARK_BLE_SERVICE_UUID);
+            // Disconnect if write failed
+            pClient->disconnect();
+            isAmpConnected_ = false;
+            return false;
         }
         DEBUG_PRINTLN("Done with this command!");
         return true;
