@@ -111,6 +111,7 @@ void loop() {
         spark_dc.checkForUpdates();
     }
     // Reading button input
+    spark_bh.configureButtons();
     spark_bh.readButtons();
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Update battery level
