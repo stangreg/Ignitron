@@ -52,6 +52,7 @@ private:
     void updateLED_AMP();
     void updateLED_KEYBOARD();
     void updateLED_LooperMode();
+    void updateLED_TUNER();
 
     void allLedOff();
     void switchLED(int num, bool on = true);

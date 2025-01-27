@@ -59,7 +59,7 @@ void SparkPresetControl::getMissingHWPresets() {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(1000);
+                    delay(1500);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -369,7 +369,7 @@ void SparkPresetControl::updateFromSparkResponseAmpPreset(string presetJson) {
 
 void SparkPresetControl::updateFromSparkResponseACK() {
     if (activeBank_ == 0) {
-        setActiveHWPreset();
+        // setActiveHWPreset();
         updatePendingWithActive();
     } else {
         updateActiveWithPendingPreset();

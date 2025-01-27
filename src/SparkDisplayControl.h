@@ -105,6 +105,9 @@ private:
     string previous_text1 = "";
     string previous_text2 = "";
 
+    string currentNote = "  ";
+    int noteOffsetCents = 0;
+
     SparkDataControl *dataControl() { return spark_dc; }
     void showInitialMessage();
     void showConnection();
@@ -122,8 +125,13 @@ private:
     void initKeyboardLayoutStrings();
     void showKeyboardLayout();
 
+    void showTunerNote();
+    void showTunerOffset();
+    void showTunerGraphic();
+
     void drawCentreString(const char *buf, int y, int offset = 0);
     void drawRightAlignedString(const char *buf, int y, int offset = 0);
+    void drawTunerTriangleCentre(int x, int size, bool direction, int color = SSD1306_WHITE);
     void drawInvertBitmapColor(int16_t x, int16_t y, const uint8_t *bitmap,
                                int16_t w, int16_t h, uint16_t color);
 

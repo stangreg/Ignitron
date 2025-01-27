@@ -60,6 +60,8 @@ private:
     void read_looper_status();
     void read_tap_tempo();
     void read_measure();
+    void read_tuner();
+    void read_tuner_onoff();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);

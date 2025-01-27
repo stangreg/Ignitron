@@ -8,7 +8,7 @@
 #include "SparkDisplayControl.h"
 
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
-    &Wire, OLED_RESET);
+                                              &Wire, OLED_RESET);
 
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
@@ -48,7 +48,7 @@ void SparkDisplayControl::init(int mode) {
 
 void SparkDisplayControl::showInitialMessage() {
     display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
-        SSD1306_WHITE);
+                       SSD1306_WHITE);
     display.setTextSize(2);
 
     string modeText;
@@ -359,19 +359,19 @@ void SparkDisplayControl::showBatterySymbol() {
     uint16_t color = SSD1306_WHITE;
     const unsigned char *battery_icon;
     switch (batteryLevel) {
-        case BATTERY_LEVEL_0:
-            battery_icon = epd_bitmap_battery_level_0;
-            break;
-        case BATTERY_LEVEL_1:
-            battery_icon = epd_bitmap_battery_level_1;
-            break;
-        case BATTERY_LEVEL_2:
-            battery_icon = epd_bitmap_battery_level_2;
-            break;
-        case BATTERY_LEVEL_3:
-        default:
-            battery_icon = epd_bitmap_battery_level_3;
-            break;
+    case BATTERY_LEVEL_0:
+        battery_icon = epd_bitmap_battery_level_0;
+        break;
+    case BATTERY_LEVEL_1:
+        battery_icon = epd_bitmap_battery_level_1;
+        break;
+    case BATTERY_LEVEL_2:
+        battery_icon = epd_bitmap_battery_level_2;
+        break;
+    case BATTERY_LEVEL_3:
+    default:
+        battery_icon = epd_bitmap_battery_level_3;
+        break;
     }
 
     display.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);
@@ -417,8 +417,8 @@ void SparkDisplayControl::initKeyboardLayoutStrings() {
     lowerButtonsLong = currentKeyboard.keyboardLongPress[0].display.append(spacerText).append(currentKeyboard.keyboardLongPress[1].display).append(spacerText).append(currentKeyboard.keyboardLongPress[2].display).append(spacerText).append(currentKeyboard.keyboardLongPress[3].display);
 
     upperButtonsLong = currentKeyboard.keyboardLongPress[4].display
-        //.append(spacerText)
-        .append(currentKeyboard.keyboardLongPress[5].display);
+                           //.append(spacerText)
+                           .append(currentKeyboard.keyboardLongPress[5].display);
 }
 
 void SparkDisplayControl::showKeyboardLayout() {
@@ -460,8 +460,89 @@ void SparkDisplayControl::showKeyboardLayout() {
     drawRightAlignedString(upperButtonsLong.c_str(), upperButtonsLongY, upperPositionOffset);
 }
 
+void SparkDisplayControl::showTunerNote() {
+
+    display.setTextColor(SSD1306_WHITE);
+
+    // text sizes: 1 = 6x8, 2= 12x16, 3=18x24, 4=24x36
+    char sharpSymbol = currentNote.at(1);
+    display.setTextSize(3);
+
+    int displayMidY = display.height() / 2.0;
+    int displayMidX = display.width() / 2.0;
+    int notePosX = displayMidX - 6;
+    if (sharpSymbol == '#') {
+        notePosX = displayMidX - 12;
+    }
+    display.setCursor(notePosX, displayMidY - 12);
+    char baseNote = currentNote.at(0);
+    display.print(baseNote);
+
+    if (sharpSymbol == '#') {
+        display.setTextSize(2);
+        display.setCursor(displayMidX + 8, displayMidY - 8);
+        display.print(sharpSymbol);
+    }
+}
+
+void SparkDisplayControl::showTunerOffset() {
+
+    int tunerPosX = 0;
+    int tunerPosY = 0;
+
+    display.setTextColor(SSD1306_WHITE);
+    display.setTextSize(2);
+    display.setCursor(tunerPosX, tunerPosY);
+    if (noteOffsetCents >= -50 && noteOffsetCents <= 50) {
+        display.print(to_string(noteOffsetCents).c_str());
+    }
+}
+
+void SparkDisplayControl::showTunerGraphic() {
+
+    int triangleSize = 12;
+    int color = SSD1306_WHITE;
+    int triPosHigher3X = 0;
+    int triPosHigher2X = 15;
+    int triPosHigher1X = 30;
+    int triPosLower1X = 98;
+    int triPosLower2X = 113;
+    int triPosLower3X = 128;
+
+    int centsTolerance = 5;
+
+    // draw triangles to point to the note
+    if (noteOffsetCents > -50 && noteOffsetCents < -35) {
+        drawTunerTriangleCentre(triPosHigher3X, triangleSize, true, color);
+    }
+    if (noteOffsetCents > -50 && noteOffsetCents < -20) {
+        drawTunerTriangleCentre(triPosHigher2X, triangleSize, true, color);
+    }
+    if (noteOffsetCents > -50 && noteOffsetCents < centsTolerance) {
+        drawTunerTriangleCentre(triPosHigher1X, triangleSize, true, color);
+    }
+
+    if (noteOffsetCents > -centsTolerance) {
+        drawTunerTriangleCentre(triPosLower1X, triangleSize, false, color);
+    }
+    if (noteOffsetCents > 20) {
+        drawTunerTriangleCentre(triPosLower2X, triangleSize, false, color);
+    }
+    if (noteOffsetCents > 35) {
+        drawTunerTriangleCentre(triPosLower3X, triangleSize, false, color);
+    }
+    // Draw circle if in tune
+    if (-centsTolerance <= noteOffsetCents && noteOffsetCents <= centsTolerance) {
+        display.drawCircle(display.width() / 2.0, display.height() / 2.0, 20, color);
+        display.invertDisplay(true);
+    } else {
+        display.invertDisplay(false);
+    }
+}
+
 void SparkDisplayControl::update(bool isInitBoot) {
 
+    opMode = spark_dc->operationMode();
     display.clearDisplay();
     if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) && isInitBoot) {
         showInitialMessage();
@@ -473,6 +554,15 @@ void SparkDisplayControl::update(bool isInitBoot) {
         lastKeyboardButtonPressedString = spark_dc->lastKeyboardButtonPressedString();
         showPressedKey();
         showKeyboardLayout();
+    } else if (opMode == SPARK_MODE_TUNER) {
+        SparkStatus &statusObject = SparkStatus::getInstance();
+        currentNote = statusObject.noteString();
+        noteOffsetCents = statusObject.note_offset_cents();
+
+        showTunerNote();
+        showTunerOffset();
+        showTunerGraphic();
+
     } else {
         SparkPresetControl &presetControl = SparkPresetControl::getInstance();
         display.setTextWrap(false);
@@ -485,7 +575,6 @@ void SparkDisplayControl::update(bool isInitBoot) {
         presetFromApp = presetControl.appReceivedPreset();
         presetEditMode = presetControl.presetEditMode();
         isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
-        opMode = spark_dc->operationMode();
         currentBTMode = spark_dc->currentBTMode();
         sparkLooperControl = spark_dc->looperControl();
 
@@ -550,7 +639,7 @@ void SparkDisplayControl::updateTextPositions() {
 }
 
 void SparkDisplayControl::drawCentreString(const char *buf,
-    int y, int offset) {
+                                           int y, int offset) {
     int16_t x1, y1;
     uint16_t w, h;
     int displayMid = display.width() / 2;
@@ -561,7 +650,7 @@ void SparkDisplayControl::drawCentreString(const char *buf,
 }
 
 void SparkDisplayControl::drawRightAlignedString(const char *buf,
-    int y, int offset) {
+                                                 int y, int offset) {
     int16_t x1, y1;
     uint16_t w, h;
     int x = 0;
@@ -570,6 +659,26 @@ void SparkDisplayControl::drawRightAlignedString(const char *buf,
     display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); // calc width of new string
     display.setCursor(displayWidth - w + offset, y);
     display.print(buf);
+}
+
+void SparkDisplayControl::drawTunerTriangleCentre(int x, int size, bool dir, int color) {
+
+    int displayMidY = display.height() / 2.0;
+    int yPos1 = displayMidY - size / 2.0;
+    int xPos1 = x;
+
+    int yPos2 = displayMidY + size / 2.0;
+    int xPos2 = x;
+
+    int yPos3 = displayMidY;
+    int xPos3;
+    if (dir) {
+        xPos3 = x + sqrt(0.75 * size * size);
+    } else {
+        xPos3 = x - sqrt(0.75 * size * size);
+    }
+
+    display.fillTriangle(xPos1, yPos1, xPos2, yPos2, xPos3, yPos3, color);
 }
 
 void SparkDisplayControl::drawInvertBitmapColor(int16_t x, int16_t y,

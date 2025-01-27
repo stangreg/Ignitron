@@ -84,6 +84,9 @@ void SparkButtonHandler::configureButtons() {
     case SPARK_MODE_KEYBOARD:
         configureKeyboardButtons();
         break;
+    case SPARK_MODE_TUNER:
+        configureTunerButtons();
+        break;
     }
 }
 
@@ -163,6 +166,7 @@ void SparkButtonHandler::configureAppButtonsPreset() {
     btn_bank_up.onPressFor(btnSwitchModeHandler, LONG_BUTTON_PRESS_TIME);
     // Switch between APP and Looper mode
     btn_preset4.onPressFor(btnToggleLoopHandler, LONG_BUTTON_PRESS_TIME);
+    btn_bank_down.onPressFor(btnSwitchTunerModeHandler, LONG_BUTTON_PRESS_TIME);
 
     // Reset Ignitron
     btn_preset2.onPressFor(btnResetHandler, LONG_BUTTON_PRESS_TIME);
@@ -224,6 +228,29 @@ void SparkButtonHandler::configureKeyboardButtons() {
 
     // btn_bank_down.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
     // btn_bank_up.onPressFor(btnKeyboardHandler, LONG_BUTTON_PRESS_TIME);
+}
+
+void SparkButtonHandler::configureTunerButtons() {
+    // Toggle Tuner mode
+    // Short press: Keyboard/Looper functionality
+    btn_preset1.onPress(doNothing);
+    btn_preset2.onPress(doNothing);
+    btn_preset3.onPress(doNothing);
+    btn_bank_down.onPress(doNothing);
+    btn_bank_up.onPress(doNothing);
+
+    // Long press: Keyboard/Looper functionality
+    btn_preset1.onPressFor(doNothing, LONG_BUTTON_PRESS_TIME);
+    btn_preset3.onPressFor(doNothing, LONG_BUTTON_PRESS_TIME);
+    btn_preset4.onPressFor(doNothing, LONG_BUTTON_PRESS_TIME);
+    btn_bank_down.onPressFor(doNothing, LONG_BUTTON_PRESS_TIME);
+    btn_bank_up.onPressFor(doNothing, LONG_BUTTON_PRESS_TIME);
+    btn_bank_down.onPress(btnSwitchTunerModeHandler);
+}
+
+void SparkButtonHandler::doNothing(BfButton *btn,
+                                   BfButton::press_pattern_t pattern) {
+    ;
 }
 
 void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
@@ -312,6 +339,36 @@ void SparkButtonHandler::btnTESTHandler(BfButton *btn, BfButton::press_pattern_t
         return;
     }
     spark_dc->getCurrentPresetFromSpark();
+}
+
+void SparkButtonHandler::btnSwitchTunerModeHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
+
+    if (!spark_dc) {
+        Serial.println("SparkDataControl not setup yet, ignoring button press.");
+        return;
+    }
+    // Switch between preset mode FX mode where FX can be separately switched
+    // Debug
+#ifdef DEBUG
+    int pressed_btn_gpio = btn->getID();
+    DEBUG_PRINT("Button pressed: ");
+    DEBUG_PRINTLN(pressed_btn_gpio);
+#endif
+
+    // Switch mode in APP mode
+    int currentMode = spark_dc->operationMode();
+    DEBUG_PRINTF("Old OpMode = %d", currentMode);
+    int newMode;
+    if (currentMode == SPARK_MODE_TUNER) {
+        DEBUG_PRINTLN("Old mode: Tuner");
+        newMode = SPARK_MODE_APP;
+    } else {
+        DEBUG_PRINTLN("Old mode: Other");
+        newMode = SPARK_MODE_TUNER;
+    }
+    spark_dc->switchOperationMode(newMode);
+    Serial.println("Re-initializing button config");
+    configureButtons();
 }
 
 void SparkButtonHandler::btnLooperPresetHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
