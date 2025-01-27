@@ -138,3 +138,31 @@ Once the enclosure is prepared and the PCB is assembled we can finally put every
 15. Close the enclosure.
 
 Test everything.
+
+## Additional Features
+
+### Battery Indicator
+
+Starting from version 1.7.2, Ignitron can be powered by an internal battery pack and displays the remaining capacity on the LED screen.
+
+This section explains how to build the hardware for this feature. To enable it in software, see [this guide](../src/Readme.md#battery-indicator).
+
+#### BOM
+
+| Component         | Quantity | Comment                                      |
+|-------------------|:--------:|----------------------------------------------|
+| 5.5*2.1 DC Jack   | x        | Optional. To power other pedals.             |
+| 5.1k resistor     | 1        | For voltage divider.                         |
+| 15k resistor      | 1        | For voltage divider.                         |
+| Battery pack      | 1        | Supports 2S and 3S Li-ion or LiFePO4 packs.  |
+| LDO module, e.g., LM317 | x  | Optional. To reduce voltage for pedals.      |
+| AMS1117 5.0       | 1        | For powering ESP32.                          |
+| Power switch      | 1        | Power switch.                                |
+
+Choose the battery pack: If your pedals require 9V, a 2S Li-ion pack is a good choice as it matches the discharge profile of a 9V alkaline battery. For 12V pedals, use a 3S Li-ion pack and add an LDO to reduce the output voltage to 9V for 9V pedals. If you don't need power output, choose any battery that provides more than 5V.
+
+Why use a 2S/3S battery pack with an LDO instead of a 1S battery with a voltage booster? LDOs do not introduce audible buzz like voltage boost chips, although they waste more energy as heat.
+
+#### Connection
+
+See [Ignitron-Battery-Indicator-Schematics.pdf](./Ignitron-Battery-Indicator-Schematics.pdf) for details.
