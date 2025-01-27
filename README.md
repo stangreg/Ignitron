@@ -3,6 +3,7 @@
 </p>
 
 An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bluetooth LE (iOS) and Bluetooth Serial (Android). Also works as a control device for a Looper app on the mobile. **NEW: Ignitron also supports the built-in looper of Spark 2!**
+
 **Ignitron has been successfully tested with**
 
 * Spark 2
@@ -20,6 +21,7 @@ An ESP32 based foot pedal to communicate with the Spark Amp and Spark App via Bl
 * **Delete** stored presets
 * Control the **Spark 2 internal looper**. 
 * Control **Looper apps** on a mobile (actually *all* apps which support bluetooth keyboard controls)
+* Use the built-in **Tuner**
 * Multiple BT keyboard layouts configurable
 
 Adding new presets to **Ignitron** can easily be done as it can also act like a Spark Amp. Simply connect to **Ignitron** with the Spark App and save new presets directly from ToneCloud (or your downloaded presets) to **Ignitron**.
@@ -86,8 +88,9 @@ In APP mode, the foot switches can be used to either switch between pre-saved pr
 
 When selecting **Preset mode**, four buttons are used to select presets, the other two buttons are used to navigate through the preset banks. This way the user has access to a huge number of saved presets. When pressing the foot switch of the current active preset, the effect configured in the DRIVE section can be toggled.\
 In **Manual/FX mode**, the user has direct access to all effects of the selected preset. Pressing a switch will toggle the respective FX type.\
-When **Looper (keyboard) mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD, and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
-When **Looper (amp) mode** is activated, Ignitron will control the internal looper of the Spark 2 amp. The display will also show information on the looper settings and click. The amp looper settings can easily be changed using Ignitron.
+When the **Tuner** is switched on, the output is shown on the display and the LEDs, allowing for quick tuning while connected with the amp.\
+When **Looper (Keyboard) mode** is activated, Ignitron acts partially like a bluetooth keyboard. You can use the buttons to control a looper app, e.g. Loopy HD, and also switch between stored presets by long pressing the `Bank down`/`Bank up` buttons. **Note:** When switching presets in Looper mode, it will do this across banks.  
+When **Looper (Amp) mode** is activated, Ignitron will control the internal looper of the Spark 2 amp. The display will also show information on the looper settings and click. The amp looper settings can easily be changed using Ignitron.
 
 ### Button commands in APP mode:
 
@@ -101,6 +104,7 @@ When **Looper (amp) mode** is activated, Ignitron will control the internal loop
 |`Preset 3`  | Short         | Select preset 3 / Toggle Drive |
 |`Preset 4`  | Short         | Select preset 4 / Toggle Drive |
 |`Preset 4` | Long           | Switch to Looper mode |
+|`Bank down`   | Long          | Switch to Tuner mode. Short press while in Tuner mode to switch back to Preset mode.  |
 |`Bank up`   | Long          | Switch to FX mode  |
 |`Preset 2`  | Long          | Restart **Ignitron**  |
 
