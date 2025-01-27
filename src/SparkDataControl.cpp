@@ -319,26 +319,19 @@ void SparkDataControl::setAmpParameters() {
 
     string ampName = sparkAmpName;
     DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
-    if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_2) {
+    if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO) {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0xAD);
         with_delay = false;
     }
-    if (ampName == AMP_NAME_SPARK_MINI) {
+    if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) {
         spark_msg.maxChunkSizeToSpark() = 0x80;
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0x64);
         with_delay = true;
-    }
-    if (ampName == AMP_NAME_SPARK_GO) {
-        spark_msg.maxChunkSizeToSpark() = 0x80;
-        spark_msg.maxBlockSizeToSpark() = 0xAD;
-        spark_msg.withHeader() = true;
-        bleControl->setMaxBleMsgSize(0xAD);
-        with_delay = false;
     }
     spark_msg.maxChunkSizeFromSpark() = 0x19;
     spark_msg.maxBlockSizeFromSpark() = 0x6A;
