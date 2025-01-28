@@ -12,8 +12,9 @@ void SparkPresetBuilder::updatePresetListUUID(int bnk, int pre, string uuid) {
 }
 
 SparkPresetBuilder::SparkPresetBuilder() : presetBanksNames{} {
-    // Creating vector of presets
-    SPIFFS.begin(true);
+    // removing for now until further investigation
+    // SPIFFS.begin(true);
+    //  Creating vector of presets
     initializePresetListFromFS();
     buildPresetUUIDs();
     resetHWPresets();
