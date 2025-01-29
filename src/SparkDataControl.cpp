@@ -656,6 +656,8 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = statusObject.ampName();
             setAmpParameters();
+            // reading initial current preset after name has been received
+            getCurrentPresetFromSpark();
             printMessage = true;
             // ampNameReceived_ = true;
         }

@@ -281,7 +281,7 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 }
 
 void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
-    SparkStreamReader sparkSSR = sparkDC->getSSR();
+    // SparkStreamReader sparkSSR = sparkDC->getSSR();
 
     activePreset_ = statusObject.currentPreset();
     activePresetNum_ = presetNum;
@@ -369,7 +369,7 @@ void SparkPresetControl::updateFromSparkResponseAmpPreset(string presetJson) {
 
 void SparkPresetControl::updateFromSparkResponseACK() {
     if (activeBank_ == 0) {
-        // setActiveHWPreset();
+        setActiveHWPreset();
         updatePendingWithActive();
     } else {
         updateActiveWithPendingPreset();
