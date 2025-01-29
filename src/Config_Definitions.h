@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.7.3";
+const string VERSION = "1.7.4";
 
 // Battery indicator
 // Note: This battery is for the Ignitron controller, not the Spark amp.
