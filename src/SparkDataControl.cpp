@@ -16,8 +16,6 @@ SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
 
-eSPIFFS SparkDataControl::fileSystem;
-
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<CmdData> SparkDataControl::currentCommand;
 deque<AckData> SparkDataControl::pendingLooperAcks;
@@ -241,9 +239,9 @@ void SparkDataControl::restartESP(bool resetSparkMode) {
     Serial.print("!!! Restarting !!! ");
     if (resetSparkMode) {
         Serial.print("Resetting Spark mode");
-        bool sparkModeFileExists = SPIFFS.exists(sparkModeFileName.c_str());
+        bool sparkModeFileExists = LittleFS.exists(sparkModeFileName.c_str());
         if (sparkModeFileExists) {
-            SPIFFS.remove(sparkModeFileName.c_str());
+            LittleFS.remove(sparkModeFileName.c_str());
         }
     }
     Serial.println();
@@ -251,33 +249,31 @@ void SparkDataControl::restartESP(bool resetSparkMode) {
 }
 
 void SparkDataControl::readOpModeFromFile() {
-    string currentSparkModeFile;
     int sparkModeInput = 0;
 
-    fileSystem.openFromFile(sparkModeFileName.c_str(), currentSparkModeFile);
-
-    stringstream sparkModeStream(currentSparkModeFile);
+    File file = LittleFS.open(sparkModeFileName.c_str());
     string line;
 
-    while (getline(sparkModeStream, line)) {
+    while (file.available()) {
+        line = file.read();
         sparkModeInput = (int)(line[0] - '0'); // was: stoi(line);
     }
     if (sparkModeInput != 0) {
         operationMode_ = sparkModeInput;
         // Serial.printf("Reading operation mode from file: %d.", sparkModeInput);
     }
+    file.close();
 }
 
 void SparkDataControl::readBTModeFromFile() {
-    string currentBTModeFile;
-    stringstream btModeStream;
     string line;
-    fileSystem.openFromFile(btModeFileName.c_str(), currentBTModeFile);
-    btModeStream.str(currentBTModeFile);
+    File file = LittleFS.open(btModeFileName.c_str());
 
-    while (getline(btModeStream, line)) {
+    while (file.available()) {
+        line = file.read();
         currentBTMode_ = (int)(line[0] - '0'); // was: stoi(line);
     }
+    file.close();
 }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
@@ -831,8 +827,11 @@ void SparkDataControl::toggleBTMode() {
             currentBTMode_ = BT_MODE_BLE;
         }
         // Save new mode to file
-        fileSystem.saveToFile(btModeFileName.c_str(), currentBTMode_);
-        fileSystem.saveToFile(sparkModeFileName.c_str(), sparkModeAmp);
+        File file = LittleFS.open(btModeFileName.c_str(), FILE_WRITE);
+        file.write(currentBTMode_);
+        file = LittleFS.open(sparkModeFileName.c_str());
+        file.write(sparkModeAmp);
+        file.close();
         Serial.println("Restarting in new BT mode");
         restartESP(false);
     }

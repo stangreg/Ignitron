@@ -98,18 +98,21 @@ Preset SparkPresetBuilder::getPresetFromJson(char *json) {
 
 void SparkPresetBuilder::initializePresetListFromFS() {
 
+    Serial.println("Reading custom presets from filesystem.");
     presetBanksNames.clear();
     string allPresetsAsText;
     vector<string> tmpVector;
     DEBUG_PRINTLN("Trying to read file list");
-    if (!fileSystem.openFromFile(presetListFileName, allPresetsAsText)) {
+    File file = LittleFS.open(presetListFileName);
+
+    if (!file) {
         Serial.println("ERROR while trying to open presets list file");
         return;
     }
 
-    stringstream stream(allPresetsAsText);
     string line;
-    while (getline(stream, line)) {
+    while (file.available()) {
+        line = file.read();
         line.erase(remove(line.begin(), line.end(), '\r'), line.end());
         line.erase(remove(line.begin(), line.end(), '\n'), line.end());
 
@@ -124,6 +127,7 @@ void SparkPresetBuilder::initializePresetListFromFS() {
             }
         }
     }
+    file.close();
     if (tmpVector.size() > 0) {
         while (tmpVector.size() < 4) {
             Serial.println("Last bank not full, filling with last preset to get bank complete");
@@ -158,16 +162,20 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre) {
     if (bank == 0) {
         return hwPresets.at(pre - 1);
     }
-    // TODO check if pre is in bounds
+
     string presetFilename = "/" + presetBanksNames[bank - 1][pre - 1];
     string presetJsonString;
-    if (fileSystem.openFromFile(&presetFilename[0], presetJsonString)) {
+    File file = LittleFS.open(&presetFilename[0]);
+
+    if (file && file.available()) {
+        presetJsonString = file.read();
         retPreset = getPresetFromJson(&presetJsonString[0]);
         return retPreset;
     } else {
         Serial.printf("Error while opening file %s, returning empty preset.", presetFilename.c_str());
         return retPreset;
     }
+    file.close();
 }
 
 pair<int, int> SparkPresetBuilder::getBankPresetNumFromUUID(string uuid) {
@@ -209,32 +217,38 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
     Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
     int counter = 0;
 
-    while (fileSystem.getFileSize(("/" + presetFileName).c_str()) != 0) {
+    string filename = "/" + presetFileName;
+    File file = LittleFS.open(filename.c_str());
+
+    while (file.size() != 0) {
         counter++;
         Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
         char counterStr[2];
         int size = sizeof counterStr;
         snprintf(counterStr, size, "%d", counter);
         presetFileName = presetNamePrefix + counterStr + ".json";
+        file.close();
+        file = LittleFS.open(presetFileName.c_str());
     }
     presetNameWithPath = "/" + presetFileName;
     // First store the json string to a new file
-    fileSystem.saveToFile(presetNameWithPath.c_str(), newPreset.json.c_str());
-
+    file.print(newPreset.json.c_str());
+    file.close();
     // Then insert the preset into the right position
     string filestr = "";
     string oldListFile;
     int lineCount = 1;
     int insertPosition = 4 * (bnk - 1) + pre;
 
-    if (!fileSystem.openFromFile(presetListFileName, oldListFile)) {
+    file = LittleFS.open(presetListFileName);
+    if (!file) {
         Serial.println("ERROR while trying to open presets list file");
         return STORE_PRESET_ERROR_OPEN;
     }
 
-    stringstream stream(oldListFile);
     string line;
-    while (getline(stream, line)) {
+    while (file.available()) {
+        line = file.read();
         if (lineCount != insertPosition) {
             // Lines starting with '-' and empty lines
             // are ignored and can be used for comments in the file
@@ -258,7 +272,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
             lineCount++;
         }
     }
-    if (fileSystem.saveToFile(presetListFileName, filestr.c_str())) {
+    if (file.print(filestr.c_str())) {
         Serial.printf("Successfully stored new preset to %d-%d\n", bnk, pre);
         initializePresetListFromFS();
         return STORE_PRESET_OK;
@@ -270,20 +284,20 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
 
     // Then insert the preset into the right position
     string filestr = "";
-    string oldListFile;
+    File oldListFile;
     string presetFileToDelete = "";
     int lineCount = 1;
     int presetCount = 1;
     int deletePosition = 4 * (bnk - 1) + pre;
-
-    if (!fileSystem.openFromFile(presetListFileName, oldListFile)) {
+    oldListFile = LittleFS.open(presetListFileName);
+    if (!oldListFile) {
         Serial.println("ERROR while trying to open presets list file");
         return STORE_PRESET_ERROR_OPEN;
     }
 
-    stringstream stream(oldListFile);
     string line;
-    while (getline(stream, line)) {
+    while (oldListFile.available()) {
+        line = oldListFile.read();
         if (lineCount != deletePosition) {
             // Lines starting with '-' and empty lines
             // are ignored and can be used for comments in the file
@@ -309,10 +323,10 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
             lineCount++;
         }
     }
-    if (fileSystem.saveToFile(presetListFileName, filestr.c_str())) {
+    if (oldListFile.print(filestr.c_str())) {
         initializePresetListFromFS();
-        // SPIFFS.begin();
-        if (SPIFFS.remove(presetFileToDelete.c_str())) {
+        oldListFile.close();
+        if (LittleFS.remove(presetFileToDelete.c_str())) {
             return DELETE_PRESET_OK;
         } else {
             return DELETE_PRESET_FILE_NOT_EXIST;

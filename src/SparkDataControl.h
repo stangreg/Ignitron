@@ -177,7 +177,6 @@ private:
     static SparkLooperControl *looperControl_;
 
     SparkBLEKeyboard bleKeyboard;
-    static eSPIFFS fileSystem;
 
     // TODO: Put settings into proper config file
     string btModeFileName = "/config/BTMode.config";

@@ -10,8 +10,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Effortless_SPIFFS.h>
-#include <FS.h>
+#include <LittleFS.h>
 #include <algorithm>
 #include <regex>
 
@@ -41,7 +40,6 @@ private:
     vector<vector<string>> presetBanksNames;
     std::map<string, pair<int, int>> presetUUIDs;
     vector<Preset> hwPresets;
-    eSPIFFS fileSystem;
     const char *presetListFileName = "/PresetList.txt";
     bool deletePresetFile(int bnk, int pre);
     void updatePresetListUUID(int bnk, int pre, string uuid);
@@ -51,7 +49,7 @@ private:
 public:
     SparkPresetBuilder();
     // string getJsonFromPreset(preset pset);
-    
+
     void resetHWPresets();
     Preset getPreset(int bank, int preset);
     pair<int, int> getBankPresetNumFromUUID(string uuid);

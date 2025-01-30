@@ -97,7 +97,6 @@ private:
     SparkPresetBuilder presetBuilder;
     SparkDataControl *sparkDC;
     SparkStatus &statusObject = SparkStatus::getInstance();
-    static eSPIFFS fileSystem;
 
     string sparkPresetFileName = "/config/SparkPreset.config";
 
@@ -106,10 +105,6 @@ private:
     void processDeletePresetRequest();
     void setPresetDeletionFlag();
     void updatePendingBankStatus();
-
-    // File related operations
-    void readLastPresetFromFile();
-    void writeLastPresetToFile();
 
     // TODO: maybe this method needs to be static to run as a task
     static void checkForMissingPresets(void *args);

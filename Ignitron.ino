@@ -45,6 +45,10 @@ void setup() {
         ;
 
     Serial.println("Initializing");
+    if (!LittleFS.begin(true)) {
+        Serial.println("LittleFS Mount failed");
+        return;
+    }
     // spark_dc = new SparkDataControl();
     spark_bh.setDataControl(&spark_dc);
     operationMode = spark_bh.checkBootOperationMode();

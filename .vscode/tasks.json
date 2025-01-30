@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "PlatformIO",
+			"task": "Upload (node32s)",
+			"problemMatcher": [
+				"$platformio"
+			],
+			"label": "PlatformIO: Upload (node32s)"
+		},
+		{
+			"type": "PlatformIO",
+			"task": "Upload Filesystem Image (node32s)",
+			"problemMatcher": [
+				"$platformio"
+			],
+			"label": "PlatformIO: Upload Filesystem Image (node32s)"
+		}
+	]
+}

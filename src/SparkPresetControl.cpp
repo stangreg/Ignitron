@@ -1,7 +1,5 @@
 #include "SparkPresetControl.h"
 
-eSPIFFS SparkPresetControl::fileSystem;
-
 SparkPresetControl::SparkPresetControl() {
 }
 
@@ -181,26 +179,6 @@ void SparkPresetControl::updatePendingBankStatus() {
     }
 }
 
-void SparkPresetControl::readLastPresetFromFile() {
-    string lastPresetFile;
-
-    fileSystem.openFromFile(sparkPresetFileName.c_str(), lastPresetFile);
-
-    stringstream sparkModeStream(lastPresetFile);
-
-    sparkModeStream >> pendingBank_ >> pendingPresetNum_;
-    // DEBUG_PRINTF("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
-    Serial.printf("Bank: %d, Preset: %d\n", pendingBank_, pendingPresetNum_);
-    // TODO: Check if this can be removed without crashing
-    pendingPreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
-}
-
-void SparkPresetControl::writeLastPresetToFile() {
-    // Save currentPreset to file
-    string currentPresetString = to_string(activeBank_) + " " + to_string(activePresetNum_);
-    Serial.printf("Preset saved: %s\n", currentPresetString.c_str());
-    fileSystem.saveToFile(sparkPresetFileName.c_str(), currentPresetString);
-}
 
 void SparkPresetControl::checkForMissingPresets(void *args) {
     SparkPresetControl *presetControl = (SparkPresetControl *)args;
