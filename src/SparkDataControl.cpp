@@ -128,16 +128,23 @@ int SparkDataControl::init(int opModeInput) {
 }
 
 void SparkDataControl::switchOperationMode(int opMode) {
-    operationMode_ = opMode;
 
     if (opMode == SPARK_MODE_APP) {
         bleKeyboard.end();
         buttonMode_ = BUTTON_MODE_PRESET;
+        if (operationMode_ == SPARK_MODE_TUNER) {
+            switchTuner(false);
+        }
     } else if (opMode == SPARK_MODE_LOOPER) {
         bleKeyboard.start();
     } else if (opMode == SPARK_MODE_SPK_LOOPER) {
         buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+    } else if (opMode == SPARK_MODE_TUNER) {
+        switchTuner(true);
     }
+
+    operationMode_ = opMode;
+
     SparkPresetControl::getInstance().updatePendingWithActive();
 }
 
@@ -324,7 +331,7 @@ void SparkDataControl::setAmpParameters() {
         spark_msg.maxBlockSizeToSpark() = 0xAD;
         spark_msg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0x64);
-        with_delay = false;
+        with_delay = true;
     }
     spark_msg.maxChunkSizeFromSpark() = 0x19;
     spark_msg.maxBlockSizeFromSpark() = 0x6A;
@@ -611,7 +618,7 @@ void SparkDataControl::handleAppModeResponse() {
     byte lastMessageNumber = statusObject.lastMessageNum();
     // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
-    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_SPK_LOOPER) {
+    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_SPK_LOOPER || operationMode_ == SPARK_MODE_TUNER) {
         bool printMessage = false;
 
         if (lastMessageType == MSG_TYPE_HWPRESET) {
@@ -649,6 +656,8 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = statusObject.ampName();
             setAmpParameters();
+            // reading initial current preset after name has been received
+            getCurrentPresetFromSpark();
             printMessage = true;
             // ampNameReceived_ = true;
         }
@@ -682,6 +691,27 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Measure info received.");
             // float currentMeasure = spark_ssr.getMeasure();
             // looperControl_->setMeasure(currentMeasure);
+        }
+
+        if (lastMessageType == MSG_TYPE_TUNER_OUTPUT) {
+            // Amp seems to be in tuner mode
+            if (operationMode_ != SPARK_MODE_TUNER) {
+                // Switch off tuner
+                switchTuner(false);
+            }
+            // operationMode_ = SPARK_MODE_TUNER;
+        }
+
+        if (lastMessageType == MSG_TYPE_TUNER_ON) {
+            Serial.println("Tuner on received.");
+            operationMode_ = SPARK_MODE_TUNER;
+            switchTuner(true);
+        }
+
+        if (lastMessageType == MSG_TYPE_TUNER_OFF) {
+            Serial.println("Tuner off received.");
+            operationMode_ = SPARK_MODE_APP;
+            switchTuner(false);
         }
 
         if (msgStr.length() > 0 && printMessage) {
@@ -929,6 +959,12 @@ void SparkDataControl::tapTempoButton() {
             }
         }
     }
+}
+
+bool SparkDataControl::switchTuner(bool on) {
+    DEBUG_PRINTF("Switching Tuner %s\n", on ? "on" : "off");
+    current_msg = spark_msg.switchTuner(nextMessageNum, on);
+    return triggerCommand(current_msg);
 }
 
 bool SparkDataControl::updateLooperSettings() {

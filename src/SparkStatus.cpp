@@ -1,16 +1,12 @@
 #include "SparkStatus.h"
 
-SparkStatus::SparkStatus()
-{
-
+SparkStatus::SparkStatus() {
 }
 
-SparkStatus::~SparkStatus()
-{
-
+SparkStatus::~SparkStatus() {
 }
 
-SparkStatus &SparkStatus::getInstance(){
+SparkStatus &SparkStatus::getInstance() {
     static SparkStatus INSTANCE;
     return INSTANCE;
 }
@@ -29,4 +25,8 @@ void SparkStatus::resetLooperSettingUpdateFlag() {
 
 void SparkStatus::resetLastMessageType() {
     last_message_type_ = 0;
+}
+
+void SparkStatus::resetAcknowledgments() {
+    acknowledgments_.clear();
 }

@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-// #define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.7.2";
+const string VERSION = "1.7.4";
 
 // Battery indicator
 // Note: This battery is for the Ignitron controller, not the Spark amp.
@@ -155,6 +155,7 @@ const string VERSION = "1.7.2";
 #define SPARK_MODE_LOOPER 3
 #define SPARK_MODE_KEYBOARD 4
 #define SPARK_MODE_SPK_LOOPER 5
+#define SPARK_MODE_TUNER 6
 
 #define BT_MODE_BLE 1
 #define BT_MODE_SERIAL 2

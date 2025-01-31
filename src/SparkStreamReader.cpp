@@ -424,6 +424,36 @@ void SparkStreamReader::read_measure() {
     statusObject.lastMessageType() = MSG_TYPE_MEASURE;
 }
 
+void SparkStreamReader::read_tuner() {
+    byte note = read_byte();
+    float offset = read_float();
+    statusObject.note() = note;
+    statusObject.note_offset() = offset;
+
+    sb.start_str();
+    sb.add_int("Note", note);
+    sb.add_float("Offset", offset, "python");
+    sb.end_str();
+    statusObject.lastMessageType() = MSG_TYPE_TUNER_OUTPUT;
+}
+
+void SparkStreamReader::read_tuner_onoff() {
+    // Read object
+    boolean isOn = read_onoff();
+
+    // Build string representations
+    sb.start_str();
+    sb.add_bool("Tuner mode", isOn);
+    sb.end_str();
+
+    // Set values
+    if (isOn) {
+        statusObject.lastMessageType() = MSG_TYPE_TUNER_ON;
+    } else {
+        statusObject.lastMessageType() = MSG_TYPE_TUNER_OFF;
+    }
+}
+
 boolean SparkStreamReader::structure_data(bool processHeader) {
 
     ByteVector block_content;
@@ -640,6 +670,14 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             DEBUG_PRINTLN("03 63 - Reading Tap Tempo");
             read_tap_tempo();
             break;
+        case 0x64:
+            DEBUG_PRINTLN("03 64 - Reading Tuner Output");
+            read_tuner();
+            break;
+        case 0x65:
+            DEBUG_PRINTLN("03 65 - Tuner On/Off");
+            read_tuner_onoff();
+            break;
         case 0x75:
             DEBUG_PRINTLN("03 75 - Reading Looper Record Status");
             read_looper_command();
@@ -713,7 +751,7 @@ AckData SparkStreamReader::getLastAckAndEmpty() {
     vector<AckData> acknowledgments = statusObject.acknowledgments();
     if (acknowledgments.size() > 0) {
         lastAck = acknowledgments.back();
-        acknowledgments.clear();
+        statusObject.resetAcknowledgments();
     }
     return lastAck;
 }

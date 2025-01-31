@@ -61,6 +61,9 @@ void SparkLEDControl::updateLEDs() {
     case SPARK_MODE_KEYBOARD:
         updateLED_KEYBOARD();
         break;
+    case SPARK_MODE_TUNER:
+        updateLED_TUNER();
+        break;
     }
 }
 
@@ -167,6 +170,29 @@ void SparkLEDControl::updateLED_LooperMode() {
         switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, true);
     } else {
         switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, false);
+    }
+}
+
+void SparkLEDControl::updateLED_TUNER() {
+    allLedOff();
+
+    SparkStatus &status = SparkStatus::getInstance();
+
+    int noteOffsetCents = status.note_offset_cents();
+    int centsTolerance = 5;
+
+    if (noteOffsetCents > -50 && noteOffsetCents < -20) {
+        switchLED(PRESET1_NUM, true);
+    }
+    if (noteOffsetCents > -50 && noteOffsetCents < centsTolerance) {
+        switchLED(PRESET2_NUM, true);
+    }
+
+    if (noteOffsetCents > -centsTolerance) {
+        switchLED(PRESET3_NUM, true);
+    }
+    if (noteOffsetCents > 20) {
+        switchLED(PRESET4_NUM, true);
     }
 }
 

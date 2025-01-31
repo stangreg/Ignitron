@@ -10,8 +10,8 @@
 
 #include "CircularBuffer.h"
 #include "Config_Definitions.h"
-#include "SparkBTControl.h"
 #include "SparkBLEKeyboard.h"
+#include "SparkBTControl.h"
 #include "SparkKeyboardControl.h"
 #include "SparkLooperControl.h"
 
@@ -106,7 +106,7 @@ public:
     const int currentBTMode() const { return currentBTMode_; }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-    const int batteryLevel() const { return batteryLevel_;}
+    const int batteryLevel() const { return batteryLevel_; }
 #endif
 
     // Set/get button mode
@@ -149,6 +149,8 @@ public:
     bool sparkLooperGetRecordStatus();
 
     void tapTempoButton();
+
+    static bool switchTuner(bool on);
 
     static bool processAction();
     const SparkStreamReader &getSSR() const { return spark_ssr; }
@@ -217,8 +219,8 @@ private:
     static int batteryLevel_;
 #endif
 
-        // keep track which HW presets have been read so far
-        static bool isInitBoot_;
+    // keep track which HW presets have been read so far
+    static bool isInitBoot_;
     static byte special_msg_num;
 
     static byte nextMessageNum;

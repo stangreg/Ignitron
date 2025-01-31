@@ -16,6 +16,9 @@
 #define MSG_TYPE_MEASURE 9
 #define MSG_TYPE_LOOPER_COMMAND 10
 #define MSG_TYPE_LOOPER_STATUS 11
+#define MSG_TYPE_TUNER_OUTPUT 12
+#define MSG_TYPE_TUNER_ON 13
+#define MSG_TYPE_TUNER_OFF 14
 
 #define MSG_REQ_SERIAL = 21
 #define MSG_REQ_FW_VER = 22
@@ -74,6 +77,19 @@ public:
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
 
+    const string noteString() const {
+        if (note_ == 0x0e)
+            return " ";
+        return notes[note_ % 12];
+    }
+
+    byte &note() { return note_; }
+
+    const float note_offset() const { return note_offset_; }
+    float &note_offset() { return note_offset_; }
+
+    const int note_offset_cents() const { return (note_offset_ * 100) - 50; }
+
     const vector<AckData> acknowledgments() const { return acknowledgments_; }
     vector<AckData> &acknowledgments() { return acknowledgments_; }
 
@@ -81,6 +97,7 @@ public:
     void resetPresetUpdateFlag();
     void resetLooperSettingUpdateFlag();
     void resetLastMessageType();
+    void resetAcknowledgments();
 
 private:
     SparkStatus();
@@ -93,6 +110,10 @@ private:
 
     string ampName_ = "";
     float measure_;
+
+    byte note_;
+    float note_offset_;
+    string notes[12] = {"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "};
 
     // In case a preset was received from Spark, it is saved here. Can then be read by main program
     Preset currentPreset_;

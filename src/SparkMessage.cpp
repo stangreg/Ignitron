@@ -399,6 +399,15 @@ vector<CmdData> SparkMessage::turn_effect_onoff(byte msg_num, const string &peda
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
+vector<CmdData> SparkMessage::switchTuner(byte msg_num, boolean enable) {
+    cmd = 0x01;
+    sub_cmd = 0x65;
+
+    start_message(cmd, sub_cmd);
+    add_onoff(enable);
+    return end_message(DIR_TO_SPARK, msg_num);
+}
+
 vector<CmdData> SparkMessage::send_serial_number(byte msg_number) {
     cmd = 0x03;
     sub_cmd = 0x23;

@@ -77,6 +77,7 @@ public:
     vector<CmdData> change_effect(byte msg_num, const string &pedal1, const string &pedal2);
     vector<CmdData> change_hardware_preset(byte msg_num, int preset_num);
     vector<CmdData> turn_effect_onoff(byte msg_num, const string &pedal, boolean enable);
+    vector<CmdData> switchTuner(byte msg_num, boolean enable);
     vector<CmdData> change_preset(const Preset &preset_data, int dir = DIR_TO_SPARK, byte msg_num = 0x00);
     vector<CmdData> get_current_preset_num(byte msg_num);
     vector<CmdData> get_current_preset(byte msg_num, int hw_preset = -1);

@@ -59,7 +59,7 @@ void SparkPresetControl::getMissingHWPresets() {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(1000);
+                    delay(1500);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -281,7 +281,7 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 }
 
 void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
-    SparkStreamReader sparkSSR = sparkDC->getSSR();
+    // SparkStreamReader sparkSSR = sparkDC->getSSR();
 
     activePreset_ = statusObject.currentPreset();
     activePresetNum_ = presetNum;

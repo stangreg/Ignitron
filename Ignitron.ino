@@ -97,10 +97,8 @@ void loop() {
             // Read AMP name to determine special parameters
             // TEST: spark_dc.getSerialNumber();
             spark_dc.getAmpName();
-            DEBUG_PRINTLN("Trying to communicate");
-            delay(500);
-            spark_dc.getCurrentPresetFromSpark();
-            // spark_dc.getCurrentPresetNum();
+            // delay(100);
+            // spark_dc.getCurrentPresetFromSpark();
             spark_dc.isInitBoot() = false;
             // spark_dc.configureLooper();
         }
@@ -111,6 +109,7 @@ void loop() {
         spark_dc.checkForUpdates();
     }
     // Reading button input
+    spark_bh.configureButtons();
     spark_bh.readButtons();
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Update battery level
