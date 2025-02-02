@@ -36,19 +36,19 @@ SparkBTControl::~SparkBTControl() {
 }
 
 // Initializing BLE connection with NimBLE
-void SparkBTControl::initBLE(notify_callback notifyCallback) {
+void SparkBTControl::initBLE(NimBLERemoteCharacteristic::notify_callback notifyCallback) {
     // NimBLEDevice::init("");
     advDevice = new NimBLEAdvertisedDevice();
     notifyCB = notifyCallback;
 
     /** Optional: set the transmit power, default is 3db */
-    NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
+    NimBLEDevice::setPower(9); /** +9db */
 
     /** create new scan */
     NimBLEScan *pScan = NimBLEDevice::getScan();
 
     /** create a callback that gets called when advertisers are found */
-    pScan->setAdvertisedDeviceCallbacks(this, false);
+    pScan->setScanCallbacks(this, false);
 
     /** Set scan interval (how often) and window (how long) in milliseconds */
     pScan->setInterval(45);
@@ -62,26 +62,27 @@ void SparkBTControl::initBLE(notify_callback notifyCallback) {
      Optional callback for when scanning stops.
      */
     Serial.println("Starting scan");
-    pScan->start(scanTime, scanEndedCB);
+    pScan->start(scanTime);
 }
 
 void SparkBTControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
     advDevice = device;
 }
 
-void SparkBTControl::scanEndedCB(NimBLEScanResults results) {
+void SparkBTControl::onScanEnd(const NimBLEScanResults &results, int reason) {
     Serial.println("Scan ended.");
 }
 
 void SparkBTControl::startScan() {
-    NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
+    NimBLEDevice::getScan()->start(scanTime);
     Serial.println("Scan initiated");
     spark_dc->resetStatus();
 }
 
+// APP Mode
 bool SparkBTControl::connectToServer() {
     /** Check if we have a client we should reuse first **/
-    if (NimBLEDevice::getClientListSize()) {
+    if (NimBLEDevice::getConnectedClients().size() > 0) {
         /** Special case when we already know this device, we send false as the
          second argument in connect() to prevent refreshing the service database.
          This saves considerable time and power.
@@ -105,7 +106,7 @@ bool SparkBTControl::connectToServer() {
 
     /** No client to reuse? Create a new one. */
     if (!pClient) {
-        if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
+        if (NimBLEDevice::getCreatedClientCount() >= NIMBLE_MAX_CONNECTIONS) {
             Serial.println(
                 "Max clients reached - no more connections available");
             isAmpConnected_ = false;
@@ -148,7 +149,7 @@ bool SparkBTControl::connectToServer() {
     return true;
 }
 
-bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
+bool SparkBTControl::subscribeToNotifications(NimBLERemoteCharacteristic::notify_callback otifyCallback) {
 
     // Subscribe to notifications from Spark
     NimBLERemoteService *pSvc = nullptr;
@@ -362,7 +363,7 @@ void SparkBTControl::startServer() {
     /** If your device is battery powered you may consider setting scan response
      *  to false as it will extend battery life at the expense of less data sent.
      */
-    pAdvertising->setScanResponse(true);
+    pAdvertising->enableScanResponse(true);
     pAdvertising->start();
 
     Serial.println("Advertising Started");
@@ -386,9 +387,9 @@ void SparkBTControl::onWrite(NimBLECharacteristic *pCharacteristic) {
 }
 
 void SparkBTControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
-                                 ble_gap_conn_desc *desc, uint16_t subValue) {
+                                 NimBLEConnInfo &connInfo, uint16_t subValue) {
     string str = "Address: ";
-    str += string(NimBLEAddress(desc->peer_ota_addr)).c_str();
+    str += string(NimBLEAddress(connInfo.getAddress())).c_str();
     if (subValue == 0) {
         str += " Unsubscribed to ";
     } else if (subValue == 1) {
@@ -441,7 +442,7 @@ void SparkBTControl::notifyClients(const vector<CmdData> &msg) {
 
 // AMP Mode
 void SparkBTControl::onConnect(NimBLEServer *pServer_,
-                               ble_gap_conn_desc *desc) {
+                               NimBLEConnInfo &connInfo) {
     isAppConnectedBLE_ = true;
     Serial.println("Multi-connect support: start advertising");
     //	pServer->updateConnParams(desc->conn_handle, 40, 80, 5, 51);
@@ -455,7 +456,7 @@ void SparkBTControl::onConnect(NimBLEClient *pClient_) {
 }
 
 // AMP mode when App is disconnected
-void SparkBTControl::onDisconnect(NimBLEServer *pServer_) {
+void SparkBTControl::onDisconnect(NimBLEServer *pServer_, NimBLEConnInfo &connInfo, int reason) {
     Serial.println("Client disconnected");
     isAppConnectedBLE_ = false;
     notificationCount = 0;
@@ -464,13 +465,13 @@ void SparkBTControl::onDisconnect(NimBLEServer *pServer_) {
 }
 
 // APP mode when Amp is disconnected
-void SparkBTControl::onDisconnect(NimBLEClient *pClient_) {
+void SparkBTControl::onDisconnect(NimBLEClient *pClient_, int reason) {
     isAmpConnected_ = false;
     isConnectionFound_ = false;
     if (!(NimBLEDevice::getScan()->isScanning())) {
         startScan();
     }
-    NimBLEClientCallbacks::onDisconnect(pClient_);
+    NimBLEClientCallbacks::onDisconnect(pClient_, reason);
 }
 
 void SparkBTControl::stopScan() {

@@ -868,11 +868,6 @@ void SparkDataControl::bleNotificationCallback(
     // Triggered when data is received from Spark Amp in APP mode
     //  Transform data into ByteVetor and process
     ByteVector chunk(&pData[0], &pData[length]);
-    // DEBUG_PRINT("Incoming block: ");
-    // DEBUG_PRINTVECTOR(chunk);
-    // DEBUG_PRINTLN();
-    //  DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
-    //   Add incoming data to message queue for processing
     msgQueue.push(chunk);
     // DEBUG_PRINTF("Seding back data via notify.");
     // vector<ByteVector> notifyVector = { chunk };

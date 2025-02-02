@@ -29,7 +29,7 @@ class SparkDataControl;
 // Forward declaration of Callbacks classes, does nothing special, only default actions
 // class ClientCallbacks: public NimBLEClientCallbacks {};
 
-class SparkBTControl : public NimBLEAdvertisedDeviceCallbacks,
+class SparkBTControl : public NimBLEScanCallbacks,
                        NimBLECharacteristicCallbacks,
                        NimBLEServerCallbacks,
                        NimBLEClientCallbacks {
@@ -92,7 +92,7 @@ public:
      *
      * @return TRUE if successful
      */
-    bool subscribeToNotifications(notify_callback notifyCallback = nullptr);
+    bool subscribeToNotifications(NimBLERemoteCharacteristic::notify_callback notifyCallback = nullptr);
     /**
      * @brief  Send messages via BLE to Spark Amp or App
      *
@@ -114,7 +114,7 @@ public:
      * @param notifyCallback function called back when servers are found
      *
      */
-    void initBLE(notify_callback notifyCallback = nullptr);
+    void initBLE(NimBLERemoteCharacteristic::notify_callback notifyCallback = nullptr);
     /**
      * @brief  Starts a scan for servers to connect to.
      *
@@ -192,16 +192,16 @@ private:
     // isClientConnected will be set when a client is connected to ESP in AMP mode
     bool isAppConnectedBLE_ = false;
     static bool isAppConnectedSerial_;
-    notify_callback notifyCB;
+    NimBLERemoteCharacteristic::notify_callback notifyCB;
 
     uint32_t scanTime = 0; /** 0 = scan forever */
     const uint8_t notificationOn[2] = {0x1, 0x0};
     int BLE_MAX_MSG_SIZE = 0x64;
 
-    static void scanEndedCB(NimBLEScanResults results);
+    void onScanEnd(const NimBLEScanResults &results, int reason);
     void onResult(NimBLEAdvertisedDevice *advertisedDevice);
     void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
-    void onDisconnect(NimBLEClient *pClient_);
+    void onDisconnect(NimBLEClient *pClient_, int reason);
     void onConnect(NimBLEClient *pClient_);
 
     // Server mode functions
@@ -214,9 +214,9 @@ private:
     SparkDataControl *spark_dc;
     void onWrite(NimBLECharacteristic *pCharacteristic);
     void onSubscribe(NimBLECharacteristic *pCharacteristic,
-                     ble_gap_conn_desc *desc, uint16_t subValue);
-    void onConnect(NimBLEServer *pServer_, ble_gap_conn_desc *desc);
-    void onDisconnect(NimBLEServer *pServer_);
+                     NimBLEConnInfo &connInfo, uint16_t subValue);
+    void onConnect(NimBLEServer *pServer_, NimBLEConnInfo &connInfo);
+    void onDisconnect(NimBLEServer *pServer_, NimBLEConnInfo &connInfo, int reason);
 
     static void serialCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);
 
