@@ -202,6 +202,7 @@ private:
     void onResult(NimBLEAdvertisedDevice *advertisedDevice);
     void setAdvertisedDevice(NimBLEAdvertisedDevice *device);
     void onDisconnect(NimBLEClient *pClient_);
+    void onConnect(NimBLEClient *pClient_);
 
     // Server mode functions
     NimBLEServer *pServer = nullptr;

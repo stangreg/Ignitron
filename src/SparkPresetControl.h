@@ -79,8 +79,8 @@ private:
     Preset pendingPreset_ = activePreset_;
     int activeBank_ = 0;
     int pendingBank_ = 0;
-    int activePresetNum_ = 3;
-    int pendingPresetNum_ = 1;
+    int activePresetNum_ = 0;
+    int pendingPresetNum_ = 0;
     bool allHWPresetsAvailable_ = false;
 
     // AMP Mode presets

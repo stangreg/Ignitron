@@ -41,6 +41,7 @@ private:
     std::map<string, pair<int, int>> presetUUIDs;
     vector<Preset> hwPresets;
     const char *presetListFileName = "/PresetList.txt";
+    const char *presetListUUIDFileName = "/PresetListUUIDs.txt";
     bool deletePresetFile(int bnk, int pre);
     void updatePresetListUUID(int bnk, int pre, string uuid);
     void initializePresetListFromFS();
@@ -49,6 +50,7 @@ private:
 public:
     SparkPresetBuilder();
     // string getJsonFromPreset(preset pset);
+    void init();
 
     void resetHWPresets();
     Preset getPreset(int bank, int preset);

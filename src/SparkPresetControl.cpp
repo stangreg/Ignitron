@@ -14,6 +14,7 @@ SparkPresetControl &SparkPresetControl::getInstance() {
 void SparkPresetControl::init() {
 
     int operationMode = sparkDC->operationMode();
+    presetBuilder.init();
     if (operationMode == SPARK_MODE_APP) {
         xTaskCreatePinnedToCore(
             checkForMissingPresets, // Function to implement the task
@@ -28,6 +29,8 @@ void SparkPresetControl::init() {
     if (operationMode == SPARK_MODE_AMP) {
         pendingBank_ = 1;
         activeBank_ = 1;
+        activePresetNum_ = 1;
+        pendingPresetNum_ = 1;
 
         activePreset_ = presetBuilder.getPreset(activePresetNum_, activeBank_);
         pendingPreset_ = presetBuilder.getPreset(activePresetNum_,
@@ -45,9 +48,16 @@ Preset SparkPresetControl::getPreset(int bank, int pre) {
 
 void SparkPresetControl::getMissingHWPresets() {
     int currentTime = millis();
+
+    // Check for HW presets
     if (currentTime - lastUpdateCheck > updateInterval) {
         lastUpdateCheck = currentTime;
         if (sparkDC->processAction()) {
+            // Only check for HW presets if current preset is known
+            if (activePreset_.isEmpty) {
+                sparkDC->getCurrentPresetFromSpark();
+                return;
+            }
             // DEBUG_PRINTLN("Checking missing HW presets");
             bool isAnyMissing = false;
             for (int num = 1; num <= 4; num++) {
@@ -123,6 +133,8 @@ void SparkPresetControl::increaseBank() {
         return;
     }
 
+    Serial.printf("Number of banks: %d\n", presetBuilder.getNumberOfBanks());
+
     // Cycle around if at the end
     if (pendingBank_ == numberOfBanks()) {
         // Roll over to 0 when going beyond the last bank
@@ -179,10 +191,9 @@ void SparkPresetControl::updatePendingBankStatus() {
     }
 }
 
-
 void SparkPresetControl::checkForMissingPresets(void *args) {
     SparkPresetControl *presetControl = (SparkPresetControl *)args;
-    delay(3000);
+    // delay(3000);
     while (true) {
         presetControl->getMissingHWPresets();
         delay(1000);
@@ -192,6 +203,7 @@ void SparkPresetControl::checkForMissingPresets(void *args) {
 void SparkPresetControl::updatePendingPreset(int bnk) {
     int presetNum = activePresetNum_ == 0 ? 1 : activePresetNum_;
     pendingPreset_ = getPreset(bnk, presetNum);
+    pendingPresetNum_ = presetNum;
 }
 
 void SparkPresetControl::updatePendingWithActive() {
@@ -262,6 +274,10 @@ void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
     // SparkStreamReader sparkSSR = sparkDC->getSSR();
 
     activePreset_ = statusObject.currentPreset();
+    if (presetNum != activePresetNum_) {
+        Serial.println("Preset number changed, getting current preset from Spark");
+        sparkDC->getCurrentPresetFromSpark();
+    }
     activePresetNum_ = presetNum;
     activeBank_ = pendingBank_ = 0;
     pendingPresetNum_ = activePresetNum_;

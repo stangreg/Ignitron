@@ -102,7 +102,7 @@ void loop() {
             // TEST: spark_dc.getSerialNumber();
             spark_dc.getAmpName();
             // delay(100);
-            // spark_dc.getCurrentPresetFromSpark();
+            //spark_dc.getCurrentPresetFromSpark();
             spark_dc.isInitBoot() = false;
             // spark_dc.configureLooper();
         }

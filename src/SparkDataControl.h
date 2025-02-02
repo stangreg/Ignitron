@@ -59,7 +59,7 @@ public:
     void checkForUpdates();
 
     bool getAmpName();
-    bool getCurrentPresetNum();
+    static bool getCurrentPresetNum();
     bool getSerialNumber();
     bool getFirmwareVersion();
     bool getHWChecksums();

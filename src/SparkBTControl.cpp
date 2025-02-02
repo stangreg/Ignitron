@@ -439,6 +439,7 @@ void SparkBTControl::notifyClients(const vector<CmdData> &msg) {
     }
 }
 
+// AMP Mode
 void SparkBTControl::onConnect(NimBLEServer *pServer_,
                                ble_gap_conn_desc *desc) {
     isAppConnectedBLE_ = true;
@@ -447,6 +448,13 @@ void SparkBTControl::onConnect(NimBLEServer *pServer_,
     NimBLEDevice::startAdvertising();
 }
 
+// APP mode
+void SparkBTControl::onConnect(NimBLEClient *pClient_) {
+    NimBLEClientCallbacks::onConnect(pClient_);
+    spark_dc->getAmpName();
+}
+
+// AMP mode when App is disconnected
 void SparkBTControl::onDisconnect(NimBLEServer *pServer_) {
     Serial.println("Client disconnected");
     isAppConnectedBLE_ = false;
@@ -455,6 +463,7 @@ void SparkBTControl::onDisconnect(NimBLEServer *pServer_) {
     NimBLEDevice::startAdvertising();
 }
 
+// APP mode when Amp is disconnected
 void SparkBTControl::onDisconnect(NimBLEClient *pClient_) {
     isAmpConnected_ = false;
     isConnectionFound_ = false;
