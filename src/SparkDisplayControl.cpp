@@ -487,16 +487,8 @@ void SparkDisplayControl::showTunerNote() {
 
 void SparkDisplayControl::showTunerOffset() {
 
-    int tunerPosX = 0;
-    int tunerPosY = 0;
-
     display.setTextColor(SSD1306_WHITE);
-    display.setTextSize(2);
-    display.setCursor(tunerPosX, tunerPosY);
     if (noteOffsetCents >= -50 && noteOffsetCents <= 50) {
-        // draw text at the top left corner
-        display.print(to_string(noteOffsetCents).c_str());
-
         // draw dynamic note offset at the bottom
         int tunerPosCenter = 128 / 2; // the middle lines are 63 and 64, choose the right side as it visually matches the other visible items
         int barHeight = 12;
