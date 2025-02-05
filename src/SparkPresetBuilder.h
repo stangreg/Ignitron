@@ -61,6 +61,8 @@ public:
     int deletePreset(int bnk, int pre);
 
     void insertHWPreset(int number, const Preset &preset);
+    string savePresetToFile(string filename, const Preset &preset, bool overwrite = false);
+    Preset readPresetFromFile(string filename);
     bool isHWPresetMissing(int num);
 };
 

@@ -76,6 +76,8 @@ int SparkDataControl::init(int opModeInput) {
     tapEntries = CircularBuffer(tapEntrySize);
 
     SparkPresetControl::getInstance().init();
+    // TODO: Check for HWpreset checksums after connecting to Amp.
+    // If checksums differ from cached ones, remove from cache, background task will then update).
     readOpModeFromFile();
 
     // Define MAC address required for keyboard
@@ -400,6 +402,10 @@ void SparkDataControl::checkForUpdates() {
 
 void SparkDataControl::processSparkData(ByteVector &blk) {
 
+    DEBUG_PRINT("Received data: ");
+    DEBUG_PRINTVECTOR(blk);
+    DEBUG_PRINTLN();
+
     // Check if incoming message requires sending an acknowledgment
     handleSendingAck(blk);
 
@@ -432,7 +438,6 @@ bool SparkDataControl::getCurrentPresetFromSpark() {
 
 bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
-    DEBUG_PRINTLN("Entering switchPreset()");
     return SparkPresetControl::getInstance().switchPreset(pre, isInitial);
 }
 
@@ -475,7 +480,8 @@ bool SparkDataControl::toggleEffect(int fx_identifier) {
     return switchEffectOnOff(fx_name, fx_isOn ? false : true);
 }
 
-bool SparkDataControl::getAmpName() {
+bool SparkDataControl::
+    getAmpName() {
     current_msg = spark_msg.get_amp_name(nextMessageNum);
     DEBUG_PRINTLN("Getting amp name from Spark");
 

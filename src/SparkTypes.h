@@ -57,15 +57,15 @@ struct KeyboardMapping {
 
 struct Parameter {
 
-    int number;
-    string special;
-    float value;
+    int number = 0;
+    string special = "";
+    float value = 0.0;
 };
 
 struct Pedal {
 
-    string name;
-    boolean isOn;
+    string name = "";
+    boolean isOn = false;
     vector<Parameter> parameters;
 };
 
@@ -110,10 +110,10 @@ struct Preset {
 };
 
 struct CmdData {
-    byte msg_num;
-    byte cmd;
-    byte subcmd;
-    ByteVector data;
+    byte msg_num = 0x00;
+    byte cmd = 0x00;
+    byte subcmd = 0x00;
+    ByteVector data = {};
     byte detail = 0;
 
     string toString() {
@@ -152,9 +152,9 @@ struct LooperSetting {
     bool unknown_onoff = false;
     unsigned int max_duration = 60000;
 
-    string json;
-    string text;
-    string raw;
+    string json = "";
+    string text = "";
+    string raw = "";
 
     void reset() {
         bpm = 120;

@@ -82,8 +82,8 @@ void SparkPresetControl::resetStatus() {
     // readLastPresetFromFile();
     //  activePresetNum_ = pendingPresetNum_ = 1;
     //  Do we need to read the current amp preset here?
-    activePresetNum_ = pendingPresetNum_;
-    activeBank_ = pendingBank_;
+    pendingPresetNum_ = activePresetNum_;
+    pendingBank_ = activeBank_;
     allHWPresetsAvailable_ = false;
 }
 
@@ -213,8 +213,9 @@ void SparkPresetControl::updatePendingWithActive() {
 
 void SparkPresetControl::setActiveHWPreset() {
 
-    activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
-    pendingPresetNum_ = activePresetNum_;
+    // TODO: Revert if not working
+    activePreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
+    activePresetNum_ = pendingPresetNum_;
     if (activePreset_.isEmpty) {
         DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
         sparkDC->getCurrentPresetFromSpark();
@@ -242,6 +243,10 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
             // Switch HW preset
             if (bnk == 0) {
                 Serial.printf("Changing to HW preset %d...", pre);
+                pendingPreset_ = presetBuilder.getPreset(bnk, pre);
+                if (pendingPreset_.isEmpty) {
+                    DEBUG_PRINTLN("Pending preset empty");
+                }
                 retValue = sparkDC->changeHWPreset(pre);
             }
             // Switch to custom preset
@@ -262,10 +267,10 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
             } // Else (custom preset)
         } // else (preset changing)
     } // if APP / LOOPER mode
-    if (retValue == true) {
+    /*if (retValue == true) {
         activeBank_ = bnk;
         activePresetNum_ = pre;
-    }
+    }*/
 
     return retValue;
 }
@@ -273,15 +278,21 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
     // SparkStreamReader sparkSSR = sparkDC->getSSR();
 
-    activePreset_ = statusObject.currentPreset();
-    if (presetNum != activePresetNum_) {
-        Serial.println("Preset number changed, getting current preset from Spark");
+    // activePreset_ = statusObject.currentPreset();
+    Preset newPreset = presetBuilder.getPreset(activeBank_, presetNum);
+    if (newPreset.isEmpty) {
+        Serial.println("Preset number changed, preset not cached, getting current preset from Spark");
         sparkDC->getCurrentPresetFromSpark();
     }
     activePresetNum_ = presetNum;
     activeBank_ = pendingBank_ = 0;
+    activePreset_ = newPreset;
     pendingPresetNum_ = activePresetNum_;
-    // writeLastPresetToFile();
+    Preset storedHWPreset = presetBuilder.getPreset(activeBank_, activePresetNum_);
+    if (storedHWPreset.isEmpty) {
+        Serial.println("Current HW preset is missing is cache, inserting.");
+        presetBuilder.insertHWPreset(activePresetNum_, activePreset_);
+    }
     /* TODO: IMPORTANT: When preset is changed at AMP (0338), we need to read the current preset and update the bank/preset.
                 If preset number was requested by us (0310), we need to compare if the current preset is the same as the number of the current HW preset number.
                 In case it is the same, we need to update the bank/preset number, otherwise stay as is.
@@ -323,7 +334,7 @@ void SparkPresetControl::switchFXOnOff(const string fx_name, bool onOff) {
 void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
 
     Preset receivedPreset = statusObject.currentPreset();
-    int presetNumber = receivedPreset.presetNumber + 1;
+    int presetNumber = receivedPreset.presetNumber;
 
     // in case the preset is a HW preset and the current selected one,
     // (or not coming from the background process to retrieve missing presets)
@@ -333,22 +344,32 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
         activePreset_ = statusObject.currentPreset();
         string uuid = receivedPreset.uuid;
         pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
-        activeBank_ = std::get<0>(bankPreset);
-        activePresetNum_ = std::get<1>(bankPreset);
+        int checkPresetNum = std::get<1>(bankPreset);
+        if (checkPresetNum != 0) {
+            activeBank_ = std::get<0>(bankPreset);
+            activePresetNum_ = std::get<1>(bankPreset);
+        } else {
+            Serial.println("Preset not found, not changing.");
+        }
         DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
         updatePendingWithActive();
     }
 
     if (isSpecial) {
-        DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber);
-        presetBuilder.insertHWPreset(presetNumber - 1, receivedPreset);
+        DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber + 1);
+        presetBuilder.insertHWPreset(presetNumber, receivedPreset);
         statusObject.resetPresetUpdateFlag();
         // Check if the received preset matches with the current active preset (=> update the number)
         DEBUG_PRINTLN("Updating (special message)...");
         string uuid = activePreset_.uuid;
         pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
-        activeBank_ = std::get<0>(bankPreset);
-        activePresetNum_ = std::get<1>(bankPreset);
+        int checkPresetNum = std::get<1>(bankPreset);
+        if (checkPresetNum != 0) {
+            activeBank_ = std::get<0>(bankPreset);
+            activePresetNum_ = std::get<1>(bankPreset);
+        } else {
+            Serial.println("Preset not found, not changing");
+        }
         DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
     }
 }
@@ -362,12 +383,12 @@ void SparkPresetControl::updateFromSparkResponseAmpPreset(string presetJson) {
 }
 
 void SparkPresetControl::updateFromSparkResponseACK() {
-    if (activeBank_ == 0) {
+    if (pendingBank_ == 0) {
         setActiveHWPreset();
-        updatePendingWithActive();
-    } else {
-        updateActiveWithPendingPreset();
-    }
+        // updatePendingWithActive();
+    } // else {
+    updateActiveWithPendingPreset();
+    //}
 }
 
 bool SparkPresetControl::increasePresetLooper() {

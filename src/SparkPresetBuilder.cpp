@@ -19,6 +19,7 @@ void SparkPresetBuilder::init() {
     // SPIFFS.begin(true);
     //  Creating vector of presets
     Serial.println("Initializing PresetBuilder");
+    resetHWPresets();
 
     initializePresetListFromFS();
     /*xTaskCreatePinnedToCore(
@@ -30,7 +31,6 @@ void SparkPresetBuilder::init() {
         NULL,             // Task handle.
         1                 // Core where the task should run
     );*/
-    resetHWPresets();
 }
 
 Preset SparkPresetBuilder::getPresetFromJson(char *json) {
@@ -174,6 +174,17 @@ void SparkPresetBuilder::initializePresetListFromFS() {
         presetBanksNames.push_back(tmpVector);
     }
 
+    // Read HWPresets from file, if present
+    for (int presetNum = 1; presetNum <= 4; presetNum++) {
+        string filename = "HWPreset" + to_string(presetNum) + ".json";
+        Preset hwPreset = readPresetFromFile(filename);
+        if (!(hwPreset.isEmpty)) {
+            hwPresets.at(presetNum - 1) = hwPreset;
+            string uuid = hwPreset.uuid;
+            updatePresetListUUID(0, presetNum, uuid);
+        }
+    }
+
     if (createUUIDFile) {
         buildPresetUUIDs();
     }
@@ -202,7 +213,7 @@ void SparkPresetBuilder::buildPresetUUIDs() {
 }
 
 Preset SparkPresetBuilder::getPreset(int bank, int pre) {
-    Preset retPreset{};
+    Preset retPreset;
     if (pre > PRESETS_PER_BANK) {
         Serial.println("Requested preset out of bounds.");
         return retPreset;
@@ -216,21 +227,10 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre) {
         return hwPresets.at(pre - 1);
     }
 
-    string presetFilename = "/" + presetBanksNames[bank - 1][pre - 1];
-    string presetJsonString;
-    File file = LittleFS.open(presetFilename.c_str());
+    string presetFilename = presetBanksNames[bank - 1][pre - 1];
+    retPreset = readPresetFromFile(presetFilename);
 
-    if (file) {
-        while (file.available()) {
-            presetJsonString += (char)file.read();
-        }
-        file.close();
-        retPreset = getPresetFromJson(&presetJsonString[0]);
-        return retPreset;
-    } else {
-        Serial.printf("Error while opening file %s, returning empty preset.", presetFilename.c_str());
-        return retPreset;
-    }
+    return retPreset;
 }
 
 pair<int, int> SparkPresetBuilder::getBankPresetNumFromUUID(string uuid) {
@@ -255,43 +255,9 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
     if (presetNamePrefix == "null" || presetNamePrefix.empty()) {
         presetNamePrefix = "Preset";
     }
-    Serial.println("Saving preset:");
-    Serial.println(newPreset.json.c_str());
-    string presetNameWithPath;
-    // remove any blanks from the name for a new filename
-    presetNamePrefix.erase(remove_if(presetNamePrefix.begin(),
-                                     presetNamePrefix.end(),
-                                     [](char chr) {
-                                         return not(regex_match(string(1, chr), regex("[A-z0-9_]")));
-                                     }),
-                           presetNamePrefix.end());
-    // cut down name to 24 characters (a potential counter + .json will then increase to 30);
-    const int nameLength = presetNamePrefix.length();
-    presetNamePrefix.resize(min(24, nameLength));
 
-    string presetFileName = presetNamePrefix + ".json";
-    Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
-    int counter = 0;
+    string presetFileName = savePresetToFile(presetNamePrefix, newPreset);
 
-    string filename = "/" + presetFileName;
-    File presetFile = LittleFS.open(filename.c_str());
-
-    while (presetFile && presetFile.size() != 0) {
-        counter++;
-        Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
-        char counterStr[2];
-        int size = sizeof counterStr;
-        snprintf(counterStr, size, "%d", counter);
-        presetFileName = presetNamePrefix + counterStr + ".json";
-        presetFile.close();
-        presetFile = LittleFS.open(presetFileName.c_str());
-    }
-    presetFile.close();
-    presetNameWithPath = "/" + presetFileName;
-    presetFile = LittleFS.open(presetNameWithPath.c_str(), FILE_WRITE);
-    // First store the json string to a new file
-    presetFile.print(newPreset.json.c_str());
-    presetFile.close();
     // Then insert the preset into the right position
     string filestrPreset = "";
     string filestrPresetUUID = "";
@@ -448,8 +414,78 @@ void SparkPresetBuilder::insertHWPreset(int number, const Preset &preset) {
         return;
     }
     hwPresets.at(number) = preset;
+    string filename = "HWPreset" + to_string(number + 1);
+    savePresetToFile(filename, preset, true);
     string uuid = preset.uuid;
     updatePresetListUUID(0, number + 1, uuid);
+}
+
+string SparkPresetBuilder::savePresetToFile(string filename, const Preset &preset, bool overwrite) {
+
+    Serial.println("Saving preset:");
+    Serial.println(preset.json.c_str());
+    string presetNameWithPath;
+    // remove any blanks from the name for a new filename
+    filename.erase(remove_if(filename.begin(),
+                             filename.end(),
+                             [](char chr) {
+                                 return not(regex_match(string(1, chr), regex("[A-z0-9_]")));
+                             }),
+                   filename.end());
+    // cut down name to 24 characters (a potential counter + .json will then increase to 30);
+    const int nameLength = filename.length();
+    filename.resize(min(24, nameLength));
+
+    string presetFileName = filename + ".json";
+    Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
+    int counter = 0;
+
+    presetFileName = "/" + presetFileName;
+    File presetFile = LittleFS.open(presetFileName.c_str());
+
+    if (!overwrite) {
+        while (presetFile && presetFile.size() != 0) {
+            counter++;
+            Serial.printf("ERROR: File '%s' already exists! Saving as copy.\n", presetFileName.c_str());
+            char counterStr[2];
+            int size = sizeof counterStr;
+            snprintf(counterStr, size, "%d", counter);
+            presetFileName = filename + counterStr + ".json";
+            presetFile.close();
+            presetFile = LittleFS.open(presetFileName.c_str());
+        }
+    }
+    presetFile.close();
+    presetFile = LittleFS.open(presetFileName.c_str(), FILE_WRITE);
+    // Store the json string to a new file
+    presetFile.print(preset.json.c_str());
+    presetFile.close();
+
+    return presetFileName;
+}
+
+Preset SparkPresetBuilder::readPresetFromFile(string filename) {
+
+    Preset retPreset;
+    string presetJsonString;
+
+    string fullFilename = "/" + filename;
+    DEBUG_PRINTF("Trying to read preset %s...", fullFilename.c_str());
+    File file = LittleFS.open(fullFilename.c_str());
+
+    if (file) {
+        while (file.available()) {
+            presetJsonString += (char)file.read();
+        }
+        file.close();
+        retPreset = getPresetFromJson(&presetJsonString[0]);
+        DEBUG_PRINTLN("done.");
+        DEBUG_PRINTF("Read preset: %s\n", retPreset.json.c_str());
+        return retPreset;
+    } else {
+        Serial.printf("Error while opening file %s, returning empty preset.\n", fullFilename.c_str());
+        return retPreset;
+    }
 }
 
 void SparkPresetBuilder::resetHWPresets() {
