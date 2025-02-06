@@ -12,6 +12,14 @@
         "istream": "cpp",
         "ostream": "cpp",
         "sstream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "functional": "cpp",
+        "iomanip": "cpp",
+        "limits": "cpp",
+        "streambuf": "cpp"
     }
 }
