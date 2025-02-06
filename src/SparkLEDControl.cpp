@@ -43,6 +43,10 @@ void SparkLEDControl::updateLEDs() {
     case SPARK_MODE_LOOPER:
     case SPARK_MODE_SPK_LOOPER:
     case SPARK_MODE_APP: {
+        if (spark_dc->isInitBoot()) {
+            allLedOff();
+            break;
+        }
         int buttonMode = spark_dc->buttonMode();
         // Show only active preset LED
         if (buttonMode == BUTTON_MODE_PRESET) {

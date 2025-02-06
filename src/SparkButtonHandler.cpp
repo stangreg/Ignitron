@@ -332,15 +332,6 @@ void SparkButtonHandler::btnToggleBTModeHandler(BfButton *btn,
     spark_dc->toggleBTMode();
 }
 
-void SparkButtonHandler::btnTESTHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
-    DEBUG_PRINTLN("TEST funcction: Get current preset from Spark");
-    if (!spark_dc) {
-        Serial.println("SparkDataControl not setup yet, ignoring button press.");
-        return;
-    }
-    spark_dc->getCurrentPresetFromSpark();
-}
-
 void SparkButtonHandler::btnSwitchTunerModeHandler(BfButton *btn, BfButton::press_pattern_t pattern) {
 
     if (!spark_dc) {
@@ -378,16 +369,17 @@ void SparkButtonHandler::btnLooperPresetHandler(BfButton *btn, BfButton::press_p
         return;
     }
     // Debug
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
     int pressed_btn_gpio = btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
     switch (pressed_btn_gpio) {
     case BUTTON_BANK_DOWN_GPIO:
-        spark_dc->decreasePresetLooper();
+        presetControl.decreasePresetLooper();
         break;
     case BUTTON_BANK_UP_GPIO:
-        spark_dc->increasePresetLooper();
+        presetControl.increasePresetLooper();
         break;
     }
 }

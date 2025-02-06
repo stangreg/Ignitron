@@ -90,6 +90,7 @@ void loop() {
     if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
         while (!(spark_dc.checkBLEConnection())) {
             spark_display.update(spark_dc.isInitBoot());
+            spark_led.updateLEDs();
             spark_bh.readButtons();
         }
 
@@ -102,7 +103,7 @@ void loop() {
             // TEST: spark_dc.getSerialNumber();
             spark_dc.getAmpName();
             // delay(100);
-            //spark_dc.getCurrentPresetFromSpark();
+            // spark_dc.getCurrentPresetFromSpark();
             spark_dc.isInitBoot() = false;
             // spark_dc.configureLooper();
         }

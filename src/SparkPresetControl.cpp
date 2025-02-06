@@ -78,13 +78,12 @@ void SparkPresetControl::getMissingHWPresets() {
 
 void SparkPresetControl::resetStatus() {
 
-    presetBuilder.resetHWPresets();
-    // readLastPresetFromFile();
-    //  activePresetNum_ = pendingPresetNum_ = 1;
-    //  Do we need to read the current amp preset here?
+    // presetBuilder.resetHWPresets();
+    //  readLastPresetFromFile();
+    //   activePresetNum_ = pendingPresetNum_ = 1;
+    //   Do we need to read the current amp preset here?
     pendingPresetNum_ = activePresetNum_;
     pendingBank_ = activeBank_;
-    allHWPresetsAvailable_ = false;
 }
 
 void SparkPresetControl::checkForUpdates(int operationMode) {

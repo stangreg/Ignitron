@@ -55,7 +55,6 @@ private:
     static void btnKeyboardSwitchHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnToggleLoopHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnToggleBTModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
-    static void btnTESTHandler(BfButton *btn, BfButton::press_pattern_t pattern);
     static void btnSwitchTunerModeHandler(BfButton *btn, BfButton::press_pattern_t pattern);
 
     static void configureLooperButtons();
@@ -68,7 +67,7 @@ private:
     static void configureTunerButtons();
 
     static void doNothing(BfButton *btn,
-                                            BfButton::press_pattern_t pattern);
+                          BfButton::press_pattern_t pattern);
 };
 
 #endif /* SPARKBUTTONHANDLER_H_ */

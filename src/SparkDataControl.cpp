@@ -76,8 +76,6 @@ int SparkDataControl::init(int opModeInput) {
     tapEntries = CircularBuffer(tapEntrySize);
 
     SparkPresetControl::getInstance().init();
-    // TODO: Check for HWpreset checksums after connecting to Amp.
-    // If checksums differ from cached ones, remove from cache, background task will then update).
     readOpModeFromFile();
 
     // Define MAC address required for keyboard
@@ -96,7 +94,6 @@ int SparkDataControl::init(int opModeInput) {
         bleControl->initBLE(&bleNotificationCallback);
         DEBUG_PRINTLN("Starting regular check for empty HW presets.");
 
-        // TODO Check if this is working. In worst case the start function is called once and exits
         xTaskCreatePinnedToCore(
             startLooperTimer,
             "LooperTimer",
@@ -311,7 +308,8 @@ void SparkDataControl::updateBatteryLevel() {
 #endif
 
 void SparkDataControl::resetStatus() {
-    // isInitBoot_ = true;
+    ampNameReceived_ = false;
+    isInitBoot_ = true;
     operationMode_ = SPARK_MODE_APP;
     buttonMode_ = BUTTON_MODE_PRESET;
     nextMessageNum = 0x01;
@@ -673,9 +671,8 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = statusObject.ampName();
             setAmpParameters();
-            // reading initial current preset after name has been received
+            // reading HW checksums for cache
             getHWChecksums();
-            // getCurrentPresetFromSpark();
             printMessage = true;
             // ampNameReceived_ = true;
         }
@@ -787,7 +784,6 @@ void SparkDataControl::handleIncomingAck() {
             Serial.println("OK");
         }
         if (lastAck.subcmd == 0x15) {
-            // TODO: Move to own method?
             SparkPresetControl::getInstance().updateActiveWithPendingPreset();
             Serial.println("OK");
         }
@@ -950,16 +946,6 @@ bool SparkDataControl::sparkLooperCommand(byte command) {
     DEBUG_PRINTF("Spark Looper: %02x\n", command);
 
     return triggerCommand(current_msg);
-}
-
-bool SparkDataControl::increasePresetLooper() {
-    // TODO: Wrapper, might not be needed in the end.
-    return SparkPresetControl::getInstance().increasePresetLooper();
-}
-
-bool SparkDataControl::decreasePresetLooper() {
-    // TODO: Wrapper, might not be needed in the end.
-    return SparkPresetControl::getInstance().decreasePresetLooper();
 }
 
 void SparkDataControl::tapTempoButton() {

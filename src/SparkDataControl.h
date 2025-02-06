@@ -124,8 +124,6 @@ public:
     void switchOperationMode(int opMode);
     void toggleBTMode();
 
-    bool increasePresetLooper();
-    bool decreasePresetLooper();
     bool sparkLooperCommand(byte command);
     bool sparkLooperStopAll();
     bool sparkLooperStopPlaying();

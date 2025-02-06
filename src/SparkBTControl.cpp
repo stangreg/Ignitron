@@ -74,9 +74,9 @@ void SparkBTControl::scanEndedCB(NimBLEScanResults results) {
 }
 
 void SparkBTControl::startScan() {
+    spark_dc->resetStatus();
     NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
     Serial.println("Scan initiated");
-    spark_dc->resetStatus();
 }
 
 bool SparkBTControl::connectToServer() {

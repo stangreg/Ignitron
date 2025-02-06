@@ -107,7 +107,6 @@ private:
     void setPresetDeletionFlag();
     void updatePendingBankStatus();
 
-    // TODO: maybe this method needs to be static to run as a task
     static void checkForMissingPresets(void *args);
     void updatePendingPreset(int bnk);
     void setActiveHWPreset();
