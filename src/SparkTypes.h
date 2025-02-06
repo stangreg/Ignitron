@@ -79,7 +79,7 @@ struct Preset {
         uuid = name = "";
         version = description = icon = "";
         bpm = 0.0;
-        filler = 0x00;
+        checksum = 0x00;
         isEmpty = true;
     }
 
@@ -106,7 +106,7 @@ struct Preset {
     string icon;
     float bpm;
     vector<Pedal> pedals;
-    byte filler;
+    byte checksum;
 };
 
 struct CmdData {

@@ -1,12 +1,80 @@
-{"PresetNumber": 127, "UUID": "55A49F08-A991-4A4F-81FA-90BF47F897F3", 
-"Name": "muff RB500", "Version": "0.7", "Description": "Description for Bass Preset 1", "Icon": "icon.png", "BPM": 120.0000, 
-"Pedals": [
-{"Name": "bias.noisegate", "IsOn": true, "Parameters":[0.2057, 0.2266]}, 
-{"Name": "BassComp", "IsOn": true, "Parameters":[0.1930, 0.3350]}, 
-{"Name": "BassBigMuff", "IsOn": true, "Parameters":[0.2353, 0.7145, 0.2483]}, 
-{"Name": "GK800", "IsOn": true, "Parameters":[0.7842, 0.4072, 0.6075, 0.4498, 0.7867]}, 
-{"Name": "Cloner", "IsOn": false, "Parameters":[0.2489, 0.0000]}, 
-{"Name": "DelayMono", "IsOn": false, "Parameters":[0.1633, 0.2147, 0.3558, 0.3200, 1.0000]}, 
-{"Name": "bias.reverb", "IsOn": true, "Parameters":[0.1685, 0.7446, 0.1304, 0.2880, 0.3234, 0.2935, 0.6000]}],
-"Filler": "3C"
+{
+    "PresetNumber": 127,
+    "UUID": "55A49F08-A991-4A4F-81FA-90BF47F897F3",
+    "Name": "muff RB500",
+    "Version": "0.7",
+    "Description": "Description for Bass Preset 1",
+    "Icon": "icon.png",
+    "BPM": 120.0000,
+    "Pedals": [
+        {
+            "Name": "bias.noisegate",
+            "IsOn": true,
+            "Parameters": [
+                0.2057,
+                0.2266
+            ]
+        },
+        {
+            "Name": "BassComp",
+            "IsOn": true,
+            "Parameters": [
+                0.1930,
+                0.3350
+            ]
+        },
+        {
+            "Name": "BassBigMuff",
+            "IsOn": true,
+            "Parameters": [
+                0.2353,
+                0.7145,
+                0.2483
+            ]
+        },
+        {
+            "Name": "GK800",
+            "IsOn": true,
+            "Parameters": [
+                0.7842,
+                0.4072,
+                0.6075,
+                0.4498,
+                0.7867
+            ]
+        },
+        {
+            "Name": "Cloner",
+            "IsOn": false,
+            "Parameters": [
+                0.2489,
+                0.0000
+            ]
+        },
+        {
+            "Name": "DelayMono",
+            "IsOn": false,
+            "Parameters": [
+                0.1633,
+                0.2147,
+                0.3558,
+                0.3200,
+                1.0000
+            ]
+        },
+        {
+            "Name": "bias.reverb",
+            "IsOn": true,
+            "Parameters": [
+                0.1685,
+                0.7446,
+                0.1304,
+                0.2880,
+                0.3234,
+                0.2935,
+                0.6000
+            ]
+        }
+    ],
+    "Checksum": "3C"
 }

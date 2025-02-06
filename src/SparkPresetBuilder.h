@@ -52,8 +52,12 @@ public:
     // string getJsonFromPreset(preset pset);
     void init();
 
+
+
     void resetHWPresets();
-    Preset getPreset(int bank, int preset);
+    void validateChecksums(vector<byte> checksums);
+        Preset
+        getPreset(int bank, int preset);
     pair<int, int> getBankPresetNumFromUUID(string uuid);
     const int getNumberOfBanks() const;
     Preset getPresetFromJson(char *json);

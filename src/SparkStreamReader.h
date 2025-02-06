@@ -53,6 +53,7 @@ private:
     void read_effect();
     void read_effect_onoff();
     void read_hardware_preset();
+    void read_hw_checksums();
     void read_store_hardware_preset();
     void read_preset();
     void read_looper_settings();
@@ -80,6 +81,7 @@ private:
     float read_float();
     boolean read_onoff();
     unsigned int read_int16();
+    int read_int();
 
     boolean isValidBlockWithoutHeader(const ByteVector &blk);
 

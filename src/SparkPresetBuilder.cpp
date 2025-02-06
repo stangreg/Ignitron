@@ -95,10 +95,13 @@ Preset SparkPresetBuilder::getPresetFromJson(char *json) {
         }
         resultPreset.pedals.push_back(currentPedal);
     }
-    // preset Filler
-    byte presetFiller = jsonPreset["Filler"].as<unsigned char>();
-    // byte presetFiller = SparkHelper::HexToByte(presetFillerString);
-    resultPreset.filler = presetFiller;
+    // preset checksum
+    string presetChecksum = jsonPreset["Checksum"].as<string>();
+    if (presetChecksum == "null") {
+        Serial.println("Checksum not found, trying legacy format.");
+        presetChecksum = jsonPreset["Filler"].as<string>();
+    }
+    resultPreset.checksum = stoi(presetChecksum, 0, 16);
 
     resultPreset.isEmpty = false;
     resultPreset.json = jsonString;
@@ -492,6 +495,30 @@ void SparkPresetBuilder::resetHWPresets() {
     hwPresets.clear();
     Preset examplePreset;
     hwPresets = {examplePreset, examplePreset, examplePreset, examplePreset};
+}
+
+void SparkPresetBuilder::validateChecksums(vector<byte> checksums) {
+
+    if (hwPresets.size() != 4 || checksums.size() != 4) {
+        Serial.println("ERROR: Vector HW Presets or Checksums not in the right size.");
+        return;
+    }
+
+    bool success = true;
+
+    for (int presetNum = 0; presetNum < 4; presetNum++) {
+        byte presetChk = hwPresets.at(presetNum).checksum;
+        byte check = (byte)checksums.at(presetNum);
+        if (presetChk != check) {
+            Serial.printf("HW checksum for preset %d changed (Cache: %02x / Amp: %02x), invalidating cache.\n", presetNum + 1, presetChk, check);
+            Preset emptyPreset;
+            hwPresets.at(presetNum) = emptyPreset;
+            success = false;
+        }
+    }
+    if (success) {
+        Serial.println("Cached HW presets are valid.");
+    }
 }
 
 bool SparkPresetBuilder::isHWPresetMissing(int num) {

@@ -19,6 +19,7 @@
 #define MSG_TYPE_TUNER_OUTPUT 12
 #define MSG_TYPE_TUNER_ON 13
 #define MSG_TYPE_TUNER_OFF 14
+#define MSG_TYPE_HWCHECKSUM 15
 
 #define MSG_REQ_SERIAL = 21
 #define MSG_REQ_FW_VER = 22
@@ -88,6 +89,9 @@ public:
     const float note_offset() const { return note_offset_; }
     float &note_offset() { return note_offset_; }
 
+    const vector<byte> hwChecksums() const { return hwChecksums_; }
+    vector<byte> &hwChecksums() { return hwChecksums_; }
+
     const int note_offset_cents() const { return (note_offset_ * 100) - 50; }
 
     const vector<AckData> acknowledgments() const { return acknowledgments_; }
@@ -129,6 +133,8 @@ private:
     int last_message_type_ = 0;
     byte last_message_num_ = 0x00;
     byte last_requested_preset = 0x00;
+
+    vector<byte> hwChecksums_ = {};
 };
 
 #endif

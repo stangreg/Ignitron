@@ -674,10 +674,17 @@ void SparkDataControl::handleAppModeResponse() {
             sparkAmpName = statusObject.ampName();
             setAmpParameters();
             // reading initial current preset after name has been received
-            // getCurrentPresetNum();
-            getCurrentPresetFromSpark();
+            getHWChecksums();
+            // getCurrentPresetFromSpark();
             printMessage = true;
             // ampNameReceived_ = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_HWCHECKSUM) {
+            printMessage = true;
+            SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+            presetControl.validateChecksums(statusObject.hwChecksums());
+            getCurrentPresetFromSpark();
         }
 
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {

@@ -200,6 +200,10 @@ void SparkPresetControl::checkForMissingPresets(void *args) {
     }
 }
 
+void SparkPresetControl::validateChecksums(vector<byte> checksums) {
+    presetBuilder.validateChecksums(checksums);
+}
+
 void SparkPresetControl::updatePendingPreset(int bnk) {
     int presetNum = activePresetNum_ == 0 ? 1 : activePresetNum_;
     pendingPreset_ = getPreset(bnk, presetNum);

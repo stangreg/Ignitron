@@ -62,7 +62,7 @@ public:
     static bool getCurrentPresetNum();
     bool getSerialNumber();
     bool getFirmwareVersion();
-    bool getHWChecksums();
+    static bool getHWChecksums();
     bool getCurrentPreset(int num);
     static bool getCurrentPresetFromSpark();
     static void readHWPreset(int num);

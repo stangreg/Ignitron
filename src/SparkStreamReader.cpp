@@ -149,6 +149,27 @@ void SparkStreamReader::read_hardware_preset() {
     statusObject.lastMessageType() = MSG_TYPE_HWPRESET;
 }
 
+void SparkStreamReader::read_hw_checksums() {
+
+    vector<byte> checksums;
+    sb.start_str();
+    // Array prefix byte
+    int number_of_presets = 4;
+    read_byte();
+    for (int i = 0; i < number_of_presets; i++) {
+        int sum = read_int();
+        checksums.push_back(sum);
+        sb.add_str("Checksum Preset " + to_string(i + 1), SparkHelper::intToHex(sum));
+        if (i < number_of_presets - 1) {
+            sb.add_separator();
+        }
+    }
+    sb.end_str();
+
+    statusObject.hwChecksums() = checksums;
+    statusObject.lastMessageType() = MSG_TYPE_HWCHECKSUM;
+}
+
 void SparkStreamReader::read_store_hardware_preset() {
     // Read object
     read_byte();
@@ -299,10 +320,9 @@ void SparkStreamReader::read_preset() {
     }
     sb.add_python("],");
     sb.add_newline();
-    byte filler = read_byte();
-    // DEBUG_PRINTF("Preset filler ID: %s\n", SparkHelper::intToHex(filler));
-    currentPreset.filler = filler;
-    sb.add_str("Filler", SparkHelper::intToHex(filler));
+    byte chksum = read_byte();
+    currentPreset.checksum = chksum;
+    sb.add_str("Checksum", SparkHelper::intToHex(chksum));
     sb.add_newline();
     sb.end_str();
     currentPreset.text = sb.getText();
@@ -594,6 +614,8 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 }
 
 void SparkStreamReader::set_interpreter(const ByteVector &_msg) {
+    DEBUG_PRINTVECTOR(_msg);
+    DEBUG_PRINTLN();
     msg_data = _msg;
     msg_pos = 0;
 }
@@ -640,6 +662,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x01:
             DEBUG_PRINTLN("03 01 - Reading preset");
             read_preset();
+            break;
+        case 0x2a:
+            DEBUG_PRINTLN("03 2A - Reading HW checksums");
+            read_hw_checksums();
             break;
         case 0x06:
             DEBUG_PRINTLN("03 06 - Reading effect");
@@ -947,6 +973,17 @@ bool SparkStreamReader::isValidBlockWithoutHeader(const ByteVector &blk) {
         return false;
 
     return true;
+}
+
+int SparkStreamReader::read_int() {
+
+    byte first = read_byte();
+    // If int value is greater than 128 it is prefixed with 0xCC
+    if (first == 0xcc) {
+        return read_byte();
+    } else {
+        return first;
+    }
 }
 
 unsigned int SparkStreamReader::read_int16() {

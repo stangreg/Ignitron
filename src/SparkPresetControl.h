@@ -69,6 +69,7 @@ public:
     void getMissingHWPresets();
     void resetStatus();
     void checkForUpdates(int operationMode);
+    void validateChecksums(vector<byte> checksums);
 
 private:
     SparkPresetControl();
