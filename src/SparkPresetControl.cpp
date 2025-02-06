@@ -217,7 +217,6 @@ void SparkPresetControl::updatePendingWithActive() {
 
 void SparkPresetControl::setActiveHWPreset() {
 
-    // TODO: Revert if not working
     activePreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
     activePresetNum_ = pendingPresetNum_;
     if (activePreset_.isEmpty) {
