@@ -53,7 +53,7 @@ private:
     void read_effect();
     void read_effect_onoff();
     void read_hardware_preset();
-    void read_hw_checksums();
+    void read_hw_checksums(byte sub_cmd = 0x2a);
     void read_store_hardware_preset();
     void read_preset();
     void read_looper_settings();

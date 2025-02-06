@@ -377,12 +377,21 @@ vector<CmdData> SparkMessage::get_hw_checksums(byte msg_num) {
     sub_cmd = 0x2a;
 
     start_message(cmd, sub_cmd);
-    //Array of size 4
+    // Array of size 4
     add_byte(0x94);
     add_byte(0x00);
     add_byte(0x01);
     add_byte(0x02);
     add_byte(0x03);
+    return end_message(DIR_TO_SPARK, msg_num);
+}
+
+vector<CmdData> SparkMessage::get_hw_checksums_extended(byte msg_num) {
+    cmd = 0x02;
+    sub_cmd = 0x2b;
+
+    start_message(cmd, sub_cmd);
+    add_byte(0x00);
     return end_message(DIR_TO_SPARK, msg_num);
 }
 

@@ -508,9 +508,12 @@ bool SparkDataControl::getFirmwareVersion() {
 }
 
 bool SparkDataControl::getHWChecksums() {
-    current_msg = spark_msg.get_hw_checksums(nextMessageNum);
     DEBUG_PRINTLN("Getting checksums from Spark");
-
+    if (sparkAmpName == AMP_NAME_SPARK_2) {
+        current_msg = spark_msg.get_hw_checksums_extended(nextMessageNum);
+    } else {
+        current_msg = spark_msg.get_hw_checksums(nextMessageNum);
+    }
     return triggerCommand(current_msg);
 }
 

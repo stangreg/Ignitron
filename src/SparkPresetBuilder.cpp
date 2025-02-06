@@ -240,7 +240,7 @@ pair<int, int> SparkPresetBuilder::getBankPresetNumFromUUID(string uuid) {
     pair<int, int> result;
     try {
         result = presetUUIDs.at(uuid);
-        DEBUG_PRINTF("Found UUID %s as preset %d - %d", uuid.c_str(), std::get<0>(result), std::get<1>(result));
+        DEBUG_PRINTF("Found UUID %s as preset %d - %d\n", uuid.c_str(), std::get<0>(result), std::get<1>(result));
     } catch (std::out_of_range exception) {
         Serial.print("Preset not found.");
         result = make_pair(0, 0);
@@ -499,13 +499,15 @@ void SparkPresetBuilder::resetHWPresets() {
 
 void SparkPresetBuilder::validateChecksums(vector<byte> checksums) {
 
-    if (hwPresets.size() != 4 || checksums.size() != 4) {
+    // TODO: Once all 8 Spark 2 HW presets are supported, this needs to be adjusted
+    if (hwPresets.size() < 4 || checksums.size() < 4) {
         Serial.println("ERROR: Vector HW Presets or Checksums not in the right size.");
         return;
     }
 
     bool success = true;
 
+    // TODO: Change limit to variable
     for (int presetNum = 0; presetNum < 4; presetNum++) {
         byte presetChk = hwPresets.at(presetNum).checksum;
         byte check = (byte)checksums.at(presetNum);

@@ -149,12 +149,20 @@ void SparkStreamReader::read_hardware_preset() {
     statusObject.lastMessageType() = MSG_TYPE_HWPRESET;
 }
 
-void SparkStreamReader::read_hw_checksums() {
+void SparkStreamReader::read_hw_checksums(byte sub_cmd) {
 
     vector<byte> checksums;
     sb.start_str();
+
+    // determine number of HW presets based on amp type (sub_cmd)
+    int number_of_presets;
+    if (sub_cmd == 0x2a) {
+        number_of_presets = 4;
+    } else if (sub_cmd == 0x2b) {
+        number_of_presets = 8;
+    }
+
     // Array prefix byte
-    int number_of_presets = 4;
     read_byte();
     for (int i = 0; i < number_of_presets; i++) {
         int sum = read_int();
@@ -665,7 +673,11 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             break;
         case 0x2a:
             DEBUG_PRINTLN("03 2A - Reading HW checksums");
-            read_hw_checksums();
+            read_hw_checksums(0x2a);
+            break;
+        case 0x2b:
+            DEBUG_PRINTLN("03 2B - Reading HW checksums");
+            read_hw_checksums(0x2b);
             break;
         case 0x06:
             DEBUG_PRINTLN("03 06 - Reading effect");
