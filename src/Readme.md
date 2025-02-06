@@ -30,7 +30,7 @@ There is a number of custom libraries used on top of the standard ones to use wi
 | ArduinoJson | 6.21.3 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | ESP32-BLE-Keyboard | 0.3.2 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
-| NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
+| NimBLE-Arduino  | 1.4.3 | BLE library | Arduino IDE Library |
 
 ## Stucture of the code
 A (rudimentary and incomplete) doxygen documentation has been created [here](https://github.com/stangreg/Ignitron/blob/main/doxygen/html/index.html).\
