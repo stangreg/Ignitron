@@ -38,10 +38,7 @@ Preset SparkPresetBuilder::getPresetFromJson(char *json) {
     Preset resultPreset;
     string jsonString(json);
 
-    const int capacity = JSON_OBJECT_SIZE(
-                             10) +
-                         JSON_ARRAY_SIZE(8) + 8 * JSON_OBJECT_SIZE(4) + 8 * JSON_OBJECT_SIZE(8);
-    DynamicJsonDocument jsonPreset(capacity);
+    JsonDocument jsonPreset;
     DeserializationError err = deserializeJson(jsonPreset, json);
 
     if (err) {
