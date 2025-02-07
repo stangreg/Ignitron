@@ -92,7 +92,11 @@ void SparkDisplayControl::showBankAndPresetNum() {
     }
     bankDisplay += selBankStr.str();
     if (pendingBank == 0) {
-        bankDisplay = "HW";
+        if (numberOfHWBanks == 1) {
+            bankDisplay = "HW";
+        } else {
+            bankDisplay = "H" + to_string(pendingHWBank + 1);
+        }
     }
 
     display.setCursor(0, 0);
@@ -113,7 +117,7 @@ void SparkDisplayControl::showPresetName() {
     int rectColor;
     int textColor;
     // Show preset name inverted if it is not the currently selected one
-    if (pendingBank == activeBank && presetEditMode != PRESET_EDIT_DELETE) {
+    if (pendingBank == activeBank && activeHWBank == pendingHWBank && presetEditMode != PRESET_EDIT_DELETE) {
         rectColor = SSD1306_BLACK;
         textColor = SSD1306_WHITE;
     } else {
@@ -143,7 +147,7 @@ void SparkDisplayControl::showPresetName() {
         display.setCursor(display_x1, 32);
         // If bank is not HW preset bank and the currently selected bank
         // is not the active one, show the pending preset name
-        if (activeBank != pendingBank) {
+        if (activeBank != pendingBank || activeHWBank != pendingHWBank) {
             primaryLinePreset = pendingPreset;
         } else {
             primaryLinePreset = activePreset;
@@ -571,6 +575,9 @@ void SparkDisplayControl::update(bool isInitBoot) {
         display.setTextWrap(false);
         activeBank = presetControl.activeBank();
         pendingBank = presetControl.pendingBank();
+        pendingHWBank = presetControl.pendingHWBank();
+        activeHWBank = presetControl.activeHWBank();
+        numberOfHWBanks = presetControl.numberOfHWBanks();
         activePreset = presetControl.activePreset();
         pendingPreset = presetControl.pendingPreset();
         buttonMode = spark_dc->buttonMode();

@@ -29,6 +29,9 @@ public:
     // int& activePresetNum() {return activePresetNum_;}
     const int &activeBank() const { return activeBank_; }
     const int &pendingBank() const { return pendingBank_; }
+    const int &activeHWBank() const { return activeHWBank_; }
+    const int &pendingHWBank() const { return pendingHWBank_; }
+    const int numberOfHWBanks() const { return presetBuilder.numberOfHWbanks(); }
     const int numberOfBanks() const { return presetBuilder.getNumberOfBanks(); }
     const Preset &appReceivedPreset() const { return appReceivedPreset_; }
 
@@ -40,6 +43,8 @@ public:
     const int presetNumToEdit() const { return presetNumToEdit_; }
     const string responseMsg() const { return responseMsg_; }
     const int presetEditMode() const { return presetEditMode_; }
+
+    void setAmpParameters(string ampName);
 
     void setBank(int i);
     void increaseBank();
@@ -83,6 +88,10 @@ private:
     int activePresetNum_ = 0;
     int pendingPresetNum_ = 0;
     bool allHWPresetsAvailable_ = false;
+
+    // HW variables
+    int activeHWBank_ = 0;
+    int pendingHWBank_ = 0;
 
     // AMP Mode presets
     Preset appReceivedPreset_;

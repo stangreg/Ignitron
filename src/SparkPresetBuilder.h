@@ -40,24 +40,33 @@ private:
     vector<vector<string>> presetBanksNames;
     std::map<string, pair<int, int>> presetUUIDs;
     vector<Preset> hwPresets;
+
+    int numberOfHWBanks_ = 1;
+    int numberOfHWPresets_ = 4;
+
     const char *presetListFileName = "/PresetList.txt";
     const char *presetListUUIDFileName = "/PresetListUUIDs.txt";
     bool deletePresetFile(int bnk, int pre);
     void updatePresetListUUID(int bnk, int pre, string uuid);
     void initializePresetListFromFS();
+
     void buildPresetUUIDs();
 
 public:
     SparkPresetBuilder();
     // string getJsonFromPreset(preset pset);
     void init();
-
-
+    void initHWPresets();
 
     void resetHWPresets();
+
+    const int numberOfHWbanks() const { return numberOfHWBanks_; }
+    int &numberOfHWBanks() { return numberOfHWBanks_; }
+    const int numberOfHWPresets() const { return numberOfHWPresets_; }
+
     void validateChecksums(vector<byte> checksums);
-        Preset
-        getPreset(int bank, int preset);
+    Preset
+    getPreset(int bank, int preset);
     pair<int, int> getBankPresetNumFromUUID(string uuid);
     const int getNumberOfBanks() const;
     Preset getPresetFromJson(char *json);

@@ -60,14 +60,15 @@ void SparkPresetControl::getMissingHWPresets() {
             }
             // DEBUG_PRINTLN("Checking missing HW presets");
             bool isAnyMissing = false;
-            for (int num = 1; num <= 4; num++) {
+            int numberOfPresets = presetBuilder.numberOfHWPresets();
+            for (int num = 1; num <= numberOfPresets; num++) {
                 // DEBUG_PRINTF("Checking missing HW preset %d.\n", num);
                 bool isCurrentMissing = presetBuilder.isHWPresetMissing(num);
                 if (isCurrentMissing) {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(1500);
+                    delay(1000);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -84,6 +85,7 @@ void SparkPresetControl::resetStatus() {
     //   Do we need to read the current amp preset here?
     pendingPresetNum_ = activePresetNum_;
     pendingBank_ = activeBank_;
+    pendingHWBank_ = activeHWBank_;
 }
 
 void SparkPresetControl::checkForUpdates(int operationMode) {
@@ -117,6 +119,16 @@ void SparkPresetControl::updateActiveWithPendingPreset() {
     activePreset_ = pendingPreset_;
     activeBank_ = pendingBank_;
     activePresetNum_ = pendingPresetNum_;
+    activeHWBank_ = pendingHWBank_;
+}
+
+void SparkPresetControl::setAmpParameters(string ampName) {
+    if (ampName == AMP_NAME_SPARK_2) {
+        presetBuilder.numberOfHWBanks() = 2;
+    } else {
+        presetBuilder.numberOfHWBanks() = 1;
+    }
+    presetBuilder.initHWPresets();
 }
 
 void SparkPresetControl::setBank(int i) {
@@ -132,12 +144,15 @@ void SparkPresetControl::increaseBank() {
         return;
     }
 
-    Serial.printf("Number of banks: %d\n", presetBuilder.getNumberOfBanks());
-
     // Cycle around if at the end
     if (pendingBank_ == numberOfBanks()) {
         // Roll over to 0 when going beyond the last bank
         pendingBank_ = 0;
+        pendingHWBank_ = 0;
+    }
+    // Check if to increase bank or if to switch between HW banks, cycle through HW banks first
+    else if (pendingHWBank_ < presetBuilder.numberOfHWBanks() - 1) {
+        pendingHWBank_++;
     } else {
         pendingBank_++;
     }
@@ -156,8 +171,11 @@ void SparkPresetControl::decreaseBank() {
     }
 
     // Roll over to last bank if going beyond the first bank
-    if (pendingBank_ == 0) {
+    if (pendingBank_ == 0 && pendingHWBank_ == 0) {
         pendingBank_ = numberOfBanks();
+        pendingHWBank_ = presetBuilder.numberOfHWBanks() - 1;
+    } else if (pendingBank_ == 0) {
+        pendingHWBank_--;
     } else {
         pendingBank_--;
     }
@@ -212,12 +230,14 @@ void SparkPresetControl::updatePendingPreset(int bnk) {
 void SparkPresetControl::updatePendingWithActive() {
     pendingBank_ = activeBank_;
     pendingPreset_ = activePreset_;
+    pendingHWBank_ = activeHWBank_;
 }
 
 void SparkPresetControl::setActiveHWPreset() {
 
     activePreset_ = presetBuilder.getPreset(pendingBank_, pendingPresetNum_);
     activePresetNum_ = pendingPresetNum_;
+    activeHWBank_ = pendingHWBank_;
     if (activePreset_.isEmpty) {
         DEBUG_PRINTLN("Cache not filled, getting preset from Spark");
         sparkDC->getCurrentPresetFromSpark();
@@ -235,7 +255,11 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
     if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER) {
         // Check if selected preset is equal to active preset.
         // In this case toggle the drive pedal only
-        if (pre == activePresetNum_ && activeBank_ == pendingBank_ && !(activePreset_.isEmpty) && !isInitial) {
+        if (pre == activePresetNum_ &&
+            activeBank_ == pendingBank_ &&
+            pendingHWBank_ == activeHWBank_ &&
+            !(activePreset_.isEmpty) &&
+            !isInitial) {
 
             retValue = sparkDC->toggleEffect(INDEX_FX_DRIVE);
 
@@ -244,12 +268,13 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
         else {
             // Switch HW preset
             if (bnk == 0) {
-                Serial.printf("Changing to HW preset %d...", pre);
-                pendingPreset_ = presetBuilder.getPreset(bnk, pre);
+                int presetNum = pre + pendingHWBank_ * PRESETS_PER_BANK;
+                Serial.printf("Changing to HW preset %d...", presetNum);
+                pendingPreset_ = presetBuilder.getPreset(bnk, presetNum);
                 if (pendingPreset_.isEmpty) {
                     DEBUG_PRINTLN("Pending preset empty");
                 }
-                retValue = sparkDC->changeHWPreset(pre);
+                retValue = sparkDC->changeHWPreset(presetNum);
             }
             // Switch to custom preset
             else {
@@ -278,7 +303,6 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 }
 
 void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
-    // SparkStreamReader sparkSSR = sparkDC->getSSR();
 
     // activePreset_ = statusObject.currentPreset();
     Preset newPreset = presetBuilder.getPreset(activeBank_, presetNum);
@@ -286,15 +310,15 @@ void SparkPresetControl::updateFromSparkResponseHWPreset(int presetNum) {
         Serial.println("Preset number changed, preset not cached, getting current preset from Spark");
         sparkDC->getCurrentPresetFromSpark();
     }
-    activePresetNum_ = presetNum;
+    // In case there are more than (PRESETS_PER_BANK) HW Presets, we have to calculate modulo (for internal display);
+    activePresetNum_ = ((presetNum - 1) % PRESETS_PER_BANK) + 1;
     activeBank_ = pendingBank_ = 0;
+    // calculate current HW bank
+    activeHWBank_ = (presetNum - 1) / PRESETS_PER_BANK;
     activePreset_ = newPreset;
+
     pendingPresetNum_ = activePresetNum_;
-    Preset storedHWPreset = presetBuilder.getPreset(activeBank_, activePresetNum_);
-    if (storedHWPreset.isEmpty) {
-        Serial.println("Current HW preset is missing is cache, inserting.");
-        presetBuilder.insertHWPreset(activePresetNum_, activePreset_);
-    }
+    pendingHWBank_ = activeHWBank_;
     /* TODO: IMPORTANT: When preset is changed at AMP (0338), we need to read the current preset and update the bank/preset.
                 If preset number was requested by us (0310), we need to compare if the current preset is the same as the number of the current HW preset number.
                 In case it is the same, we need to update the bank/preset number, otherwise stay as is.
@@ -349,7 +373,10 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
         int checkPresetNum = std::get<1>(bankPreset);
         if (checkPresetNum != 0) {
             activeBank_ = std::get<0>(bankPreset);
-            activePresetNum_ = std::get<1>(bankPreset);
+            activePresetNum_ = ((checkPresetNum - 1) % PRESETS_PER_BANK) + 1;
+            if (activeBank_ == 0) {
+                activeHWBank_ = (checkPresetNum - 1) / PRESETS_PER_BANK;
+            }
         } else {
             Serial.println("Preset not found, not changing.");
         }
@@ -402,11 +429,17 @@ bool SparkPresetControl::increasePresetLooper() {
         return false;
     }
 
+    // TODO: Adjust for multiple HW banks
     int selectedPresetNum;
     if (activePresetNum_ == 4) {
         selectedPresetNum = 1;
-        if (activeBank_ == numberOfBanks()) {
+        if (pendingBank_ == numberOfBanks()) {
             pendingBank_ = 0;
+            activeHWBank_ = 0;
+        }
+        // Check if to increase bank or if to switch between HW banks, cycle through HW banks first
+        else if (activeHWBank_ < presetBuilder.numberOfHWBanks() - 1) {
+            activeHWBank_++;
         } else {
             pendingBank_++;
         }
@@ -418,6 +451,7 @@ bool SparkPresetControl::increasePresetLooper() {
 
 bool SparkPresetControl::decreasePresetLooper() {
 
+    // TODO: Adjust for multiple HW banks
     int operationMode = sparkDC->operationMode();
     if (!sparkDC->processAction() ||
         (operationMode != SPARK_MODE_LOOPER && operationMode != SPARK_MODE_SPK_LOOPER)) {
@@ -428,8 +462,11 @@ bool SparkPresetControl::decreasePresetLooper() {
     int selectedPresetNum;
     if (activePresetNum_ == 1) {
         selectedPresetNum = 4;
-        if (activeBank_ == 0) {
+        if (pendingBank_ == 0 && activeHWBank_ == 0) {
             pendingBank_ = numberOfBanks();
+            activeHWBank_ = presetBuilder.numberOfHWBanks() - 1;
+        } else if (pendingBank_ == 0) {
+            activeHWBank_--;
         } else {
             pendingBank_--;
         }

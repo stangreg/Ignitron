@@ -20,17 +20,7 @@ void SparkPresetBuilder::init() {
     //  Creating vector of presets
     Serial.println("Initializing PresetBuilder");
     resetHWPresets();
-
     initializePresetListFromFS();
-    /*xTaskCreatePinnedToCore(
-        buildPresetUUIDs, // Function to implement the task
-        "PresetUUIDs",    // Name of the task
-        10000,            // Stack size in words
-        this,             // Task input parameter
-        0,                // Priority of the task
-        NULL,             // Task handle.
-        1                 // Core where the task should run
-    );*/
 }
 
 Preset SparkPresetBuilder::getPresetFromJson(char *json) {
@@ -174,8 +164,19 @@ void SparkPresetBuilder::initializePresetListFromFS() {
         presetBanksNames.push_back(tmpVector);
     }
 
+    // initHWPresets();
+
+    if (createUUIDFile) {
+        buildPresetUUIDs();
+    }
+}
+
+void SparkPresetBuilder::initHWPresets() {
+    // Determine the number of HW presets and store
+    numberOfHWPresets_ = numberOfHWBanks_ * PRESETS_PER_BANK;
+    resetHWPresets();
     // Read HWPresets from file, if present
-    for (int presetNum = 1; presetNum <= 4; presetNum++) {
+    for (int presetNum = 1; presetNum <= numberOfHWPresets_; presetNum++) {
         string filename = "HWPreset" + to_string(presetNum) + ".json";
         Preset hwPreset = readPresetFromFile(filename);
         if (!(hwPreset.isEmpty)) {
@@ -183,10 +184,6 @@ void SparkPresetBuilder::initializePresetListFromFS() {
             string uuid = hwPreset.uuid;
             updatePresetListUUID(0, presetNum, uuid);
         }
-    }
-
-    if (createUUIDFile) {
-        buildPresetUUIDs();
     }
 }
 
@@ -214,22 +211,30 @@ void SparkPresetBuilder::buildPresetUUIDs() {
 
 Preset SparkPresetBuilder::getPreset(int bank, int pre) {
     Preset retPreset;
-    if (pre > PRESETS_PER_BANK) {
-        Serial.println("Requested preset out of bounds.");
-        return retPreset;
-    }
-
-    if (bank > presetBanksNames.size()) {
-        Serial.println("Requested bank out of bounds.");
-        return retPreset;
-    }
+    // HW preset
     if (bank == 0) {
+        if (pre > hwPresets.size()) {
+            Serial.println("Requested HW preset out of bounds.");
+            return retPreset;
+        }
         return hwPresets.at(pre - 1);
     }
 
-    string presetFilename = presetBanksNames[bank - 1][pre - 1];
-    retPreset = readPresetFromFile(presetFilename);
+    // Custom preset
+    if (bank > 0) {
+        if (pre > PRESETS_PER_BANK) {
+            Serial.println("Requested preset out of bounds.");
+            return retPreset;
+        }
 
+        if (bank > presetBanksNames.size()) {
+            Serial.println("Requested bank out of bounds.");
+            return retPreset;
+        }
+
+        string presetFilename = presetBanksNames[bank - 1][pre - 1];
+        retPreset = readPresetFromFile(presetFilename);
+    }
     return retPreset;
 }
 
@@ -409,7 +414,7 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
 
 void SparkPresetBuilder::insertHWPreset(int number, const Preset &preset) {
 
-    if (number < 0 || number > 3) {
+    if (number < 0 || number > numberOfHWPresets_ - 1) {
         Serial.println("ERROR: HW Preset not inserted, preset number out of bounds.");
         return;
     }
@@ -491,21 +496,23 @@ Preset SparkPresetBuilder::readPresetFromFile(string filename) {
 void SparkPresetBuilder::resetHWPresets() {
     hwPresets.clear();
     Preset examplePreset;
-    hwPresets = {examplePreset, examplePreset, examplePreset, examplePreset};
+    for (int i = 0; i < numberOfHWPresets_; i++) {
+        hwPresets.push_back(examplePreset);
+    }
 }
 
 void SparkPresetBuilder::validateChecksums(vector<byte> checksums) {
 
     // TODO: Once all 8 Spark 2 HW presets are supported, this needs to be adjusted
-    if (hwPresets.size() < 4 || checksums.size() < 4) {
-        Serial.println("ERROR: Vector HW Presets or Checksums not in the right size.");
+    if (hwPresets.size() < numberOfHWPresets_ || checksums.size() < numberOfHWPresets_) {
+        Serial.printf("ERROR: Vector HW Presets (size: %d) or Checksums (size: %d) not in the expected size (%d).\n", hwPresets.size(), checksums.size(), numberOfHWPresets_);
         return;
     }
 
     bool success = true;
 
-    // TODO: Change limit to variable
-    for (int presetNum = 0; presetNum < 4; presetNum++) {
+    // Compare checksums of stored HW presets with received checksums
+    for (int presetNum = 0; presetNum < numberOfHWPresets_; presetNum++) {
         byte presetChk = hwPresets.at(presetNum).checksum;
         byte check = (byte)checksums.at(presetNum);
         if (presetChk != check) {
@@ -521,7 +528,7 @@ void SparkPresetBuilder::validateChecksums(vector<byte> checksums) {
 }
 
 bool SparkPresetBuilder::isHWPresetMissing(int num) {
-    if (num < 1 || num > 4) {
+    if (num < 1 || num > numberOfHWPresets_) {
         return false;
     }
     if (hwPresets.at(num - 1).isEmpty) {

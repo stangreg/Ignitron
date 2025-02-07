@@ -344,6 +344,8 @@ void SparkDataControl::setAmpParameters() {
     }
     spark_msg.maxChunkSizeFromSpark() = 0x19;
     spark_msg.maxBlockSizeFromSpark() = 0x6A;
+
+    SparkPresetControl::getInstance().setAmpParameters(ampName);
 }
 
 void SparkDataControl::checkForUpdates() {
@@ -644,9 +646,11 @@ void SparkDataControl::handleAppModeResponse() {
 
             int spark_presetNumber = statusObject.currentPresetNumber();
 
-            // only change active presetNumber if new number is between 1 and 4,
+            // only change active presetNumber if new number is between 1 and max HW presets,
             // otherwise it is a custom preset number and can be ignored
-            if (lastMessageNumber != special_msg_num && spark_presetNumber >= 1 && spark_presetNumber <= 4) {
+            SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+            int numberOfHWPresets = presetControl.numberOfHWBanks() * PRESETS_PER_BANK;
+            if (lastMessageNumber != special_msg_num && spark_presetNumber >= 1 && spark_presetNumber <= numberOfHWPresets) {
                 // check if this improves behavior, updating activePreset when new HW preset received
                 SparkPresetControl::getInstance().updateFromSparkResponseHWPreset(spark_presetNumber);
             } else {

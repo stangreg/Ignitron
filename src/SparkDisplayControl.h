@@ -48,6 +48,9 @@ private:
     SparkDataControl *spark_dc;
     int activeBank = 1;
     int pendingBank = 1;
+    int activeHWBank = 0;
+    int pendingHWBank = 0;
+    int numberOfHWBanks = 1;
     Preset activePreset;
     Preset pendingPreset;
     Preset presetFromApp;
