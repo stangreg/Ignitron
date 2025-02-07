@@ -429,7 +429,6 @@ bool SparkPresetControl::increasePresetLooper() {
         return false;
     }
 
-    // TODO: Adjust for multiple HW banks
     int selectedPresetNum;
     if (activePresetNum_ == 4) {
         selectedPresetNum = 1;
@@ -451,7 +450,6 @@ bool SparkPresetControl::increasePresetLooper() {
 
 bool SparkPresetControl::decreasePresetLooper() {
 
-    // TODO: Adjust for multiple HW banks
     int operationMode = sparkDC->operationMode();
     if (!sparkDC->processAction() ||
         (operationMode != SPARK_MODE_LOOPER && operationMode != SPARK_MODE_SPK_LOOPER)) {
