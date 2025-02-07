@@ -24,10 +24,10 @@ There is a number of custom libraries used on top of the standard ones to use wi
 
 |Library|Version|Comment| Source
 |---|---:|---|---|
-| Adafruit SSD1306 | 2.5.7 | Display control | Arduino IDE Library |
+| Adafruit SSD1306 | 2.5.13 | Display control | Arduino IDE Library |
 | Adafruit BusIO | 1.14.5 | Bus IO | Arduino IDE Library |
-| Adafruit_GFX_Library | 1.11.7 | Advanced display control | Arduino IDE Library |
-| ArduinoJson | 6.21.3 | JSON document parsing | Arduino IDE Library |
+| Adafruit_GFX_Library | 1.11.11 | Advanced display control | Arduino IDE Library |
+| ArduinoJson | 7.3.0 | JSON document parsing | Arduino IDE Library |
 | ButtonFever | 1.0.0 | Button library | Arduino IDE Library |
 | ESP32-BLE-Keyboard | 0.3.2 | Keyboard used for the looper app control | [GitHub](https://github.com/T-vK/ESP32-BLE-Keyboard) |
 | NimBLE-Arduino  | 1.4.1 | BLE library | Arduino IDE Library |
