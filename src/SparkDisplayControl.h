@@ -10,7 +10,18 @@
 
 #include "Config_Definitions.h"
 #include <Adafruit_GFX.h>
+
+// Definition of OLED driver in Config_Definitions.h
+#if defined(OLED_DRIVER_SSD1306)
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
+#define OLED_WHITE SSD1306_WHITE
+#define OLED_BLACK SSD1306_BLACK
+#elif defined(OLED_DRIVER_SH1106)
+#include <Adafruit_SH110X.h> //https://github.com/adafruit/Adafruit_SH110x
+#define OLED_WHITE SH110X_WHITE
+#define OLED_BLACK SH110X_BLACK
+#endif
+
 
 #include "SparkDataControl.h"
 #include "SparkLooperControl.h"
@@ -44,7 +55,11 @@ public:
     }
 
 private:
+#if defined(OLED_DRIVER_SSD1306)
     static Adafruit_SSD1306 display;
+#elif defined(OLED_DRIVER_SH1106)
+    static Adafruit_SH1106G display;
+#endif
     SparkDataControl *spark_dc;
     int activeBank = 1;
     int pendingBank = 1;
@@ -134,7 +149,7 @@ private:
 
     void drawCentreString(const char *buf, int y, int offset = 0);
     void drawRightAlignedString(const char *buf, int y, int offset = 0);
-    void drawTunerTriangleCentre(int x, int size, bool direction, int color = SSD1306_WHITE);
+    void drawTunerTriangleCentre(int x, int size, bool direction, int color = OLED_WHITE);
     void drawInvertBitmapColor(int16_t x, int16_t y, const uint8_t *bitmap,
                                int16_t w, int16_t h, uint16_t color);
 

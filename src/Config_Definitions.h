@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-// #define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -74,6 +74,14 @@ const string VERSION = "1.8.0";
 
 #endif
 
+// OLED Driver config
+// By default an SSD1306 driver is used which is most common for 0.96" 128x64 OLED displays
+// 1.3" OLED 128x64 displays commonly uses an SH1106 driver. 
+// Choose driver below, only one can be defined!
+
+//#define OLED_DRIVER_SSD1306
+#define OLED_DRIVER_SH1106
+
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 25
 #define BUTTON_DRIVE_GPIO 25
@@ -97,17 +105,44 @@ const string VERSION = "1.8.0";
 #define LONG_BUTTON_PRESS_TIME 1000
 
 // LED GPIOs
-#define LED_PRESET1_GPIO 27
 #define LED_DRIVE_GPIO 27
-
-#define LED_PRESET2_GPIO 13
 #define LED_MOD_GPIO 13
-
-#define LED_PRESET3_GPIO 16
 #define LED_DELAY_GPIO 16
-
-#define LED_PRESET4_GPIO 14
 #define LED_REVERB_GPIO 14
+
+// If the optional DEDICATED_PRESET_LEDS is defined below it will 
+// slightly alter the behaviour of Ignitron to make the FX and 
+// PRESET LEDs work independently. Also the bottom  line in the 
+// OLED display will no longer show FX symbols but instead 
+// show which *mode* Ignitron is in:
+// (PRESET/FX MANUAL/LOOP-CONFIG/LOOP-CNTRL).
+// The FX LEDS will show the actual FX pedals in use for each preset.
+// The dedicated Preset LED GPIO pins LED_PRESET<n>_GPIO is defined 
+// separately below under the #ifdef DEDICATED_PRESET_LEDS clause.
+
+#define DEDICATED_PRESET_LEDS
+
+#ifdef DEDICATED_PRESET_LEDS
+#define LED_PRESET1_GPIO 0
+#define LED_PRESET2_GPIO 4
+#define LED_PRESET3_GPIO 12
+#define LED_PRESET4_GPIO 15
+#else
+#define LED_PRESET1_GPIO LED_DRIVE_GPIO
+#define LED_PRESET2_GPIO LED_MOD_GPIO
+#define LED_PRESET3_GPIO LED_DELAY_GPIO
+#define LED_PRESET4_GPIO LED_REVERB_GPIO
+
+
+// If GPIO 0, 4, 12, 15 is physically connected in hardware but 
+// DEDICATED_PRESET_LEDS is undefined, we need to set those outputs 
+// to LOW. So we define an extra set of defines to allow them to be 
+// controlled
+#define OPTIONAL_GPIO_1 0
+#define OPTIONAL_GPIO_2 4
+#define OPTIONAL_GPIO_3 12
+#define OPTIONAL_GPIO_4 15
+#endif
 
 #define LED_BANK_DOWN_GPIO 23
 #define LED_NOISEGATE_GPIO 23

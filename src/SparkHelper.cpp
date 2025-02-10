@@ -110,28 +110,53 @@ int SparkHelper::getFXIndexFromBtnGpio(int btn_gpio){
 
 }
 
-int SparkHelper::getLedGpio(int btn_number){
-	switch(btn_number) {
-	case 1:
-		return LED_PRESET1_GPIO;
-		break;
-	case 2:
-		return LED_PRESET2_GPIO;
-		break;
-	case 3:
-		return LED_PRESET3_GPIO;
-		break;
-	case 4:
-		return LED_PRESET4_GPIO;
-		break;
-	case 5:
-		return LED_BANK_DOWN_GPIO;
-		break;
-	case 6:
-		return LED_BANK_UP_GPIO;
-		break;
-	default:
-		return -1;
+int SparkHelper::getLedGpio(int btn_number, bool fxMode){
+	if (!fxMode) { // Preset mode LEDs
+		switch(btn_number) {
+		case 1:
+			return LED_PRESET1_GPIO;
+			break;
+		case 2:
+			return LED_PRESET2_GPIO;
+			break;
+		case 3:
+			return LED_PRESET3_GPIO;
+			break;
+		case 4:
+			return LED_PRESET4_GPIO;
+			break;
+		case 5:
+			return LED_BANK_DOWN_GPIO;
+			break;
+		case 6:
+			return LED_BANK_UP_GPIO;
+			break;
+		default:
+			return -1;
+		}
+	} else { // FX Mode LEDs
+		switch(btn_number) {
+		case 1:
+			return LED_DRIVE_GPIO;
+			break;
+		case 2:
+			return LED_MOD_GPIO;
+			break;
+		case 3:
+			return LED_DELAY_GPIO;
+			break;
+		case 4:
+			return LED_REVERB_GPIO;
+			break;
+		case 5:
+			return LED_NOISEGATE_GPIO;
+			break;
+		case 6:
+			return LED_COMP_GPIO;
+			break;
+		default:
+			return -1;
+		}
 	}
 
 }
