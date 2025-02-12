@@ -55,7 +55,7 @@ private:
     void updateLED_TUNER();
 
     void allLedOff();
-    void switchLED(int num, bool on = true);
+    void switchLED(int num, bool on = true, bool fxMode = false);
 };
 
 #endif /* SPARKLEDCONTROL_H_ */

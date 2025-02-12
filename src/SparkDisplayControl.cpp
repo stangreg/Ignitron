@@ -7,11 +7,17 @@
 
 #include "SparkDisplayControl.h"
 
+#if defined(OLED_DRIVER_SSD1306)
 Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
                                               &Wire, OLED_RESET);
-
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
+#elif defined(OLED_DRIVER_SH1106)
+Adafruit_SH1106G SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
+                                              &Wire, OLED_RESET);
+SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
+}
+#endif
 
 SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
     // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -23,17 +29,25 @@ SparkDisplayControl::~SparkDisplayControl() {
 }
 
 void SparkDisplayControl::init(int mode) {
+#if defined(OLED_DRIVER_SSD1306)
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // 0x3C required for this display
         Serial.println(F("SSD1306 initialization failed"));
         for (;;)
             ; // Loop forever
     }
+#elif defined(OLED_DRIVER_SH1106)
+if (!display.begin(0x3C, true)) { // 0x3C required for this display
+        Serial.println(F("SH1106 initialization failed"));
+        for (;;)
+            ; // Loop forever
+    }
+#endif
     initKeyboardLayoutStrings();
     // Clear the buffer
     display.clearDisplay(); // No Adafruit splash
     display.display();
-    display.setTextColor(SSD1306_WHITE);
+    display.setTextColor(OLED_WHITE);
     display.setTextWrap(false);
     opMode = spark_dc->operationMode();
     sparkLooperControl = spark_dc->looperControl();
@@ -48,7 +62,7 @@ void SparkDisplayControl::init(int mode) {
 
 void SparkDisplayControl::showInitialMessage() {
     display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
-                       SSD1306_WHITE);
+                       OLED_WHITE);
     display.setTextSize(2);
 
     string modeText;
@@ -75,7 +89,7 @@ void SparkDisplayControl::showInitialMessage() {
 void SparkDisplayControl::showBankAndPresetNum() {
 
     // Display the bank and preset number
-    display.setTextColor(SSD1306_WHITE);
+    display.setTextColor(OLED_WHITE);
     display.setTextSize(4);
 
     // Configure numbers as strings
@@ -117,12 +131,12 @@ void SparkDisplayControl::showPresetName() {
     int rectColor;
     int textColor;
     // Show preset name inverted if it is not the currently selected one
-    if (pendingBank == activeBank && activeHWBank == pendingHWBank && presetEditMode != PRESET_EDIT_DELETE) {
-        rectColor = SSD1306_BLACK;
-        textColor = SSD1306_WHITE;
+    if (pendingBank == activeBank && presetEditMode != PRESET_EDIT_DELETE) {
+        rectColor = OLED_BLACK;
+        textColor = OLED_WHITE;
     } else {
-        rectColor = SSD1306_WHITE;
-        textColor = SSD1306_BLACK;
+        rectColor = OLED_WHITE;
+        textColor = OLED_BLACK;
     }
 
     display.setTextColor(textColor);
@@ -194,6 +208,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
             secondaryLineText = secondaryLineText + text_filler + secondaryLineText;
         }
     } else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
+
+#ifndef DEDICATED_PRESET_LEDS        
         // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
@@ -222,9 +238,35 @@ void SparkDisplayControl::showFX_SecondaryName() {
             secondaryLineText = "";
         }
     }
-    display.fillRect(0, 48, 128, 16, SSD1306_BLACK);
 
-    display.setTextColor(SSD1306_WHITE);
+    display.fillRect(0, 48, 128, 16, OLED_BLACK);
+    display.setTextColor(OLED_WHITE);
+#else 
+        if (opMode == SPARK_MODE_LOOPER) {
+            secondaryLineText = "LOOPER MODE";
+        } else {
+            switch (buttonMode) {
+                case BUTTON_MODE_FX:
+                    secondaryLineText = " MANUAL/FX ";
+                    break;
+                case BUTTON_MODE_PRESET:
+                    secondaryLineText = "PRESET MODE";
+                    break;
+                case BUTTON_MODE_LOOP_CONFIG:
+                    secondaryLineText = "LOOP CONFIG";
+                    break;
+                case BUTTON_MODE_LOOP_CONTROL:
+                    secondaryLineText = " LOOP CTRL ";
+                    break;            
+            }
+        }
+        
+    }
+
+    display.fillRect(0, 48, 128, 16, OLED_WHITE); // Invert line
+    display.setTextColor(OLED_BLACK);
+#endif
+
     display.setTextSize(2);
     if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
         drawCentreString(secondaryLineText.c_str(), secondaryLinePosY);
@@ -256,7 +298,7 @@ void SparkDisplayControl::showLooperTimer() {
     // Reserve 2 characters for totalBars, 3 for BPM
     int maxBarWidth = display.width() - 2 * charWidth;
     int barWidth = (double)(currentBar)*maxBarWidth / totalBars;
-    int drawColor = SSD1306_WHITE;
+    int drawColor = OLED_WHITE;
     display.fillRect(xPos, yPos, barWidth, barHeight, drawColor);
 
     // Show BPM
@@ -278,7 +320,7 @@ void SparkDisplayControl::showLooperTimer() {
     }
     for (int i = 0; i < totalBars; i = i + stepSize) {
         int xPos = (double)i * maxBarWidth / totalBars;
-        drawColor = xPos < barWidth ? SSD1306_BLACK : SSD1306_WHITE;
+        drawColor = xPos < barWidth ? OLED_BLACK : OLED_WHITE;
         display.drawFastVLine(xPos, yPos, barHeight, drawColor);
     }
 }
@@ -326,7 +368,6 @@ void SparkDisplayControl::showConnection() {
     int xPosText = xPosSymbol;
     int yPosText = 0;
 
-    uint16_t color = SSD1306_WHITE;
     // Bluetooth
     switch (currentBTMode) {
     case BT_MODE_BLE:
@@ -336,6 +377,7 @@ void SparkDisplayControl::showConnection() {
         currentBTModeText = "SRL";
         break;
     }
+    display.setTextColor(OLED_WHITE);
     display.setTextSize(1);
     display.setCursor(xPosText, yPosText);
     display.print(currentBTModeText.c_str());
@@ -346,7 +388,7 @@ void SparkDisplayControl::showConnection() {
 #endif
 
     if (isBTConnected) {
-        display.drawBitmap(xPosSymbol, yPosSymbol, epd_bitmap_bt_logo, symbolWidth, symbolHeight, color);
+        display.drawBitmap(xPosSymbol, yPosSymbol, epd_bitmap_bt_logo, symbolWidth, symbolHeight, OLED_WHITE);
     }
 }
 
@@ -360,7 +402,7 @@ void SparkDisplayControl::showBatterySymbol() {
     int symbolWidth = 9;
     int symbolHeight = 15;
 
-    uint16_t color = SSD1306_WHITE;
+    uint16_t color = OLED_WHITE;
     const unsigned char *battery_icon;
     switch (batteryLevel) {
     case BATTERY_LEVEL_0:
@@ -387,7 +429,7 @@ void SparkDisplayControl::showPressedKey() {
     short int pressedButtonPosX = 20;
     short int pressedButtonPosY = 0;
 
-    display.setTextColor(SSD1306_WHITE);
+    display.setTextColor(OLED_WHITE);
     display.setTextSize(4);
 
     display.setCursor(pressedButtonPosX, pressedButtonPosY);
@@ -439,16 +481,16 @@ void SparkDisplayControl::showKeyboardLayout() {
 
     short int displayMid = display.width() / 2;
 
-    display.fillRect(0, 48, 128, 16, SSD1306_BLACK);
+    display.fillRect(0, 48, 128, 16, OLED_BLACK);
 
     // Rectangle color for preset name
     int rectColor;
     int textColor;
     int textColorInv;
     // Show preset name inverted if it is not the currently selected one
-    rectColor = SSD1306_WHITE;
-    textColorInv = SSD1306_BLACK;
-    textColor = SSD1306_WHITE;
+    rectColor = OLED_WHITE;
+    textColorInv = OLED_BLACK;
+    textColor = OLED_WHITE;
 
     display.setTextColor(textColor);
     display.setTextSize(2);
@@ -466,7 +508,7 @@ void SparkDisplayControl::showKeyboardLayout() {
 
 void SparkDisplayControl::showTunerNote() {
 
-    display.setTextColor(SSD1306_WHITE);
+    display.setTextColor(OLED_WHITE);
 
     // text sizes: 1 = 6x8, 2= 12x16, 3=18x24, 4=24x36
     char sharpSymbol = currentNote.at(1);
@@ -491,24 +533,24 @@ void SparkDisplayControl::showTunerNote() {
 
 void SparkDisplayControl::showTunerOffset() {
 
-    display.setTextColor(SSD1306_WHITE);
+    display.setTextColor(OLED_WHITE);
     if (noteOffsetCents >= -50 && noteOffsetCents <= 50) {
         // draw dynamic note offset at the bottom
         int tunerPosCenter = 128 / 2; // the middle lines are 63 and 64, choose the right side as it visually matches the other visible items
         int barHeight = 12;
         int tunerPosBottomY = 64 - barHeight;
-        display.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, SSD1306_WHITE);
-        display.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, SSD1306_WHITE);
+        display.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
+        display.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
 
         tunerPosCenter += noteOffsetCents;
-        display.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, SSD1306_WHITE);
+        display.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, OLED_WHITE);
     }
 }
 
 void SparkDisplayControl::showTunerGraphic() {
 
     int triangleSize = 12;
-    int color = SSD1306_WHITE;
+    int color = OLED_WHITE;
     int triPosHigher3X = 0;
     int triPosHigher2X = 15;
     int triPosHigher1X = 30;
@@ -602,12 +644,14 @@ void SparkDisplayControl::update(bool isInitBoot) {
             showBankAndPresetNum();
             showFX_SecondaryName();
 
+#ifndef DEDICATED_PRESET_LEDS
             // in FX mode (manual mode) invert display
             if (buttonMode == BUTTON_MODE_FX) {
                 display.invertDisplay(true);
             } else {
                 display.invertDisplay(false);
             }
+#endif            
         }
     }
     // logDisplay();

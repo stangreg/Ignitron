@@ -25,6 +25,7 @@ There is a number of custom libraries used on top of the standard ones to use wi
 | Library | Version | Comment | Source |
 |---|---:|---|---|
 | Adafruit SSD1306 | 2.5.13 | Display control | Arduino IDE Library |
+| Adafruit SH110X | 2.1.11 | Display control | Arduino IDE Library |
 | Adafruit BusIO | 1.14.5 | Bus IO | Arduino IDE Library |
 | Adafruit_GFX_Library | 1.11.11 | Advanced display control | Arduino IDE Library |
 | ArduinoJson | 7.3.0 | JSON document parsing | Arduino IDE Library |
@@ -94,3 +95,14 @@ To enable this feature:
 6. Build and flash the ESP32 with the new settings.
 
 There will be a battery indicator in APP Mode with four states for different levels: 0-10%, 10-50%, 50-90%, 90-100%.
+
+### SH1106 1.3" OLED Display driver
+
+The SH1106 driver is already linked in the Libraries section of the platform.ini file, but it needs to be activated in code since the two drivers uses different handles and somewhat different API. By default the SSD1306 driver is active but can be exchanged to the SH1106.
+
+Go to [src/Config_Definitions.h](Config_Definitions.h) and enable **one of** `#define OLED_DRIVER_SSD1306` or `#define OLED_DRIVER_SH1106` by moving the `//` at the beginning of the line to the definition that should be **disabled**. 
+
+### Dedicated Preset LEDs
+
+Go to [src/Config_Definitions.h](Config_Definitions.h) and uncomment the line `#define DEDICATED_PRESET_LEDS`.
+This will enable the use of 4 new GPIO pins (0, 4, 12, 15) and related hardware LEDs and resistors as described in the hardware Readme. This also enables a different behavior in **Ignitron** as it will light up the corresponding FX LEDs for the active pedals when a preset is selected, instead of displaying the FX symbols in the OLED display (which is redundant in this config). The bottom line of the OLED display will also show the current mode that is active (Preset mode|Manual FX|Looper mode). 

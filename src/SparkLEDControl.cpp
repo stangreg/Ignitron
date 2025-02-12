@@ -21,7 +21,7 @@ SparkLEDControl::~SparkLEDControl() {
 }
 
 void SparkLEDControl::init() {
-
+    // Preset LEDs
     pinMode(LED_PRESET1_GPIO, OUTPUT);
     pinMode(LED_PRESET2_GPIO, OUTPUT);
     pinMode(LED_PRESET3_GPIO, OUTPUT);
@@ -29,6 +29,24 @@ void SparkLEDControl::init() {
     pinMode(LED_BANK_DOWN_GPIO, OUTPUT);
     pinMode(LED_BANK_UP_GPIO, OUTPUT);
 
+    // FX LEDS
+    pinMode(LED_DRIVE_GPIO, OUTPUT);
+    pinMode(LED_MOD_GPIO, OUTPUT);
+    pinMode(LED_DELAY_GPIO, OUTPUT);
+    pinMode(LED_REVERB_GPIO, OUTPUT);
+    pinMode(LED_NOISEGATE_GPIO, OUTPUT); 
+    pinMode(LED_COMP_GPIO, OUTPUT); 
+
+#ifndef DEDICATED_PRESET_LEDS
+    // For special corner case where the extra dedicated 
+    // Preset LED hardware *is* connected to the extra
+    // GPIO ports, but the define that activates them is 
+    // undefined
+    pinMode(OPTIONAL_GPIO_1, OUTPUT);
+    pinMode(OPTIONAL_GPIO_2, OUTPUT);
+    pinMode(OPTIONAL_GPIO_3, OUTPUT);
+    pinMode(OPTIONAL_GPIO_4, OUTPUT);
+#endif
     allLedOff();
 }
 
@@ -48,15 +66,25 @@ void SparkLEDControl::updateLEDs() {
             break;
         }
         int buttonMode = spark_dc->buttonMode();
-        // Show only active preset LED
-        if (buttonMode == BUTTON_MODE_PRESET) {
-            updateLED_APP_PresetMode();
-            // For each effect, show which effect is active
-        } else if (buttonMode == BUTTON_MODE_FX) {
-            updateLED_APP_FXMode();
-        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG || buttonMode == BUTTON_MODE_LOOP_CONTROL) {
-            updateLED_LooperMode();
+        // Show only active LEDs
+        switch(buttonMode) {
+            case BUTTON_MODE_PRESET:
+                updateLED_APP_PresetMode();
+#ifndef DEDICATED_PRESET_LEDS
+                // Do not break if DEDICATED_PRESET_LEDS is defined
+                // Will thus fall through to next case and also update FX LEDs
+                break;
+#endif
+            case BUTTON_MODE_FX:
+                updateLED_APP_FXMode(); 
+                break;
+            
+            case BUTTON_MODE_LOOP_CONFIG:
+            case BUTTON_MODE_LOOP_CONTROL:
+                updateLED_LooperMode();
+                break;
         }
+        
     } break;
 
     case SPARK_MODE_AMP:
@@ -73,7 +101,7 @@ void SparkLEDControl::updateLEDs() {
 
 void SparkLEDControl::updateLED_APP_PresetMode() {
     allLedOff();
-    switchLED(activePresetNum, true);
+    switchLED(activePresetNum, true, false);
 }
 
 void SparkLEDControl::updateLED_APP_FXMode() {
@@ -85,7 +113,7 @@ void SparkLEDControl::updateLED_APP_FXMode() {
                 return;
             }*/
             Pedal current_fx = activePreset.pedals[fxIndex];
-            switchLED(btn_number, current_fx.isOn);
+            switchLED(btn_number, current_fx.isOn, true);
         }
     }
 }
@@ -201,18 +229,38 @@ void SparkLEDControl::updateLED_TUNER() {
 }
 
 void SparkLEDControl::allLedOff() {
+    // Preset LEDs
     digitalWrite(LED_PRESET1_GPIO, LOW);
     digitalWrite(LED_PRESET2_GPIO, LOW);
     digitalWrite(LED_PRESET3_GPIO, LOW);
     digitalWrite(LED_PRESET4_GPIO, LOW);
+
     digitalWrite(LED_BANK_DOWN_GPIO, LOW);
     digitalWrite(LED_BANK_UP_GPIO, LOW);
+
+    // FX LEDS
+    digitalWrite(LED_DRIVE_GPIO, LOW);
+    digitalWrite(LED_MOD_GPIO, LOW);
+    digitalWrite(LED_DELAY_GPIO, LOW);
+    digitalWrite(LED_REVERB_GPIO, LOW);
+
+#ifndef DEDICATED_PRESET_LEDS
+    // For special corner case where the extra dedicated 
+    // Preset LED hardware *is* connected to the extra
+    // GPIO ports, but the define that activates them is 
+    // undefined.
+    digitalWrite(OPTIONAL_GPIO_1, LOW);
+    digitalWrite(OPTIONAL_GPIO_2, LOW);
+    digitalWrite(OPTIONAL_GPIO_3, LOW);
+    digitalWrite(OPTIONAL_GPIO_4, LOW);
+#endif
 }
 
-void SparkLEDControl::switchLED(int num, bool on) {
+void SparkLEDControl::switchLED(int num, bool on, bool fxMode) {
     int STATE = on ? HIGH : LOW;
-    int ledGpio = SparkHelper::getLedGpio(num);
+    int ledGpio = SparkHelper::getLedGpio(num, fxMode);
     if (ledGpio != -1) {
+        //Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
         digitalWrite(ledGpio, STATE);
     }
 }

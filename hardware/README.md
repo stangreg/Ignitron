@@ -166,3 +166,32 @@ Why use a 2S/3S battery pack with an LDO instead of a 1S battery with a voltage 
 #### Connection
 
 See [Ignitron-Battery-Indicator-Schematics.pdf](./Ignitron-Battery-Indicator-Schematics.pdf) for details.
+
+### 3D Printed case
+
+A 3D printed case that is custom made for **Ignitron** is contributed by user @Barsk (orginal design by @Intaker). Note that the design is made for a 1.3" OLED display (original design uses 0.96") and a 38 pin ESP32 devkit board featuring four mounting holes. There are many clones and any with the same dimension will do. A version without the holes *may* work, it is untested though and might need some hot glue perhaps for mounting. 
+
+The case is designed to power the ESP32 board directly by its own USB port, which is available from a hole in the outer casing. 
+
+The case is made with an internal part that needs to be printed with a translucent filament so the LEDs can shine through. Natural PLA (uncolored transparent) works fine, transparent PETG is an option. The outer shell should be printed in an opaque color of choice. It is easy to print outer shells in various colors and change the "skin" of the Ignatron. The texts for TUNER, MAN FX, AMP, Reboot icon, LOOPER and Bank Up/Down is recessed by default and will work fine if a simple one filament print is used. There is also the possibility (and recommended if you have the possibility) to print the texts with a contrasting color to make it more readable. This can for instance be done with a PrucaSlicer, OrcaSlicer or a Bambu Studio slicer. The details of the slicer setting to make this possible will be published in [Thingiverse](https://thingiverse.com) with the Ignitron case which will be available for download there.
+
+There are two LED slots for lighting the **Ignitron** label on the case. The following approach is suggested. The LEDs can be powered from the +5V pin on the ESP32 which is fed from USB power. Solder a wire to +5V and to one of the GND pins and put the two LEDs in series with a 47 ohm resistor (suitable for 5mm  red, yellow or green). Note that blue leds do not work here since they have to high forward voltage drop. 
+The suggested approach is to use the J1 connector (if the PCB is used) that is unused since we instead power directly from USB. The J1 connector is already connected to +5V and GND.
+
+### Optional dedicated Preset LEDs 
+The case also has mounting sockets for 4 extra dedicated preset LEDs. To *enable this optional functionality in the firmware please see the related section under the source Readme*. If enabled it also *modifies* the behaviour of **Ignatron** to light up the FX LEDs for the selected preset instead of displaying the FX symbols in the OLED display. This way it is easy to see which Preset slot is used and exactly which FX pedals that are in use as each of them are lit by its own LED. If choosing not to use this optional functionality then just leave those extra sockets empty.
+
+The LEDs has no connections on the PCB as this is a new addition to the functionality. Instead you need to solder the wires for the LEDs directly to the bare pins on the ESP32 board. The wires need to have the LED and a 470 ohm resistor in series. Make sure to use heat shrinkable tubes where approriate so not to short out anything. Each LED needs a connection to a GPIO pin + LED + resistor and then to ground. Make sure to connect the cathod leg to ground otherwise the LED will not light up.
+
+|Preset slot| GPIO|
+|-----------|-----|
+|          1|    0|
+|          2|    4|
+|          3|   12|
+|          4|   15|    
+
+#### Hardware (BOM)
+The printed 3D case uses the same ESP32 board as the orginal design above. Same foot switches and same LEDs for the FX pedal sockets. In addition there are two extra 5 mm green LEDs (for the IGNITRON label) these are connected in series with one 47 ohm 1/4W resistor. Four yellow 5 mm LEDs for the preset LEDs and four 470 ohm 1/4W resistors (optional)).
+The OLED display is replaced by a larger SH1106 1.3" 128x64 i2C OLED.
+
+The orginal enclosure, LED holder, USB jack and OLED frame are not used with the 3D printed case.
