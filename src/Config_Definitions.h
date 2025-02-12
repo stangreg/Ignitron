@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-//#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.8.0";
+const string VERSION = "1.8.1";
 
 // Battery indicator
 // Note: This battery is for the Ignitron controller, not the Spark amp.
@@ -76,7 +76,7 @@ const string VERSION = "1.8.0";
 
 // OLED Driver config
 // By default an SSD1306 driver is used which is most common for 0.96" 128x64 OLED displays
-// 1.3" OLED 128x64 displays commonly uses an SH1106 driver. 
+// 1.3" OLED 128x64 displays commonly uses an SH1106 driver.
 // Choose driver below, only one can be defined!
 
 #define OLED_DRIVER_SSD1306
@@ -110,14 +110,14 @@ const string VERSION = "1.8.0";
 #define LED_DELAY_GPIO 16
 #define LED_REVERB_GPIO 14
 
-// If the optional DEDICATED_PRESET_LEDS is defined below it will 
-// slightly alter the behaviour of Ignitron to make the FX and 
-// PRESET LEDs work independently. Also the bottom  line in the 
-// OLED display will no longer show FX symbols but instead 
+// If the optional DEDICATED_PRESET_LEDS is defined below it will
+// slightly alter the behaviour of Ignitron to make the FX and
+// PRESET LEDs work independently. Also the bottom  line in the
+// OLED display will no longer show FX symbols but instead
 // show which *mode* Ignitron is in:
 // (PRESET/FX MANUAL/LOOP-CONFIG/LOOP-CNTRL).
 // The FX LEDS will show the actual FX pedals in use for each preset.
-// The dedicated Preset LED GPIO pins LED_PRESET<n>_GPIO is defined 
+// The dedicated Preset LED GPIO pins LED_PRESET<n>_GPIO is defined
 // separately below under the #ifdef DEDICATED_PRESET_LEDS clause.
 
 // #define DEDICATED_PRESET_LEDS
@@ -133,10 +133,9 @@ const string VERSION = "1.8.0";
 #define LED_PRESET3_GPIO LED_DELAY_GPIO
 #define LED_PRESET4_GPIO LED_REVERB_GPIO
 
-
-// If GPIO 0, 4, 12, 15 is physically connected in hardware but 
-// DEDICATED_PRESET_LEDS is undefined, we need to set those outputs 
-// to LOW. So we define an extra set of defines to allow them to be 
+// If GPIO 0, 4, 12, 15 is physically connected in hardware but
+// DEDICATED_PRESET_LEDS is undefined, we need to set those outputs
+// to LOW. So we define an extra set of defines to allow them to be
 // controlled
 #define OPTIONAL_GPIO_1 0
 #define OPTIONAL_GPIO_2 4
