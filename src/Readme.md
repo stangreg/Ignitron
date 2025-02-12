@@ -22,7 +22,7 @@ When configuring the Serial monitor, please make sure to select a baud rate of 1
 ### Libraries
 There is a number of custom libraries used on top of the standard ones to use with ESP32.
 
-|Library|Version|Comment| Source
+| Library | Version | Comment | Source |
 |---|---:|---|---|
 | Adafruit SSD1306 | 2.5.13 | Display control | Arduino IDE Library |
 | Adafruit BusIO | 1.14.5 | Bus IO | Arduino IDE Library |
