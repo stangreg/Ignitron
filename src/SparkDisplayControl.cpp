@@ -37,7 +37,7 @@ void SparkDisplayControl::init(int mode) {
             ; // Loop forever
     }
 #elif defined(OLED_DRIVER_SH1106)
-if (!display.begin(0x3C, true)) { // 0x3C required for this display
+    if (!display.begin(0x3C, true)) { // 0x3C required for this display
         Serial.println(F("SH1106 initialization failed"));
         for (;;)
             ; // Loop forever
@@ -72,10 +72,6 @@ void SparkDisplayControl::showInitialMessage() {
         break;
     case SPARK_MODE_AMP:
         modeText = "AMP";
-        break;
-    case SPARK_MODE_LOOPER:
-    case SPARK_MODE_SPK_LOOPER:
-        modeText = "LPR";
         break;
     case SPARK_MODE_KEYBOARD:
         modeText = "KB";
@@ -207,14 +203,14 @@ void SparkDisplayControl::showFX_SecondaryName() {
         if (secondaryLineText.length() > text_scroll_limit) {
             secondaryLineText = secondaryLineText + text_filler + secondaryLineText;
         }
-    } else if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
+    } else if (opMode == SPARK_MODE_APP) {
 
-#ifndef DEDICATED_PRESET_LEDS        
+#ifndef DEDICATED_PRESET_LEDS
         // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
         // When we switched to FX mode, we always show the current selected preset
-        if (buttonMode == BUTTON_MODE_FX) {
+        if (subMode == SUB_MODE_FX) {
             secondaryLinePreset = activePreset;
         }
 
@@ -241,26 +237,25 @@ void SparkDisplayControl::showFX_SecondaryName() {
 
     display.fillRect(0, 48, 128, 16, OLED_BLACK);
     display.setTextColor(OLED_WHITE);
-#else 
-        if (opMode == SPARK_MODE_LOOPER) {
+#else
+        if (opMode == SUB_MODE_LOOPER) {
             secondaryLineText = "LOOPER MODE";
         } else {
-            switch (buttonMode) {
-                case BUTTON_MODE_FX:
-                    secondaryLineText = " MANUAL/FX ";
-                    break;
-                case BUTTON_MODE_PRESET:
-                    secondaryLineText = "PRESET MODE";
-                    break;
-                case BUTTON_MODE_LOOP_CONFIG:
-                    secondaryLineText = "LOOP CONFIG";
-                    break;
-                case BUTTON_MODE_LOOP_CONTROL:
-                    secondaryLineText = " LOOP CTRL ";
-                    break;            
+            switch (subMode) {
+            case SUB_MODE_FX:
+                secondaryLineText = " MANUAL/FX ";
+                break;
+            case SUB_MODE_PRESET:
+                secondaryLineText = "PRESET MODE";
+                break;
+            case SUB_MODE_LOOP_CONFIG:
+                secondaryLineText = "LOOP CONFIG";
+                break;
+            case SUB_MODE_LOOP_CONTROL:
+                secondaryLineText = " LOOP CTRL ";
+                break;
             }
         }
-        
     }
 
     display.fillRect(0, 48, 128, 16, OLED_WHITE); // Invert line
@@ -268,7 +263,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
 #endif
 
     display.setTextSize(2);
-    if (opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) {
+    if (opMode == SPARK_MODE_APP) {
         drawCentreString(secondaryLineText.c_str(), secondaryLinePosY);
 
     } else if (opMode == SPARK_MODE_AMP) {
@@ -333,7 +328,8 @@ void SparkDisplayControl::showModeModifier() {
     display.setTextSize(4);
     string presetText = " ";
 
-    if (opMode == SPARK_MODE_APP && buttonMode == BUTTON_MODE_FX) {
+    // Change to subMode
+    if (opMode == SPARK_MODE_APP && subMode == SUB_MODE_FX) {
         // If in FX mode, show an "M" for manual mode
         presetText = "M";
     }
@@ -341,17 +337,17 @@ void SparkDisplayControl::showModeModifier() {
         presetText = "*";
     }
     // Spark 2 built-in Looper
-    if (opMode == SPARK_MODE_SPK_LOOPER) {
+    if (subMode == SUB_MODE_LOOP_CONTROL) {
         // If in Looper mode, show an "L" for Looper mode
         display.setTextSize(2);
-        if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
-            presetText = "L";
-        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
-            presetText = "C";
-        }
+        presetText = "L";
+    }
+    if (subMode == SUB_MODE_LOOP_CONFIG) {
+        display.setTextSize(2);
+        presetText = "C";
     }
     // Looper app
-    if (opMode == SPARK_MODE_LOOPER) {
+    if (subMode == SUB_MODE_LOOPER) {
         // If in Looper mode, show an "L" for Looper mode
         presetText = "L";
     }
@@ -592,8 +588,9 @@ void SparkDisplayControl::showTunerGraphic() {
 void SparkDisplayControl::update(bool isInitBoot) {
 
     opMode = spark_dc->operationMode();
+    subMode = spark_dc->subMode();
     display.clearDisplay();
-    if ((opMode == SPARK_MODE_APP || opMode == SPARK_MODE_LOOPER || opMode == SPARK_MODE_SPK_LOOPER) && isInitBoot) {
+    if ((opMode == SPARK_MODE_APP) && isInitBoot) {
         showInitialMessage();
     } else if (opMode == SPARK_MODE_KEYBOARD) {
         if (spark_dc->keyboardChanged()) {
@@ -603,7 +600,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
         lastKeyboardButtonPressedString = spark_dc->lastKeyboardButtonPressedString();
         showPressedKey();
         showKeyboardLayout();
-    } else if (opMode == SPARK_MODE_TUNER) {
+    } else if (subMode == SUB_MODE_TUNER) {
         SparkStatus &statusObject = SparkStatus::getInstance();
         currentNote = statusObject.noteString();
         noteOffsetCents = statusObject.note_offset_cents();
@@ -622,7 +619,6 @@ void SparkDisplayControl::update(bool isInitBoot) {
         numberOfHWBanks = presetControl.numberOfHWBanks();
         activePreset = presetControl.activePreset();
         pendingPreset = presetControl.pendingPreset();
-        buttonMode = spark_dc->buttonMode();
         activePresetNum = presetControl.activePresetNum();
         presetFromApp = presetControl.appReceivedPreset();
         presetEditMode = presetControl.presetEditMode();
@@ -638,7 +634,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
         showModeModifier();
         updateTextPositions();
         showPresetName();
-        if (opMode == SPARK_MODE_SPK_LOOPER) {
+        if (subMode == SUB_MODE_LOOP_CONTROL || subMode == SUB_MODE_LOOP_CONFIG) {
             showLooperTimer();
         } else {
             showBankAndPresetNum();
@@ -646,12 +642,12 @@ void SparkDisplayControl::update(bool isInitBoot) {
 
 #ifndef DEDICATED_PRESET_LEDS
             // in FX mode (manual mode) invert display
-            if (buttonMode == BUTTON_MODE_FX) {
+            if (subMode == SUB_MODE_FX) {
                 display.invertDisplay(true);
             } else {
                 display.invertDisplay(false);
             }
-#endif            
+#endif
         }
     }
     // logDisplay();

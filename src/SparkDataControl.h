@@ -76,7 +76,7 @@ public:
     static bool switchEffectOnOff(const string &fx_name, bool enable);
     static bool toggleEffect(int fx_identifier);
 
-    bool toggleButtonMode();
+    bool toggleSubMode();
     bool toggleLooperAppMode();
 
     uint8_t lastKeyboardButtonPressed() const { return lastKeyboardButtonPressed_; }
@@ -110,8 +110,8 @@ public:
 #endif
 
     // Set/get button mode
-    const int &buttonMode() const { return buttonMode_; }
-    int &buttonMode() { return buttonMode_; }
+    const int &subMode() const { return subMode_; }
+    int &subMode() { return subMode_; }
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
@@ -121,7 +121,7 @@ public:
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
     void triggerInitialBLENotifications();
-    void switchOperationMode(int opMode);
+    void switchSubMode(int subMode);
     void toggleBTMode();
 
     bool sparkLooperCommand(byte command);
@@ -181,7 +181,7 @@ private:
     string sparkModeFileName = "/config/SparkMode.config";
 
     // Button data
-    int buttonMode_ = BUTTON_MODE_PRESET;
+    static int subMode_;
     uint8_t lastKeyboardButtonPressed_ = 0;
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;

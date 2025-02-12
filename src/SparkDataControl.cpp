@@ -35,6 +35,7 @@ vector<CmdData> SparkDataControl::current_msg;
 
 bool SparkDataControl::customPresetNumberChangePending = false;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
+int SparkDataControl::subMode_ = SUB_MODE_PRESET;
 
 int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
@@ -124,28 +125,25 @@ int SparkDataControl::init(int opModeInput) {
     return operationMode_;
 }
 
-void SparkDataControl::switchOperationMode(int opMode) {
-
-    if (opMode == SPARK_MODE_APP) {
-        bleKeyboard.end();
-        buttonMode_ = BUTTON_MODE_PRESET;
-        if (operationMode_ == SPARK_MODE_TUNER) {
-            switchTuner(false);
-        }
-    } else if (opMode == SPARK_MODE_LOOPER) {
+void SparkDataControl::switchSubMode(int subMode) {
+    // TODO: Check if that works fine
+    if (subMode == SUB_MODE_LOOPER) {
         bleKeyboard.start();
-    } else if (opMode == SPARK_MODE_SPK_LOOPER) {
-        buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
-    } else if (opMode == SPARK_MODE_TUNER) {
+    } else {
+        bleKeyboard.end();
+    }
+    // Switch off tuner mode at amp if was enabled before
+    if (subMode_ == SUB_MODE_TUNER && subMode_ != subMode) {
+        switchTuner(false);
+    }
+    if (subMode == SUB_MODE_TUNER) {
         switchTuner(true);
     }
-
-    operationMode_ = opMode;
-
+    subMode_ = subMode;
     SparkPresetControl::getInstance().updatePendingWithActive();
 }
 
-bool SparkDataControl::toggleButtonMode() {
+bool SparkDataControl::toggleSubMode() {
 
     if (!processAction() || operationMode_ == SPARK_MODE_AMP) {
         Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
@@ -154,35 +152,28 @@ bool SparkDataControl::toggleButtonMode() {
 
     Serial.print("Switching to ");
     if (operationMode_ == SPARK_MODE_APP) {
-        switch (buttonMode_) {
-        case BUTTON_MODE_FX:
+        switch (subMode_) {
+        case SUB_MODE_FX:
             Serial.println("PRESET mode");
-            buttonMode_ = BUTTON_MODE_PRESET;
+            subMode_ = SUB_MODE_PRESET;
             break;
-        case BUTTON_MODE_PRESET:
+        case SUB_MODE_PRESET:
             Serial.println("FX mode");
-            buttonMode_ = BUTTON_MODE_FX;
+            subMode_ = SUB_MODE_FX;
+            SparkPresetControl::getInstance().updatePendingWithActive();
+            break;
+        case SUB_MODE_LOOP_CONTROL:
+            Serial.println("Looper CONFIG mode");
+            subMode_ = SUB_MODE_LOOP_CONFIG;
+            break;
+        case SUB_MODE_LOOP_CONFIG:
+            Serial.println("Looper CONTROL mode");
+            subMode_ = SUB_MODE_LOOP_CONTROL;
             SparkPresetControl::getInstance().updatePendingWithActive();
             break;
         default:
             Serial.println("Unexpected mode. Defaulting to PRESET mode");
-            buttonMode_ = BUTTON_MODE_PRESET;
-            break;
-        } // SWITCH
-    } else if (operationMode_ == SPARK_MODE_SPK_LOOPER) {
-        switch (buttonMode_) {
-        case BUTTON_MODE_LOOP_CONTROL:
-            Serial.println("CONFIG mode");
-            buttonMode_ = BUTTON_MODE_LOOP_CONFIG;
-            break;
-        case BUTTON_MODE_LOOP_CONFIG:
-            Serial.println("CONTROL mode");
-            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
-            SparkPresetControl::getInstance().updatePendingWithActive();
-            break;
-        default:
-            Serial.println("Unexpected mode. Defaulting to PRESET mode");
-            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+            subMode_ = SUB_MODE_PRESET;
             break;
         } // SWITCH
     }
@@ -195,37 +186,34 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
         return false;
     }
-    int newOperationMode;
+    int newSubMode;
     Serial.print("Switching to ");
-    switch (operationMode_) {
-    case SPARK_MODE_APP:
+    switch (subMode_) {
+    case SUB_MODE_PRESET:
+    case SUB_MODE_FX:
         Serial.println("LOOPER mode");
         if (sparkAmpName == AMP_NAME_SPARK_2) {
-            newOperationMode = SPARK_MODE_SPK_LOOPER;
-            buttonMode_ = BUTTON_MODE_LOOP_CONTROL;
+            newSubMode = SUB_MODE_LOOP_CONTROL;
             looperControl_->stop();
             looperControl_->reset();
             sparkLooperGetConfig();
             sparkLooperGetStatus();
-
         } else {
-            newOperationMode = SPARK_MODE_LOOPER;
+            newSubMode = SUB_MODE_LOOPER;
         }
         break;
-    case SPARK_MODE_LOOPER:
-    case SPARK_MODE_SPK_LOOPER:
+    case SUB_MODE_LOOPER:
+    case SUB_MODE_SPK_LOOPER:
         Serial.println("APP mode");
-        newOperationMode = SPARK_MODE_APP;
-        buttonMode_ = BUTTON_MODE_PRESET;
+        newSubMode = SUB_MODE_PRESET;
         looperControl_->triggerReset();
         break;
     default:
         Serial.println("Unexpected mode. Defaulting to APP mode");
-        newOperationMode = SPARK_MODE_APP;
-        buttonMode_ = BUTTON_MODE_PRESET;
+        newSubMode = SUB_MODE_PRESET;
         break;
     } // SWITCH
-    switchOperationMode(newOperationMode);
+    switchSubMode(newSubMode);
     return true;
 }
 
@@ -311,7 +299,7 @@ void SparkDataControl::resetStatus() {
     ampNameReceived_ = false;
     isInitBoot_ = true;
     operationMode_ = SPARK_MODE_APP;
-    buttonMode_ = BUTTON_MODE_PRESET;
+    subMode_ = SUB_MODE_PRESET;
     nextMessageNum = 0x01;
     customPresetNumberChangePending = false;
     sparkAmpType = AMP_TYPE_40;
@@ -574,7 +562,7 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
         }
 
         DEBUG_PRINTLN("Sending acknowledgment");
-        if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_LOOPER || operationMode_ == SPARK_MODE_SPK_LOOPER) {
+        if (operationMode_ == SPARK_MODE_APP) {
             triggerCommand(ack_msg);
         } else if (operationMode_ == SPARK_MODE_AMP) {
             bleControl->notifyClients(ack_msg);
@@ -638,7 +626,7 @@ void SparkDataControl::handleAppModeResponse() {
     byte lastMessageNumber = statusObject.lastMessageNum();
     // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
-    if (operationMode_ == SPARK_MODE_APP || operationMode_ == SPARK_MODE_SPK_LOOPER || operationMode_ == SPARK_MODE_TUNER) {
+    if (operationMode_ == SPARK_MODE_APP) {
         bool printMessage = false;
 
         if (lastMessageType == MSG_TYPE_HWPRESET) {
@@ -724,22 +712,24 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_TUNER_OUTPUT) {
             // Amp seems to be in tuner mode
-            if (operationMode_ != SPARK_MODE_TUNER) {
+            if (operationMode_ != SUB_MODE_TUNER) {
                 // Switch off tuner
                 switchTuner(false);
             }
-            // operationMode_ = SPARK_MODE_TUNER;
+            // operationMode_ = SUB_MODE_TUNER;
         }
 
+        // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_ON) {
             Serial.println("Tuner on received.");
-            operationMode_ = SPARK_MODE_TUNER;
+            subMode_ = SUB_MODE_TUNER;
             switchTuner(true);
         }
 
+        // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_OFF) {
             Serial.println("Tuner off received.");
-            operationMode_ = SPARK_MODE_APP;
+            subMode_ = SPARK_MODE_APP;
             switchTuner(false);
         }
 

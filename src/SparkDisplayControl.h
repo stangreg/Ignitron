@@ -22,7 +22,6 @@
 #define OLED_BLACK SH110X_BLACK
 #endif
 
-
 #include "SparkDataControl.h"
 #include "SparkLooperControl.h"
 #include "SparkPresetControl.h"
@@ -70,7 +69,7 @@ private:
     Preset pendingPreset;
     Preset presetFromApp;
     int presetEditMode;
-    int buttonMode = 1;
+    int subMode = 1;
     int activePresetNum = 1;
     int selectedPresetNum = 1;
     int opMode = 1;

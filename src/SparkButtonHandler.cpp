@@ -57,25 +57,30 @@ int SparkButtonHandler::checkBootOperationMode() {
 void SparkButtonHandler::configureButtons() {
 
     int operationMode = spark_dc->operationMode();
-    int buttonMode = spark_dc->buttonMode();
+    int subMode = spark_dc->subMode();
 
     // Mode specific button config
     switch (operationMode) {
-    case SPARK_MODE_LOOPER:
-        configureLooperButtons();
-        break;
-    case SPARK_MODE_SPK_LOOPER:
-        if (buttonMode == BUTTON_MODE_LOOP_CONTROL) {
-            configureSpark2LooperControlButtons();
-        } else if (buttonMode == BUTTON_MODE_LOOP_CONFIG) {
-            configureSpark2LooperConfigButtons();
-        }
-        break;
     case SPARK_MODE_APP:
-        if (buttonMode == BUTTON_MODE_PRESET) {
+        switch (subMode) {
+        case SUB_MODE_PRESET:
             configureAppButtonsPreset();
-        } else if (buttonMode == BUTTON_MODE_FX) {
+            break;
+        case SUB_MODE_FX:
             configureAppButtonsFX();
+            break;
+        case SUB_MODE_LOOPER:
+            configureLooperButtons();
+            break;
+        case SUB_MODE_LOOP_CONFIG:
+            configureSpark2LooperConfigButtons();
+            break;
+        case SUB_MODE_LOOP_CONTROL:
+            configureSpark2LooperControlButtons();
+            break;
+        case SUB_MODE_TUNER:
+            configureTunerButtons();
+            break;
         }
         break;
     case SPARK_MODE_AMP:
@@ -83,9 +88,6 @@ void SparkButtonHandler::configureButtons() {
         break;
     case SPARK_MODE_KEYBOARD:
         configureKeyboardButtons();
-        break;
-    case SPARK_MODE_TUNER:
-        configureTunerButtons();
         break;
     }
 }
@@ -338,7 +340,7 @@ void SparkButtonHandler::btnSwitchTunerModeHandler(BfButton *btn, BfButton::pres
         Serial.println("SparkDataControl not setup yet, ignoring button press.");
         return;
     }
-    // Switch between preset mode FX mode where FX can be separately switched
+    // Switch between tuner mode where tuner can be separately switched
     // Debug
 #ifdef DEBUG
     int pressed_btn_gpio = btn->getID();
@@ -347,17 +349,17 @@ void SparkButtonHandler::btnSwitchTunerModeHandler(BfButton *btn, BfButton::pres
 #endif
 
     // Switch mode in APP mode
-    int currentMode = spark_dc->operationMode();
-    DEBUG_PRINTF("Old OpMode = %d", currentMode);
+    int currentSubMode = spark_dc->subMode();
+    DEBUG_PRINTF("Old SubMode = %d", currentSubMode);
     int newMode;
-    if (currentMode == SPARK_MODE_TUNER) {
+    if (currentSubMode == SUB_MODE_TUNER) {
         DEBUG_PRINTLN("Old mode: Tuner");
-        newMode = SPARK_MODE_APP;
+        newMode = SUB_MODE_PRESET;
     } else {
         DEBUG_PRINTLN("Old mode: Other");
-        newMode = SPARK_MODE_TUNER;
+        newMode = SUB_MODE_TUNER;
     }
-    spark_dc->switchOperationMode(newMode);
+    spark_dc->switchSubMode(newMode);
     Serial.println("Re-initializing button config");
     configureButtons();
 }
@@ -521,7 +523,7 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
 #endif
 
     // Switch mode in APP mode
-    spark_dc->toggleButtonMode();
+    spark_dc->toggleSubMode();
     Serial.println("Re-initializing button config");
     configureButtons();
 }

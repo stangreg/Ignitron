@@ -91,7 +91,7 @@ void SparkPresetControl::resetStatus() {
 void SparkPresetControl::checkForUpdates(int operationMode) {
 
     if (statusObject.isPresetNumberUpdated() &&
-        (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER)) {
+        (operationMode == SPARK_MODE_APP)) {
         if (pendingBank_ == 0) {
             DEBUG_PRINTLN("Preset number has changed, updating active preset");
             setActiveHWPreset();
@@ -101,8 +101,9 @@ void SparkPresetControl::checkForUpdates(int operationMode) {
 
     // Check if active preset has been updated
     // If so, update the preset variables
+
     if (statusObject.isPresetUpdated() &&
-        (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER)) {
+        (operationMode == SPARK_MODE_APP)) {
 
         DEBUG_PRINTLN("Preset has changed, updating active with current preset");
         activePreset_ = statusObject.currentPreset();
@@ -252,7 +253,8 @@ bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 
     int bnk = pendingBank_;
     pendingPresetNum_ = pre;
-    if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER) {
+
+    if (operationMode == SPARK_MODE_APP) {
         // Check if selected preset is equal to active preset.
         // In this case toggle the drive pedal only
         if (pre == activePresetNum_ &&
@@ -422,9 +424,9 @@ void SparkPresetControl::updateFromSparkResponseACK() {
 
 bool SparkPresetControl::increasePresetLooper() {
 
-    int operationMode = sparkDC->operationMode();
+    int subMode = sparkDC->subMode();
     if (!sparkDC->processAction() ||
-        (operationMode != SPARK_MODE_LOOPER && operationMode != SPARK_MODE_SPK_LOOPER)) {
+        (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
         return false;
     }
@@ -450,9 +452,9 @@ bool SparkPresetControl::increasePresetLooper() {
 
 bool SparkPresetControl::decreasePresetLooper() {
 
-    int operationMode = sparkDC->operationMode();
+    int subMode = sparkDC->subMode();
     if (!sparkDC->processAction() ||
-        (operationMode != SPARK_MODE_LOOPER && operationMode != SPARK_MODE_SPK_LOOPER)) {
+        (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
         return false;
     }
@@ -602,11 +604,12 @@ bool SparkPresetControl::processPresetSelect(int presetNum) {
         return false;
     }
 
-    if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER || operationMode == SPARK_MODE_SPK_LOOPER) {
+    if (operationMode == SPARK_MODE_APP) {
 
         sparkDC->switchPreset(presetNum, false);
 
     } else if (operationMode == SPARK_MODE_AMP) { // AMP mode
+
         processPresetEdit(presetNum);
     }
     return true;

@@ -503,7 +503,6 @@ void SparkPresetBuilder::resetHWPresets() {
 
 void SparkPresetBuilder::validateChecksums(vector<byte> checksums) {
 
-    // TODO: Once all 8 Spark 2 HW presets are supported, this needs to be adjusted
     if (hwPresets.size() < numberOfHWPresets_ || checksums.size() < numberOfHWPresets_) {
         Serial.printf("ERROR: Vector HW Presets (size: %d) or Checksums (size: %d) not in the expected size (%d).\n", hwPresets.size(), checksums.size(), numberOfHWPresets_);
         return;

@@ -34,13 +34,13 @@ void SparkLEDControl::init() {
     pinMode(LED_MOD_GPIO, OUTPUT);
     pinMode(LED_DELAY_GPIO, OUTPUT);
     pinMode(LED_REVERB_GPIO, OUTPUT);
-    pinMode(LED_NOISEGATE_GPIO, OUTPUT); 
-    pinMode(LED_COMP_GPIO, OUTPUT); 
+    pinMode(LED_NOISEGATE_GPIO, OUTPUT);
+    pinMode(LED_COMP_GPIO, OUTPUT);
 
 #ifndef DEDICATED_PRESET_LEDS
-    // For special corner case where the extra dedicated 
+    // For special corner case where the extra dedicated
     // Preset LED hardware *is* connected to the extra
-    // GPIO ports, but the define that activates them is 
+    // GPIO ports, but the define that activates them is
     // undefined
     pinMode(OPTIONAL_GPIO_1, OUTPUT);
     pinMode(OPTIONAL_GPIO_2, OUTPUT);
@@ -58,33 +58,33 @@ void SparkLEDControl::updateLEDs() {
 
     switch (operationMode) {
 
-    case SPARK_MODE_LOOPER:
-    case SPARK_MODE_SPK_LOOPER:
     case SPARK_MODE_APP: {
         if (spark_dc->isInitBoot()) {
             allLedOff();
             break;
         }
-        int buttonMode = spark_dc->buttonMode();
+        int subMode = spark_dc->subMode();
         // Show only active LEDs
-        switch(buttonMode) {
-            case BUTTON_MODE_PRESET:
-                updateLED_APP_PresetMode();
+        switch (subMode) {
+        case SUB_MODE_LOOPER:
+        case SUB_MODE_SPK_LOOPER:
+        case SUB_MODE_PRESET:
+            updateLED_APP_PresetMode();
 #ifndef DEDICATED_PRESET_LEDS
-                // Do not break if DEDICATED_PRESET_LEDS is defined
-                // Will thus fall through to next case and also update FX LEDs
-                break;
+            // Do not break if DEDICATED_PRESET_LEDS is defined
+            // Will thus fall through to next case and also update FX LEDs
+            break;
 #endif
-            case BUTTON_MODE_FX:
-                updateLED_APP_FXMode(); 
-                break;
-            
-            case BUTTON_MODE_LOOP_CONFIG:
-            case BUTTON_MODE_LOOP_CONTROL:
-                updateLED_LooperMode();
-                break;
+        case SUB_MODE_FX:
+            updateLED_APP_FXMode();
+            break;
+
+        case SUB_MODE_LOOP_CONFIG:
+        case SUB_MODE_LOOP_CONTROL:
+            updateLED_LooperMode();
+            break;
         }
-        
+
     } break;
 
     case SPARK_MODE_AMP:
@@ -93,7 +93,7 @@ void SparkLEDControl::updateLEDs() {
     case SPARK_MODE_KEYBOARD:
         updateLED_KEYBOARD();
         break;
-    case SPARK_MODE_TUNER:
+    case SUB_MODE_TUNER:
         updateLED_TUNER();
         break;
     }
@@ -245,9 +245,9 @@ void SparkLEDControl::allLedOff() {
     digitalWrite(LED_REVERB_GPIO, LOW);
 
 #ifndef DEDICATED_PRESET_LEDS
-    // For special corner case where the extra dedicated 
+    // For special corner case where the extra dedicated
     // Preset LED hardware *is* connected to the extra
-    // GPIO ports, but the define that activates them is 
+    // GPIO ports, but the define that activates them is
     // undefined.
     digitalWrite(OPTIONAL_GPIO_1, LOW);
     digitalWrite(OPTIONAL_GPIO_2, LOW);
@@ -260,7 +260,7 @@ void SparkLEDControl::switchLED(int num, bool on, bool fxMode) {
     int STATE = on ? HIGH : LOW;
     int ledGpio = SparkHelper::getLedGpio(num, fxMode);
     if (ledGpio != -1) {
-        //Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
+        // Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
         digitalWrite(ledGpio, STATE);
     }
 }

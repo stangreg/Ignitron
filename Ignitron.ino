@@ -65,9 +65,6 @@ void setup() {
     case SPARK_MODE_AMP:
         Serial.println("======= Entering AMP mode =======");
         break;
-    case SPARK_MODE_LOOPER:
-        Serial.println("======= Entering Looper mode =======");
-        break;
     case SPARK_MODE_KEYBOARD:
         Serial.println("======= Entering Keyboard mode =======");
         break;
@@ -87,7 +84,7 @@ void setup() {
 void loop() {
 
     // Methods to call only in APP mode
-    if (operationMode == SPARK_MODE_APP || operationMode == SPARK_MODE_LOOPER) {
+    if (operationMode == SPARK_MODE_APP) {
         while (!(spark_dc.checkBLEConnection())) {
             spark_display.update(spark_dc.isInitBoot());
             spark_led.updateLEDs();

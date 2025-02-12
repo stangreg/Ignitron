@@ -25,7 +25,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.8.1";
+const string VERSION = "1.8.2";
 
 // Battery indicator
 // Note: This battery is for the Ignitron controller, not the Spark amp.
@@ -178,18 +178,18 @@ const string VERSION = "1.8.1";
 #define INDEX_FX_REVERB 6
 
 // Spark button configs in APP mode
-#define BUTTON_MODE_FX 1
-#define BUTTON_MODE_PRESET 2
-#define BUTTON_MODE_LOOP_CONFIG 3
-#define BUTTON_MODE_LOOP_CONTROL 4
+#define SUB_MODE_FX 1
+#define SUB_MODE_PRESET 2
+#define SUB_MODE_LOOPER 3
+#define SUB_MODE_SPK_LOOPER 4
+#define SUB_MODE_LOOP_CONFIG 5
+#define SUB_MODE_LOOP_CONTROL 6
+#define SUB_MODE_TUNER 7
 
 // Spark operation modes
 #define SPARK_MODE_APP 1
 #define SPARK_MODE_AMP 2
-#define SPARK_MODE_LOOPER 3
-#define SPARK_MODE_KEYBOARD 4
-#define SPARK_MODE_SPK_LOOPER 5
-#define SPARK_MODE_TUNER 6
+#define SPARK_MODE_KEYBOARD 3
 
 #define BT_MODE_BLE 1
 #define BT_MODE_SERIAL 2
