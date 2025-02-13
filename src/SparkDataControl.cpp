@@ -15,6 +15,7 @@ SparkMessage SparkDataControl::spark_msg;
 SparkDisplayControl *SparkDataControl::spark_display = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
+SparkBLEKeyboard SparkDataControl::bleKeyboard = SparkBLEKeyboard();
 
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<CmdData> SparkDataControl::currentCommand;
@@ -132,7 +133,7 @@ void SparkDataControl::switchSubMode(int subMode) {
     } else {
         bleKeyboard.end();
     }
-    // Switch off tuner mode at amp if was enabled before
+    // Switch off tuner mode at amp if was enabled before but is not matching current subMode
     if (subMode_ == SUB_MODE_TUNER && subMode_ != subMode) {
         switchTuner(false);
     }
@@ -712,7 +713,7 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_TUNER_OUTPUT) {
             // Amp seems to be in tuner mode
-            if (operationMode_ != SUB_MODE_TUNER) {
+            if (subMode_ != SUB_MODE_TUNER) {
                 // Switch off tuner
                 switchTuner(false);
             }
@@ -722,15 +723,13 @@ void SparkDataControl::handleAppModeResponse() {
         // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_ON) {
             Serial.println("Tuner on received.");
-            subMode_ = SUB_MODE_TUNER;
-            switchTuner(true);
+            switchSubMode(SUB_MODE_TUNER);
         }
 
         // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_OFF) {
             Serial.println("Tuner off received.");
-            subMode_ = SPARK_MODE_APP;
-            switchTuner(false);
+            switchSubMode(SUB_MODE_PRESET);
         }
 
         if (msgStr.length() > 0 && printMessage) {

@@ -121,7 +121,7 @@ public:
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
     void triggerInitialBLENotifications();
-    void switchSubMode(int subMode);
+    static void switchSubMode(int subMode);
     void toggleBTMode();
 
     bool sparkLooperCommand(byte command);
@@ -174,7 +174,7 @@ private:
     static SparkKeyboardControl *keyboardControl;
     static SparkLooperControl *looperControl_;
 
-    SparkBLEKeyboard bleKeyboard;
+    static SparkBLEKeyboard bleKeyboard;
 
     // TODO: Put settings into proper config file
     string btModeFileName = "/config/BTMode.config";
