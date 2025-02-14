@@ -91,7 +91,7 @@ public:
 
     vector<CmdData> send_serial_number(byte msg_number);
     vector<CmdData> send_firmware_version(byte msg_number);
-    vector<CmdData> send_hw_checksums(byte msg_number);
+    vector<CmdData> send_hw_checksums(byte msg_number, byte checksum1 = 0x00, byte checksum2 = 0x00, byte checksum3 = 0x00, byte checksum4 = 0x00);
     vector<CmdData> send_hw_preset_number(byte msg_number);
     vector<CmdData> send_response_71(byte msg_number);
     vector<CmdData> send_response_72(byte msg_number);

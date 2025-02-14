@@ -578,6 +578,8 @@ void SparkDataControl::handleAmpModeRequest() {
     byte currentMessageNum = statusObject.lastMessageNum();
     byte sub_cmd_ = currentMessage.back().subcmd;
     Preset activePreset = SparkPresetControl::getInstance().activePreset();
+    SparkPresetControl &control = SparkPresetControl::getInstance();
+    byte checksum1 = activePreset.checksum;
 
     switch (sub_cmd_) {
 
@@ -593,14 +595,15 @@ void SparkDataControl::handleAmpModeRequest() {
         break;
     case 0x2A:
         DEBUG_PRINTLN("Found request for hw checksum");
-        msg = spark_msg.send_hw_checksums(currentMessageNum);
+        msg = spark_msg.send_hw_checksums(currentMessageNum, checksum1, checksum1, checksum1, checksum1);
         break;
     case 0x10:
         DEBUG_PRINTLN("Found request for hw preset number");
         msg = spark_msg.send_hw_preset_number(currentMessageNum);
         break;
     case 0x01:
-        DEBUG_PRINTLN("Found request for current preset");
+        DEBUG_PRINTLN("Found request for preset");
+        // was: activePreset
         msg = spark_msg.change_preset(activePreset, DIR_FROM_SPARK,
                                       currentMessageNum);
         break;

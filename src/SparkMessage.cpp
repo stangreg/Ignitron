@@ -452,7 +452,7 @@ vector<CmdData> SparkMessage::send_firmware_version(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number) {
+vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number, byte checksum1, byte checksum2, byte checksum3, byte checksum4) {
     cmd = 0x03;
     sub_cmd = 0x2A;
 
@@ -474,10 +474,16 @@ vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number) {
 
     add_byte(0x94);
     add_byte(0xCC);
+    /*
     add_byte(0x9e);
     add_byte(0x75);
     add_byte(0x67);
     add_byte(0x2a);
+    */
+    add_byte(checksum1);
+    add_byte(checksum2);
+    add_byte(checksum3);
+    add_byte(checksum4);
 
     return end_message(DIR_FROM_SPARK, msg_number);
 }
@@ -541,8 +547,9 @@ vector<CmdData> SparkMessage::change_preset(const Preset &preset_data,
             add_float(curr_pedal_params[p].value);
         }
     }
-    byte checksum = calculate_checksum(data) ^ 0x7F;
-    add_byte(checksum);
+    // TODO: CHECK if this needs to be changed back
+    //byte checksum = calculate_checksum(data) ^ 0x7F;
+    add_byte(preset_data.checksum);
     return end_message(direction, msg_num);
 }
 
