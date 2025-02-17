@@ -42,7 +42,7 @@ int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
-string SparkDataControl::sparkAmpName = "Spark 2";
+string SparkDataControl::sparkAmpName = AMP_NAME_SPARK_40;
 bool SparkDataControl::with_delay = false;
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR

@@ -177,7 +177,7 @@ void SparkPresetBuilder::initHWPresets() {
     resetHWPresets();
     // Read HWPresets from file, if present
     for (int presetNum = 1; presetNum <= numberOfHWPresets_; presetNum++) {
-        string filename = "HWPreset" + to_string(presetNum) + ".json";
+        string filename = "/HWPreset" + to_string(presetNum) + ".json";
         Preset hwPreset = readPresetFromFile(filename);
         if (!(hwPreset.isEmpty)) {
             hwPresets.at(presetNum - 1) = hwPreset;
@@ -419,7 +419,7 @@ void SparkPresetBuilder::insertHWPreset(int number, const Preset &preset) {
         return;
     }
     hwPresets.at(number) = preset;
-    string filename = "HWPreset" + to_string(number + 1);
+    string filename = "/HWPreset" + to_string(number + 1);
     savePresetToFile(filename, preset, true);
     string uuid = preset.uuid;
     updatePresetListUUID(0, number + 1, uuid);

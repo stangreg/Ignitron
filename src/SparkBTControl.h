@@ -184,8 +184,8 @@ private:
     NimBLEClient *pClient = nullptr;
 
     BluetoothSerial *btSerial = nullptr;
-    string bt_name_ble = "Spark 40 BLE";      // Spark 40 BLE
-    string bt_name_serial = "Spark 40 Audio"; // Spark 40 Audio
+    string bt_name_ble = "Spark GO BLE";      // Spark 40 BLE
+    string bt_name_serial = "Spark GO Audio"; // Spark 40 Audio
 
     bool isAmpConnected_ = false;
     bool isConnectionFound_ = false;
