@@ -169,11 +169,16 @@ See [Ignitron-Battery-Indicator-Schematics.pdf](./Ignitron-Battery-Indicator-Sch
 
 ### 3D Printed case
 
-A 3D printed case that is custom made for **Ignitron** is contributed by user @Barsk (orginal design by @Intaker). Note that the design is made for a 1.3" OLED display (original design uses 0.96") and a 38 pin ESP32 devkit board featuring four mounting holes. There are many clones and any with the same dimension will do. A version without the holes *may* work, it is untested though and might need some hot glue perhaps for mounting. 
+![3D Case](./preview-3dcase.jpg)
+![3D Case internal](./preview-3dcase-internal.jpg)
 
-The case is designed to power the ESP32 board directly by its own USB port, which is available from a hole in the outer casing. 
+Link to Thingiverse: [Ignitron case - foot pedal for Positive Grid Spark amps](https://www.thingiverse.com/thing:6952547)
 
-The case is made with an internal part that needs to be printed with a translucent filament so the LEDs can shine through. Natural PLA (uncolored transparent) works fine, transparent PETG is an option. The outer shell should be printed in an opaque color of choice. It is easy to print outer shells in various colors and change the "skin" of the Ignatron. The texts for TUNER, MAN FX, AMP, Reboot icon, LOOPER and Bank Up/Down is recessed by default and will work fine if a simple one filament print is used. There is also the possibility (and recommended if you have the possibility) to print the texts with a contrasting color to make it more readable. This can for instance be done with a PrucaSlicer, OrcaSlicer or a Bambu Studio slicer. The details of the slicer setting to make this possible will be published in [Thingiverse](https://thingiverse.com) with the Ignitron case which will be available for download there.
+A 3D printed case that is custom made for **Ignitron** is contributed by user @Barsk (orginal design by @Intaker). Note that the design is made for a 1.3" OLED display (original design uses 0.96") and a 38 pin ESP32 devkit board featuring four mounting holes. There are many clones and any with the same dimension will do. A version without the holes *may* work, it is untested though and migh t need some hot glue perhaps for mounting. 
+
+The case is designed to power the ESP32 board directly by its own USB port, which is available from a port in the outer casing. 
+
+The case is made with an internal part that needs to be printed with a translucent filament so the LEDs can shine through. Natural PLA (uncolored transparent) works fine, transparent PETG is an option. The outer shell should be printed in an opaque color of choice. It is easy to print outer shells in various colors and change the "skin" of the Ignatron. The texts for TUNER, MAN FX, AMP, Reboot icon, LOOPER and Bank Up/Down is punched by default and will work fine if a simple one filament print is used. There is also the possibility (and recommended if you have the possibility) to print the texts with a contrasting color to make it more readable. Please view the [thingiverse pages](https://www.thingiverse.com/thing:6952547) for more information.
 
 There are two LED slots for lighting the **Ignitron** label on the case. The following approach is suggested. The LEDs can be powered from the +5V pin on the ESP32 which is fed from USB power. Solder a wire to +5V and to one of the GND pins and put the two LEDs in series with a 47 ohm resistor (suitable for 5mm  red, yellow or green). Note that blue leds do not work here since they have to high forward voltage drop. 
 The suggested approach is to use the J1 connector (if the PCB is used) that is unused since we instead power directly from USB. The J1 connector is already connected to +5V and GND.
