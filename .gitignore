@@ -7,4 +7,4 @@ logs/*
 unpacked_fs/*
 TestChecksumsPresets.txt
 .vscode/settings.json
-
+Ignitron.ino.cpp
