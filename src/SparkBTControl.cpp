@@ -382,7 +382,8 @@ void SparkBTControl::onWrite(NimBLECharacteristic *pCharacteristic) {
             byteVector.push_back((byte)(rxValue[i]));
         }
     }
-    spark_dc->processSparkData(byteVector);
+    // Add message to Queue for processing
+    spark_dc->queueMessage(byteVector);
 }
 
 void SparkBTControl::onSubscribe(NimBLECharacteristic *pCharacteristic,

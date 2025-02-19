@@ -70,6 +70,8 @@ public:
     pair<int, int> getBankPresetNumFromUUID(string uuid);
     const int getNumberOfBanks() const;
     Preset getPresetFromJson(char *json);
+    Preset getPresetFromJson(File file);
+    Preset getPresetFromJsonDocument(JsonDocument doc, string jsonString);
     int storePreset(Preset newPreset, int bnk, int pre);
     int deletePreset(int bnk, int pre);
 

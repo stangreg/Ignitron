@@ -68,6 +68,8 @@ private:
     void add_onoff(boolean onoff);
     void add_int16(unsigned int number);
     byte calculate_checksum(const ByteVector &chunk);
+    byte calculate_preset_checksum(const ByteVector &chunk);
+    ByteVector build_preset_data(const Preset &preset, int direction = DIR_TO_SPARK);
 
 public:
     SparkMessage();
@@ -91,7 +93,7 @@ public:
 
     vector<CmdData> send_serial_number(byte msg_number);
     vector<CmdData> send_firmware_version(byte msg_number);
-    vector<CmdData> send_hw_checksums(byte msg_number);
+    vector<CmdData> send_hw_checksums(byte msg_number, ByteVector checksums = {});
     vector<CmdData> send_hw_preset_number(byte msg_number);
     vector<CmdData> send_response_71(byte msg_number);
     vector<CmdData> send_response_72(byte msg_number);
@@ -103,6 +105,8 @@ public:
     vector<CmdData> get_looper_status(byte msg_number);
     vector<CmdData> get_looper_config(byte msg_number);
     vector<CmdData> get_looper_record_status(byte msg_number); // To test if that is correct
+
+    byte get_preset_checksum(const Preset &preset);
 
     int &
     maxChunkSizeToSpark() {

@@ -203,7 +203,7 @@ def download_fs(fs_info: FSInfo):
     print(fs_info)
     esptoolpy = join(platform.get_package_dir("tool-esptoolpy") or "", "esptool.py")
     upload_port = join(env.get("UPLOAD_PORT", "none"))
-    download_speed = join(str(board.get("download.speed", "115200")))
+    download_speed = join(str(board.get("download.speed", "230400")))
     if "none" in upload_port:
         env.AutodetectUploadPort()
         upload_port = join(env.get("UPLOAD_PORT", "none"))

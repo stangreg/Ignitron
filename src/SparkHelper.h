@@ -9,47 +9,48 @@
 #define SPARK_HELPER_H
 
 #include <array>
-#include <vector>
 #include <iomanip>
-//#include <sstream>
+#include <vector>
+// #include <sstream>
 #include <cstdio>
 
-#include <Arduino.h>
 #include "Config_Definitions.h"
+#include <Arduino.h>
 
 using namespace std;
 using ByteVector = vector<byte>;
 
-class SparkHelper{
+class SparkHelper {
 
 private:
-
-
 public:
-	// Convert a string to a ByteVector
-	//static ByteVector HexToBytes(const string& hex);
-	// Convert a string hex item to a byte
-	static byte HexToByte(const string& hex);
+    // Convert a string to a ByteVector
+    // static ByteVector HexToBytes(const string& hex);
+    // Convert a string hex item to a byte
+    static byte HexToByte(const string &hex);
+    static ByteVector hexStringToByteVector(const string &hexString);
+    // Internal test function
+    static ByteVector stripHeader(ByteVector input);
 
-	// Convert a byte array to a string
-	//static string hexStr(byte *data, int len);
-	// convert a byte to a string hex representation
-	static string intToHex(byte by);
-	// print a vector of byte vectors;
-	static void printDataAsHexString(const vector<ByteVector>& data);
-	// Print a byte vector
-	static void printByteVector(const ByteVector& vec);
-	// get a byteVector from int value
-	//static ByteVector bytes(int value);
+    // Convert a byte array to a string
+    // static string hexStr(byte *data, int len);
+    // convert a byte to a string hex representation
+    static string intToHex(byte by);
+    // print a vector of byte vectors;
+    static void printDataAsHexString(const vector<ByteVector> &data);
+    // Print a byte vector
+    static void printByteVector(const ByteVector &vec);
+    // get a byteVector from int value
+    // static ByteVector bytes(int value);
 
-	static int dataVectorNumOfBytes(const vector<ByteVector>& data);
+    static int dataVectorNumOfBytes(const vector<ByteVector> &data);
 
-	static int getButtonNumber(int btn_gpio);
-	static int getFXIndexFromBtnGpio(int btn_gpio);
-	static int getLedGpio(int btn_number, bool fxMode);
-	static int getFXIndexFromButtonNumber(int btn_number);
+    static int getButtonNumber(int btn_gpio);
+    static int getFXIndexFromBtnGpio(int btn_gpio);
+    static int getLedGpio(int btn_number, bool fxMode);
+    static int getFXIndexFromButtonNumber(int btn_number);
 
-	static int searchSubVector(const ByteVector& vectorToSearchIn, const ByteVector& vectorToFind);
+    static int searchSubVector(const ByteVector &vectorToSearchIn, const ByteVector &vectorToFind);
 };
 
 #endif

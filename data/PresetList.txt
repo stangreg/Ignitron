@@ -30,84 +30,70 @@ NothingElseMattersAcous.json
 PapaResortLastResort.json
 -- Bank 7 
 HateToSay.json
-RedHotChiliPeppers.json
-AliceCooper.json
-EddieVanHalen.json
--- Bank 8 
+DookieSoundGreenDay.json
 Rush.json
 SantanaBlackMagicWoman.json
+-- Bank 8 
 SunshineOfMyLove.json
 SatrianiSatchBoogie.json
--- Bank 9 
-ToolClean.json
-VintageCreamyLarson.json
 WizoQuadrat1.json
--- Bank 10 
 Wizo.json
-JethroTull.json
-VoodooKidWah.json
+-- Bank 9  
 MasterOfPuppets.json
--- Bank 11 
 Megadeth.json
 GhostDanceMacabreMart.json
 CrazyTrain.json
+-- Bank 10
 IronMaiden.json
--- Bank 12 
 BangBang.json
 CleanForBallads.json
 OrangeAD30Arpeggio.json
+-- Bank 11
 ModernVintageClean.json
--- Bank 13 
-PerfectCleanLarson.json
 Oasis.json
-DookieSoundGreenDay.json
 LynyrdSkynyrd.json
--- Bank 14 
-Hendrix.json
 EnglFireball.json
+-- Bank 12
 Anastasia.json
 The1975.json
--- Bank 15 
 PapaResortLastResort1.json
-HouseoftheRisingSonJusti.json
-CleanRB5001.json
-CleanRB500.json
--- Bank 16 
-muffRB500.json
 DireStraits.json
+-- Bank 13
 SultansOfSwingKnopfler.json
-SultansOfSwing2.json
--- Bank 17 
 TornadoOfSouls.json
 AintTalkinBoutLoveLARSON.json
 VanHalen.json
-SpookyMelody.json
--- Bank 18 
+-- Bank 14
+SpookyMelody.json 
 NothingElseMattersMetall.json
 ZakkWyldeNoMoreTearsLead.json
 12stracoustrummingCN1.json
+-- Bank 15
 SilverShip.json
--- Bank 19 
-SweetMemory.json
+SweetMemory.json 
 DancingInTheRoom.json
 RoyalCrown.json
+-- Bank 16
 WoodenBridge.json
--- Bank 20 
-StoneBreaker.json
+StoneBreaker.json 
 CountryRoad.json
 BluesArk.json
+-- Bank 17
 ModernStone.json
--- Bank 21 
-CrazyCrue.json
+CrazyCrue.json 
 DarkSoul.json
 BritishAccent.json
+-- Bank 18
 IronHammer.json
--- Bank 22 
-MillenialLead.json
+MillenialLead.json 
 HeavyAxe.json
 DualTrain.json
+-- Bank 19
 SpookyMelody.json
--- Bank 23 
-FuzzyJam.json
+FuzzyJam.json 
 AngryMonkey.json
 HideAndSeek.json
+-- Bank 20
+CleanRB5001.json
+CleanRB500.json 
+muffRB500.json

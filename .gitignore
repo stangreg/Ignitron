@@ -5,3 +5,6 @@
 .vscode/ipch
 logs/*
 unpacked_fs/*
+TestChecksumsPresets.txt
+.vscode/settings.json
+

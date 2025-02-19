@@ -58,7 +58,7 @@ public:
     void switchFXOnOff(const string name, bool onOff);
 
     void updateFromSparkResponsePreset(bool isSpecial);
-    void updateFromSparkResponseAmpPreset(string presetJson);
+    void updateFromSparkResponseAmpPreset(char *presetJson);
     void updateFromSparkResponseACK();
 
     void

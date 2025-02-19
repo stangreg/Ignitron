@@ -22,11 +22,18 @@
 #define MSG_TYPE_HWCHECKSUM 15
 #define MSG_TYPE_HWCHECKSUM_EXT 16
 
-#define MSG_REQ_SERIAL = 21
-#define MSG_REQ_FW_VER = 22
-#define MSG_REQ_PRESET_CHK = 23
-#define MSG_REQ_CURR_PRESET_NUM = 24
-#define MSG_REQ_CURR_PRESET = 25
+#define MSG_REQ_SERIAL 21
+#define MSG_REQ_FW_VER 22
+#define MSG_REQ_PRESET_CHK 23
+#define MSG_REQ_CURR_PRESET_NUM 24
+#define MSG_REQ_CURR_PRESET 25
+#define MSG_REQ_71 26
+#define MSG_REQ_72 27
+#define MSG_REQ_PRESET1 28
+#define MSG_REQ_PRESET2 29
+#define MSG_REQ_PRESET3 30
+#define MSG_REQ_PRESET4 31
+#define MSG_REQ_INVALID 99
 
 class SparkStatus {
 public:

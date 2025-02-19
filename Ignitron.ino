@@ -1,4 +1,4 @@
-
+#define CONFIG_LITTLEFS_SPIFFS_COMPAT
 
 #include <Arduino.h>
 #include <NimBLEDevice.h> // github NimBLE

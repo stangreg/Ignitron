@@ -147,8 +147,6 @@ vector<CmdData> SparkMessage::buildMessage(int dir, byte msg_num) {
 
     // create blocks from all data with headers.
     while (data_to_split.size() > 0) {
-        DEBUG_PRINTVECTOR(current_block);
-        DEBUG_PRINTLN();
         data_size = (int)data_to_split.size();
         if (with_header) {
 
@@ -167,8 +165,6 @@ vector<CmdData> SparkMessage::buildMessage(int dir, byte msg_num) {
         std::deque<byte>::iterator num_bytes = data_to_split.begin() + bytes_to_insert;
         current_block.insert(current_block.end(), data_to_split.begin(), num_bytes);
         data_to_split.erase(data_to_split.begin(), num_bytes);
-        DEBUG_PRINTVECTOR(current_block);
-        DEBUG_PRINTLN();
         CmdData data_item;
         data_item.data = current_block;
         data_item.cmd = cmd;
@@ -452,9 +448,15 @@ vector<CmdData> SparkMessage::send_firmware_version(byte msg_number) {
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
-vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number) {
+vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number, ByteVector checksums) {
     cmd = 0x03;
     sub_cmd = 0x2A;
+
+    if (checksums.size() == 0) {
+        checksums = {0x50, 0x16, 0x8F, 0x58};
+        // checksums = {0x8e, 0x75, 0x67, 0x2a};
+        // checksums = {0xA5, 0xAE, 0xC2, 0x8E};
+    }
 
     start_message(cmd, sub_cmd);
 
@@ -469,15 +471,14 @@ vector<CmdData> SparkMessage::send_hw_checksums(byte msg_number) {
      */
 
     // Spark 40: 94 CC 8e 75 67 2a
-
     // Spark GO: f001 0779 032a   07 14 4c 1e 75 67 2a       f7
 
+    // Vector with size
     add_byte(0x94);
     add_byte(0xCC);
-    add_byte(0x9e);
-    add_byte(0x75);
-    add_byte(0x67);
-    add_byte(0x2a);
+    for (byte bt : checksums) {
+        add_byte(bt);
+    }
 
     return end_message(DIR_FROM_SPARK, msg_number);
 }
@@ -504,12 +505,52 @@ vector<CmdData> SparkMessage::change_preset(const Preset &preset_data,
     sub_cmd = 0x01;
 
     start_message(cmd, sub_cmd);
+    build_preset_data(preset_data, direction);
+    return end_message(direction, msg_num);
+}
+
+// This prepares a message to send an acknowledgement
+vector<CmdData> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
+                                       int dir) {
+
+    byte cmd_ = 0x04;
+
+    start_message(cmd_, sub_cmd_);
+    if (sub_cmd_ == 0x70) {
+        add_byte(0x00);
+        add_byte(0x00);
+    }
+    return end_message(dir, msg_num);
+}
+
+byte SparkMessage::calculate_checksum(const ByteVector &chunk) {
+    byte current_sum = 0x00;
+    for (byte by : chunk) {
+        current_sum ^= by;
+    }
+    return (byte)current_sum;
+}
+
+byte SparkMessage::calculate_preset_checksum(const ByteVector &chunk) {
+    long int current_sum = 0;
+    for (byte by : chunk) {
+        current_sum += by;
+    }
+    return (byte)(current_sum % 256);
+}
+
+ByteVector SparkMessage::build_preset_data(const Preset &preset_data, int direction) {
     if (direction == DIR_TO_SPARK) {
         add_byte(0x00);
         add_byte(0x7F);
     } else {
-        add_byte(0x01);
-        add_byte(0x00);
+        if (preset_data.presetNumber == 127) {
+            add_byte(0x01);
+            add_byte(0x00);
+        } else {
+            add_byte(0x00);
+            add_byte(preset_data.presetNumber);
+        }
     }
     add_long_string(preset_data.uuid);
     string name = preset_data.name;
@@ -537,35 +578,16 @@ vector<CmdData> SparkMessage::change_preset(const Preset &preset_data,
         add_byte((byte)(num_p + 0x90));
         for (int p = 0; p < num_p; p++) {
             add_byte((byte)p);
-            add_byte((byte)'\x91');
+            add_byte((byte)0x91);
             add_float(curr_pedal_params[p].value);
         }
     }
-    byte checksum = calculate_checksum(data) ^ 0x7F;
+    ByteVector preset_only;
+    preset_only.assign(data.begin() + 2, data.end());
+    byte checksum = calculate_preset_checksum(preset_only);
+
     add_byte(checksum);
-    return end_message(direction, msg_num);
-}
-
-// This prepares a message to send an acknowledgement
-vector<CmdData> SparkMessage::send_ack(byte msg_num, byte sub_cmd_,
-                                       int dir) {
-
-    byte cmd_ = 0x04;
-
-    start_message(cmd_, sub_cmd_);
-    if (sub_cmd_ == 0x70) {
-        add_byte(0x00);
-        add_byte(0x00);
-    }
-    return end_message(dir, msg_num);
-}
-
-byte SparkMessage::calculate_checksum(const ByteVector &chunk) {
-    byte current_sum = 0x00;
-    for (byte by : chunk) {
-        current_sum ^= by;
-    }
-    return (byte)current_sum;
+    return data;
 }
 
 vector<CmdData> SparkMessage::send_response_71(byte msg_number) {
@@ -577,7 +599,7 @@ vector<CmdData> SparkMessage::send_response_71(byte msg_number) {
     sub_cmd = 0x71;
 
     start_message(cmd, sub_cmd);
-    add_byte(0x0C);
+    /*add_byte(0x0C);
     add_byte(0x04);
     add_byte(0x01);
     add_byte(0x02);
@@ -587,7 +609,19 @@ vector<CmdData> SparkMessage::send_response_71(byte msg_number) {
     add_byte(0xCD);
     add_byte(0x06);
     add_byte(0xC9);
-    add_byte(0x1D);
+    add_byte(0x1D);*/
+
+    add_byte(0x0F);
+    add_byte(0x02);
+    add_byte(0x00);
+    add_byte(0x00);
+    add_byte(0xCD);
+    add_byte(0x0F);
+    add_byte(0xA9);
+    add_byte(0xCD);
+    add_byte(0x08);
+    add_byte(0x33);
+    add_byte(0x14);
     return end_message(DIR_FROM_SPARK, msg_number);
 }
 
@@ -676,4 +710,9 @@ vector<CmdData> SparkMessage::get_looper_record_status(byte msg_number) {
     sub_cmd = 0x75;
     start_message(cmd, sub_cmd);
     return end_message(DIR_TO_SPARK, msg_number);
+}
+
+byte SparkMessage::get_preset_checksum(const Preset &preset) {
+    ByteVector data = build_preset_data(preset);
+    return data.back();
 }

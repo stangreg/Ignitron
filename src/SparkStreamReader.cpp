@@ -215,9 +215,10 @@ void SparkStreamReader::read_preset() {
     // Read object (Preset main data)
     // DEBUG_PRINTF("Free memory before reading preset: %d\n", xPortGetFreeHeapSize());
 
-    DEBUG_PRINTLN("Parsing message:");
+    /*DEBUG_PRINTLN("Parsing message:");
     DEBUG_PRINTVECTOR(msg_data);
     DEBUG_PRINTLN();
+    */
 
     Preset &currentPreset = statusObject.currentPreset();
 
@@ -340,6 +341,7 @@ void SparkStreamReader::read_preset() {
 
     statusObject.isPresetUpdated() = true;
     statusObject.lastMessageType() = MSG_TYPE_PRESET;
+
 }
 
 void SparkStreamReader::read_looper_settings() {
@@ -482,6 +484,33 @@ void SparkStreamReader::read_tuner_onoff() {
     }
 }
 
+void SparkStreamReader::read_preset_request() {
+    int type = read_byte();
+    if (type == 1) {
+        statusObject.lastMessageType() = MSG_REQ_CURR_PRESET;
+    } else {
+        int preset_num = read_byte();
+        DEBUG_PRINTF("Request for preset %d\n", preset_num + 1);
+        switch (preset_num) {
+        case 0:
+            statusObject.lastMessageType() = MSG_REQ_PRESET1;
+            break;
+        case 1:
+            statusObject.lastMessageType() = MSG_REQ_PRESET2;
+            break;
+        case 2:
+            statusObject.lastMessageType() = MSG_REQ_PRESET3;
+            break;
+        case 3:
+            statusObject.lastMessageType() = MSG_REQ_PRESET4;
+            break;
+        default:
+            DEBUG_PRINTF("Unknown preset number request: %d\n", preset_num);
+            break;
+        }
+    }
+}
+
 boolean SparkStreamReader::structure_data(bool processHeader) {
 
     ByteVector block_content;
@@ -552,32 +581,11 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
         ByteVector data7bit = {};
         data7bit.assign(chunk.begin() + 6, chunk.end() - 1);
 
-        int chunk_len = data7bit.size();
-        // DEBUG_PRINT("Chunk_len:");
-        // DEBUG_PRINTLN(chunk_len);
-        int num_seq = int((chunk_len + 7) / 8);
-        ByteVector data8bit = {};
-
-        for (int this_seq = 0; this_seq < num_seq; this_seq++) {
-            int seq_len = min(8, chunk_len - (this_seq * 8));
-            ByteVector seq = {};
-            byte bit8 = data7bit[this_seq * 8];
-            for (int ind = 0; ind < seq_len - 1; ind++) {
-                byte dat = data7bit[this_seq * 8 + ind + 1];
-                if ((bit8 & (1 << ind)) == (1 << ind)) {
-                    dat |= 0x80;
-                }
-                seq.push_back(dat);
-            }
-            for (auto by : seq) {
-                data8bit.push_back(by);
-            }
-        }
         // DEBUG_PRINTLN("Converted to 8bit");
         CmdData curr_data;
         curr_data.cmd = this_cmd;
         curr_data.subcmd = this_sub_cmd;
-        curr_data.data = data8bit;
+        curr_data.data = convertDataTo8bit(data7bit);
 
         chunk_8bit.push_back(curr_data);
 
@@ -622,8 +630,6 @@ boolean SparkStreamReader::structure_data(bool processHeader) {
 }
 
 void SparkStreamReader::set_interpreter(const ByteVector &_msg) {
-    DEBUG_PRINTVECTOR(_msg);
-    DEBUG_PRINTLN();
     msg_data = _msg;
     msg_pos = 0;
 }
@@ -663,6 +669,40 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
     // Request to AMP
     else if (_cmd == 0x02) {
         DEBUG_PRINTLN("Reading request from Amp");
+        switch (_sub_cmd) {
+        case 0x23:
+            DEBUG_PRINTLN("Found request for serial number");
+            statusObject.lastMessageType() = MSG_REQ_SERIAL;
+            break;
+        case 0x2F:
+            DEBUG_PRINTLN("Found request for firmware version");
+            statusObject.lastMessageType() = MSG_REQ_FW_VER;
+            break;
+        case 0x2A:
+            DEBUG_PRINTLN("Found request for hw checksum");
+            statusObject.lastMessageType() = MSG_REQ_PRESET_CHK;
+            break;
+        case 0x10:
+            DEBUG_PRINTLN("Found request for hw preset number");
+            statusObject.lastMessageType() = MSG_REQ_CURR_PRESET_NUM;
+            break;
+        case 0x01:
+            DEBUG_PRINTLN("Found request for current preset");
+            read_preset_request();
+            break;
+        case 0x71:
+            DEBUG_PRINTLN("Found request for 02 71");
+            statusObject.lastMessageType() = MSG_REQ_71;
+            break;
+        case 0x72:
+            DEBUG_PRINTLN("Found request for 02 72");
+            statusObject.lastMessageType() = MSG_REQ_72;
+            break;
+        default:
+            DEBUG_PRINTF("Found invalid request: %02x \n", _sub_cmd);
+            statusObject.lastMessageType() = MSG_REQ_INVALID;
+            break;
+        }
     }
     // Message from AMP to APP
     else if (_cmd == 0x03) {
@@ -928,7 +968,7 @@ int SparkStreamReader::processBlock(ByteVector &blk) {
     if (msg_last_block) {
         msg_last_block = false;
         setMessage(response);
-        DEBUG_PRINT("Response received: ");
+        DEBUG_PRINT("Message received: ");
         for (auto chunk : response) {
             DEBUG_PRINTVECTOR(chunk);
             DEBUG_PRINTLN();
@@ -1011,6 +1051,31 @@ unsigned int SparkStreamReader::read_int16() {
 void SparkStreamReader::clearMessageBuffer() {
     DEBUG_PRINTLN("Clearing response buffer.");
     response.clear();
+}
+
+ByteVector SparkStreamReader::convertDataTo8bit(ByteVector input) {
+    int chunk_len = input.size();
+    // DEBUG_PRINT("Chunk_len:");
+    // DEBUG_PRINTLN(chunk_len);
+    int num_seq = int((chunk_len + 7) / 8);
+    ByteVector data8bit = {};
+
+    for (int this_seq = 0; this_seq < num_seq; this_seq++) {
+        int seq_len = min(8, chunk_len - (this_seq * 8));
+        ByteVector seq = {};
+        byte bit8 = input[this_seq * 8];
+        for (int ind = 0; ind < seq_len - 1; ind++) {
+            byte dat = input[this_seq * 8 + ind + 1];
+            if ((bit8 & (1 << ind)) == (1 << ind)) {
+                dat |= 0x80;
+            }
+            seq.push_back(dat);
+        }
+        for (auto by : seq) {
+            data8bit.push_back(by);
+        }
+    }
+    return data8bit;
 }
 
 void SparkStreamReader::read_amp_name() {
