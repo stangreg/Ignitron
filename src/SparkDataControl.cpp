@@ -42,8 +42,9 @@ int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
 int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
-string SparkDataControl::sparkAmpName = "Spark 2";
+string SparkDataControl::sparkAmpName = AMP_NAME_SPARK_40;
 bool SparkDataControl::with_delay = false;
+ByteVector SparkDataControl::checksums = {};
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 int SparkDataControl::batteryLevel_ = BATTERY_LEVEL_0;
@@ -112,6 +113,7 @@ int SparkDataControl::init(int opModeInput) {
         } else if (currentBTMode_ == BT_MODE_SERIAL) {
             bleControl->startBTSerial();
         }
+        readPresetChecksums();
         break;
     case SPARK_MODE_KEYBOARD:
         // Set MAC address for BLE keyboard
@@ -337,6 +339,16 @@ void SparkDataControl::setAmpParameters() {
     SparkPresetControl::getInstance().setAmpParameters(ampName);
 }
 
+void SparkDataControl::readPresetChecksums() {
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+    checksums.clear();
+    for (int i = 1; i <= PRESETS_PER_BANK; i++) {
+        Preset preset = presetControl.getPreset(1, i);
+        byte checksum = spark_msg.get_preset_checksum(preset);
+        checksums.push_back(checksum);
+    }
+}
+
 void SparkDataControl::checkForUpdates() {
 
     while (msgQueue.size() > 0) {
@@ -391,10 +403,10 @@ void SparkDataControl::checkForUpdates() {
 
 void SparkDataControl::processSparkData(ByteVector &blk) {
 
-    DEBUG_PRINT("Received data: ");
+    /*DEBUG_PRINT("Received data: ");
     DEBUG_PRINTVECTOR(blk);
     DEBUG_PRINTLN();
-
+    */
     // Check if incoming message requires sending an acknowledgment
     handleSendingAck(blk);
 
@@ -577,47 +589,80 @@ void SparkDataControl::handleAmpModeRequest() {
     vector<CmdData> currentMessage = spark_ssr.lastMessage();
     byte currentMessageNum = statusObject.lastMessageNum();
     byte sub_cmd_ = currentMessage.back().subcmd;
-    Preset activePreset = SparkPresetControl::getInstance().activePreset();
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
-    switch (sub_cmd_) {
+    Preset preset;
 
-    case 0x23:
+    int lastMessageType = statusObject.lastMessageType();
+    bool sendMessage = true;
+    switch (lastMessageType) {
+
+    case MSG_REQ_SERIAL:
         DEBUG_PRINTLN("Found request for serial number");
         msg = spark_msg.send_serial_number(
             currentMessageNum);
         break;
-    case 0x2F:
+    case MSG_REQ_FW_VER:
         DEBUG_PRINTLN("Found request for firmware version");
         msg = spark_msg.send_firmware_version(
             currentMessageNum);
         break;
-    case 0x2A:
+    case MSG_REQ_PRESET_CHK:
         DEBUG_PRINTLN("Found request for hw checksum");
-        msg = spark_msg.send_hw_checksums(currentMessageNum);
+        msg = spark_msg.send_hw_checksums(currentMessageNum, checksums);
         break;
-    case 0x10:
+    case MSG_REQ_CURR_PRESET_NUM:
         DEBUG_PRINTLN("Found request for hw preset number");
         msg = spark_msg.send_hw_preset_number(currentMessageNum);
         break;
-    case 0x01:
+    case MSG_REQ_CURR_PRESET:
         DEBUG_PRINTLN("Found request for current preset");
-        msg = spark_msg.change_preset(activePreset, DIR_FROM_SPARK,
+        preset = presetControl.activePreset();
+        preset.presetNumber = 127;
+        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK,
                                       currentMessageNum);
         break;
-    case 0x71:
+    case MSG_REQ_PRESET1:
+        DEBUG_PRINTLN("Found request for preset 1");
+        preset = presetControl.getPreset(1, 1);
+        preset.presetNumber = 0;
+        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        break;
+    case MSG_REQ_PRESET2:
+        DEBUG_PRINTLN("Found request for preset 2");
+        preset = presetControl.getPreset(1, 2);
+        preset.presetNumber = 1;
+        DEBUG_PRINTF("Preset NUMBER after init: %02X\n", preset.presetNumber);
+        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        break;
+    case MSG_REQ_PRESET3:
+        DEBUG_PRINTLN("Found request for preset 3");
+        preset = presetControl.getPreset(1, 3);
+        preset.presetNumber = 2;
+        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        break;
+    case MSG_REQ_PRESET4:
+        DEBUG_PRINTLN("Found request for preset 4");
+        preset = presetControl.getPreset(1, 4);
+        preset.presetNumber = 3;
+        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        break;
+    case MSG_REQ_71:
         DEBUG_PRINTLN("Found request for 02 71");
         msg = spark_msg.send_response_71(currentMessageNum);
         break;
-    case 0x72:
+    case MSG_REQ_72:
         DEBUG_PRINTLN("Found request for 02 72");
         msg = spark_msg.send_response_72(currentMessageNum);
         break;
     default:
-        DEBUG_PRINTF("Found invalid request: %02x \n", sub_cmd_);
+        DEBUG_PRINTF("Found invalid request: %d \n", lastMessageType);
+        sendMessage = false;
         break;
     }
-
-    bleControl->notifyClients(msg);
+    if (sendMessage) {
+        bleControl->notifyClients(msg);
+    }
 }
 
 void SparkDataControl::handleAppModeResponse() {
@@ -741,7 +786,7 @@ void SparkDataControl::handleAppModeResponse() {
     if (operationMode_ == SPARK_MODE_AMP) {
         if (lastMessageType == MSG_TYPE_PRESET) {
 
-            SparkPresetControl::getInstance().updateFromSparkResponseAmpPreset(msgStr);
+            SparkPresetControl::getInstance().updateFromSparkResponseAmpPreset(&msgStr[0]);
             statusObject.resetPresetUpdateFlag();
             statusObject.resetPresetNumberUpdateFlag();
         }
@@ -882,6 +927,12 @@ void SparkDataControl::bleNotificationCallback(
     // DEBUG_PRINTF("Seding back data via notify.");
     // vector<ByteVector> notifyVector = { chunk };
     // bleControl->writeBLE(notifyVector, false, false);
+}
+
+void SparkDataControl::queueMessage(ByteVector &blk) {
+    if (blk.size() > 0) {
+        msgQueue.push(blk);
+    }
 }
 
 bool SparkDataControl::sendMessageToBT(ByteVector &msg) {

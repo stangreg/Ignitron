@@ -24,8 +24,6 @@ void SparkPresetBuilder::init() {
 }
 
 Preset SparkPresetBuilder::getPresetFromJson(char *json) {
-
-    Preset resultPreset;
     string jsonString(json);
 
     JsonDocument jsonPreset;
@@ -35,11 +33,31 @@ Preset SparkPresetBuilder::getPresetFromJson(char *json) {
         Serial.print(F("deserializeJson() failed with code "));
         Serial.println(err.f_str());
     }
+    return getPresetFromJsonDocument(jsonPreset, jsonString);
+}
+
+Preset SparkPresetBuilder::getPresetFromJson(File file) {
+
+    JsonDocument jsonPreset;
+    DeserializationError err = deserializeJson(jsonPreset, file);
+
+    if (err) {
+        Serial.print(F("deserializeJson() failed with code "));
+        Serial.println(err.f_str());
+    }
+    string jsonString;
+    serializeJson(jsonPreset, jsonString);
+    return getPresetFromJsonDocument(jsonPreset, jsonString);
+}
+
+Preset SparkPresetBuilder::getPresetFromJsonDocument(JsonDocument jsonPreset, string jsonString) {
+    Preset resultPreset;
 
     // Preset number is not used currently
-    resultPreset.presetNumber = 0;
-    // myObject.hasOwnProperty(key) checks if the object contains an entry for key
-    // preset UUID
+    resultPreset.presetNumber = jsonPreset["PresetNumber"].as<int>();
+    // resultPreset.presetNumber = stoi(presetNumber, 0, 16);
+    //  myObject.hasOwnProperty(key) checks if the object contains an entry for key
+    //  preset UUID
     string presetUUID = jsonPreset["UUID"].as<string>();
     resultPreset.uuid = presetUUID;
 
@@ -210,6 +228,7 @@ void SparkPresetBuilder::buildPresetUUIDs() {
 }
 
 Preset SparkPresetBuilder::getPreset(int bank, int pre) {
+    DEBUG_PRINTF("Getting preset number %d - %02d\n", bank, pre);
     Preset retPreset;
     // HW preset
     if (bank == 0) {
@@ -233,7 +252,8 @@ Preset SparkPresetBuilder::getPreset(int bank, int pre) {
         }
 
         string presetFilename = presetBanksNames[bank - 1][pre - 1];
-        retPreset = readPresetFromFile(presetFilename);
+        DEBUG_PRINTF("Reading preset filename: %s\n", presetFilename.c_str());
+        return readPresetFromFile(presetFilename);
     }
     return retPreset;
 }
@@ -431,10 +451,11 @@ string SparkPresetBuilder::savePresetToFile(string filename, const Preset &prese
     Serial.println(preset.json.c_str());
     string presetNameWithPath;
     // remove any blanks from the name for a new filename
+
     filename.erase(remove_if(filename.begin(),
                              filename.end(),
                              [](char chr) {
-                                 return not(regex_match(string(1, chr), regex("[A-z0-9_]")));
+                                 return not(regex_match(string(1, chr), regex("[A-z0-9_/]")));
                              }),
                    filename.end());
     // cut down name to 24 characters (a potential counter + .json will then increase to 30);
@@ -442,10 +463,10 @@ string SparkPresetBuilder::savePresetToFile(string filename, const Preset &prese
     filename.resize(min(24, nameLength));
 
     string presetFileName = filename + ".json";
-    Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
     int counter = 0;
 
     presetFileName = "/" + presetFileName;
+    Serial.printf("Store preset with filename %s\n", presetFileName.c_str());
     File presetFile = LittleFS.open(presetFileName.c_str());
 
     if (!overwrite) {
@@ -465,30 +486,29 @@ string SparkPresetBuilder::savePresetToFile(string filename, const Preset &prese
     // Store the json string to a new file
     presetFile.print(preset.json.c_str());
     presetFile.close();
-
+    presetFile = LittleFS.open(presetFileName.c_str());
+    presetFile.close();
     return presetFileName;
 }
 
-Preset SparkPresetBuilder::readPresetFromFile(string filename) {
+Preset SparkPresetBuilder::readPresetFromFile(string fname) {
 
     Preset retPreset;
     string presetJsonString;
 
-    string fullFilename = "/" + filename;
-    DEBUG_PRINTF("Trying to read preset %s...", fullFilename.c_str());
+    string fullFilename = "/" + fname;
+    // DEBUG_PRINTF("Trying to read preset %s ...", fullFilename.c_str());
     File file = LittleFS.open(fullFilename.c_str());
-
     if (file) {
-        while (file.available()) {
-            presetJsonString += (char)file.read();
-        }
+        retPreset = getPresetFromJson(file);
         file.close();
-        retPreset = getPresetFromJson(&presetJsonString[0]);
+        
         DEBUG_PRINTLN("done.");
-        DEBUG_PRINTF("Read preset: %s\n", retPreset.json.c_str());
+        DEBUG_PRINTF("Preset read: %s\n", retPreset.json.c_str());
         return retPreset;
     } else {
         Serial.printf("Error while opening file %s, returning empty preset.\n", fullFilename.c_str());
+        file.close();
         return retPreset;
     }
 }

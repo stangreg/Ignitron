@@ -405,9 +405,9 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
     }
 }
 
-void SparkPresetControl::updateFromSparkResponseAmpPreset(string presetJson) {
+void SparkPresetControl::updateFromSparkResponseAmpPreset(char *presetJson) {
     presetEditMode_ = PRESET_EDIT_STORE;
-    appReceivedPreset_ = presetBuilder.getPresetFromJson(&presetJson[0]);
+    appReceivedPreset_ = presetBuilder.getPresetFromJson(presetJson);
     DEBUG_PRINTLN("received from app:");
     DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
     presetNumToEdit_ = 0;
@@ -488,6 +488,7 @@ void SparkPresetControl::processPresetEdit(int presetNum) {
     } else {
         resetPresetEdit(true, true);
         activePresetNum_ = presetNum;
+        DEBUG_PRINTF("Reading presetEdit %d - %02d\n", activeBank_, activePresetNum_);
         activePreset_ = presetBuilder.getPreset(activeBank_, activePresetNum_);
         pendingPreset_ = activePreset_;
     }

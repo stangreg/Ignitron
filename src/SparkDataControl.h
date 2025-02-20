@@ -52,6 +52,7 @@ public:
     static void bleNotificationCallback(NimBLERemoteCharacteristic *pRemoteCharacteristic,
                                         uint8_t *pData, size_t length, bool isNotify);
 
+    static void queueMessage(ByteVector &blk);
     // methods to process any data from Spark (process with SparkStreamReader and send ack if required)
     static void processSparkData(ByteVector &blk);
 
@@ -120,7 +121,6 @@ public:
 
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
-    void triggerInitialBLENotifications();
     static void switchSubMode(int subMode);
     void toggleBTMode();
 
@@ -210,6 +210,7 @@ private:
     static int sparkAmpType;
     static string sparkAmpName;
     static bool with_delay;
+    static ByteVector checksums;
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Battery level
@@ -231,6 +232,7 @@ private:
 
     // Retrieves the current preset from Spark (required for HW presets)
     static void setAmpParameters();
+    static void readPresetChecksums();
 
     // methods to process any data from Spark (process with SparkStreamReader and send ack if required)
     static void handleSendingAck(const ByteVector &blk);

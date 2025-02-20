@@ -63,6 +63,7 @@ private:
     void read_measure();
     void read_tuner();
     void read_tuner_onoff();
+    void read_preset_request();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);
@@ -71,6 +72,7 @@ private:
     vector<CmdData> read_message(bool processHeader = true);
     boolean structure_data(bool processHeader = true);
     void interpret_data();
+    ByteVector convertDataTo8bit(ByteVector input);
     void set_interpreter(const ByteVector &_msg);
     int run_interpreter(byte _cmd, byte _sub_cmd);
 
