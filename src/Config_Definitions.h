@@ -79,8 +79,8 @@ const string VERSION = "1.8.3";
 // 1.3" OLED 128x64 displays commonly uses an SH1106 driver.
 // Choose driver below, only one can be defined!
 
-#define OLED_DRIVER_SSD1306
-// #define OLED_DRIVER_SH1106
+// #define OLED_DRIVER_SSD1306
+#define OLED_DRIVER_SH1106
 
 // Button GPIOs
 #define BUTTON_PRESET1_GPIO 25
@@ -120,7 +120,7 @@ const string VERSION = "1.8.3";
 // The dedicated Preset LED GPIO pins LED_PRESET<n>_GPIO is defined
 // separately below under the #ifdef DEDICATED_PRESET_LEDS clause.
 
-// #define DEDICATED_PRESET_LEDS
+#define DEDICATED_PRESET_LEDS
 
 #ifdef DEDICATED_PRESET_LEDS
 #define LED_PRESET1_GPIO 0
