@@ -281,11 +281,15 @@ void SparkDataControl::readBTModeFromFile() {
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 void SparkDataControl::updateBatteryLevel() {
+#if BATTERY_TYPE == BATTERY_TYPE_LI_ION || BATTERY_TYPE == BATTERY_TYPE_LI_FE_PO4
     const int analogReading = analogRead(BATTERY_VOLTAGE_ADC_PIN);
     // analogReading ranges from 0 to 4095
     // 0V = 0, 3.3V = 4095
     float analogVoltage = (analogReading / 4095.0) * 3.3;
     float batteryVoltage = analogVoltage / VOLTAGE_DIVIDER_R1 * (VOLTAGE_DIVIDER_R1 + VOLTAGE_DIVIDER_R2);
+#elif BATTERY_TYPE == BATTERY_TYPE_AMP
+    float batteryVoltage = SparkStatus::getInstance().ampBatteryLevel();
+#endif
 
     // Set battery level
     batteryLevel_ = batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10
@@ -375,6 +379,18 @@ void SparkDataControl::checkForUpdates() {
         updateLooperSettings();
         looperControl_->resetChangePending();
     }
+
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+#if BATTERY_TYPE == BATTERY_TYPE_AMP
+    unsigned int current_time = millis();
+    if (current_time - lastAmpBatteryUpdate > updateAmpBatteryInterval) {
+        Serial.println("Reading current battery level");
+        lastAmpBatteryUpdate = current_time;
+        current_msg = spark_msg.get_amp_status(nextMessageNum);
+        triggerCommand(current_msg);
+    }
+#endif
+#endif
 
     if (operationMode_ == SPARK_MODE_AMP) {
 
@@ -716,6 +732,10 @@ void SparkDataControl::handleAppModeResponse() {
             getHWChecksums();
             printMessage = true;
             // ampNameReceived_ = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_AMPSTATUS) {
+            DEBUG_PRINTLN("Last message was amp status");
         }
 
         if (lastMessageType == MSG_TYPE_HWCHECKSUM) {

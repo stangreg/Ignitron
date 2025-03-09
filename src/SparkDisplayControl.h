@@ -125,6 +125,8 @@ private:
     string currentNote = "  ";
     int noteOffsetCents = 0;
 
+    int ampBatteryLevel = 0;
+
     SparkDataControl *dataControl() { return spark_dc; }
     void showInitialMessage();
     void showConnection();

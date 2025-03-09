@@ -341,7 +341,6 @@ void SparkStreamReader::read_preset() {
 
     statusObject.isPresetUpdated() = true;
     statusObject.lastMessageType() = MSG_TYPE_PRESET;
-
 }
 
 void SparkStreamReader::read_looper_settings() {
@@ -509,6 +508,29 @@ void SparkStreamReader::read_preset_request() {
             break;
         }
     }
+}
+
+void SparkStreamReader::read_amp_status() {
+
+    // 0a ?
+    // 01 (always 01?)
+    // 01 (00 when not charging)
+    // 02 (00 when not charging)
+    // CD 0f CD (4045) (Battery level)
+    // CD 06 73 (1651) (?)
+    // 20  (?)
+
+    // Read first bytes without action as not needed
+    for (int i = 0; i < 4; i++) {
+        read_byte();
+    }
+    int batteryLevel = read_int16();
+    // Unknown UINT16 and last byte
+    read_int16();
+    read_byte();
+    SparkStatus &statusObject = SparkStatus::getInstance();
+    statusObject.ampBatteryLevel() = batteryLevel;
+    statusObject.lastMessageType() = MSG_TYPE_AMPSTATUS;
 }
 
 boolean SparkStreamReader::structure_data(bool processHeader) {
@@ -755,6 +777,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         case 0x65:
             DEBUG_PRINTLN("03 65 - Tuner On/Off");
             read_tuner_onoff();
+            break;
+        case 0x71:
+            DEBUG_PRINTLN("03 71 - Reading Amp Status");
+            read_amp_status();
             break;
         case 0x75:
             DEBUG_PRINTLN("03 75 - Reading Looper Record Status");

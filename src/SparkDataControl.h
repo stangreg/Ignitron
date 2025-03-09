@@ -193,6 +193,8 @@ private:
     static bool recordStartFlag;
 
     static bool ampNameReceived_;
+    const unsigned int updateAmpBatteryInterval = 60000; // Update battery status every minute
+    unsigned int lastAmpBatteryUpdate = 0;               // When battery level was last updated
 
     // static LooperSetting *looperSetting_;
 
