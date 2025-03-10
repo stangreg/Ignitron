@@ -502,7 +502,7 @@ Preset SparkPresetBuilder::readPresetFromFile(string fname) {
     if (file) {
         retPreset = getPresetFromJson(file);
         file.close();
-        
+
         DEBUG_PRINTLN("done.");
         DEBUG_PRINTF("Preset read: %s\n", retPreset.json.c_str());
         return retPreset;

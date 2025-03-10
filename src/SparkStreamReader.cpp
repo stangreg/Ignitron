@@ -824,6 +824,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         DEBUG_PRINTVECTOR(msg_data);
         DEBUG_PRINTLN();
     }
+
     return 1;
 }
 

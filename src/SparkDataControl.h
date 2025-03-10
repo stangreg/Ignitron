@@ -116,9 +116,6 @@ public:
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
-    int getMaxChunkSize(int direction);
-    int getMaxBlockSize(int direction);
-
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
     static void switchSubMode(int subMode);
