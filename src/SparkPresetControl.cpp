@@ -79,7 +79,7 @@ void SparkPresetControl::getMissingHWPresets() {
 
 void SparkPresetControl::resetStatus() {
 
-    presetBuilder.resetHWPresets();
+    presetBuilder.initHWPresets();
     presetBuilder.numberOfHWBanks() = 1;
     activePresetNum_ = pendingPresetNum_ = 1;
     activeHWBank_ = activeBank_ = pendingHWBank_ = pendingBank_ = 0;

@@ -121,6 +121,8 @@ public:
     void resetLastMessageType();
     void resetAcknowledgments();
 
+    void resetStatus();
+
 private:
     SparkStatus();
 

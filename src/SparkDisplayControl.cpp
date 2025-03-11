@@ -392,6 +392,8 @@ void SparkDisplayControl::showConnection() {
 // Show battery status indicator with a voltage divider
 // 0-4095 for 0v-3.3v
 void SparkDisplayControl::showBatterySymbol() {
+
+    SparkStatus &statusObject = SparkStatus::getInstance();
     // Display the Battery symbols
     int xPosSymbol = (display.width() / 2.0);
     int yPosSymbol = 11;
@@ -417,6 +419,12 @@ void SparkDisplayControl::showBatterySymbol() {
     default:
         battery_icon = epd_bitmap_battery_level_3;
         break;
+    }
+
+    if (BATTERY_TYPE == BATTERY_TYPE_AMP) {
+        if (statusObject.ampBatteryChargingStatus() == BATTERY_CHARGING_STATUS_POWERED) {
+            battery_icon = epd_bitmap_battery_plug;
+        }
     }
 
     display.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);

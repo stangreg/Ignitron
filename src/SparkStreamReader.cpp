@@ -524,13 +524,10 @@ void SparkStreamReader::read_amp_status() {
     // CD 06 73 (1651) (?)
     // 20  (?)
     // Default value when power cable is connected
-    int batteryLevel = BATTERY_MAX_LEVEL;
-    if (chargingStatus != BATTERY_CHARGING_STATUS_POWERED) {
-        batteryLevel = read_int16();
-        // Unknown UINT16 and last byte
-        read_int16();
-        read_byte();
-    }
+    int batteryLevel = read_int();
+    // Unknown UINT16/int and last byte
+    read_int();
+    read_int();
 
     SparkStatus &statusObject = SparkStatus::getInstance();
     statusObject.isAmpBatteryPowered() = isBatteryPowered;
@@ -1062,13 +1059,27 @@ bool SparkStreamReader::isValidBlockWithoutHeader(const ByteVector &blk) {
 
 int SparkStreamReader::read_int() {
 
+    int result = 0;
     byte first = read_byte();
+    byte major = 0;
+    byte minor = 0;
     // If int value is greater than 128 it is prefixed with 0xCC
-    if (first == 0xcc) {
-        return read_byte();
-    } else {
-        return first;
+    switch (first) {
+    case 0xCC:
+    case 0xD0:
+        result = read_byte();
+        break;
+    case 0xCD:
+        major = read_byte();
+        minor = read_byte();
+        result = (major << 8 | minor);
+        break;
+    default:
+        result = first;
+        break;
     }
+
+    return result;
 }
 
 unsigned int SparkStreamReader::read_int16() {

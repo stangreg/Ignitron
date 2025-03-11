@@ -321,6 +321,7 @@ void SparkDataControl::resetStatus() {
     with_delay = false;
     lastAmpBatteryUpdate = 0;
     SparkPresetControl::getInstance().resetStatus();
+    SparkStatus::getInstance().resetStatus();
 }
 
 /////////////////////////////////////////////////////////
