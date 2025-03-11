@@ -125,15 +125,19 @@ private:
     string currentNote = "  ";
     int noteOffsetCents = 0;
 
-    int ampBatteryLevel = 0;
-
     SparkDataControl *dataControl() { return spark_dc; }
     void showInitialMessage();
     void showConnection();
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     void showBatterySymbol();
+    int ampBatteryLevel = 0;
+    int changeBatterySymbolInteral = 500;
+    unsigned long lastBatteryRotationTimestamp = 0;
+    unsigned int currentBatterySymbolIndex = 0;
+    const unsigned char *rotateBatteryIcons();
 #endif
-    void showBankAndPresetNum();
+    void
+    showBankAndPresetNum();
     void showPresetName();
     void showFX_SecondaryName();
     void showLooperTimer();

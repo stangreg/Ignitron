@@ -401,6 +401,9 @@ void SparkDisplayControl::showBatterySymbol() {
     uint16_t color = OLED_WHITE;
     const unsigned char *battery_icon;
     switch (batteryLevel) {
+    case BATTERY_LEVEL_CHARGING:
+        battery_icon = rotateBatteryIcons();
+        break;
     case BATTERY_LEVEL_0:
         battery_icon = epd_bitmap_battery_level_0;
         break;
@@ -417,6 +420,29 @@ void SparkDisplayControl::showBatterySymbol() {
     }
 
     display.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);
+}
+const unsigned char *SparkDisplayControl::rotateBatteryIcons() {
+
+    unsigned long currentTime = millis();
+    if (currentTime - lastBatteryRotationTimestamp > changeBatterySymbolInteral) {
+        lastBatteryRotationTimestamp = currentTime;
+        currentBatterySymbolIndex = (currentBatterySymbolIndex + 1) % 4;
+    }
+    switch (currentBatterySymbolIndex) {
+    case 0:
+        return epd_bitmap_battery_level_0;
+        break;
+    case 1:
+        return epd_bitmap_battery_level_1;
+        break;
+    case 2:
+        return epd_bitmap_battery_level_2;
+        break;
+    case 3:
+    default:
+        return epd_bitmap_battery_level_3;
+        break;
+    }
 }
 #endif
 

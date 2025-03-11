@@ -87,6 +87,12 @@ public:
     const int ampBatteryLevel() const { return ampBatteryLevel_; }
     int &ampBatteryLevel() { return ampBatteryLevel_; }
 
+    const bool isAmpBatteryPowered() const { return isAmpBatteryPowered_; }
+    bool &isAmpBatteryPowered() { return isAmpBatteryPowered_; }
+
+    const int ampBatteryChargingStatus() const { return ampBatteryChargingStatus_; }
+    int &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
+
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
 
@@ -147,6 +153,8 @@ private:
     byte last_requested_preset = 0x00;
 
     int ampBatteryLevel_ = 0;
+    bool isAmpBatteryPowered_ = false;
+    int ampBatteryChargingStatus_ = 0;
 
     vector<byte> hwChecksums_ = {};
 };

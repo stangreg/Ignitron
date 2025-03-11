@@ -299,6 +299,12 @@ void SparkDataControl::updateBatteryLevel() {
                     : batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90
                         ? BATTERY_LEVEL_2
                         : BATTERY_LEVEL_3;
+
+#if BATTERY_TYPE == BATTERY_TYPE_AMP
+    if (SparkStatus::getInstance().ampBatteryChargingStatus() == BATTERY_CHARGING_STATUS_CHARGING) {
+        batteryLevel_ = BATTERY_LEVEL_CHARGING;
+    }
+#endif
 }
 #endif
 
@@ -357,7 +363,7 @@ void SparkDataControl::readPresetChecksums() {
 
 void SparkDataControl::checkForUpdates() {
 
-    if(msgQueue.size() > 0) {
+    if (msgQueue.size() > 0) {
         processSparkData(msgQueue.front());
         msgQueue.pop();
     }
