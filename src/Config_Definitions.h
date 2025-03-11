@@ -58,7 +58,7 @@ const string VERSION = "1.8.5";
 #define BATTERY_LEVEL_3 3        // 90-100%
 #define BATTERY_LEVEL_CHARGING 9 // when charging (only used for AMP battery)
 
-#define BATTERY_MAX_LEVEL 4095.0;
+#define BATTERY_MAX_LEVEL 4095.0
 
 #define BATTERY_TYPE_LI_ION 0
 #define BATTERY_TYPE_LI_FE_PO4 1
