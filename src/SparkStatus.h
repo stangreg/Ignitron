@@ -21,6 +21,7 @@
 #define MSG_TYPE_TUNER_OFF 14
 #define MSG_TYPE_HWCHECKSUM 15
 #define MSG_TYPE_HWCHECKSUM_EXT 16
+#define MSG_TYPE_AMPSTATUS 17
 
 #define MSG_REQ_SERIAL 21
 #define MSG_REQ_FW_VER 22
@@ -83,6 +84,15 @@ public:
     const string ampName() const { return ampName_; }
     string &ampName() { return ampName_; }
 
+    const int ampBatteryLevel() const { return ampBatteryLevel_; }
+    int &ampBatteryLevel() { return ampBatteryLevel_; }
+
+    const bool isAmpBatteryPowered() const { return isAmpBatteryPowered_; }
+    bool &isAmpBatteryPowered() { return isAmpBatteryPowered_; }
+
+    const int ampBatteryChargingStatus() const { return ampBatteryChargingStatus_; }
+    int &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
+
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
 
@@ -110,6 +120,8 @@ public:
     void resetLooperSettingUpdateFlag();
     void resetLastMessageType();
     void resetAcknowledgments();
+
+    void resetStatus();
 
 private:
     SparkStatus();
@@ -141,6 +153,10 @@ private:
     int last_message_type_ = 0;
     byte last_message_num_ = 0x00;
     byte last_requested_preset = 0x00;
+
+    int ampBatteryLevel_ = 0;
+    bool isAmpBatteryPowered_ = false;
+    int ampBatteryChargingStatus_ = 0;
 
     vector<byte> hwChecksums_ = {};
 };

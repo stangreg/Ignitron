@@ -25,10 +25,13 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.8.4";
+const string VERSION = "1.8.5";
 
 // Battery indicator
-// Note: This battery is for the Ignitron controller, not the Spark amp.
+// Note: This battery can be for the Ignitron controller or the Spark amp.
+// When BATTERY_TYPE = BATTERY_TYPE_AMP is selected,
+// the battery indicator will show the AMP battery status,
+// otherwise the internal battery of Ignitron (if present)
 //
 // As ESP32 only support ADC input less than 3.3V, will use a voltage divider built by two
 // simple resistors in serial to pull down the voltage ESP32's ADC pin receives.
@@ -45,19 +48,23 @@ const string VERSION = "1.8.4";
 // When battery is full, VoltageOnADCPin = 12.6V / (5.1k + 15k) * 5.1k ~= 3.197V < 3.3V,
 // so this voltage divider setting is suitable for this need.
 
-// #define ENABLE_BATTERY_STATUS_INDICATOR
+#define ENABLE_BATTERY_STATUS_INDICATOR
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 #define BATTERY_VOLTAGE_ADC_PIN 36
-#define BATTERY_LEVEL_0 0 // 0-10%
-#define BATTERY_LEVEL_1 1 // 10-50%
-#define BATTERY_LEVEL_2 2 // 50-90%
-#define BATTERY_LEVEL_3 3 // 90-100%
+#define BATTERY_LEVEL_0 0        // 0-10%
+#define BATTERY_LEVEL_1 1        // 10-50%
+#define BATTERY_LEVEL_2 2        // 50-90%
+#define BATTERY_LEVEL_3 3        // 90-100%
+#define BATTERY_LEVEL_CHARGING 9 // when charging (only used for AMP battery)
+
+#define BATTERY_MAX_LEVEL 4095.0
 
 #define BATTERY_TYPE_LI_ION 0
 #define BATTERY_TYPE_LI_FE_PO4 1
+#define BATTERY_TYPE_AMP 2
 
-#define BATTERY_TYPE BATTERY_TYPE_LI_ION // Choose from BATTERY_TYPE_LI_ION or BATTERY_TYPE_LI_FE_PO4
+#define BATTERY_TYPE BATTERY_TYPE_AMP // Choose from BATTERY_TYPE_LI_ION or BATTERY_TYPE_LI_FE_PO4 for Ignitron internal battery or BATTERY_TYPE_AMP for Spark battery
 #define BATTERY_CELLS 3
 #define VOLTAGE_DIVIDER_R1 (5.1 * 1000) // 5.1k ohm
 #define VOLTAGE_DIVIDER_R2 (15 * 1000)  // 15k ohm
@@ -70,6 +77,16 @@ const string VERSION = "1.8.4";
 #define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_CELLS * 3.35)
 #define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_CELLS * 3.26)
 #define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_CELLS * 3.0)
+#elif BATTERY_TYPE == BATTERY_TYPE_AMP // Level between 0 and 4095
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_MAX_LEVEL * 0.9)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_MAX_LEVEL * 0.5)
+#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_MAX_LEVEL * 0.1)
+
+#define BATTERY_CHARGING_STATUS_DISCHARGING 0
+#define BATTERY_CHARGING_STATUS_POWERED 1
+#define BATTERY_CHARGING_STATUS_CHARGING 2
+#define BATTERY_CHARGING_STATUS_FULL_CHARGED 3
+
 #endif
 
 #endif

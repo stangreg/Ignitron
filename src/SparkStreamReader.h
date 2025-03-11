@@ -64,6 +64,7 @@ private:
     void read_tuner();
     void read_tuner_onoff();
     void read_preset_request();
+    void read_amp_status();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);

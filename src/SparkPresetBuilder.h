@@ -42,7 +42,7 @@ private:
     vector<Preset> hwPresets;
 
     int numberOfHWBanks_ = 1;
-    int numberOfHWPresets_ = 4;
+    int numberOfHWPresets_ = PRESETS_PER_BANK;
 
     const char *presetListFileName = "/PresetList.txt";
     const char *presetListUUIDFileName = "/PresetListUUIDs.txt";

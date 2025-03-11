@@ -53,6 +53,8 @@ Preset SparkPresetBuilder::getPresetFromJson(File file) {
 Preset SparkPresetBuilder::getPresetFromJsonDocument(JsonDocument jsonPreset, string jsonString) {
     Preset resultPreset;
 
+    DEBUG_PRINTF("JSON STRING: %s\n", jsonString.c_str());
+
     // Preset number is not used currently
     resultPreset.presetNumber = jsonPreset["PresetNumber"].as<int>();
     // resultPreset.presetNumber = stoi(presetNumber, 0, 16);
@@ -105,6 +107,10 @@ Preset SparkPresetBuilder::getPresetFromJsonDocument(JsonDocument jsonPreset, st
     if (presetChecksum == "null") {
         Serial.println("Checksum not found, trying legacy format.");
         presetChecksum = jsonPreset["Filler"].as<string>();
+    }
+    if (presetChecksum == "null") {
+        resultPreset = {};
+        return resultPreset;
     }
     resultPreset.checksum = stoi(presetChecksum, 0, 16);
 
@@ -502,7 +508,7 @@ Preset SparkPresetBuilder::readPresetFromFile(string fname) {
     if (file) {
         retPreset = getPresetFromJson(file);
         file.close();
-        
+
         DEBUG_PRINTLN("done.");
         DEBUG_PRINTF("Preset read: %s\n", retPreset.json.c_str());
         return retPreset;
