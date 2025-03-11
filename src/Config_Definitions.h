@@ -52,11 +52,13 @@ const string VERSION = "1.8.5";
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 #define BATTERY_VOLTAGE_ADC_PIN 36
-#define BATTERY_LEVEL_0 0 // 0-10%
-#define BATTERY_LEVEL_1 1 // 10-50%
-#define BATTERY_LEVEL_2 2 // 50-90%
-#define BATTERY_LEVEL_3 3 // 90-100%
+#define BATTERY_LEVEL_0 0        // 0-10%
+#define BATTERY_LEVEL_1 1        // 10-50%
+#define BATTERY_LEVEL_2 2        // 50-90%
+#define BATTERY_LEVEL_3 3        // 90-100%
 #define BATTERY_LEVEL_CHARGING 9 // when charging (only used for AMP battery)
+
+#define BATTERY_MAX_LEVEL 4095.0;
 
 #define BATTERY_TYPE_LI_ION 0
 #define BATTERY_TYPE_LI_FE_PO4 1

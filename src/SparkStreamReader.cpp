@@ -523,13 +523,18 @@ void SparkStreamReader::read_amp_status() {
     // CD 0f CD (4045) (Battery level)
     // CD 06 73 (1651) (?)
     // 20  (?)
-    int batteryLevel = read_int16();
-    // Unknown UINT16 and last byte
-    read_int16();
-    read_byte();
+    // Default value when power cable is connected
+    int batteryLevel = BATTERY_MAX_LEVEL;
+    if (chargingStatus != BATTERY_CHARGING_STATUS_POWERED) {
+        batteryLevel = read_int16();
+        // Unknown UINT16 and last byte
+        read_int16();
+        read_byte();
+    }
+
     SparkStatus &statusObject = SparkStatus::getInstance();
-    statusObject.ampBatteryLevel() = batteryLevel;
     statusObject.isAmpBatteryPowered() = isBatteryPowered;
+    statusObject.ampBatteryLevel() = batteryLevel;
     statusObject.ampBatteryChargingStatus() = chargingStatus;
     statusObject.lastMessageType() = MSG_TYPE_AMPSTATUS;
 }

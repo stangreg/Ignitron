@@ -284,8 +284,8 @@ void SparkDataControl::updateBatteryLevel() {
 #if BATTERY_TYPE == BATTERY_TYPE_LI_ION || BATTERY_TYPE == BATTERY_TYPE_LI_FE_PO4
     const int analogReading = analogRead(BATTERY_VOLTAGE_ADC_PIN);
     // analogReading ranges from 0 to 4095
-    // 0V = 0, 3.3V = 4095
-    float analogVoltage = (analogReading / 4095.0) * 3.3;
+    // 0V = 0, 3.3V = 4095 (BATTERY_MAX_LEVEL)
+    float analogVoltage = (analogReading / BATTERY_MAX_LEVEL) * 3.3;
     float batteryVoltage = analogVoltage / VOLTAGE_DIVIDER_R1 * (VOLTAGE_DIVIDER_R1 + VOLTAGE_DIVIDER_R2);
 #elif BATTERY_TYPE == BATTERY_TYPE_AMP
     float batteryVoltage = SparkStatus::getInstance().ampBatteryLevel();
