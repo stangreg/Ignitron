@@ -116,9 +116,6 @@ public:
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
-    int getMaxChunkSize(int direction);
-    int getMaxBlockSize(int direction);
-
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
     static void switchSubMode(int subMode);
@@ -193,6 +190,8 @@ private:
     static bool recordStartFlag;
 
     static bool ampNameReceived_;
+    const unsigned int updateAmpBatteryInterval = 60000; // Update battery status every minute
+    unsigned int lastAmpBatteryUpdate = 0;               // When battery level was last updated
 
     // static LooperSetting *looperSetting_;
 

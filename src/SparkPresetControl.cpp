@@ -68,7 +68,7 @@ void SparkPresetControl::getMissingHWPresets() {
                     // if (presetBuilder.isHWPresetMissing(num)) {
                     DEBUG_PRINTF("%d is missing.\n", num);
                     sparkDC->readHWPreset(num);
-                    delay(1000);
+                    delay(500);
                 }
                 isAnyMissing = isAnyMissing || isCurrentMissing;
             }
@@ -79,13 +79,10 @@ void SparkPresetControl::getMissingHWPresets() {
 
 void SparkPresetControl::resetStatus() {
 
-    // presetBuilder.resetHWPresets();
-    //  readLastPresetFromFile();
-    //   activePresetNum_ = pendingPresetNum_ = 1;
-    //   Do we need to read the current amp preset here?
-    pendingPresetNum_ = activePresetNum_;
-    pendingBank_ = activeBank_;
-    pendingHWBank_ = activeHWBank_;
+    presetBuilder.initHWPresets();
+    presetBuilder.numberOfHWBanks() = 1;
+    activePresetNum_ = pendingPresetNum_ = 1;
+    activeHWBank_ = activeBank_ = pendingHWBank_ = pendingBank_ = 0;
 }
 
 void SparkPresetControl::checkForUpdates(int operationMode) {
@@ -370,39 +367,26 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
     if (!isSpecial) {
         DEBUG_PRINTLN("Updating activePreset...");
         activePreset_ = statusObject.currentPreset();
-        string uuid = receivedPreset.uuid;
-        pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
-        int checkPresetNum = std::get<1>(bankPreset);
-        if (checkPresetNum != 0) {
-            activeBank_ = std::get<0>(bankPreset);
-            activePresetNum_ = ((checkPresetNum - 1) % PRESETS_PER_BANK) + 1;
-            if (activeBank_ == 0) {
-                activeHWBank_ = (checkPresetNum - 1) / PRESETS_PER_BANK;
-            }
-        } else {
-            Serial.println("Preset not found, not changing.");
-        }
-        DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
-        updatePendingWithActive();
     }
-
     if (isSpecial) {
         DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber + 1);
         presetBuilder.insertHWPreset(presetNumber, receivedPreset);
         statusObject.resetPresetUpdateFlag();
-        // Check if the received preset matches with the current active preset (=> update the number)
-        DEBUG_PRINTLN("Updating (special message)...");
-        string uuid = activePreset_.uuid;
-        pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
-        int checkPresetNum = std::get<1>(bankPreset);
-        if (checkPresetNum != 0) {
-            activeBank_ = std::get<0>(bankPreset);
-            activePresetNum_ = std::get<1>(bankPreset);
-        } else {
-            Serial.println("Preset not found, not changing");
-        }
-        DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
     }
+    string uuid = activePreset_.uuid;
+    pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
+    int checkPresetNum = std::get<1>(bankPreset);
+    if (checkPresetNum != 0) {
+        activeBank_ = std::get<0>(bankPreset);
+        activePresetNum_ = ((checkPresetNum - 1) % PRESETS_PER_BANK) + 1;
+        if (activeBank_ == 0) {
+            activeHWBank_ = (checkPresetNum - 1) / PRESETS_PER_BANK;
+        }
+    } else {
+        Serial.println("Preset not found, not changing.");
+    }
+    DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
+    updatePendingWithActive();
 }
 
 void SparkPresetControl::updateFromSparkResponseAmpPreset(char *presetJson) {

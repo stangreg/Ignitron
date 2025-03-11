@@ -281,11 +281,15 @@ void SparkDataControl::readBTModeFromFile() {
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 void SparkDataControl::updateBatteryLevel() {
+#if BATTERY_TYPE == BATTERY_TYPE_LI_ION || BATTERY_TYPE == BATTERY_TYPE_LI_FE_PO4
     const int analogReading = analogRead(BATTERY_VOLTAGE_ADC_PIN);
     // analogReading ranges from 0 to 4095
-    // 0V = 0, 3.3V = 4095
-    float analogVoltage = (analogReading / 4095.0) * 3.3;
+    // 0V = 0, 3.3V = 4095 (BATTERY_MAX_LEVEL)
+    float analogVoltage = (analogReading / BATTERY_MAX_LEVEL) * 3.3;
     float batteryVoltage = analogVoltage / VOLTAGE_DIVIDER_R1 * (VOLTAGE_DIVIDER_R1 + VOLTAGE_DIVIDER_R2);
+#elif BATTERY_TYPE == BATTERY_TYPE_AMP
+    float batteryVoltage = SparkStatus::getInstance().ampBatteryLevel();
+#endif
 
     // Set battery level
     batteryLevel_ = batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10
@@ -295,10 +299,17 @@ void SparkDataControl::updateBatteryLevel() {
                     : batteryVoltage < BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90
                         ? BATTERY_LEVEL_2
                         : BATTERY_LEVEL_3;
+
+#if BATTERY_TYPE == BATTERY_TYPE_AMP
+    if (SparkStatus::getInstance().ampBatteryChargingStatus() == BATTERY_CHARGING_STATUS_CHARGING) {
+        batteryLevel_ = BATTERY_LEVEL_CHARGING;
+    }
+#endif
 }
 #endif
 
 void SparkDataControl::resetStatus() {
+    Serial.println("Resetting Status");
     ampNameReceived_ = false;
     isInitBoot_ = true;
     operationMode_ = SPARK_MODE_APP;
@@ -308,7 +319,9 @@ void SparkDataControl::resetStatus() {
     sparkAmpType = AMP_TYPE_40;
     sparkAmpName = "Spark 40";
     with_delay = false;
+    lastAmpBatteryUpdate = 0;
     SparkPresetControl::getInstance().resetStatus();
+    SparkStatus::getInstance().resetStatus();
 }
 
 /////////////////////////////////////////////////////////
@@ -351,7 +364,7 @@ void SparkDataControl::readPresetChecksums() {
 
 void SparkDataControl::checkForUpdates() {
 
-    while (msgQueue.size() > 0) {
+    if (msgQueue.size() > 0) {
         processSparkData(msgQueue.front());
         msgQueue.pop();
     }
@@ -375,6 +388,18 @@ void SparkDataControl::checkForUpdates() {
         updateLooperSettings();
         looperControl_->resetChangePending();
     }
+
+#ifdef ENABLE_BATTERY_STATUS_INDICATOR
+#if BATTERY_TYPE == BATTERY_TYPE_AMP
+    unsigned int current_time = millis();
+    if (lastAmpBatteryUpdate == 0 || (current_time - lastAmpBatteryUpdate > updateAmpBatteryInterval)) {
+        Serial.println("Reading current battery level");
+        lastAmpBatteryUpdate = current_time;
+        current_msg = spark_msg.get_amp_status(nextMessageNum);
+        triggerCommand(current_msg);
+    }
+#endif
+#endif
 
     if (operationMode_ == SPARK_MODE_AMP) {
 
@@ -481,8 +506,7 @@ bool SparkDataControl::toggleEffect(int fx_identifier) {
     return switchEffectOnOff(fx_name, fx_isOn ? false : true);
 }
 
-bool SparkDataControl::
-    getAmpName() {
+bool SparkDataControl::getAmpName() {
     current_msg = spark_msg.get_amp_name(nextMessageNum);
     DEBUG_PRINTLN("Getting amp name from Spark");
 
@@ -716,6 +740,10 @@ void SparkDataControl::handleAppModeResponse() {
             getHWChecksums();
             printMessage = true;
             // ampNameReceived_ = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_AMPSTATUS) {
+            DEBUG_PRINTLN("Last message was amp status");
         }
 
         if (lastMessageType == MSG_TYPE_HWCHECKSUM) {

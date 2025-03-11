@@ -90,6 +90,7 @@ public:
     vector<CmdData> get_hw_checksums(byte msg_num);
     vector<CmdData> get_hw_checksums_extended(byte msg_num);
     vector<CmdData> get_firmware_version(byte msg_num);
+    vector<CmdData> get_amp_status(byte msg_num);
 
     vector<CmdData> send_serial_number(byte msg_number);
     vector<CmdData> send_firmware_version(byte msg_number);

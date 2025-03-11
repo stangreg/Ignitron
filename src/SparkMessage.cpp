@@ -399,6 +399,14 @@ vector<CmdData> SparkMessage::get_firmware_version(byte msg_num) {
     return end_message(DIR_TO_SPARK, msg_num);
 }
 
+vector<CmdData> SparkMessage::get_amp_status(byte msg_num) {
+    cmd = 0x02;
+    sub_cmd = 0x71;
+
+    start_message(cmd, sub_cmd);
+    return end_message(DIR_TO_SPARK, msg_num);
+}
+
 vector<CmdData> SparkMessage::turn_effect_onoff(byte msg_num, const string &pedal, boolean enable) {
     cmd = 0x01;
     sub_cmd = 0x15;

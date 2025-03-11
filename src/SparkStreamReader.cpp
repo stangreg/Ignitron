@@ -341,7 +341,6 @@ void SparkStreamReader::read_preset() {
 
     statusObject.isPresetUpdated() = true;
     statusObject.lastMessageType() = MSG_TYPE_PRESET;
-
 }
 
 void SparkStreamReader::read_looper_settings() {
@@ -509,6 +508,32 @@ void SparkStreamReader::read_preset_request() {
             break;
         }
     }
+}
+
+void SparkStreamReader::read_amp_status() {
+
+    // 0a ?
+    read_byte();
+    // 01 (always 01?)
+    read_byte();
+    // 01 (powered(?))
+    bool isBatteryPowered = read_byte() == 0x01 ? true : false;
+    // 00 (discharging) 01 (constant power) 02 (charging) 03 (full charged)
+    int chargingStatus = read_byte();
+    // CD 0f CD (4045) (Battery level)
+    // CD 06 73 (1651) (?)
+    // 20  (?)
+    // Default value when power cable is connected
+    int batteryLevel = read_int();
+    // Unknown UINT16/int and last byte
+    read_int();
+    read_int();
+
+    SparkStatus &statusObject = SparkStatus::getInstance();
+    statusObject.isAmpBatteryPowered() = isBatteryPowered;
+    statusObject.ampBatteryLevel() = batteryLevel;
+    statusObject.ampBatteryChargingStatus() = chargingStatus;
+    statusObject.lastMessageType() = MSG_TYPE_AMPSTATUS;
 }
 
 boolean SparkStreamReader::structure_data(bool processHeader) {
@@ -756,6 +781,10 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
             DEBUG_PRINTLN("03 65 - Tuner On/Off");
             read_tuner_onoff();
             break;
+        case 0x71:
+            DEBUG_PRINTLN("03 71 - Reading Amp Status");
+            read_amp_status();
+            break;
         case 0x75:
             DEBUG_PRINTLN("03 75 - Reading Looper Record Status");
             read_looper_command();
@@ -798,6 +827,7 @@ int SparkStreamReader::run_interpreter(byte _cmd, byte _sub_cmd) {
         DEBUG_PRINTVECTOR(msg_data);
         DEBUG_PRINTLN();
     }
+
     return 1;
 }
 
@@ -1029,13 +1059,27 @@ bool SparkStreamReader::isValidBlockWithoutHeader(const ByteVector &blk) {
 
 int SparkStreamReader::read_int() {
 
+    int result = 0;
     byte first = read_byte();
+    byte major = 0;
+    byte minor = 0;
     // If int value is greater than 128 it is prefixed with 0xCC
-    if (first == 0xcc) {
-        return read_byte();
-    } else {
-        return first;
+    switch (first) {
+    case 0xCC:
+    case 0xD0:
+        result = read_byte();
+        break;
+    case 0xCD:
+        major = read_byte();
+        minor = read_byte();
+        result = (major << 8 | minor);
+        break;
+    default:
+        result = first;
+        break;
     }
+
+    return result;
 }
 
 unsigned int SparkStreamReader::read_int16() {
