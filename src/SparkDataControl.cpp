@@ -8,13 +8,13 @@
 #include "SparkDataControl.h"
 
 SparkBTControl *SparkDataControl::bleControl = nullptr;
-SparkStreamReader SparkDataControl::spark_ssr;
+SparkStreamReader SparkDataControl::sparkSsr;
 SparkStatus &SparkDataControl::statusObject = SparkStatus::getInstance();
-SparkMessage SparkDataControl::spark_msg;
+SparkMessage SparkDataControl::sparkMsg;
 
-SparkDisplayControl *SparkDataControl::spark_display = nullptr;
+SparkDisplayControl *SparkDataControl::sparkDisplay = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
-SparkLooperControl *SparkDataControl::looperControl_ = nullptr;
+SparkLooperControl SparkDataControl::looperControl_;
 SparkBLEKeyboard SparkDataControl::bleKeyboard = SparkBLEKeyboard();
 
 queue<ByteVector> SparkDataControl::msgQueue;
@@ -31,8 +31,8 @@ CircularBuffer SparkDataControl::tapEntries(tapEntrySize);
 bool SparkDataControl::recordStartFlag = false;
 
 vector<CmdData>
-    SparkDataControl::ack_msg;
-vector<CmdData> SparkDataControl::current_msg;
+    SparkDataControl::ackMsg;
+vector<CmdData> SparkDataControl::currentMsg;
 
 bool SparkDataControl::customPresetNumberChangePending = false;
 int SparkDataControl::operationMode_ = SPARK_MODE_APP;
@@ -43,7 +43,7 @@ int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
 int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 int SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = AMP_NAME_SPARK_40;
-bool SparkDataControl::with_delay = false;
+bool SparkDataControl::withDelay = false;
 ByteVector SparkDataControl::checksums = {};
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
@@ -51,7 +51,7 @@ int SparkDataControl::batteryLevel_ = BATTERY_LEVEL_0;
 #endif
 
 bool SparkDataControl::isInitBoot_ = true;
-byte SparkDataControl::special_msg_num = 0xEE;
+byte SparkDataControl::specialMsgNum = 0xEE;
 
 SparkDataControl::SparkDataControl() {
     // init();
@@ -59,18 +59,15 @@ SparkDataControl::SparkDataControl() {
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
     tapEntries = CircularBuffer(tapEntrySize);
-    looperControl_ = new SparkLooperControl();
 }
 
 SparkDataControl::~SparkDataControl() {
     if (bleControl)
         delete bleControl;
-    if (spark_display)
-        delete spark_display;
+    if (sparkDisplay)
+        delete sparkDisplay;
     if (keyboardControl)
         delete keyboardControl;
-    if (looperControl_)
-        delete looperControl_;
 }
 
 int SparkDataControl::init(int opModeInput) {
@@ -82,12 +79,12 @@ int SparkDataControl::init(int opModeInput) {
     readOpModeFromFile();
 
     // Define MAC address required for keyboard
-    uint8_t mac_keyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
+    uint8_t macKeyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
 
     switch (operationMode_) {
     case SPARK_MODE_APP:
         // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&mac_keyboard[0]);
+        esp_base_mac_addr_set(&macKeyboard[0]);
 
         // initialize BLE
         bleKeyboard.setName("Ignitron BLE");
@@ -117,7 +114,7 @@ int SparkDataControl::init(int opModeInput) {
         break;
     case SPARK_MODE_KEYBOARD:
         // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&mac_keyboard[0]);
+        esp_base_mac_addr_set(&macKeyboard[0]);
 
         // initialize BLE
         bleKeyboard.setName("Ignitron BLE");
@@ -197,8 +194,8 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("LOOPER mode");
         if (sparkAmpName == AMP_NAME_SPARK_2) {
             newSubMode = SUB_MODE_LOOP_CONTROL;
-            looperControl_->stop();
-            looperControl_->reset();
+            looperControl_.stop();
+            looperControl_.reset();
             sparkLooperGetConfig();
             sparkLooperGetStatus();
         } else {
@@ -209,7 +206,7 @@ bool SparkDataControl::toggleLooperAppMode() {
     case SUB_MODE_SPK_LOOPER:
         Serial.println("APP mode");
         newSubMode = SUB_MODE_PRESET;
-        looperControl_->triggerReset();
+        looperControl_.triggerReset();
         break;
     default:
         Serial.println("Unexpected mode. Defaulting to APP mode");
@@ -221,7 +218,7 @@ bool SparkDataControl::toggleLooperAppMode() {
 }
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
-    spark_display = display;
+    sparkDisplay = display;
 }
 
 void SparkDataControl::restartESP(bool resetSparkMode) {
@@ -318,7 +315,7 @@ void SparkDataControl::resetStatus() {
     customPresetNumberChangePending = false;
     sparkAmpType = AMP_TYPE_40;
     sparkAmpName = "Spark 40";
-    with_delay = false;
+    withDelay = false;
     lastAmpBatteryUpdate = 0;
     SparkPresetControl::getInstance().resetStatus();
     SparkStatus::getInstance().resetStatus();
@@ -333,21 +330,21 @@ void SparkDataControl::setAmpParameters() {
     string ampName = sparkAmpName;
     DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
     if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO) {
-        spark_msg.maxChunkSizeToSpark() = 0x80;
-        spark_msg.maxBlockSizeToSpark() = 0xAD;
-        spark_msg.withHeader() = true;
+        sparkMsg.maxChunkSizeToSpark() = 0x80;
+        sparkMsg.maxBlockSizeToSpark() = 0xAD;
+        sparkMsg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0xAD);
-        with_delay = false;
+        withDelay = false;
     }
     if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) {
-        spark_msg.maxChunkSizeToSpark() = 0x80;
-        spark_msg.maxBlockSizeToSpark() = 0xAD;
-        spark_msg.withHeader() = true;
+        sparkMsg.maxChunkSizeToSpark() = 0x80;
+        sparkMsg.maxBlockSizeToSpark() = 0xAD;
+        sparkMsg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0x64);
-        with_delay = true;
+        withDelay = true;
     }
-    spark_msg.maxChunkSizeFromSpark() = 0x19;
-    spark_msg.maxBlockSizeFromSpark() = 0x6A;
+    sparkMsg.maxChunkSizeFromSpark() = 0x19;
+    sparkMsg.maxBlockSizeFromSpark() = 0x6A;
 
     SparkPresetControl::getInstance().setAmpParameters(ampName);
 }
@@ -357,7 +354,7 @@ void SparkDataControl::readPresetChecksums() {
     checksums.clear();
     for (int i = 1; i <= PRESETS_PER_BANK; i++) {
         Preset preset = presetControl.getPreset(1, i);
-        byte checksum = spark_msg.get_preset_checksum(preset);
+        byte checksum = sparkMsg.getPresetChecksum(preset);
         checksums.push_back(checksum);
     }
 }
@@ -372,31 +369,31 @@ void SparkDataControl::checkForUpdates() {
     SparkPresetControl::getInstance().checkForUpdates(operationMode_);
 
     if (recordStartFlag) {
-        if (looperControl_->currentBar() != 0) {
+        if (looperControl_.currentBar() != 0) {
             sparkLooperCommand(SPK_LOOPER_CMD_REC);
             recordStartFlag = false;
         }
     }
 
     if (statusObject.isLooperSettingUpdated()) {
-        looperControl_->setLooperSetting(statusObject.currentLooperSetting());
+        looperControl_.setLooperSetting(statusObject.currentLooperSetting());
         statusObject.resetLooperSettingUpdateFlag();
     }
 
-    const LooperSetting *looperSetting = looperControl_->looperSetting();
-    if (looperSetting->changePending) {
+    const LooperSetting &looperSetting = looperControl_.looperSetting();
+    if (looperSetting.changePending) {
         updateLooperSettings();
-        looperControl_->resetChangePending();
+        looperControl_.resetChangePending();
     }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 #if BATTERY_TYPE == BATTERY_TYPE_AMP
-    unsigned int current_time = millis();
-    if (lastAmpBatteryUpdate == 0 || (current_time - lastAmpBatteryUpdate > updateAmpBatteryInterval)) {
+    unsigned int currentTime = millis();
+    if (lastAmpBatteryUpdate == 0 || (currentTime - lastAmpBatteryUpdate > updateAmpBatteryInterval)) {
         Serial.println("Reading current battery level");
-        lastAmpBatteryUpdate = current_time;
-        current_msg = spark_msg.get_amp_status(nextMessageNum);
-        triggerCommand(current_msg);
+        lastAmpBatteryUpdate = currentTime;
+        currentMsg = sparkMsg.getAmpStatus(nextMessageNum);
+        triggerCommand(currentMsg);
     }
 #endif
 #endif
@@ -435,7 +432,7 @@ void SparkDataControl::processSparkData(ByteVector &blk) {
     // Check if incoming message requires sending an acknowledgment
     handleSendingAck(blk);
 
-    int retCode = spark_ssr.processBlock(blk);
+    int retCode = sparkSsr.processBlock(blk);
     if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
         handleAmpModeRequest();
     }
@@ -455,11 +452,11 @@ bool SparkDataControl::processAction() {
 }
 
 bool SparkDataControl::getCurrentPresetFromSpark() {
-    int hw_preset = -1;
-    current_msg = spark_msg.get_current_preset(nextMessageNum, hw_preset);
+    int hwPreset = -1;
+    currentMsg = sparkMsg.getCurrentPreset(nextMessageNum, hwPreset);
     Serial.println("Getting current preset from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::switchPreset(int pre, bool isInitial) {
@@ -469,28 +466,28 @@ bool SparkDataControl::switchPreset(int pre, bool isInitial) {
 
 bool SparkDataControl::changeHWPreset(int preset) {
 
-    current_msg = spark_msg.change_hardware_preset(nextMessageNum, preset);
-    return triggerCommand(current_msg);
+    currentMsg = sparkMsg.changeHardwarePreset(nextMessageNum, preset);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::changePreset(Preset preset) {
-    current_msg = spark_msg.change_preset(preset, DIR_TO_SPARK, nextMessageNum);
-    if (triggerCommand(current_msg)) {
+    currentMsg = sparkMsg.changePreset(preset, DIR_TO_SPARK, nextMessageNum);
+    if (triggerCommand(currentMsg)) {
         customPresetNumberChangePending = true;
         return true;
     }
     return false;
 }
 
-bool SparkDataControl::switchEffectOnOff(const string &fx_name, bool enable) {
+bool SparkDataControl::switchEffectOnOff(const string &fxName, bool enable) {
 
-    SparkPresetControl::getInstance().switchFXOnOff(fx_name, enable);
-    current_msg = spark_msg.turn_effect_onoff(nextMessageNum, fx_name, enable);
+    SparkPresetControl::getInstance().switchFXOnOff(fxName, enable);
+    currentMsg = sparkMsg.turnEffectOnOff(nextMessageNum, fxName, enable);
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
-bool SparkDataControl::toggleEffect(int fx_identifier) {
+bool SparkDataControl::toggleEffect(int fxIdentifier) {
 
     Preset activePreset = SparkPresetControl::getInstance().activePreset();
     if (!processAction() || operationMode_ == SPARK_MODE_AMP) {
@@ -500,55 +497,55 @@ bool SparkDataControl::toggleEffect(int fx_identifier) {
     if (activePreset.isEmpty) {
         return false;
     }
-    string fx_name = activePreset.pedals[fx_identifier].name;
-    bool fx_isOn = activePreset.pedals[fx_identifier].isOn;
+    string fxName = activePreset.pedals[fxIdentifier].name;
+    bool fxIsOn = activePreset.pedals[fxIdentifier].isOn;
 
-    return switchEffectOnOff(fx_name, fx_isOn ? false : true);
+    return switchEffectOnOff(fxName, fxIsOn ? false : true);
 }
 
 bool SparkDataControl::getAmpName() {
-    current_msg = spark_msg.get_amp_name(nextMessageNum);
+    currentMsg = sparkMsg.getAmpName(nextMessageNum);
     DEBUG_PRINTLN("Getting amp name from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::getCurrentPresetNum() {
-    current_msg = spark_msg.get_current_preset_num(nextMessageNum);
+    currentMsg = sparkMsg.getCurrentPresetNum(nextMessageNum);
     DEBUG_PRINTLN("Getting current preset num from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::getSerialNumber() {
-    current_msg = spark_msg.get_serial_number(nextMessageNum);
+    currentMsg = sparkMsg.getSerialNumber(nextMessageNum);
     DEBUG_PRINTLN("Getting serial number from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::getFirmwareVersion() {
-    current_msg = spark_msg.get_firmware_version(nextMessageNum);
+    currentMsg = sparkMsg.getFirmwareVersion(nextMessageNum);
     DEBUG_PRINTLN("Getting firmware version from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::getHWChecksums() {
     DEBUG_PRINTLN("Getting checksums from Spark");
     if (sparkAmpName == AMP_NAME_SPARK_2) {
-        current_msg = spark_msg.get_hw_checksums_extended(nextMessageNum);
+        currentMsg = sparkMsg.getHWChecksumsExtended(nextMessageNum);
     } else {
-        current_msg = spark_msg.get_hw_checksums(nextMessageNum);
+        currentMsg = sparkMsg.getHwChecksums(nextMessageNum);
     }
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::getCurrentPreset(int num) {
-    current_msg = spark_msg.get_current_preset(nextMessageNum, num);
+    currentMsg = sparkMsg.getCurrentPreset(nextMessageNum, num);
     DEBUG_PRINTLN("Getting preset information from Spark");
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::triggerCommand(vector<CmdData> &msg) {
@@ -556,24 +553,24 @@ bool SparkDataControl::triggerCommand(vector<CmdData> &msg) {
     if (msg.size() > 0) {
         currentCommand.assign(msg.begin(), msg.end());
     }
-    // spark_ssr.clearMessageBuffer();
+    // sparkSsr.clearMessageBuffer();
     DEBUG_PRINTLN("Sending message via BT.");
     return sendNextRequest();
-    // spark_ssr.clearMessageBuffer();
+    // sparkSsr.clearMessageBuffer();
 }
 
 bool SparkDataControl::sendNextRequest() {
     if (currentCommand.size() > 0) {
         CmdData request = currentCommand.front();
         ByteVector firstBlock = request.data;
-        AckData curr_request;
-        curr_request.cmd = request.cmd;
-        curr_request.subcmd = request.subcmd;
-        curr_request.detail = request.detail;
-        curr_request.msg_num = request.msg_num;
+        AckData currRequest;
+        currRequest.cmd = request.cmd;
+        currRequest.subcmd = request.subcmd;
+        currRequest.detail = request.detail;
+        currRequest.msgNum = request.msgNum;
 
         if (sendMessageToBT(firstBlock)) {
-            pendingLooperAcks.push_back(curr_request);
+            pendingLooperAcks.push_back(currRequest);
             if (currentCommand.size() > 0) {
                 currentCommand.pop_front();
             }
@@ -585,24 +582,24 @@ bool SparkDataControl::sendNextRequest() {
 
 void SparkDataControl::handleSendingAck(const ByteVector &blk) {
     bool ackNeeded;
-    byte seq, sub_cmd;
+    byte seq, subCmd;
 
     // Check if ack needed. In positive case the sequence number and command
     // are also returned to send back to requester
-    tie(ackNeeded, seq, sub_cmd) = spark_ssr.needsAck(blk);
+    tie(ackNeeded, seq, subCmd) = sparkSsr.needsAck(blk);
     if (ackNeeded) {
         DEBUG_PRINTLN("ACK required");
         if (operationMode_ == SPARK_MODE_AMP) {
-            ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_FROM_SPARK);
+            ackMsg = sparkMsg.sendAck(seq, subCmd, DIR_FROM_SPARK);
         } else {
-            ack_msg = spark_msg.send_ack(seq, sub_cmd, DIR_TO_SPARK);
+            ackMsg = sparkMsg.sendAck(seq, subCmd, DIR_TO_SPARK);
         }
 
         DEBUG_PRINTLN("Sending acknowledgment");
         if (operationMode_ == SPARK_MODE_APP) {
-            triggerCommand(ack_msg);
+            triggerCommand(ackMsg);
         } else if (operationMode_ == SPARK_MODE_AMP) {
-            bleControl->notifyClients(ack_msg);
+            bleControl->notifyClients(ackMsg);
         }
     }
 }
@@ -610,9 +607,9 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
 void SparkDataControl::handleAmpModeRequest() {
 
     vector<CmdData> msg;
-    vector<CmdData> currentMessage = spark_ssr.lastMessage();
+    vector<CmdData> currentMessage = sparkSsr.lastMessage();
     byte currentMessageNum = statusObject.lastMessageNum();
-    byte sub_cmd_ = currentMessage.back().subcmd;
+    byte subCmd_ = currentMessage.back().subcmd;
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
     Preset preset;
@@ -623,61 +620,61 @@ void SparkDataControl::handleAmpModeRequest() {
 
     case MSG_REQ_SERIAL:
         DEBUG_PRINTLN("Found request for serial number");
-        msg = spark_msg.send_serial_number(
+        msg = sparkMsg.sendSerialNumber(
             currentMessageNum);
         break;
     case MSG_REQ_FW_VER:
         DEBUG_PRINTLN("Found request for firmware version");
-        msg = spark_msg.send_firmware_version(
+        msg = sparkMsg.sendFirmwareVersion(
             currentMessageNum);
         break;
     case MSG_REQ_PRESET_CHK:
         DEBUG_PRINTLN("Found request for hw checksum");
-        msg = spark_msg.send_hw_checksums(currentMessageNum, checksums);
+        msg = sparkMsg.sendHWChecksums(currentMessageNum, checksums);
         break;
     case MSG_REQ_CURR_PRESET_NUM:
         DEBUG_PRINTLN("Found request for hw preset number");
-        msg = spark_msg.send_hw_preset_number(currentMessageNum);
+        msg = sparkMsg.sendHWPresetNumber(currentMessageNum);
         break;
     case MSG_REQ_CURR_PRESET:
         DEBUG_PRINTLN("Found request for current preset");
         preset = presetControl.activePreset();
         preset.presetNumber = 127;
-        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK,
-                                      currentMessageNum);
+        msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK,
+                                    currentMessageNum);
         break;
     case MSG_REQ_PRESET1:
         DEBUG_PRINTLN("Found request for preset 1");
         preset = presetControl.getPreset(1, 1);
         preset.presetNumber = 0;
-        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK, currentMessageNum);
         break;
     case MSG_REQ_PRESET2:
         DEBUG_PRINTLN("Found request for preset 2");
         preset = presetControl.getPreset(1, 2);
         preset.presetNumber = 1;
         DEBUG_PRINTF("Preset NUMBER after init: %02X\n", preset.presetNumber);
-        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK, currentMessageNum);
         break;
     case MSG_REQ_PRESET3:
         DEBUG_PRINTLN("Found request for preset 3");
         preset = presetControl.getPreset(1, 3);
         preset.presetNumber = 2;
-        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK, currentMessageNum);
         break;
     case MSG_REQ_PRESET4:
         DEBUG_PRINTLN("Found request for preset 4");
         preset = presetControl.getPreset(1, 4);
         preset.presetNumber = 3;
-        msg = spark_msg.change_preset(preset, DIR_FROM_SPARK, currentMessageNum);
+        msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK, currentMessageNum);
         break;
-    case MSG_REQ_71:
+    case MSG_REQ_AMP_STATUS:
         DEBUG_PRINTLN("Found request for 02 71");
-        msg = spark_msg.send_response_71(currentMessageNum);
+        msg = sparkMsg.sendAmpStatus(currentMessageNum);
         break;
     case MSG_REQ_72:
         DEBUG_PRINTLN("Found request for 02 72");
-        msg = spark_msg.send_response_72(currentMessageNum);
+        msg = sparkMsg.sendResponse72(currentMessageNum);
         break;
     default:
         DEBUG_PRINTF("Found invalid request: %d \n", lastMessageType);
@@ -691,7 +688,7 @@ void SparkDataControl::handleAmpModeRequest() {
 
 void SparkDataControl::handleAppModeResponse() {
 
-    string msgStr = spark_ssr.getJson();
+    string msgStr = sparkSsr.getJson();
     int lastMessageType = statusObject.lastMessageType();
     byte lastMessageNumber = statusObject.lastMessageNum();
     // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
@@ -702,15 +699,15 @@ void SparkDataControl::handleAppModeResponse() {
         if (lastMessageType == MSG_TYPE_HWPRESET) {
             DEBUG_PRINTLN("Received HW Preset response");
 
-            int spark_presetNumber = statusObject.currentPresetNumber();
+            int sparkPresetNumber = statusObject.currentPresetNumber();
 
             // only change active presetNumber if new number is between 1 and max HW presets,
             // otherwise it is a custom preset number and can be ignored
             SparkPresetControl &presetControl = SparkPresetControl::getInstance();
             int numberOfHWPresets = presetControl.numberOfHWBanks() * PRESETS_PER_BANK;
-            if (lastMessageNumber != special_msg_num && spark_presetNumber >= 1 && spark_presetNumber <= numberOfHWPresets) {
+            if (lastMessageNumber != specialMsgNum && sparkPresetNumber >= 1 && sparkPresetNumber <= numberOfHWPresets) {
                 // check if this improves behavior, updating activePreset when new HW preset received
-                SparkPresetControl::getInstance().updateFromSparkResponseHWPreset(spark_presetNumber);
+                SparkPresetControl::getInstance().updateFromSparkResponseHWPreset(sparkPresetNumber);
             } else {
                 DEBUG_PRINTLN("Received custom preset number (128), ignoring number change");
             }
@@ -721,7 +718,7 @@ void SparkDataControl::handleAppModeResponse() {
             DEBUG_PRINTLN("Last message was a preset change.");
             printMessage = true;
             // This preset number is between 0 and 3!
-            bool isSpecial = lastMessageNumber == special_msg_num;
+            bool isSpecial = lastMessageNumber == specialMsgNum;
             SparkPresetControl::getInstance().updateFromSparkResponsePreset(isSpecial);
         }
 
@@ -761,9 +758,9 @@ void SparkDataControl::handleAppModeResponse() {
         if (lastMessageType == MSG_TYPE_LOOPER_STATUS) {
             DEBUG_PRINTLN("New Looper status received (reading only number of loops)");
             int numOfLoops = statusObject.numberOfLoops();
-            looperControl_->loopCount() = numOfLoops;
+            looperControl_.loopCount() = numOfLoops;
             if (numOfLoops > 0) {
-                looperControl_->isRecAvailable() = true;
+                looperControl_.isRecAvailable() = true;
             }
             printMessage = true;
         }
@@ -780,8 +777,8 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_MEASURE) {
             DEBUG_PRINTLN("Measure info received.");
-            // float currentMeasure = spark_ssr.getMeasure();
-            // looperControl_->setMeasure(currentMeasure);
+            // float currentMeasure = sparkSsr.getMeasure();
+            // looperControl_.setMeasure(currentMeasure);
         }
 
         if (lastMessageType == MSG_TYPE_TUNER_OUTPUT) {
@@ -826,7 +823,7 @@ void SparkDataControl::handleIncomingAck() {
 
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
-    AckData lastAck = spark_ssr.getLastAckAndEmpty();
+    AckData lastAck = sparkSsr.getLastAckAndEmpty();
     if (lastAck.cmd == 0x05) { // 05 is intermediate ack, not last message
         DEBUG_PRINTLN("Received intermediate ACK");
         if (lastAck.subcmd == 0x01) {
@@ -839,8 +836,8 @@ void SparkDataControl::handleIncomingAck() {
         if (lastAck.subcmd == 0x01) {
             // only execute preset number change on last ack for preset change
             if (customPresetNumberChangePending) {
-                current_msg = spark_msg.change_hardware_preset(nextMessageNum, 128);
-                triggerCommand(current_msg);
+                currentMsg = sparkMsg.changeHardwarePreset(nextMessageNum, 128);
+                triggerCommand(currentMsg);
                 customPresetNumberChangePending = false;
                 SparkPresetControl::getInstance().updateActiveWithPendingPreset();
             }
@@ -857,11 +854,11 @@ void SparkDataControl::handleIncomingAck() {
             Serial.println("OK");
         }
         if (lastAck.subcmd == 0x75) {
-            byte msg_num = lastAck.msg_num;
+            byte msgNum = lastAck.msgNum;
             byte looperCommand;
             for (auto it = pendingLooperAcks.begin(); it != pendingLooperAcks.end(); /*NOTE: no incrementation of the iterator here*/) {
-                byte it_msg_num = (*it).msg_num;
-                if (it_msg_num == msg_num) {
+                byte itMsgNum = (*it).msgNum;
+                if (itMsgNum == msgNum) {
                     looperCommand = (*it).detail;
                     it = pendingLooperAcks.erase(it); // erase returns the next iterator
                 } else {
@@ -869,7 +866,7 @@ void SparkDataControl::handleIncomingAck() {
                 }
             }
             updateLooperCommand(looperCommand);
-            Serial.println(looperControl_->getLooperStatus().c_str());
+            Serial.println(looperControl_.getLooperStatus().c_str());
         }
     }
 }
@@ -878,8 +875,8 @@ void SparkDataControl::readHWPreset(int num) {
 
     // in case HW presets are missing from the cache, they can be requested
     Serial.printf("Reading missing HW preset %d\n", num);
-    current_msg = spark_msg.get_current_preset(special_msg_num, num);
-    triggerCommand(current_msg);
+    currentMsg = sparkMsg.getCurrentPreset(specialMsgNum, num);
+    triggerCommand(currentMsg);
 }
 
 /////////////////////////////////////////////////////////
@@ -965,7 +962,7 @@ void SparkDataControl::queueMessage(ByteVector &blk) {
 
 bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
     DEBUG_PRINTLN("Sending message via BT.");
-    return bleControl->writeBLE(msg, with_delay);
+    return bleControl->writeBLE(msg, withDelay);
 }
 
 /////////////////////////////////////////////////////////
@@ -983,7 +980,7 @@ void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
         }
         if (k.modifier != 0)
             bleKeyboard.release(k.modifier);
-        lastKeyboardButtonPressed_ = k.key_uid;
+        lastKeyboardButtonPressed_ = k.keyUid;
         lastKeyboardButtonPressedString_ = k.display;
     } else {
         Serial.println("Keyboard not connected");
@@ -1017,10 +1014,10 @@ Looper commands end */
 
 bool SparkDataControl::sparkLooperCommand(byte command) {
 
-    current_msg = spark_msg.spark_looper_command(nextMessageNum, command);
+    currentMsg = sparkMsg.sparkLooperCommand(nextMessageNum, command);
     DEBUG_PRINTF("Spark Looper: %02x\n", command);
 
-    return triggerCommand(current_msg);
+    return triggerCommand(currentMsg);
 }
 
 void SparkDataControl::tapTempoButton() {
@@ -1044,7 +1041,7 @@ void SparkDataControl::tapTempoButton() {
                 bpm = min(bpm, 255);
                 bpm = max(30, bpm);
                 DEBUG_PRINTF("Tap tempo: %d\n", bpm);
-                looperControl_->changeSettingBpm(bpm);
+                looperControl_.changeSettingBpm(bpm);
             }
         }
     }
@@ -1052,18 +1049,18 @@ void SparkDataControl::tapTempoButton() {
 
 bool SparkDataControl::switchTuner(bool on) {
     DEBUG_PRINTF("Switching Tuner %s\n", on ? "on" : "off");
-    current_msg = spark_msg.switchTuner(nextMessageNum, on);
-    return triggerCommand(current_msg);
+    currentMsg = sparkMsg.switchTuner(nextMessageNum, on);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::updateLooperSettings() {
-    DEBUG_PRINTF("Updating looper settings: %s\n", looperControl_->looperSetting()->getJson().c_str());
-    current_msg = spark_msg.update_looper_settings(nextMessageNum, looperControl_->looperSetting());
-    return triggerCommand(current_msg);
+    DEBUG_PRINTF("Updating looper settings: %s\n", looperControl_.looperSetting().getJson().c_str());
+    currentMsg = sparkMsg.updateLooperSettings(nextMessageNum, looperControl_.looperSetting());
+    return triggerCommand(currentMsg);
 }
 
 void SparkDataControl::startLooperTimer(void *args) {
-    looperControl_->run(args);
+    looperControl_.run(args);
 }
 
 void SparkDataControl::updateLooperCommand(byte lastCommand) {
@@ -1074,7 +1071,7 @@ void SparkDataControl::updateLooperCommand(byte lastCommand) {
         break;
     case 0x04:
         // Record started
-        looperControl_->isRecRunning() = true;
+        looperControl_.isRecRunning() = true;
         break;
     case 0x05:
         // To be analyzed
@@ -1084,42 +1081,42 @@ void SparkDataControl::updateLooperCommand(byte lastCommand) {
         break;
     case 0x07:
         // Recording finished
-        looperControl_->isRecRunning() = false;
-        looperControl_->isRecAvailable() = true;
+        looperControl_.isRecRunning() = false;
+        looperControl_.isRecAvailable() = true;
         break;
     case 0x08:
         // Play
-        looperControl_->isPlaying() = true;
+        looperControl_.isPlaying() = true;
         break;
     case 0x09:
         // Stop
-        looperControl_->isPlaying() = false;
+        looperControl_.isPlaying() = false;
         break;
     case 0x0A:
         // Delete
-        looperControl_->resetStatus();
+        looperControl_.resetStatus();
         break;
     case 0x0B:
         // Dub
-        looperControl_->isRecRunning() = true;
+        looperControl_.isRecRunning() = true;
         break;
     case 0x0C:
         // Stop Recording
-        looperControl_->isRecRunning() = false;
-        looperControl_->isRecAvailable() = true;
+        looperControl_.isRecRunning() = false;
+        looperControl_.isRecAvailable() = true;
         break;
     case 0x0D:
         // UNDO
-        looperControl_->canRedo() = true;
+        looperControl_.canRedo() = true;
         break;
     case 0x0E:
-        looperControl_->canRedo() = false;
+        looperControl_.canRedo() = false;
         break;
     default:
         DEBUG_PRINTLN("Unknown looper command received.");
         break;
     }
-    Serial.println(looperControl_->getLooperStatus().c_str());
+    Serial.println(looperControl_.getLooperStatus().c_str());
 }
 
 bool SparkDataControl::sparkLooperStopAll() {
@@ -1129,68 +1126,68 @@ bool SparkDataControl::sparkLooperStopAll() {
 }
 
 bool SparkDataControl::sparkLooperStopPlaying() {
-    // looperControl_->isPlaying() = false;
+    // looperControl_.isPlaying() = false;
     bool retValue = sparkLooperCommand(SPK_LOOPER_CMD_STOP);
     if (retValue) {
-        looperControl_->stop();
-        looperControl_->reset();
+        looperControl_.stop();
+        looperControl_.reset();
         sparkLooperGetStatus();
     }
     return retValue;
 }
 
 bool SparkDataControl::sparkLooperPlay() {
-    // looperControl_->isPlaying() = true;
-    if (!(looperControl_->isPlaying())) {
-        looperControl_->start();
+    // looperControl_.isPlaying() = true;
+    if (!(looperControl_.isPlaying())) {
+        looperControl_.start();
         return sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
     }
     return true;
 }
 
 bool SparkDataControl::sparkLooperRec() {
-    bool countIn = looperControl_->looperSetting()->click;
+    bool countIn = looperControl_.looperSetting().click;
     if (countIn) {
         sparkLooperCommand(SPK_LOOPER_CMD_COUNTIN);
-        looperControl_->setCurrentBar(0);
+        looperControl_.setCurrentBar(0);
     }
-    looperControl_->start();
+    looperControl_.start();
     recordStartFlag = true;
     return true;
 }
 
 bool SparkDataControl::sparkLooperDub() {
     bool retValue = sparkLooperCommand(SPK_LOOPER_CMD_DUB);
-    // looperControl_->reset();
-    looperControl_->start();
+    // looperControl_.reset();
+    looperControl_.start();
     retValue = retValue && sparkLooperCommand(SPK_LOOPER_CMD_PLAY);
-    looperControl_->isPlaying() = true;
+    looperControl_.isPlaying() = true;
     return retValue;
 }
 
 bool SparkDataControl::sparkLooperRetry() {
     sparkLooperCommand(SPK_LOOPER_CMD_RETRY);
-    looperControl_->reset();
+    looperControl_.reset();
     return sparkLooperRec();
 }
 // TODO: Get Looper status on startup and set flags accordingly
 
 bool SparkDataControl::sparkLooperStopRec() {
-    bool isRecAvailable = looperControl_->isRecAvailable();
+    bool isRecAvailable = looperControl_.isRecAvailable();
     bool retVal = false;
     if (isRecAvailable) {
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_DUB);
     } else {
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_STOP_REC);
         retVal = sparkLooperCommand(SPK_LOOPER_CMD_REC_COMPLETE);
-        looperControl_->reset();
+        looperControl_.reset();
     }
     sparkLooperGetStatus();
     return retVal;
 }
 
 bool SparkDataControl::sparkLooperUndo() {
-    if (looperControl_->canUndo()) {
+    if (looperControl_.canUndo()) {
         DEBUG_PRINTLN("UNDO possible");
         return sparkLooperCommand(SPK_LOOPER_CMD_UNDO);
     }
@@ -1198,7 +1195,7 @@ bool SparkDataControl::sparkLooperUndo() {
 }
 
 bool SparkDataControl::sparkLooperRedo() {
-    if (looperControl_->canRedo()) {
+    if (looperControl_.canRedo()) {
         DEBUG_PRINTLN("REDO possible");
         return sparkLooperCommand(SPK_LOOPER_CMD_REDO);
     }
@@ -1216,8 +1213,8 @@ bool SparkDataControl::sparkLooperDeleteAll() {
 }
 
 bool SparkDataControl::sparkLooperPlayStop() {
-    bool isRecRunning = looperControl_->isRecRunning();
-    bool isPlaying = looperControl_->isPlaying();
+    bool isRecRunning = looperControl_.isRecRunning();
+    bool isPlaying = looperControl_.isPlaying();
     bool result = false;
     if (isRecRunning) {
         result = sparkLooperStopAll();
@@ -1230,8 +1227,8 @@ bool SparkDataControl::sparkLooperPlayStop() {
 }
 
 bool SparkDataControl::sparkLooperRecDub() {
-    bool isRecRunning = looperControl_->isRecRunning();
-    bool isRecAvailable = looperControl_->isRecAvailable();
+    bool isRecRunning = looperControl_.isRecRunning();
+    bool isRecAvailable = looperControl_.isRecAvailable();
     int status = 2 * isRecAvailable + isRecRunning;
     bool result = false;
 
@@ -1257,9 +1254,9 @@ bool SparkDataControl::sparkLooperRecDub() {
 }
 
 bool SparkDataControl::sparkLooperUndoRedo() {
-    // bool isRecRunning = looperControl_->isRecRunning();
-    bool isRecAvailable = looperControl_->isRecAvailable();
-    bool canRedo = looperControl_->canRedo();
+    // bool isRecRunning = looperControl_.isRecRunning();
+    bool isRecAvailable = looperControl_.isRecAvailable();
+    bool canRedo = looperControl_.canRedo();
     if (canRedo) {
         DEBUG_PRINTLN("REDO");
         return sparkLooperRedo();
@@ -1273,16 +1270,16 @@ bool SparkDataControl::sparkLooperUndoRedo() {
 
 bool SparkDataControl::sparkLooperGetStatus() {
     bool retValue;
-    current_msg = spark_msg.get_looper_status(nextMessageNum);
-    return triggerCommand(current_msg);
+    currentMsg = sparkMsg.getLooperStatus(nextMessageNum);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::sparkLooperGetConfig() {
-    current_msg = spark_msg.get_looper_config(nextMessageNum);
-    return triggerCommand(current_msg);
+    currentMsg = sparkMsg.getLooperConfig(nextMessageNum);
+    return triggerCommand(currentMsg);
 }
 
 bool SparkDataControl::sparkLooperGetRecordStatus() {
-    current_msg = spark_msg.get_looper_record_status(nextMessageNum);
-    return triggerCommand(current_msg);
+    currentMsg = sparkMsg.getLooperRecordStatus(nextMessageNum);
+    return triggerCommand(currentMsg);
 }

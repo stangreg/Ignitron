@@ -6,9 +6,9 @@
 #include "SparkStatus.h"
 #include "SparkTypes.h"
 
-#define PRESET_EDIT_NONE 0
-#define PRESET_EDIT_STORE 1
-#define PRESET_EDIT_DELETE 2
+const int PRESET_EDIT_NONE = 0;
+const int PRESET_EDIT_STORE = 1;
+const int PRESET_EDIT_DELETE = 2;
 
 class SparkDataControl;
 

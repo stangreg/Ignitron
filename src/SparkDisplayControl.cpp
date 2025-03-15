@@ -7,37 +7,41 @@
 
 #include "SparkDisplayControl.h"
 
+const int SparkDisplayControl::SCREEN_WIDTH = 128;         // Display width
+const int SparkDisplayControl::SCREEN_HEIGHT = 64;         // Display height
+const int SparkDisplayControl::OLED_RESET = -1;            // Reset pin # (or -1 if sharing Arduino reset pin)
+const int SparkDisplayControl::DISPLAY_MIN_X_FACTOR = -12; // for text size 2, scales linearly with text size
+
 #if defined(OLED_DRIVER_SSD1306)
-Adafruit_SSD1306 SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                              &Wire, OLED_RESET);
+Adafruit_SSD1306 SparkDisplayControl::display_(SCREEN_WIDTH, SCREEN_HEIGHT,
+                                               &Wire, OLED_RESET);
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
 #elif defined(OLED_DRIVER_SH1106)
-Adafruit_SH1106G SparkDisplayControl::display(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                              &Wire, OLED_RESET);
+Adafruit_SH1106G SparkDisplayControl::display_(SCREEN_WIDTH, SCREEN_HEIGHT,
+                                               &Wire, OLED_RESET);
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
 #endif
 
 SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
-    // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-    spark_dc = dc;
-    sparkLooperControl = nullptr;
-    presetEditMode = PRESET_EDIT_NONE;
+    // Adafruit_SSD1306 display_(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+    sparkDC_ = dc;
 }
+
 SparkDisplayControl::~SparkDisplayControl() {
 }
 
 void SparkDisplayControl::init(int mode) {
 #if defined(OLED_DRIVER_SSD1306)
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // 0x3C required for this display
+    if (!display_.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // 0x3C required for this display
         Serial.println(F("SSD1306 initialization failed"));
         for (;;)
             ; // Loop forever
     }
 #elif defined(OLED_DRIVER_SH1106)
-    if (!display.begin(0x3C, true)) { // 0x3C required for this display
+    if (!display_.begin(0x3C, true)) { // 0x3C required for this display
         Serial.println(F("SH1106 initialization failed"));
         for (;;)
             ; // Loop forever
@@ -45,28 +49,26 @@ void SparkDisplayControl::init(int mode) {
 #endif
     initKeyboardLayoutStrings();
     // Clear the buffer
-    display.clearDisplay(); // No Adafruit splash
-    display.display();
-    display.setTextColor(OLED_WHITE);
-    display.setTextWrap(false);
-    opMode = spark_dc->operationMode();
-    sparkLooperControl = spark_dc->looperControl();
+    display_.clearDisplay(); // No Adafruit splash
+    display_.display();
+    display_.setTextColor(OLED_WHITE);
+    display_.setTextWrap(false);
 
     showInitialMessage();
-    display.display();
-    if (opMode == SPARK_MODE_KEYBOARD) {
+    display_.display();
+    if (sparkDC_->operationMode() == SPARK_MODE_KEYBOARD) {
         // Allow the initial screen to show for some time
         delay(2000);
     }
 }
 
 void SparkDisplayControl::showInitialMessage() {
-    display.drawBitmap(0, 0, epd_bitmap_Ignitron_Logo, 128, 47,
-                       OLED_WHITE);
-    display.setTextSize(2);
+    display_.drawBitmap(0, 0, epdBitmapIgnitronLogo, kSplashImageWidth, kSplashImageHeight,
+                        OLED_WHITE);
+    display_.setTextSize(2);
 
     string modeText;
-    switch (opMode) {
+    switch (sparkDC_->operationMode()) {
     case SPARK_MODE_APP:
         modeText = "APP";
         break;
@@ -85,15 +87,18 @@ void SparkDisplayControl::showInitialMessage() {
 void SparkDisplayControl::showBankAndPresetNum() {
 
     // Display the bank and preset number
-    display.setTextColor(OLED_WHITE);
-    display.setTextSize(4);
+    display_.setTextColor(OLED_WHITE);
+    display_.setTextSize(4);
+
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+    int pendingBank = presetControl.pendingBank();
 
     // Configure numbers as strings
     ostringstream selBankStr;
     selBankStr << pendingBank;
 
     ostringstream selPresetStr;
-    selPresetStr << activePresetNum;
+    selPresetStr << presetControl.activePresetNum();
 
     // Bank number display
     string bankDisplay = "";
@@ -102,26 +107,33 @@ void SparkDisplayControl::showBankAndPresetNum() {
     }
     bankDisplay += selBankStr.str();
     if (pendingBank == 0) {
-        if (numberOfHWBanks == 1) {
+        if (presetControl.numberOfHWBanks() == 1) {
             bankDisplay = "HW";
         } else {
-            bankDisplay = "H" + to_string(pendingHWBank + 1);
+            bankDisplay = "H" + to_string(presetControl.pendingHWBank() + 1);
         }
     }
 
-    display.setCursor(0, 0);
-    display.print(bankDisplay.c_str());
+    display_.setCursor(0, 0);
+    display_.print(bankDisplay.c_str());
 
     // Preset display
-    display.setCursor(display.width() - 24, 0);
+    display_.setCursor(display_.width() - 24, 0);
     string presetText = "";
     presetText = selPresetStr.str();
-    display.print(presetText.c_str());
+    display_.print(presetText.c_str());
 }
 
 void SparkDisplayControl::showPresetName() {
 
-    const string msg = SparkPresetControl::getInstance().responseMsg();
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+    const string msg = presetControl.responseMsg();
+    int pendingBank = presetControl.pendingBank();
+    int activeBank = presetControl.activeBank();
+    int pendingHWBank = presetControl.pendingHWBank();
+    int activeHWBank = presetControl.activeHWBank();
+
+    int presetEditMode = presetControl.presetEditMode();
 
     // Rectangle color for preset name
     int rectColor;
@@ -135,53 +147,57 @@ void SparkDisplayControl::showPresetName() {
         textColor = OLED_BLACK;
     }
 
-    display.setTextColor(textColor);
-    display.fillRect(0, 31, 128, 16, rectColor);
+    display_.setTextColor(textColor);
+    display_.fillRect(0, 31, 128, 16, rectColor);
 
-    display.setTextSize(2);
+    display_.setTextSize(2);
     unsigned long currentMillis = millis();
 
     if (msg != "") { // message to show for some time
         previousMillis = millis();
         primaryLineText = msg;
-        SparkPresetControl::getInstance().resetPresetEditResponse();
+        presetControl.resetPresetEditResponse();
         showMsgFlag = true;
     }
     if (showMsgFlag) {
-        display.setCursor(0, 32);
+        display_.setCursor(0, 32);
         if (currentMillis - previousMillis >= showMessageInterval) {
             // reset the show message flag to show preset data again
             showMsgFlag = false;
         }
     } else { // no preset save message to display
-        display.setCursor(display_x1, 32);
+        display_.setCursor(displayX1_, 32);
         // If bank is not HW preset bank and the currently selected bank
         // is not the active one, show the pending preset name
         if (activeBank != pendingBank || activeHWBank != pendingHWBank) {
-            primaryLinePreset = pendingPreset;
+            primaryLinePreset = presetControl.pendingPreset();
         } else {
-            primaryLinePreset = activePreset;
+            primaryLinePreset = presetControl.activePreset();
         }
         primaryLineText = primaryLinePreset.name;
 
         // Reset scroll timer
-        if (primaryLineText != previous_text1) {
-            text_row_1_timestamp = millis();
-            previous_text1 = primaryLineText;
-            display_x1 = 0;
+        if (primaryLineText != previousText1_) {
+            textRow1Timestamp_ = millis();
+            previousText1_ = primaryLineText;
+            displayX1_ = 0;
         }
         // double the preset text for scrolling if longer than threshold
         //  if text is too long and will be scrolled, double to "wrap around"
-        if (primaryLineText.length() > text_scroll_limit) {
-            primaryLineText = primaryLineText + text_filler + primaryLineText;
+        if (primaryLineText.length() > textScrollLimit_) {
+            primaryLineText = primaryLineText + textFiller_ + primaryLineText;
         }
     }
-    display.print(primaryLineText.c_str());
+    display_.print(primaryLineText.c_str());
 }
 void SparkDisplayControl::showFX_SecondaryName() {
     // The last line shows either the FX setup (in APP mode)
     // or the new received preset from the app (in AMP mode)
     int secondaryLinePosY = 50;
+
+    int opMode = sparkDC_->operationMode();
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+    Preset presetFromApp = presetControl.appReceivedPreset();
 
     secondaryLineText = "";
     if (opMode == SPARK_MODE_AMP) {
@@ -189,19 +205,19 @@ void SparkDisplayControl::showFX_SecondaryName() {
         if (!(presetFromApp.isEmpty)) {
             secondaryLineText = presetFromApp.name;
             // Reset scroll timer
-            if (secondaryLineText != previous_text2) {
-                text_row_2_timestamp = millis();
-                previous_text2 = secondaryLineText;
-                display_x2 = 0;
+            if (secondaryLineText != previousText2_) {
+                textRow2Timestamp_ = millis();
+                previousText2_ = secondaryLineText;
+                displayX2_ = 0;
             }
-        } else if (presetEditMode == PRESET_EDIT_DELETE) {
+        } else if (presetControl.presetEditMode() == PRESET_EDIT_DELETE) {
             secondaryLineText = "DELETE ?";
         } else {
             secondaryLineText = "Select preset";
         }
         // if text is too long and will be scrolled, double to "wrap around"
-        if (secondaryLineText.length() > text_scroll_limit) {
-            secondaryLineText = secondaryLineText + text_filler + secondaryLineText;
+        if (secondaryLineText.length() > textScrollLimit_) {
+            secondaryLineText = secondaryLineText + textFiller_ + secondaryLineText;
         }
     } else if (opMode == SPARK_MODE_APP) {
 
@@ -209,24 +225,26 @@ void SparkDisplayControl::showFX_SecondaryName() {
         // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
+        int subMode = sparkDC_->subMode();
+
         // When we switched to FX mode, we always show the current selected preset
         if (subMode == SUB_MODE_FX) {
-            secondaryLinePreset = activePreset;
+            secondaryLinePreset = presetControl.activePreset();
         }
 
-        if (!(secondaryLinePreset.isEmpty) || pendingBank > 0) {
+        if (!(secondaryLinePreset.isEmpty) || presetControl.pendingBank() > 0) {
             // Iterate through the corresponding preset's pedals and show indicators if switched on
             for (int i = 0; i < 7; i++) { // 7 pedals, amp to be ignored
                 if (i != 3) {             // Amp is on position 3, ignore
                     // blank placeholder for Amp
-                    string fx_indicators_on[] =
+                    string fxIndicatorsOn[] =
                         {"N", "C ", "D ", " ", "M ", "D ", "R"};
-                    string fx_indicators_off[] = {" ", "  ", "  ", " ", "  ", "  ", " "};
+                    string fxIndicatorsOff[] = {" ", "  ", "  ", " ", "  ", "  ", " "};
 
                     string currPedalStatus;
                     Pedal currPedal = secondaryLinePreset.pedals[i];
                     currPedalStatus =
-                        currPedal.isOn ? fx_indicators_on[i] : fx_indicators_off[i];
+                        currPedal.isOn ? fxIndicatorsOn[i] : fxIndicatorsOff[i];
                     secondaryLineText += currPedalStatus;
                 }
             }
@@ -235,8 +253,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     }
 
-    display.fillRect(0, 48, 128, 16, OLED_BLACK);
-    display.setTextColor(OLED_WHITE);
+    display_.fillRect(0, 48, 128, 16, OLED_BLACK);
+    display_.setTextColor(OLED_WHITE);
 #else
         if (opMode == SUB_MODE_LOOPER) {
             secondaryLineText = "LOOPER MODE";
@@ -258,31 +276,33 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     }
 
-    display.fillRect(0, 48, 128, 16, OLED_WHITE); // Invert line
-    display.setTextColor(OLED_BLACK);
+    display_.fillRect(0, 48, 128, 16, OLED_WHITE); // Invert line
+    display_.setTextColor(OLED_BLACK);
 #endif
 
-    display.setTextSize(2);
+    display_.setTextSize(2);
     if (opMode == SPARK_MODE_APP) {
         drawCentreString(secondaryLineText.c_str(), secondaryLinePosY);
 
     } else if (opMode == SPARK_MODE_AMP) {
-        display.setCursor(display_x2, secondaryLinePosY);
-        display.print(secondaryLineText.c_str());
+        display_.setCursor(displayX2_, secondaryLinePosY);
+        display_.print(secondaryLineText.c_str());
     }
 }
 
 void SparkDisplayControl::showLooperTimer() {
-    int currentBeat = sparkLooperControl->currentBeat();
-    int currentBar = sparkLooperControl->currentBar();
-    int totalBars = sparkLooperControl->totalBars();
-    int bpm = sparkLooperControl->bpm();
 
-    display.setTextSize(4);
-    display.setCursor(0, 0);
-    display.print(currentBar);
-    display.setCursor(display.width() - 24, 0);
-    display.print(currentBeat);
+    SparkLooperControl &sparkLooperControl = sparkDC_->looperControl();
+    int currentBeat = sparkLooperControl.currentBeat();
+    int currentBar = sparkLooperControl.currentBar();
+    int totalBars = sparkLooperControl.totalBars();
+    int bpm = sparkLooperControl.bpm();
+
+    display_.setTextSize(4);
+    display_.setCursor(0, 0);
+    display_.print(currentBar);
+    display_.setCursor(display_.width() - 24, 0);
+    display_.print(currentBeat);
 
     // Progress bar
     int barHeight = 16;
@@ -291,22 +311,22 @@ void SparkDisplayControl::showLooperTimer() {
     int xOffset = 16;
     int yPos = 47;
     // Reserve 2 characters for totalBars, 3 for BPM
-    int maxBarWidth = display.width() - 2 * charWidth;
+    int maxBarWidth = display_.width() - 2 * charWidth;
     int barWidth = (double)(currentBar)*maxBarWidth / totalBars;
     int drawColor = OLED_WHITE;
-    display.fillRect(xPos, yPos, barWidth, barHeight, drawColor);
+    display_.fillRect(xPos, yPos, barWidth, barHeight, drawColor);
 
     // Show BPM
-    int bpmXPos = display.width() - 60;
+    int bpmXPos = display_.width() - 60;
     int bpmYPos = 17;
-    display.setCursor(bpmXPos, bpmYPos);
-    display.setTextSize(2);
-    display.print(bpm);
+    display_.setCursor(bpmXPos, bpmYPos);
+    display_.setTextSize(2);
+    display_.print(bpm);
 
     // Show total bars
-    display.setCursor(maxBarWidth + 2, yPos);
-    display.setTextSize(2);
-    display.print(totalBars);
+    display_.setCursor(maxBarWidth + 2, yPos);
+    display_.setTextSize(2);
+    display_.print(totalBars);
 
     // lines to separate the bars
     int stepSize = 1;
@@ -316,34 +336,38 @@ void SparkDisplayControl::showLooperTimer() {
     for (int i = 0; i < totalBars; i = i + stepSize) {
         int xPos = (double)i * maxBarWidth / totalBars;
         drawColor = xPos < barWidth ? OLED_BLACK : OLED_WHITE;
-        display.drawFastVLine(xPos, yPos, barHeight, drawColor);
+        display_.drawFastVLine(xPos, yPos, barHeight, drawColor);
     }
 }
 
 void SparkDisplayControl::showModeModifier() {
 
-    display.setCursor(display.width() - 48, 0);
+    display_.setCursor(display_.width() - 48, 0);
 
     // Preset display
-    display.setTextSize(4);
+    display_.setTextSize(4);
     string presetText = " ";
+
+    int opMode = sparkDC_->operationMode();
+    int subMode = sparkDC_->subMode();
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
     // Change to subMode
     if (opMode == SPARK_MODE_APP && subMode == SUB_MODE_FX) {
         // If in FX mode, show an "M" for manual mode
         presetText = "M";
     }
-    if (opMode == SPARK_MODE_AMP && presetEditMode != PRESET_EDIT_NONE) {
+    if (opMode == SPARK_MODE_AMP && presetControl.presetEditMode() != PRESET_EDIT_NONE) {
         presetText = "*";
     }
     // Spark 2 built-in Looper
     if (subMode == SUB_MODE_LOOP_CONTROL) {
         // If in Looper mode, show an "L" for Looper mode
-        display.setTextSize(2);
+        display_.setTextSize(2);
         presetText = "L";
     }
     if (subMode == SUB_MODE_LOOP_CONFIG) {
-        display.setTextSize(2);
+        display_.setTextSize(2);
         presetText = "C";
     }
     // Looper app
@@ -351,12 +375,12 @@ void SparkDisplayControl::showModeModifier() {
         // If in Looper mode, show an "L" for Looper mode
         presetText = "L";
     }
-    display.print(presetText.c_str());
+    display_.print(presetText.c_str());
 }
 
 void SparkDisplayControl::showConnection() {
     // Display the Connection symbols
-    int xPosSymbol = (display.width() / 2.0) - 10;
+    int xPosSymbol = (display_.width() / 2.0) - 10;
     int yPosSymbol = 9;
     int symbolWidth = 15;
     int symbolHeight = 17;
@@ -365,7 +389,7 @@ void SparkDisplayControl::showConnection() {
     int yPosText = 0;
 
     // Bluetooth
-    switch (currentBTMode) {
+    switch (sparkDC_->currentBTMode()) {
     case BT_MODE_BLE:
         currentBTModeText = "BLE";
         break;
@@ -373,18 +397,19 @@ void SparkDisplayControl::showConnection() {
         currentBTModeText = "SRL";
         break;
     }
-    display.setTextColor(OLED_WHITE);
-    display.setTextSize(1);
-    display.setCursor(xPosText, yPosText);
-    display.print(currentBTModeText.c_str());
+    display_.setTextColor(OLED_WHITE);
+    display_.setTextSize(1);
+    display_.setCursor(xPosText, yPosText);
+    display_.print(currentBTModeText.c_str());
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // If enable battery SOC, move the BT symbol to the left
     xPosSymbol -= 5;
 #endif
 
+    bool isBTConnected = sparkDC_->isAmpConnected() || sparkDC_->isAppConnected();
     if (isBTConnected) {
-        display.drawBitmap(xPosSymbol, yPosSymbol, epd_bitmap_bt_logo, symbolWidth, symbolHeight, OLED_WHITE);
+        display_.drawBitmap(xPosSymbol, yPosSymbol, epdBitmapBTLogo, symbolWidth, symbolHeight, OLED_WHITE);
     }
 }
 
@@ -395,10 +420,12 @@ void SparkDisplayControl::showBatterySymbol() {
 
     SparkStatus &statusObject = SparkStatus::getInstance();
     // Display the Battery symbols
-    int xPosSymbol = (display.width() / 2.0);
+    int xPosSymbol = (display_.width() / 2.0);
     int yPosSymbol = 11;
     int symbolWidth = 9;
     int symbolHeight = 15;
+
+    int batteryLevel = sparkDC_->batteryLevel();
 
     uint16_t color = OLED_WHITE;
     const unsigned char *battery_icon;
@@ -407,27 +434,27 @@ void SparkDisplayControl::showBatterySymbol() {
         battery_icon = rotateBatteryIcons();
         break;
     case BATTERY_LEVEL_0:
-        battery_icon = epd_bitmap_battery_level_0;
+        battery_icon = epdBitmapBatteryLevel0;
         break;
     case BATTERY_LEVEL_1:
-        battery_icon = epd_bitmap_battery_level_1;
+        battery_icon = epdBitmapBatteryLevel1;
         break;
     case BATTERY_LEVEL_2:
-        battery_icon = epd_bitmap_battery_level_2;
+        battery_icon = epdBitmapBatteryLevel2;
         break;
     case BATTERY_LEVEL_3:
     default:
-        battery_icon = epd_bitmap_battery_level_3;
+        battery_icon = epdBitmapBatteryLevel3;
         break;
     }
 
     if (BATTERY_TYPE == BATTERY_TYPE_AMP) {
         if (statusObject.ampBatteryChargingStatus() == BATTERY_CHARGING_STATUS_POWERED) {
-            battery_icon = epd_bitmap_battery_plug;
+            battery_icon = epdBitmapBatteryPlug;
         }
     }
 
-    display.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);
+    display_.drawBitmap(xPosSymbol, yPosSymbol, battery_icon, symbolWidth, symbolHeight, color);
 }
 const unsigned char *SparkDisplayControl::rotateBatteryIcons() {
 
@@ -438,17 +465,17 @@ const unsigned char *SparkDisplayControl::rotateBatteryIcons() {
     }
     switch (currentBatterySymbolIndex) {
     case 0:
-        return epd_bitmap_battery_level_0;
+        return epdBitmapBatteryLevel0;
         break;
     case 1:
-        return epd_bitmap_battery_level_1;
+        return epdBitmapBatteryLevel1;
         break;
     case 2:
-        return epd_bitmap_battery_level_2;
+        return epdBitmapBatteryLevel2;
         break;
     case 3:
     default:
-        return epd_bitmap_battery_level_3;
+        return epdBitmapBatteryLevel3;
         break;
     }
 }
@@ -459,10 +486,10 @@ void SparkDisplayControl::showPressedKey() {
     short int pressedButtonPosX = 20;
     short int pressedButtonPosY = 0;
 
-    display.setTextColor(OLED_WHITE);
-    display.setTextSize(4);
+    display_.setTextColor(OLED_WHITE);
+    display_.setTextSize(4);
 
-    display.setCursor(pressedButtonPosX, pressedButtonPosY);
+    display_.setCursor(pressedButtonPosX, pressedButtonPosY);
 
     unsigned long currentMillis = millis();
     if (lastKeyboardButtonPressedString != "" && showKeyboardPressedFlag == false) {
@@ -473,17 +500,17 @@ void SparkDisplayControl::showPressedKey() {
         if (currentMillis - keyboardPressedTimestamp >= showKeyboardPressedInterval) {
             // reset the show message flag to show preset data again
             showKeyboardPressedFlag = false;
-            spark_dc->resetLastKeyboardButtonPressed();
+            sparkDC_->resetLastKeyboardButtonPressed();
             lastKeyboardButtonPressedString = "";
         }
     }
 
-    display.print(lastKeyboardButtonPressedString.c_str());
+    display_.print(lastKeyboardButtonPressedString.c_str());
 }
 
 void SparkDisplayControl::initKeyboardLayoutStrings() {
 
-    currentKeyboard = spark_dc->currentKeyboard();
+    KeyboardMapping currentKeyboard = sparkDC_->currentKeyboard();
     string spacerText = "  ";
 
     lowerButtonsShort = currentKeyboard.keyboardShortPress[0].display.append(spacerText).append(currentKeyboard.keyboardShortPress[1].display).append(spacerText).append(currentKeyboard.keyboardShortPress[2].display).append(spacerText).append(currentKeyboard.keyboardShortPress[3].display);
@@ -499,7 +526,7 @@ void SparkDisplayControl::initKeyboardLayoutStrings() {
 
 void SparkDisplayControl::showKeyboardLayout() {
 
-    currentKeyboard = spark_dc->currentKeyboard();
+    KeyboardMapping &currentKeyboard = sparkDC_->currentKeyboard();
 
     short int upperButtonsLongY = 1;
     short int upperButtonsShortY = 17;
@@ -509,9 +536,9 @@ void SparkDisplayControl::showKeyboardLayout() {
 
     short int upperPositionOffset = -4;
 
-    short int displayMid = display.width() / 2;
+    short int displayMid = display_.width() / 2;
 
-    display.fillRect(0, 48, 128, 16, OLED_BLACK);
+    display_.fillRect(0, 48, 128, 16, OLED_BLACK);
 
     // Rectangle color for preset name
     int rectColor;
@@ -522,58 +549,58 @@ void SparkDisplayControl::showKeyboardLayout() {
     textColorInv = OLED_BLACK;
     textColor = OLED_WHITE;
 
-    display.setTextColor(textColor);
-    display.setTextSize(2);
+    display_.setTextColor(textColor);
+    display_.setTextSize(2);
 
     drawCentreString(lowerButtonsShort.c_str(), lowerButtonsShortY);
     drawRightAlignedString(upperButtonsShort.c_str(), upperButtonsShortY, upperPositionOffset);
 
-    display.setTextColor(textColorInv);
-    display.fillRect(0, lowerButtonsLongY - 1, 128, 16, rectColor);
+    display_.setTextColor(textColorInv);
+    display_.fillRect(0, lowerButtonsLongY - 1, 128, 16, rectColor);
     drawCentreString(lowerButtonsLong.c_str(), lowerButtonsLongY);
 
-    display.fillRect(displayMid - upperPositionOffset, 0, displayMid + upperPositionOffset, 16, rectColor);
+    display_.fillRect(displayMid - upperPositionOffset, 0, displayMid + upperPositionOffset, 16, rectColor);
     drawRightAlignedString(upperButtonsLong.c_str(), upperButtonsLongY, upperPositionOffset);
 }
 
 void SparkDisplayControl::showTunerNote() {
 
-    display.setTextColor(OLED_WHITE);
+    display_.setTextColor(OLED_WHITE);
 
     // text sizes: 1 = 6x8, 2= 12x16, 3=18x24, 4=24x36
     char sharpSymbol = currentNote.at(1);
-    display.setTextSize(3);
+    display_.setTextSize(3);
 
-    int displayMidY = display.height() / 2.0;
-    int displayMidX = display.width() / 2.0;
+    int displayMidY = display_.height() / 2.0;
+    int displayMidX = display_.width() / 2.0;
     int notePosX = displayMidX - 6;
     if (sharpSymbol == '#') {
         notePosX = displayMidX - 12;
     }
-    display.setCursor(notePosX, displayMidY - 12);
+    display_.setCursor(notePosX, displayMidY - 12);
     char baseNote = currentNote.at(0);
-    display.print(baseNote);
+    display_.print(baseNote);
 
     if (sharpSymbol == '#') {
-        display.setTextSize(2);
-        display.setCursor(displayMidX + 8, displayMidY - 8);
-        display.print(sharpSymbol);
+        display_.setTextSize(2);
+        display_.setCursor(displayMidX + 8, displayMidY - 8);
+        display_.print(sharpSymbol);
     }
 }
 
 void SparkDisplayControl::showTunerOffset() {
 
-    display.setTextColor(OLED_WHITE);
+    display_.setTextColor(OLED_WHITE);
     if (noteOffsetCents >= -50 && noteOffsetCents <= 50) {
         // draw dynamic note offset at the bottom
         int tunerPosCenter = 128 / 2; // the middle lines are 63 and 64, choose the right side as it visually matches the other visible items
         int barHeight = 12;
         int tunerPosBottomY = 64 - barHeight;
-        display.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
-        display.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
+        display_.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
+        display_.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
 
         tunerPosCenter += noteOffsetCents;
-        display.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, OLED_WHITE);
+        display_.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, OLED_WHITE);
     }
 }
 
@@ -612,32 +639,32 @@ void SparkDisplayControl::showTunerGraphic() {
     }
     // Draw circle if in tune
     if (-centsTolerance <= noteOffsetCents && noteOffsetCents <= centsTolerance) {
-        display.drawCircle(display.width() / 2.0, display.height() / 2.0, 20, color);
-        display.invertDisplay(true);
+        display_.drawCircle(display_.width() / 2.0, display_.height() / 2.0, 20, color);
+        display_.invertDisplay(true);
     } else {
-        display.invertDisplay(false);
+        display_.invertDisplay(false);
     }
 }
 
 void SparkDisplayControl::update(bool isInitBoot) {
 
-    opMode = spark_dc->operationMode();
-    subMode = spark_dc->subMode();
-    display.clearDisplay();
+    int opMode = sparkDC_->operationMode();
+    int subMode = sparkDC_->subMode();
+    display_.clearDisplay();
     if ((opMode == SPARK_MODE_APP) && isInitBoot) {
         showInitialMessage();
     } else if (opMode == SPARK_MODE_KEYBOARD) {
-        if (spark_dc->keyboardChanged()) {
+        if (sparkDC_->keyboardChanged()) {
             initKeyboardLayoutStrings();
-            spark_dc->resetKeyboardChangeIndicator();
+            sparkDC_->resetKeyboardChangeIndicator();
         }
-        lastKeyboardButtonPressedString = spark_dc->lastKeyboardButtonPressedString();
+        lastKeyboardButtonPressedString = sparkDC_->lastKeyboardButtonPressedString();
         showPressedKey();
         showKeyboardLayout();
     } else if (subMode == SUB_MODE_TUNER) {
         SparkStatus &statusObject = SparkStatus::getInstance();
         currentNote = statusObject.noteString();
-        noteOffsetCents = statusObject.note_offset_cents();
+        noteOffsetCents = statusObject.noteOffsetCents();
 
         showTunerNote();
         showTunerOffset();
@@ -645,26 +672,13 @@ void SparkDisplayControl::update(bool isInitBoot) {
 
     } else {
         SparkPresetControl &presetControl = SparkPresetControl::getInstance();
-        display.setTextWrap(false);
-        activeBank = presetControl.activeBank();
-        pendingBank = presetControl.pendingBank();
-        pendingHWBank = presetControl.pendingHWBank();
-        activeHWBank = presetControl.activeHWBank();
-        numberOfHWBanks = presetControl.numberOfHWBanks();
-        activePreset = presetControl.activePreset();
-        pendingPreset = presetControl.pendingPreset();
-        activePresetNum = presetControl.activePresetNum();
-        presetFromApp = presetControl.appReceivedPreset();
-        presetEditMode = presetControl.presetEditMode();
-        isBTConnected = spark_dc->isAmpConnected() || spark_dc->isAppConnected();
-        currentBTMode = spark_dc->currentBTMode();
-        sparkLooperControl = spark_dc->looperControl();
-
+        display_.setTextWrap(false);
         showConnection();
+
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-        batteryLevel = spark_dc->batteryLevel();
         showBatterySymbol();
 #endif
+
         showModeModifier();
         updateTextPositions();
         showPresetName();
@@ -677,46 +691,46 @@ void SparkDisplayControl::update(bool isInitBoot) {
 #ifndef DEDICATED_PRESET_LEDS
             // in FX mode (manual mode) invert display
             if (subMode == SUB_MODE_FX) {
-                display.invertDisplay(true);
+                display_.invertDisplay(true);
             } else {
-                display.invertDisplay(false);
+                display_.invertDisplay(false);
             }
 #endif
         }
     }
     // logDisplay();
-    display.display();
+    display_.display();
 }
 
 void SparkDisplayControl::updateTextPositions() {
     // This is for the primary preset name line
-    display_minX1 = DISPLAY_MIN_X_FACTOR * ((primaryLineText.length() - text_filler.length()) / 2.0 + text_filler.length());
-    if (primaryLineText.length() <= text_scroll_limit) {
-        display_x1 = 0;
+    displayMinX1_ = DISPLAY_MIN_X_FACTOR * ((primaryLineText.length() - textFiller_.length()) / 2.0 + textFiller_.length());
+    if (primaryLineText.length() <= textScrollLimit_) {
+        displayX1_ = 0;
     }
     // long preset names are scrolled right to left and back
     else {
-        if (millis() - text_row_1_timestamp > text_scroll_delay) {
-            display_x1 -= display_scroll_num1;
-            if (display_x1 < display_minX1) {
+        if (millis() - textRow1Timestamp_ > textScrollDelay_) {
+            displayX1_ -= displayScrollNum1_;
+            if (displayX1_ < displayMinX1_) {
                 // Reset text
-                display_x1 = 0;
-                text_row_1_timestamp = millis();
+                displayX1_ = 0;
+                textRow1Timestamp_ = millis();
             }
         }
     }
 
     // This is for the secondary FX display line (show preset name in AMP mode)
-    display_minX2 = DISPLAY_MIN_X_FACTOR * ((secondaryLineText.length() - text_filler.length()) / 2.0 + text_filler.length());
-    if (secondaryLineText.length() <= text_scroll_limit) {
-        display_x2 = 0;
+    displayMinX2_ = DISPLAY_MIN_X_FACTOR * ((secondaryLineText.length() - textFiller_.length()) / 2.0 + textFiller_.length());
+    if (secondaryLineText.length() <= textScrollLimit_) {
+        displayX2_ = 0;
     } else {
-        if (millis() - text_row_2_timestamp > text_scroll_delay) {
-            display_x2 -= display_scroll_num2;
-            if (display_x2 < display_minX2) {
+        if (millis() - textRow2Timestamp_ > textScrollDelay_) {
+            displayX2_ -= displayScrollNum2_;
+            if (displayX2_ < displayMinX2_) {
                 // Reset text
-                display_x2 = 0;
-                text_row_2_timestamp = millis();
+                displayX2_ = 0;
+                textRow2Timestamp_ = millis();
             }
         }
     }
@@ -726,11 +740,11 @@ void SparkDisplayControl::drawCentreString(const char *buf,
                                            int y, int offset) {
     int16_t x1, y1;
     uint16_t w, h;
-    int displayMid = display.width() / 2;
+    int displayMid = display_.width() / 2;
 
-    display.getTextBounds(buf, displayMid, y, &x1, &y1, &w, &h); // calc width of new string
-    display.setCursor(displayMid - w / 2 + offset, y);
-    display.print(buf);
+    display_.getTextBounds(buf, displayMid, y, &x1, &y1, &w, &h); // calc width of new string
+    display_.setCursor(displayMid - w / 2 + offset, y);
+    display_.print(buf);
 }
 
 void SparkDisplayControl::drawRightAlignedString(const char *buf,
@@ -738,16 +752,16 @@ void SparkDisplayControl::drawRightAlignedString(const char *buf,
     int16_t x1, y1;
     uint16_t w, h;
     int x = 0;
-    int displayWidth = display.width();
+    int displayWidth = display_.width();
 
-    display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); // calc width of new string
-    display.setCursor(displayWidth - w + offset, y);
-    display.print(buf);
+    display_.getTextBounds(buf, x, y, &x1, &y1, &w, &h); // calc width of new string
+    display_.setCursor(displayWidth - w + offset, y);
+    display_.print(buf);
 }
 
 void SparkDisplayControl::drawTunerTriangleCentre(int x, int size, bool dir, int color) {
 
-    int displayMidY = display.height() / 2.0;
+    int displayMidY = display_.height() / 2.0;
     int yPos1 = displayMidY - size / 2.0;
     int xPos1 = x;
 
@@ -762,7 +776,7 @@ void SparkDisplayControl::drawTunerTriangleCentre(int x, int size, bool dir, int
         xPos3 = x - sqrt(0.75 * size * size);
     }
 
-    display.fillTriangle(xPos1, yPos1, xPos2, yPos2, xPos3, yPos3, color);
+    display_.fillTriangle(xPos1, yPos1, xPos2, yPos2, xPos3, yPos3, color);
 }
 
 void SparkDisplayControl::drawInvertBitmapColor(int16_t x, int16_t y,
@@ -773,7 +787,7 @@ void SparkDisplayControl::drawInvertBitmapColor(int16_t x, int16_t y,
     for (j = 0; j < h; j++) {
         for (i = 0; i < w; i++) {
             if ((pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) == 0) {
-                display.drawPixel(x + i, y + j, color);
+                display_.drawPixel(x + i, y + j, color);
             }
         }
     }
@@ -781,13 +795,15 @@ void SparkDisplayControl::drawInvertBitmapColor(int16_t x, int16_t y,
 
 void SparkDisplayControl::logDisplay() {
     if (millis() - lastLogTimestamp > logInterval) {
+        SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+
         DEBUG_PRINTLN("Display status:");
         DEBUG_PRINTLN("Current Preset settings:");
         DEBUG_PRINTF("Primary line   : %s\n", primaryLineText.c_str());
         DEBUG_PRINTF("Secondary line : %s\n", secondaryLineText.c_str());
-        if (!(activePreset.isEmpty) && !(pendingPreset.isEmpty)) {
-            DEBUG_PRINTF("Act Preset empty? : %s\n", activePreset.isEmpty ? "true" : "false");
-            DEBUG_PRINTF("Pen Preset empty? : %s\n", pendingPreset.isEmpty ? "true" : "false");
+        if (!(presetControl.activePreset().isEmpty) && !(presetControl.pendingPreset().isEmpty)) {
+            DEBUG_PRINTF("Act Preset empty? : %s\n", presetControl.activePreset().isEmpty ? "true" : "false");
+            DEBUG_PRINTF("Pen Preset empty? : %s\n", presetControl.pendingPreset().isEmpty ? "true" : "false");
         }
         lastLogTimestamp = millis();
     }

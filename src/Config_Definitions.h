@@ -8,10 +8,11 @@
 #ifndef CONFIG_DEFINITIONS_H_
 #define CONFIG_DEFINITIONS_H_
 
+#include <Arduino.h>
 #include <string>
 using namespace std;
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -25,7 +26,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.8.5";
+const string VERSION = "1.8.6";
 
 // Battery indicator
 // Note: This battery can be for the Ignitron controller or the Spark amp.
@@ -51,41 +52,41 @@ const string VERSION = "1.8.5";
 #define ENABLE_BATTERY_STATUS_INDICATOR
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-#define BATTERY_VOLTAGE_ADC_PIN 36
-#define BATTERY_LEVEL_0 0        // 0-10%
-#define BATTERY_LEVEL_1 1        // 10-50%
-#define BATTERY_LEVEL_2 2        // 50-90%
-#define BATTERY_LEVEL_3 3        // 90-100%
-#define BATTERY_LEVEL_CHARGING 9 // when charging (only used for AMP battery)
+const int BATTERY_VOLTAGE_ADC_PIN = 36;
+const int BATTERY_LEVEL_0 = 0;        // 0-10%
+const int BATTERY_LEVEL_1 = 1;        // 10-50%
+const int BATTERY_LEVEL_2 = 2;        // 50-90%
+const int BATTERY_LEVEL_3 = 3;        // 90-100%
+const int BATTERY_LEVEL_CHARGING = 9; // when charging (only used for AMP battery)
 
-#define BATTERY_MAX_LEVEL 4095.0
+const float BATTERY_MAX_LEVEL = 4095.0;
 
 #define BATTERY_TYPE_LI_ION 0
 #define BATTERY_TYPE_LI_FE_PO4 1
 #define BATTERY_TYPE_AMP 2
 
 #define BATTERY_TYPE BATTERY_TYPE_AMP // Choose from BATTERY_TYPE_LI_ION or BATTERY_TYPE_LI_FE_PO4 for Ignitron internal battery or BATTERY_TYPE_AMP for Spark battery
-#define BATTERY_CELLS 3
-#define VOLTAGE_DIVIDER_R1 (5.1 * 1000) // 5.1k ohm
-#define VOLTAGE_DIVIDER_R2 (15 * 1000)  // 15k ohm
+const int BATTERY_CELLS = 3;
+const float VOLTAGE_DIVIDER_R1 = (5.1 * 1000); // 5.1k ohm
+const float VOLTAGE_DIVIDER_R2 = (15 * 1000);  // 15k ohm
 
 #if BATTERY_TYPE == BATTERY_TYPE_LI_ION
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_CELLS * 4.1)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_CELLS * 3.7)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_CELLS * 3.3)
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 = (BATTERY_CELLS * 4.1);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 = (BATTERY_CELLS * 3.7);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 = (BATTERY_CELLS * 3.3);
 #elif BATTERY_TYPE == BATTERY_TYPE_LI_FE_PO4
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_CELLS * 3.35)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_CELLS * 3.26)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_CELLS * 3.0)
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 = (BATTERY_CELLS * 3.35);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 = (BATTERY_CELLS * 3.26);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 = (BATTERY_CELLS * 3.0);
 #elif BATTERY_TYPE == BATTERY_TYPE_AMP // Level between 0 and 4095
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 (BATTERY_MAX_LEVEL * 0.9)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 (BATTERY_MAX_LEVEL * 0.5)
-#define BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 (BATTERY_MAX_LEVEL * 0.1)
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_90 = (BATTERY_MAX_LEVEL * 0.9);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_50 = (BATTERY_MAX_LEVEL * 0.5);
+const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 = (BATTERY_MAX_LEVEL * 0.1);
 
-#define BATTERY_CHARGING_STATUS_DISCHARGING 0
-#define BATTERY_CHARGING_STATUS_POWERED 1
-#define BATTERY_CHARGING_STATUS_CHARGING 2
-#define BATTERY_CHARGING_STATUS_FULL_CHARGED 3
+const int BATTERY_CHARGING_STATUS_DISCHARGING = 0;
+const int BATTERY_CHARGING_STATUS_POWERED = 1;
+const int BATTERY_CHARGING_STATUS_CHARGING = 2;
+const int BATTERY_CHARGING_STATUS_FULL_CHARGED = 3;
 
 #endif
 
@@ -100,32 +101,32 @@ const string VERSION = "1.8.5";
 // #define OLED_DRIVER_SH1106
 
 // Button GPIOs
-#define BUTTON_PRESET1_GPIO 25
-#define BUTTON_DRIVE_GPIO 25
+const int BUTTON_PRESET1_GPIO = 25;
+const int BUTTON_DRIVE_GPIO = 25;
 
-#define BUTTON_PRESET2_GPIO 26
-#define BUTTON_MOD_GPIO 26
+const int BUTTON_PRESET2_GPIO = 26;
+const int BUTTON_MOD_GPIO = 26;
 
-#define BUTTON_PRESET3_GPIO 32
-#define BUTTON_DELAY_GPIO 32
+const int BUTTON_PRESET3_GPIO = 32;
+const int BUTTON_DELAY_GPIO = 32;
 
-#define BUTTON_PRESET4_GPIO 33
-#define BUTTON_REVERB_GPIO 33
+const int BUTTON_PRESET4_GPIO = 33;
+const int BUTTON_REVERB_GPIO = 33;
 
-#define BUTTON_BANK_DOWN_GPIO 19
-#define BUTTON_NOISEGATE_GPIO 19
+const int BUTTON_BANK_DOWN_GPIO = 19;
+const int BUTTON_NOISEGATE_GPIO = 19;
 
-#define BUTTON_BANK_UP_GPIO 18
-#define BUTTON_COMP_GPIO 18
+const int BUTTON_BANK_UP_GPIO = 18;
+const int BUTTON_COMP_GPIO = 18;
 
 // Button long press time
-#define LONG_BUTTON_PRESS_TIME 1000
+const int LONG_BUTTON_PRESS_TIME = 1000;
 
 // LED GPIOs
-#define LED_DRIVE_GPIO 27
-#define LED_MOD_GPIO 13
-#define LED_DELAY_GPIO 16
-#define LED_REVERB_GPIO 14
+const int LED_DRIVE_GPIO = 27;
+const int LED_MOD_GPIO = 13;
+const int LED_DELAY_GPIO = 16;
+const int LED_REVERB_GPIO = 14;
 
 // If the optional DEDICATED_PRESET_LEDS is defined below it will
 // slightly alter the behaviour of Ignitron to make the FX and
@@ -140,103 +141,103 @@ const string VERSION = "1.8.5";
 // #define DEDICATED_PRESET_LEDS
 
 #ifdef DEDICATED_PRESET_LEDS
-#define LED_PRESET1_GPIO 0
-#define LED_PRESET2_GPIO 4
-#define LED_PRESET3_GPIO 12
-#define LED_PRESET4_GPIO 15
+const int LED_PRESET1_GPIO = 0;
+const int LED_PRESET2_GPIO = 4;
+const int LED_PRESET3_GPIO = 12;
+const int LED_PRESET4_GPIO = 15;
 #else
-#define LED_PRESET1_GPIO LED_DRIVE_GPIO
-#define LED_PRESET2_GPIO LED_MOD_GPIO
-#define LED_PRESET3_GPIO LED_DELAY_GPIO
-#define LED_PRESET4_GPIO LED_REVERB_GPIO
+const int LED_PRESET1_GPIO = LED_DRIVE_GPIO;
+const int LED_PRESET2_GPIO = LED_MOD_GPIO;
+const int LED_PRESET3_GPIO = LED_DELAY_GPIO;
+const int LED_PRESET4_GPIO = LED_REVERB_GPIO;
 
 // If GPIO 0, 4, 12, 15 is physically connected in hardware but
 // DEDICATED_PRESET_LEDS is undefined, we need to set those outputs
 // to LOW. So we define an extra set of defines to allow them to be
 // controlled
-#define OPTIONAL_GPIO_1 0
-#define OPTIONAL_GPIO_2 4
-#define OPTIONAL_GPIO_3 12
-#define OPTIONAL_GPIO_4 15
+const int OPTIONAL_GPIO_1 = 0;
+const int OPTIONAL_GPIO_2 = 4;
+const int OPTIONAL_GPIO_3 = 12;
+const int OPTIONAL_GPIO_4 = 15;
 #endif
 
-#define LED_BANK_DOWN_GPIO 23
-#define LED_NOISEGATE_GPIO 23
+const int LED_BANK_DOWN_GPIO = 23;
+const int LED_NOISEGATE_GPIO = 23;
 
-#define LED_BANK_UP_GPIO 17
-#define LED_COMP_GPIO 17
+const int LED_BANK_UP_GPIO = 17;
+const int LED_COMP_GPIO = 17;
 
 // LED/Button numbering
-#define DRIVE_NUM 1
-#define PRESET1_NUM 1
+const int DRIVE_NUM = 1;
+const int PRESET1_NUM = 1;
 
-#define MOD_NUM 2
-#define PRESET2_NUM 2
+const int MOD_NUM = 2;
+const int PRESET2_NUM = 2;
 
-#define DELAY_NUM 3
-#define PRESET3_NUM 3
+const int DELAY_NUM = 3;
+const int PRESET3_NUM = 3;
 
-#define REVERB_NUM 4
-#define PRESET4_NUM 4
+const int REVERB_NUM = 4;
+const int PRESET4_NUM = 4;
 
-#define NOISEGATE_NUM 5
-#define BANK_DOWN_NUM 5
+const int NOISEGATE_NUM = 5;
+const int BANK_DOWN_NUM = 5;
 
-#define COMP_NUM 6
-#define BANK_UP_NUM 6
+const int COMP_NUM = 6;
+const int BANK_UP_NUM = 6;
 
 // Positions of FX types in Preset struct
-#define INDEX_FX_NOISEGATE 0
-#define INDEX_FX_COMP 1
-#define INDEX_FX_DRIVE 2
-#define INDEX_FX_AMP 3
-#define INDEX_FX_MOD 4
-#define INDEX_FX_DELAY 5
-#define INDEX_FX_REVERB 6
+const int INDEX_FX_NOISEGATE = 0;
+const int INDEX_FX_COMP = 1;
+const int INDEX_FX_DRIVE = 2;
+const int INDEX_FX_AMP = 3;
+const int INDEX_FX_MOD = 4;
+const int INDEX_FX_DELAY = 5;
+const int INDEX_FX_REVERB = 6;
 
 // Spark button configs in APP mode
-#define SUB_MODE_FX 1
-#define SUB_MODE_PRESET 2
-#define SUB_MODE_LOOPER 3
-#define SUB_MODE_SPK_LOOPER 4
-#define SUB_MODE_LOOP_CONFIG 5
-#define SUB_MODE_LOOP_CONTROL 6
-#define SUB_MODE_TUNER 7
+const int SUB_MODE_FX = 1;
+const int SUB_MODE_PRESET = 2;
+const int SUB_MODE_LOOPER = 3;
+const int SUB_MODE_SPK_LOOPER = 4;
+const int SUB_MODE_LOOP_CONFIG = 5;
+const int SUB_MODE_LOOP_CONTROL = 6;
+const int SUB_MODE_TUNER = 7;
 
 // Spark operation modes
-#define SPARK_MODE_APP 1
-#define SPARK_MODE_AMP 2
-#define SPARK_MODE_KEYBOARD 3
+const int SPARK_MODE_APP = 1;
+const int SPARK_MODE_AMP = 2;
+const int SPARK_MODE_KEYBOARD = 3;
 
-#define BT_MODE_BLE 1
-#define BT_MODE_SERIAL 2
+const int BT_MODE_BLE = 1;
+const int BT_MODE_SERIAL = 2;
 
-#define AMP_TYPE_40 1
-#define AMP_TYPE_MINI 2
-#define AMP_TYPE_GO 3
-#define AMP_TYPE_2 4
+const int AMP_TYPE_40 = 1;
+const int AMP_TYPE_MINI = 2;
+const int AMP_TYPE_GO = 3;
+const int AMP_TYPE_2 = 4;
 
-#define AMP_NAME_SPARK_40 "Spark 40"
-#define AMP_NAME_SPARK_MINI "Spark MINI"
-#define AMP_NAME_SPARK_GO "Spark GO"
-#define AMP_NAME_SPARK_2 "Spark 2"
+const string AMP_NAME_SPARK_40 = "Spark 40";
+const string AMP_NAME_SPARK_MINI = "Spark MINI";
+const string AMP_NAME_SPARK_GO = "Spark GO";
+const string AMP_NAME_SPARK_2 = "Spark 2";
 
-#define SPK_LOOPER_CMD_COUNTIN 0x02
-#define SPK_LOOPER_CMD_REC 0x04
-#define SPK_LOOPER_CMD_STOP_REC 0x05
-#define SPK_LOOPER_CMD_RETRY 0x06
-#define SPK_LOOPER_CMD_REC_COMPLETE 0x07
-#define SPK_LOOPER_CMD_PLAY 0x08
-#define SPK_LOOPER_CMD_STOP 0x09
-#define SPK_LOOPER_CMD_DELETE 0x0A
-#define SPK_LOOPER_CMD_DUB 0x0B
-#define SPK_LOOPER_CMD_STOP_DUB 0x0C
-#define SPK_LOOPER_CMD_UNDO 0x0D
-#define SPK_LOOPER_CMD_REDO 0x0E
+const byte SPK_LOOPER_CMD_COUNTIN = 0x02;
+const byte SPK_LOOPER_CMD_REC = 0x04;
+const byte SPK_LOOPER_CMD_STOP_REC = 0x05;
+const byte SPK_LOOPER_CMD_RETRY = 0x06;
+const byte SPK_LOOPER_CMD_REC_COMPLETE = 0x07;
+const byte SPK_LOOPER_CMD_PLAY = 0x08;
+const byte SPK_LOOPER_CMD_STOP = 0x09;
+const byte SPK_LOOPER_CMD_DELETE = 0x0A;
+const byte SPK_LOOPER_CMD_DUB = 0x0B;
+const byte SPK_LOOPER_CMD_STOP_DUB = 0x0C;
+const byte SPK_LOOPER_CMD_UNDO = 0x0D;
+const byte SPK_LOOPER_CMD_REDO = 0x0E;
 
-#define SPK_LOOPER_BPM_LED_ID 5
-#define SPK_LOOPER_REC_DUB_LED_ID 1
-#define SPK_LOOPER_PLAY_STOP_LED_ID 2
-#define SPK_LOOPER_UNDO_REDO_LED_ID 3
+const int SPK_LOOPER_BPM_LED_ID = 5;
+const int SPK_LOOPER_REC_DUB_LED_ID = 1;
+const int SPK_LOOPER_PLAY_STOP_LED_ID = 2;
+const int SPK_LOOPER_UNDO_REDO_LED_ID = 3;
 
 #endif /* CONFIG_DEFINITIONS_H_ */

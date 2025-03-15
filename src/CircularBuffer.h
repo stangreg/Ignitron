@@ -17,33 +17,33 @@ class CircularBuffer {
 
 public:
     CircularBuffer(int capacity) {
-        this->capacity = capacity;
-        buffer.clear();
+        capacity_ = capacity;
+        buffer_.clear();
         // buffer.resize(capacity);
     }
 
-    void reset() { buffer.clear(); }
+    void reset() { buffer_.clear(); }
     void add_element(int num) {
-        buffer.push_back(num);
-        if (buffer.size() > capacity) {
-            buffer.pop_front();
+        buffer_.push_back(num);
+        if (buffer_.size() > capacity_) {
+            buffer_.pop_front();
         }
     };
     int averageValue() {
-        if (buffer.size() == 0) {
+        if (buffer_.size() == 0) {
             return 0;
         }
-        int count = buffer.size();
-        return std::accumulate(buffer.begin(), buffer.end(), 0) / count;
+        int count = buffer_.size();
+        return std::accumulate(buffer_.begin(), buffer_.end(), 0) / count;
     }
 
     int size() {
-        return buffer.size();
+        return buffer_.size();
     }
 
 private:
-    deque<int> buffer;
-    int capacity;
+    deque<int> buffer_;
+    int capacity_;
 };
 
 #endif

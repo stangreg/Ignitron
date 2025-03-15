@@ -23,14 +23,14 @@ public:
     virtual ~SparkLEDControl();
 
     void updateLEDs();
-    // SparkDataControl* dataControl() {return spark_dc;}
+    // SparkDataControl* dataControl() {return sparkDC;}
     void setDataControl(SparkDataControl *dc) {
-        spark_dc = dc;
+        sparkDC = dc;
     }
 
 private:
     void init();
-    SparkDataControl *spark_dc;
+    SparkDataControl *sparkDC;
     KeyboardMapping mapping;
 
     int operationMode = SPARK_MODE_APP;
@@ -45,17 +45,17 @@ private:
     // constants won't change:
     const long blinkInterval_ms = 200; // blinkInterval_ms at which to blink (milliseconds)
 
-    long tap_blinkInterval_ms = 250;
+    long tapBlinkInterval_ms = 250;
 
-    void updateLED_APP_PresetMode();
-    void updateLED_APP_FXMode();
-    void updateLED_AMP();
-    void updateLED_KEYBOARD();
-    void updateLED_LooperMode();
-    void updateLED_TUNER();
+    void updateLedAppPresetMode();
+    void updateLedAppFXMode();
+    void updateLedAmp();
+    void updateLedKeyboard();
+    void updateLedLooperMode();
+    void updateLedTuner();
 
     void allLedOff();
-    void switchLED(int num, bool on = true, bool fxMode = false);
+    void switchLed(int num, bool on = true, bool fxMode = false);
 };
 
 #endif /* SPARKLEDCONTROL_H_ */

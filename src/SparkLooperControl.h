@@ -20,7 +20,7 @@ public:
     SparkLooperControl();
     virtual ~SparkLooperControl();
 
-    const LooperSetting *looperSetting() const { return &looperSetting_; }
+    const LooperSetting &looperSetting() const { return looperSetting_; }
 
     const int currentBeat() const { return currentBeat_; }
     const int currentBar() const { return currentBar_; }

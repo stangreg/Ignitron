@@ -115,7 +115,7 @@ void SparkKeyboardControl::init() {
     keyboards.push_back(mapping2);
 }
 
-KeyboardMapping SparkKeyboardControl::getNextKeyboard() {
+KeyboardMapping &SparkKeyboardControl::getNextKeyboard() {
 
     currentKeyboardIndex++;
     if (currentKeyboardIndex == keyboards.size()) {
@@ -124,7 +124,7 @@ KeyboardMapping SparkKeyboardControl::getNextKeyboard() {
     return keyboards.at(currentKeyboardIndex);
 }
 
-KeyboardMapping SparkKeyboardControl::getPreviousKeyboard() {
+KeyboardMapping &SparkKeyboardControl::getPreviousKeyboard() {
 
     currentKeyboardIndex--;
     if (currentKeyboardIndex < 0) {
@@ -133,6 +133,6 @@ KeyboardMapping SparkKeyboardControl::getPreviousKeyboard() {
     return keyboards.at(currentKeyboardIndex);
 }
 
-KeyboardMapping SparkKeyboardControl::getCurrentKeyboard() {
+KeyboardMapping &SparkKeyboardControl::getCurrentKeyboard() {
     return keyboards.at(currentKeyboardIndex);
 }

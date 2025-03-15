@@ -19,17 +19,17 @@
 #include "SparkHelper.h"
 #include "SparkTypes.h"
 
-#define PRESETS_PER_BANK 4
+const int PRESETS_PER_BANK = 4;
 
-#define STORE_PRESET_OK 1
-#define STORE_PRESET_FILE_EXISTS 2
-#define STORE_PRESET_ERROR_OPEN 3
-#define STORE_PRESET_UNKNOWN_ERROR 4
+const int STORE_PRESET_OK = 1;
+const int STORE_PRESET_FILE_EXISTS = 2;
+const int STORE_PRESET_ERROR_OPEN = 3;
+const int STORE_PRESET_UNKNOWN_ERROR = 4;
 
-#define DELETE_PRESET_OK 1
-#define DELETE_PRESET_FILE_NOT_EXIST 2
-#define DELETE_PRESET_ERROR_OPEN 3
-#define DELETE_PRESET_UNKNOWN_ERROR 4
+const int DELETE_PRESET_OK = 1;
+const int DELETE_PRESET_FILE_NOT_EXIST = 2;
+const int DELETE_PRESET_ERROR_OPEN = 3;
+const int DELETE_PRESET_UNKNOWN_ERROR = 4;
 
 using namespace std;
 using ByteVector = vector<byte>;

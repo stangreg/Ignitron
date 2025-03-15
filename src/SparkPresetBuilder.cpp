@@ -321,11 +321,11 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
             if (line.rfind("-", 0) != 0 && !line.empty()) {
                 if (((lineCount - 1) % 4) == 0) {
                     // New bank separator addd to file for better readability
-                    char bank_string[20] = "";
-                    int size = sizeof bank_string;
-                    snprintf(bank_string, size, "%d ", ((lineCount - 1) / 4) + 1);
+                    char bankString[20] = "";
+                    int size = sizeof bankString;
+                    snprintf(bankString, size, "%d ", ((lineCount - 1) / 4) + 1);
                     filestrPreset += "-- Bank ";
-                    filestrPreset += bank_string;
+                    filestrPreset += bankString;
                     filestrPreset += "\n";
                 }
                 lineCount++;
@@ -396,11 +396,11 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
                 stringstream(line) >> preset >> uuid;
                 if (((lineCount - 1) % 4) == 0) {
                     // New bank separator added to file for better readability
-                    char bank_string[20] = "";
-                    int size = sizeof bank_string;
-                    snprintf(bank_string, size, "%d ", ((lineCount - 1) / 4) + 1);
+                    char bankString[20] = "";
+                    int size = sizeof bankString;
+                    snprintf(bankString, size, "%d ", ((lineCount - 1) / 4) + 1);
                     filestrPreset += "-- Bank ";
-                    filestrPreset += bank_string;
+                    filestrPreset += bankString;
                     filestrPreset += "\n";
                 }
                 filestrPreset += preset + "\n";

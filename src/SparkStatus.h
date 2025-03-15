@@ -1,40 +1,38 @@
 #ifndef SPARKCURRENTSTATUS_H
 #define SPARKCURRENTSTATUS_H
 
-#pragma once
-
 #include "SparkTypes.h"
 
-#define MSG_TYPE_PRESET 1
-#define MSG_TYPE_HWPRESET 2
-#define MSG_TYPE_FX_ONOFF 3
-#define MSG_TYPE_FX_CHANGE 4
-#define MSG_TYPE_FX_PARAM 5
-#define MSG_TYPE_AMP_NAME 6
-#define MSG_TYPE_LOOPER_SETTING 7
-#define MSG_TYPE_TAP_TEMPO 8
-#define MSG_TYPE_MEASURE 9
-#define MSG_TYPE_LOOPER_COMMAND 10
-#define MSG_TYPE_LOOPER_STATUS 11
-#define MSG_TYPE_TUNER_OUTPUT 12
-#define MSG_TYPE_TUNER_ON 13
-#define MSG_TYPE_TUNER_OFF 14
-#define MSG_TYPE_HWCHECKSUM 15
-#define MSG_TYPE_HWCHECKSUM_EXT 16
-#define MSG_TYPE_AMPSTATUS 17
+const int MSG_TYPE_PRESET = 1;
+const int MSG_TYPE_HWPRESET = 2;
+const int MSG_TYPE_FX_ONOFF = 3;
+const int MSG_TYPE_FX_CHANGE = 4;
+const int MSG_TYPE_FX_PARAM = 5;
+const int MSG_TYPE_AMP_NAME = 6;
+const int MSG_TYPE_LOOPER_SETTING = 7;
+const int MSG_TYPE_TAP_TEMPO = 8;
+const int MSG_TYPE_MEASURE = 9;
+const int MSG_TYPE_LOOPER_COMMAND = 10;
+const int MSG_TYPE_LOOPER_STATUS = 11;
+const int MSG_TYPE_TUNER_OUTPUT = 12;
+const int MSG_TYPE_TUNER_ON = 13;
+const int MSG_TYPE_TUNER_OFF = 14;
+const int MSG_TYPE_HWCHECKSUM = 15;
+const int MSG_TYPE_HWCHECKSUM_EXT = 16;
+const int MSG_TYPE_AMPSTATUS = 17;
 
-#define MSG_REQ_SERIAL 21
-#define MSG_REQ_FW_VER 22
-#define MSG_REQ_PRESET_CHK 23
-#define MSG_REQ_CURR_PRESET_NUM 24
-#define MSG_REQ_CURR_PRESET 25
-#define MSG_REQ_71 26
-#define MSG_REQ_72 27
-#define MSG_REQ_PRESET1 28
-#define MSG_REQ_PRESET2 29
-#define MSG_REQ_PRESET3 30
-#define MSG_REQ_PRESET4 31
-#define MSG_REQ_INVALID 99
+const int MSG_REQ_SERIAL = 21;
+const int MSG_REQ_FW_VER = 22;
+const int MSG_REQ_PRESET_CHK = 23;
+const int MSG_REQ_CURR_PRESET_NUM = 24;
+const int MSG_REQ_CURR_PRESET = 25;
+const int MSG_REQ_AMP_STATUS = 26;
+const int MSG_REQ_72 = 27;
+const int MSG_REQ_PRESET1 = 28;
+const int MSG_REQ_PRESET2 = 29;
+const int MSG_REQ_PRESET3 = 30;
+const int MSG_REQ_PRESET4 = 31;
+const int MSG_REQ_INVALID = 99;
 
 class SparkStatus {
 public:
@@ -75,11 +73,11 @@ public:
     const int numberOfLoops() const { return numberOfLoops_; }
     int &numberOfLoops() { return numberOfLoops_; }
 
-    const int lastMessageType() const { return last_message_type_; }
-    int &lastMessageType() { return last_message_type_; }
+    const int lastMessageType() const { return lastMessageType_; }
+    int &lastMessageType() { return lastMessageType_; }
 
-    const byte lastMessageNum() const { return last_message_num_; }
-    byte &lastMessageNum() { return last_message_num_; }
+    const byte lastMessageNum() const { return lastMessageNum_; }
+    byte &lastMessageNum() { return lastMessageNum_; }
 
     const string ampName() const { return ampName_; }
     string &ampName() { return ampName_; }
@@ -104,13 +102,13 @@ public:
 
     byte &note() { return note_; }
 
-    const float note_offset() const { return note_offset_; }
-    float &note_offset() { return note_offset_; }
+    const float noteOffset() const { return noteOffset_; }
+    float &noteOffset() { return noteOffset_; }
 
     const vector<byte> hwChecksums() const { return hwChecksums_; }
     vector<byte> &hwChecksums() { return hwChecksums_; }
 
-    const int note_offset_cents() const { return (note_offset_ * 100) - 50; }
+    const int noteOffsetCents() const { return (noteOffset_ * 100) - 50; }
 
     const vector<AckData> acknowledgments() const { return acknowledgments_; }
     vector<AckData> &acknowledgments() { return acknowledgments_; }
@@ -136,7 +134,7 @@ private:
     float measure_;
 
     byte note_;
-    float note_offset_;
+    float noteOffset_;
     string notes[12] = {"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "};
 
     // In case a preset was received from Spark, it is saved here. Can then be read by main program
@@ -150,9 +148,9 @@ private:
     boolean isEffectUpdated_ = false;
 
     vector<AckData> acknowledgments_;
-    int last_message_type_ = 0;
-    byte last_message_num_ = 0x00;
-    byte last_requested_preset = 0x00;
+    int lastMessageType_ = 0;
+    byte lastMessageNum_ = 0x00;
+    byte lastRequestedPreset = 0x00;
 
     int ampBatteryLevel_ = 0;
     bool isAmpBatteryPowered_ = false;

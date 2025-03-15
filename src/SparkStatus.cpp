@@ -24,7 +24,7 @@ void SparkStatus::resetLooperSettingUpdateFlag() {
 }
 
 void SparkStatus::resetLastMessageType() {
-    last_message_type_ = 0;
+    lastMessageType_ = 0;
 }
 
 void SparkStatus::resetAcknowledgments() {
@@ -45,9 +45,9 @@ void SparkStatus::resetStatus() {
     isEffectUpdated_ = false;
 
     acknowledgments_.clear();
-    last_message_type_ = 0;
-    last_message_num_ = 0x00;
-    last_requested_preset = 0x00;
+    lastMessageType_ = 0;
+    lastMessageNum_ = 0x00;
+    lastRequestedPreset = 0x00;
 
     ampBatteryLevel_ = 0;
     isAmpBatteryPowered_ = false;
