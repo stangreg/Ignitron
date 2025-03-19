@@ -613,10 +613,26 @@ void SparkDisplayControl::showTunerGraphic() {
     // Draw circle if in tune
     if (-centsTolerance <= noteOffsetCents && noteOffsetCents <= centsTolerance) {
         display.drawCircle(display.width() / 2.0, display.height() / 2.0, 20, color);
-        display.invertDisplay(true);
+        invertedDisplay = true;
     } else {
-        display.invertDisplay(false);
+        invertedDisplay = false;
     }
+}
+
+void SparkDisplayControl::checkInvertDisplay(int subMode) {
+    switch (subMode) {
+    case SUB_MODE_FX:
+        invertedDisplay = true;
+        break;
+    case SUB_MODE_TUNER:
+        // don't change value as it is set in showTunerGraphics()
+        break;
+    default:
+        invertedDisplay = false;
+        break;
+    }
+
+    display.invertDisplay(invertedDisplay);
 }
 
 void SparkDisplayControl::update(bool isInitBoot) {
@@ -624,6 +640,7 @@ void SparkDisplayControl::update(bool isInitBoot) {
     opMode = spark_dc->operationMode();
     subMode = spark_dc->subMode();
     display.clearDisplay();
+    checkInvertDisplay(subMode);
     if ((opMode == SPARK_MODE_APP) && isInitBoot) {
         showInitialMessage();
     } else if (opMode == SPARK_MODE_KEYBOARD) {
@@ -673,15 +690,6 @@ void SparkDisplayControl::update(bool isInitBoot) {
         } else {
             showBankAndPresetNum();
             showFX_SecondaryName();
-
-#ifndef DEDICATED_PRESET_LEDS
-            // in FX mode (manual mode) invert display
-            if (subMode == SUB_MODE_FX) {
-                display.invertDisplay(true);
-            } else {
-                display.invertDisplay(false);
-            }
-#endif
         }
     }
     // logDisplay();
