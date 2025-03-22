@@ -119,7 +119,7 @@ void SparkLEDControl::updateLedAmp() {
     unsigned long currentMillis = millis();
 
     int presetNumToEdit = SparkPresetControl::getInstance().presetNumToEdit();
-    const int presetEditMode = SparkPresetControl::getInstance().presetEditMode();
+    const PresetEditMode presetEditMode = SparkPresetControl::getInstance().presetEditMode();
 
     if (presetEditMode != PRESET_EDIT_NONE) {
 

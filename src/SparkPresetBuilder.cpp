@@ -280,7 +280,7 @@ const int SparkPresetBuilder::getNumberOfBanks() const {
     return presetBanksNames.size();
 }
 
-int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
+PresetStoreResult SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
     string presetNamePrefix = newPreset.name;
     string presetUUID = newPreset.uuid;
     if (presetNamePrefix == "null" || presetNamePrefix.empty()) {
@@ -358,7 +358,7 @@ int SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int pre) {
     return STORE_PRESET_UNKNOWN_ERROR;
 }
 
-int SparkPresetBuilder::deletePreset(int bnk, int pre) {
+PresetDeleteResult SparkPresetBuilder::deletePreset(int bnk, int pre) {
 
     // Remove the preset
     string filestrPreset = "";
@@ -373,7 +373,7 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
     presetListUUIDFile = LittleFS.open(presetListUUIDFileName);
     if (!presetListUUIDFile) {
         Serial.println("ERROR while trying to open presets list file");
-        return STORE_PRESET_ERROR_OPEN;
+        return DELETE_PRESET_ERROR_OPEN;
     }
 
     // Read file content into stream
@@ -421,7 +421,7 @@ int SparkPresetBuilder::deletePreset(int bnk, int pre) {
     presetListUUIDFile = LittleFS.open(presetListUUIDFileName, FILE_WRITE);
     if (!presetListFile || !presetListUUIDFile) {
         Serial.println("ERROR opening preset files for writing.");
-        return STORE_PRESET_ERROR_OPEN;
+        return DELETE_PRESET_ERROR_OPEN;
     }
     bool success = presetListFile.print(filestrPreset.c_str()) && presetListUUIDFile.print(filestrPresetUUID.c_str());
     presetListFile.close();

@@ -51,7 +51,7 @@ void SparkDisplayControl::init(int mode) {
     // Clear the buffer
     display_.clearDisplay(); // No Adafruit splash
     display_.display();
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
     display_.setTextWrap(false);
 
     showInitialMessage();
@@ -64,7 +64,7 @@ void SparkDisplayControl::init(int mode) {
 
 void SparkDisplayControl::showInitialMessage() {
     display_.drawBitmap(0, 0, epdBitmapIgnitronLogo, kSplashImageWidth, kSplashImageHeight,
-                        OLED_WHITE);
+                        WHITE);
     display_.setTextSize(2);
 
     string modeText;
@@ -87,7 +87,7 @@ void SparkDisplayControl::showInitialMessage() {
 void SparkDisplayControl::showBankAndPresetNum() {
 
     // Display the bank and preset number
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
     display_.setTextSize(4);
 
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
@@ -133,18 +133,18 @@ void SparkDisplayControl::showPresetName() {
     int pendingHWBank = presetControl.pendingHWBank();
     int activeHWBank = presetControl.activeHWBank();
 
-    int presetEditMode = presetControl.presetEditMode();
+    PresetEditMode presetEditMode = presetControl.presetEditMode();
 
     // Rectangle color for preset name
     int rectColor;
     int textColor;
     // Show preset name inverted if it is not the currently selected one
     if (pendingBank == activeBank && presetEditMode != PRESET_EDIT_DELETE) {
-        rectColor = OLED_BLACK;
-        textColor = OLED_WHITE;
+        rectColor = BLACK;
+        textColor = WHITE;
     } else {
-        rectColor = OLED_WHITE;
-        textColor = OLED_BLACK;
+        rectColor = WHITE;
+        textColor = BLACK;
     }
 
     display_.setTextColor(textColor);
@@ -253,8 +253,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     }
 
-    display_.fillRect(0, 48, 128, 16, OLED_BLACK);
-    display_.setTextColor(OLED_WHITE);
+    display_.fillRect(0, 48, 128, 16, BLACK);
+    display_.setTextColor(WHITE);
 #else
         if (opMode == SUB_MODE_LOOPER) {
             secondaryLineText = "LOOPER MODE";
@@ -276,8 +276,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     }
 
-    display_.fillRect(0, 48, 128, 16, OLED_WHITE); // Invert line
-    display_.setTextColor(OLED_BLACK);
+    display_.fillRect(0, 48, 128, 16, WHITE); // Invert line
+    display_.setTextColor(BLACK);
 #endif
 
     display_.setTextSize(2);
@@ -313,7 +313,7 @@ void SparkDisplayControl::showLooperTimer() {
     // Reserve 2 characters for totalBars, 3 for BPM
     int maxBarWidth = display_.width() - 2 * charWidth;
     int barWidth = (double)(currentBar)*maxBarWidth / totalBars;
-    int drawColor = OLED_WHITE;
+    int drawColor = WHITE;
     display_.fillRect(xPos, yPos, barWidth, barHeight, drawColor);
 
     // Show BPM
@@ -335,7 +335,7 @@ void SparkDisplayControl::showLooperTimer() {
     }
     for (int i = 0; i < totalBars; i = i + stepSize) {
         int xPos = (double)i * maxBarWidth / totalBars;
-        drawColor = xPos < barWidth ? OLED_BLACK : OLED_WHITE;
+        drawColor = xPos < barWidth ? BLACK : WHITE;
         display_.drawFastVLine(xPos, yPos, barHeight, drawColor);
     }
 }
@@ -397,7 +397,7 @@ void SparkDisplayControl::showConnection() {
         currentBTModeText = "SRL";
         break;
     }
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
     display_.setTextSize(1);
     display_.setCursor(xPosText, yPosText);
     display_.print(currentBTModeText.c_str());
@@ -409,7 +409,7 @@ void SparkDisplayControl::showConnection() {
 
     bool isBTConnected = sparkDC_->isAmpConnected() || sparkDC_->isAppConnected();
     if (isBTConnected) {
-        display_.drawBitmap(xPosSymbol, yPosSymbol, epdBitmapBTLogo, symbolWidth, symbolHeight, OLED_WHITE);
+        display_.drawBitmap(xPosSymbol, yPosSymbol, epdBitmapBTLogo, symbolWidth, symbolHeight, WHITE);
     }
 }
 
@@ -427,7 +427,7 @@ void SparkDisplayControl::showBatterySymbol() {
 
     BatteryLevel batteryLevel = sparkDC_->batteryLevel();
 
-    uint16_t color = OLED_WHITE;
+    uint16_t color = WHITE;
     const unsigned char *battery_icon;
     switch (batteryLevel) {
     case BATTERY_LEVEL_CHARGING:
@@ -486,7 +486,7 @@ void SparkDisplayControl::showPressedKey() {
     short int pressedButtonPosX = 20;
     short int pressedButtonPosY = 0;
 
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
     display_.setTextSize(4);
 
     display_.setCursor(pressedButtonPosX, pressedButtonPosY);
@@ -538,16 +538,16 @@ void SparkDisplayControl::showKeyboardLayout() {
 
     short int displayMid = display_.width() / 2;
 
-    display_.fillRect(0, 48, 128, 16, OLED_BLACK);
+    display_.fillRect(0, 48, 128, 16, BLACK);
 
     // Rectangle color for preset name
     int rectColor;
     int textColor;
     int textColorInv;
     // Show preset name inverted if it is not the currently selected one
-    rectColor = OLED_WHITE;
-    textColorInv = OLED_BLACK;
-    textColor = OLED_WHITE;
+    rectColor = WHITE;
+    textColorInv = BLACK;
+    textColor = WHITE;
 
     display_.setTextColor(textColor);
     display_.setTextSize(2);
@@ -565,7 +565,7 @@ void SparkDisplayControl::showKeyboardLayout() {
 
 void SparkDisplayControl::showTunerNote() {
 
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
 
     // text sizes: 1 = 6x8, 2= 12x16, 3=18x24, 4=24x36
     char sharpSymbol = currentNote.at(1);
@@ -590,24 +590,24 @@ void SparkDisplayControl::showTunerNote() {
 
 void SparkDisplayControl::showTunerOffset() {
 
-    display_.setTextColor(OLED_WHITE);
+    display_.setTextColor(WHITE);
     if (noteOffsetCents >= -50 && noteOffsetCents <= 50) {
         // draw dynamic note offset at the bottom
         int tunerPosCenter = 128 / 2; // the middle lines are 63 and 64, choose the right side as it visually matches the other visible items
         int barHeight = 12;
         int tunerPosBottomY = 64 - barHeight;
-        display_.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
-        display_.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, OLED_WHITE);
+        display_.drawFastVLine(tunerPosCenter - 2, tunerPosBottomY + barHeight / 3, barHeight / 3, WHITE);
+        display_.drawFastVLine(tunerPosCenter + 2, tunerPosBottomY + barHeight / 3, barHeight / 3, WHITE);
 
         tunerPosCenter += noteOffsetCents;
-        display_.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, OLED_WHITE);
+        display_.drawFastVLine(tunerPosCenter, tunerPosBottomY, barHeight, WHITE);
     }
 }
 
 void SparkDisplayControl::showTunerGraphic() {
 
     int triangleSize = 12;
-    int color = OLED_WHITE;
+    int color = WHITE;
     int triPosHigher3X = 0;
     int triPosHigher2X = 15;
     int triPosHigher1X = 30;

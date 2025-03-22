@@ -50,13 +50,13 @@ private:
     bool withHeader_ = true;
 
     void startMessage(byte cmd_, byte sub_cmd_);
-    vector<CmdData> endMessage(int dir = DIR_TO_SPARK,
+    vector<CmdData> endMessage(MessageDirection dir = DIR_TO_SPARK,
                                byte msgNumber = 0x00);
 
     void splitDataToChunks(int dir);
     void convertDataTo7Bit();
     void buildChunkData(byte msgNumber);
-    vector<CmdData> buildMessage(int dir, byte msgNum = 0);
+    vector<CmdData> buildMessage(MessageDirection dir, byte msgNum = 0);
     // ByteVector endMessage();
     void addBytes(const ByteVector &bytes8);
     void addByte(byte by);
@@ -69,7 +69,7 @@ private:
     void addInt16(unsigned int number);
     byte calculateChecksum(const ByteVector &chunk);
     byte calculatePresetChecksum(const ByteVector &chunk);
-    ByteVector buildPresetData(const Preset &preset, int direction = DIR_TO_SPARK);
+    ByteVector buildPresetData(const Preset &preset, MessageDirection direction = DIR_TO_SPARK);
 
 public:
     SparkMessage();
@@ -80,10 +80,10 @@ public:
     vector<CmdData> changeHardwarePreset(byte msgNum, int preset_num);
     vector<CmdData> turnEffectOnOff(byte msgNum, const string &pedal, boolean enable);
     vector<CmdData> switchTuner(byte msgNum, boolean enable);
-    vector<CmdData> changePreset(const Preset &presetData, int dir = DIR_TO_SPARK, byte msgNum = 0x00);
+    vector<CmdData> changePreset(const Preset &presetData, MessageDirection dir = DIR_TO_SPARK, byte msgNum = 0x00);
     vector<CmdData> getCurrentPresetNum(byte msgNum);
     vector<CmdData> getCurrentPreset(byte msgNum, int hwPreset = -1);
-    vector<CmdData> sendAck(byte seq, byte cmd_, int direction = DIR_TO_SPARK);
+    vector<CmdData> sendAck(byte seq, byte cmd_, MessageDirection direction = DIR_TO_SPARK);
 
     vector<CmdData> getAmpName(byte msgNum);
     vector<CmdData> getSerialNumber(byte msgNum);

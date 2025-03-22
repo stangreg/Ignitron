@@ -12,7 +12,7 @@
 #include <string>
 using namespace std;
 
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__)
 #define DEBUG_PRINTLN(x) Serial.println(x)
@@ -265,9 +265,11 @@ enum LooperCommand {
     SPK_LOOPER_CMD_REDO = 0x0E
 };
 
-const int SPK_LOOPER_BPM_LED_ID = 5;
-const int SPK_LOOPER_REC_DUB_LED_ID = 1;
-const int SPK_LOOPER_PLAY_STOP_LED_ID = 2;
-const int SPK_LOOPER_UNDO_REDO_LED_ID = 3;
+enum LooperLedID {
+    SPK_LOOPER_REC_DUB_LED_ID = 1,
+    SPK_LOOPER_PLAY_STOP_LED_ID = 2,
+    SPK_LOOPER_UNDO_REDO_LED_ID = 3,
+    SPK_LOOPER_BPM_LED_ID = 5
+};
 
 #endif /* CONFIG_DEFINITIONS_H_ */

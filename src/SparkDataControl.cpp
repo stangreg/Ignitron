@@ -74,7 +74,7 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
 
     tapEntries = CircularBuffer(tapEntrySize);
-    
+
     readOpModeFromFile();
     SparkPresetControl::getInstance().init();
 
@@ -432,7 +432,7 @@ void SparkDataControl::processSparkData(ByteVector &blk) {
     // Check if incoming message requires sending an acknowledgment
     handleSendingAck(blk);
 
-    int retCode = sparkSsr.processBlock(blk);
+    MessageProcessStatus retCode = sparkSsr.processBlock(blk);
     if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
         handleAmpModeRequest();
     }
@@ -614,7 +614,7 @@ void SparkDataControl::handleAmpModeRequest() {
 
     Preset preset;
 
-    int lastMessageType = statusObject.lastMessageType();
+    MessageType lastMessageType = statusObject.lastMessageType();
     bool sendMessage = true;
     switch (lastMessageType) {
 
@@ -669,7 +669,7 @@ void SparkDataControl::handleAmpModeRequest() {
         msg = sparkMsg.changePreset(preset, DIR_FROM_SPARK, currentMessageNum);
         break;
     case MSG_REQ_AMP_STATUS:
-        DEBUG_PRINTLN("Found request for 02 71");
+        DEBUG_PRINTLN("Found request for amp status");
         msg = sparkMsg.sendAmpStatus(currentMessageNum);
         break;
     case MSG_REQ_72:
@@ -689,7 +689,7 @@ void SparkDataControl::handleAmpModeRequest() {
 void SparkDataControl::handleAppModeResponse() {
 
     string msgStr = sparkSsr.getJson();
-    int lastMessageType = statusObject.lastMessageType();
+    MessageType lastMessageType = statusObject.lastMessageType();
     byte lastMessageNumber = statusObject.lastMessageNum();
     // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 

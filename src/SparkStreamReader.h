@@ -21,9 +21,11 @@
 using namespace std;
 using ByteVector = vector<byte>;
 
-const int MSG_PROCESS_RES_COMPLETE = 1;
-const int MSG_PROCESS_RES_INCOMPLETE = 2;
-const int MSG_PROCESS_RES_REQUEST = 3;
+enum MessageProcessStatus {
+    MSG_PROCESS_RES_COMPLETE,
+    MSG_PROCESS_RES_INCOMPLETE,
+    MSG_PROCESS_RES_REQUEST
+};
 
 class SparkStreamReader {
     // Parser for Spark messages (from App or Amp)
@@ -98,7 +100,7 @@ public:
     string getJson();
 
     tuple<boolean, byte, byte> needsAck(const ByteVector &block);
-    int processBlock(ByteVector &block);
+    MessageProcessStatus processBlock(ByteVector &block);
     AckData getLastAckAndEmpty();
     void clearMessageBuffer();
 };

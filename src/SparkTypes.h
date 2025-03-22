@@ -18,8 +18,10 @@
 using namespace std;
 using ByteVector = vector<byte>;
 
-#define DIR_TO_SPARK 0
-#define DIR_FROM_SPARK 1
+enum MessageDirection {
+    DIR_TO_SPARK,
+    DIR_FROM_SPARK
+};
 
 struct keyboardKeyDefinition {
     // Quick reference from https://github.com/T-vK/ESP32-BLE-Keyboard/blob/master/BleKeyboard.h

@@ -3,36 +3,38 @@
 
 #include "SparkTypes.h"
 
-const int MSG_TYPE_PRESET = 1;
-const int MSG_TYPE_HWPRESET = 2;
-const int MSG_TYPE_FX_ONOFF = 3;
-const int MSG_TYPE_FX_CHANGE = 4;
-const int MSG_TYPE_FX_PARAM = 5;
-const int MSG_TYPE_AMP_NAME = 6;
-const int MSG_TYPE_LOOPER_SETTING = 7;
-const int MSG_TYPE_TAP_TEMPO = 8;
-const int MSG_TYPE_MEASURE = 9;
-const int MSG_TYPE_LOOPER_COMMAND = 10;
-const int MSG_TYPE_LOOPER_STATUS = 11;
-const int MSG_TYPE_TUNER_OUTPUT = 12;
-const int MSG_TYPE_TUNER_ON = 13;
-const int MSG_TYPE_TUNER_OFF = 14;
-const int MSG_TYPE_HWCHECKSUM = 15;
-const int MSG_TYPE_HWCHECKSUM_EXT = 16;
-const int MSG_TYPE_AMPSTATUS = 17;
-
-const int MSG_REQ_SERIAL = 21;
-const int MSG_REQ_FW_VER = 22;
-const int MSG_REQ_PRESET_CHK = 23;
-const int MSG_REQ_CURR_PRESET_NUM = 24;
-const int MSG_REQ_CURR_PRESET = 25;
-const int MSG_REQ_AMP_STATUS = 26;
-const int MSG_REQ_72 = 27;
-const int MSG_REQ_PRESET1 = 28;
-const int MSG_REQ_PRESET2 = 29;
-const int MSG_REQ_PRESET3 = 30;
-const int MSG_REQ_PRESET4 = 31;
-const int MSG_REQ_INVALID = 99;
+enum MessageType {
+    MSG_TYPE_NONE,
+    MSG_TYPE_PRESET,
+    MSG_TYPE_HWPRESET,
+    MSG_TYPE_FX_ONOFF,
+    MSG_TYPE_FX_CHANGE,
+    MSG_TYPE_FX_PARAM,
+    MSG_TYPE_AMP_NAME,
+    MSG_TYPE_LOOPER_SETTING,
+    MSG_TYPE_TAP_TEMPO,
+    MSG_TYPE_MEASURE,
+    MSG_TYPE_LOOPER_COMMAND,
+    MSG_TYPE_LOOPER_STATUS,
+    MSG_TYPE_TUNER_OUTPUT,
+    MSG_TYPE_TUNER_ON,
+    MSG_TYPE_TUNER_OFF,
+    MSG_TYPE_HWCHECKSUM,
+    MSG_TYPE_HWCHECKSUM_EXT,
+    MSG_TYPE_AMPSTATUS,
+    MSG_REQ_SERIAL,
+    MSG_REQ_FW_VER,
+    MSG_REQ_PRESET_CHK,
+    MSG_REQ_CURR_PRESET_NUM,
+    MSG_REQ_CURR_PRESET,
+    MSG_REQ_AMP_STATUS,
+    MSG_REQ_72,
+    MSG_REQ_PRESET1,
+    MSG_REQ_PRESET2,
+    MSG_REQ_PRESET3,
+    MSG_REQ_PRESET4,
+    MSG_REQ_INVALID,
+};
 
 class SparkStatus {
 public:
@@ -73,8 +75,8 @@ public:
     const int numberOfLoops() const { return numberOfLoops_; }
     int &numberOfLoops() { return numberOfLoops_; }
 
-    const int lastMessageType() const { return lastMessageType_; }
-    int &lastMessageType() { return lastMessageType_; }
+    const MessageType lastMessageType() const { return lastMessageType_; }
+    MessageType &lastMessageType() { return lastMessageType_; }
 
     const byte lastMessageNum() const { return lastMessageNum_; }
     byte &lastMessageNum() { return lastMessageNum_; }
@@ -148,7 +150,7 @@ private:
     boolean isEffectUpdated_ = false;
 
     vector<AckData> acknowledgments_;
-    int lastMessageType_ = 0;
+    MessageType lastMessageType_ = MSG_TYPE_NONE;
     byte lastMessageNum_ = 0x00;
     byte lastRequestedPreset = 0x00;
 

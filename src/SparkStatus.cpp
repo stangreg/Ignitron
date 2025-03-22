@@ -24,7 +24,7 @@ void SparkStatus::resetLooperSettingUpdateFlag() {
 }
 
 void SparkStatus::resetLastMessageType() {
-    lastMessageType_ = 0;
+    lastMessageType_ = MSG_TYPE_NONE;
 }
 
 void SparkStatus::resetAcknowledgments() {
@@ -45,7 +45,7 @@ void SparkStatus::resetStatus() {
     isEffectUpdated_ = false;
 
     acknowledgments_.clear();
-    lastMessageType_ = 0;
+    lastMessageType_ = MSG_TYPE_NONE;
     lastMessageNum_ = 0x00;
     lastRequestedPreset = 0x00;
 

@@ -485,7 +485,7 @@ void SparkPresetControl::processStorePresetRequest(int presetNum) {
     responseMsg_ = "";
     if (presetEditMode_ == PRESET_EDIT_STORE) {
         if (presetNumToEdit_ == presetNum && presetBankToEdit_ == pendingBank_) {
-            int responseCode;
+            PresetStoreResult responseCode;
             responseCode = presetBuilder.storePreset(appReceivedPreset_,
                                                      pendingBank_, presetNum);
             if (responseCode == STORE_PRESET_OK) {
@@ -534,7 +534,7 @@ void SparkPresetControl::resetPresetEditResponse() {
 void SparkPresetControl::processDeletePresetRequest() {
     responseMsg_ = "";
     if (presetEditMode_ == PRESET_EDIT_DELETE && activeBank_ > 0) {
-        int responseCode;
+        PresetDeleteResult responseCode;
         responseCode = presetBuilder.deletePreset(activeBank_,
                                                   activePresetNum_);
         if (responseCode == DELETE_PRESET_OK || responseCode == DELETE_PRESET_FILE_NOT_EXIST) {
@@ -551,7 +551,7 @@ void SparkPresetControl::processDeletePresetRequest() {
                 responseMsg_ = "FILE NOT EXITS";
             }
         }
-        if (responseCode == DELETE_PRESET_ERROR_OPEN || responseCode == STORE_PRESET_UNKNOWN_ERROR) {
+        if (responseCode == DELETE_PRESET_ERROR_OPEN || responseCode == DELETE_PRESET_UNKNOWN_ERROR) {
             responseMsg_ = "DELETE ERROR";
         }
         resetPresetEdit(true, true);
@@ -575,7 +575,7 @@ bool SparkPresetControl::handleDeletePreset() {
         return false;
     }
 
-    if (presetEditMode() == PRESET_EDIT_STORE) {
+    if (presetEditMode_ == PRESET_EDIT_STORE) {
         resetPresetEdit(true, true);
     } else {
         processPresetEdit();

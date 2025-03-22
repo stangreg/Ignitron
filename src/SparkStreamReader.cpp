@@ -928,9 +928,9 @@ bool SparkStreamReader::blockIsStarted(ByteVector &blk) {
     return newStart;
 }
 
-int SparkStreamReader::processBlock(ByteVector &blk) {
+MessageProcessStatus SparkStreamReader::processBlock(ByteVector &blk) {
 
-    int retValue = MSG_PROCESS_RES_INCOMPLETE;
+    MessageProcessStatus retValue = MSG_PROCESS_RES_INCOMPLETE;
     bool msgToSpark = false;
     bool msgFromSpark = true;
 

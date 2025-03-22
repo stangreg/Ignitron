@@ -118,7 +118,7 @@ void SparkMessage::buildChunkData(byte msgNumber) {
     }
 }
 
-vector<CmdData> SparkMessage::buildMessage(int dir, byte msgNum) {
+vector<CmdData> SparkMessage::buildMessage(MessageDirection dir, byte msgNum) {
 
     vector<CmdData> finalMessage = {};
 
@@ -184,7 +184,7 @@ vector<CmdData> SparkMessage::buildMessage(int dir, byte msgNum) {
     return finalMessage;
 }
 
-vector<CmdData> SparkMessage::endMessage(int dir, byte msgNumber) {
+vector<CmdData> SparkMessage::endMessage(MessageDirection dir, byte msgNumber) {
 
     DEBUG_PRINT("MESSAGE NUMBER: ");
     DEBUG_PRINT(msgNumber);
@@ -503,7 +503,7 @@ vector<CmdData> SparkMessage::sendHWPresetNumber(byte msgNumber) {
 }
 
 vector<CmdData> SparkMessage::changePreset(const Preset &presetData,
-                                           int direction, byte msgNum) {
+                                           MessageDirection direction, byte msgNum) {
 
     if (direction == DIR_TO_SPARK) {
         cmd = 0x01;
@@ -519,7 +519,7 @@ vector<CmdData> SparkMessage::changePreset(const Preset &presetData,
 
 // This prepares a message to send an acknowledgement
 vector<CmdData> SparkMessage::sendAck(byte msgNum, byte subCmd,
-                                      int dir) {
+                                      MessageDirection dir) {
 
     byte cmd = 0x04;
 
@@ -547,7 +547,7 @@ byte SparkMessage::calculatePresetChecksum(const ByteVector &chunk) {
     return (byte)(currentSum % 256);
 }
 
-ByteVector SparkMessage::buildPresetData(const Preset &presetData, int direction) {
+ByteVector SparkMessage::buildPresetData(const Preset &presetData, MessageDirection direction) {
     if (direction == DIR_TO_SPARK) {
         addByte(0x00);
         addByte(0x7F);

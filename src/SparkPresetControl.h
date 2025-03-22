@@ -6,9 +6,11 @@
 #include "SparkStatus.h"
 #include "SparkTypes.h"
 
-const int PRESET_EDIT_NONE = 0;
-const int PRESET_EDIT_STORE = 1;
-const int PRESET_EDIT_DELETE = 2;
+enum PresetEditMode {
+    PRESET_EDIT_NONE,
+    PRESET_EDIT_STORE,
+    PRESET_EDIT_DELETE
+};
 
 class SparkDataControl;
 
@@ -42,7 +44,7 @@ public:
 
     const int presetNumToEdit() const { return presetNumToEdit_; }
     const string responseMsg() const { return responseMsg_; }
-    const int presetEditMode() const { return presetEditMode_; }
+    const PresetEditMode presetEditMode() const { return presetEditMode_; }
 
     void setAmpParameters(string ampName);
 
@@ -97,7 +99,7 @@ private:
     Preset appReceivedPreset_;
     int presetNumToEdit_ = 0;
     int presetBankToEdit_ = 0;
-    int presetEditMode_ = PRESET_EDIT_NONE;
+    PresetEditMode presetEditMode_ = PRESET_EDIT_NONE;
 
     string responseMsg_ = "";
 
