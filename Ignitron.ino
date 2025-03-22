@@ -30,7 +30,7 @@ int initialRequestInterval = 3000;
 
 // Check for initial boot
 bool isInitBoot;
-int operationMode = SPARK_MODE_APP;
+OperationMode operationMode = SPARK_MODE_APP;
 
 /////////////////////////////////////////////////////////
 //

@@ -531,8 +531,8 @@ void SparkStreamReader::readAmpStatus() {
 
     SparkStatus &statusObject = SparkStatus::getInstance();
     statusObject.isAmpBatteryPowered() = isBatteryPowered;
-    statusObject.ampBatteryLevel() = batteryLevel;
-    statusObject.ampBatteryChargingStatus() = chargingStatus;
+    statusObject.ampBatteryLevel() = (BatteryLevel)batteryLevel;
+    statusObject.ampBatteryChargingStatus() = (BatteryChargingStatus)chargingStatus;
     statusObject.lastMessageType() = MSG_TYPE_AMPSTATUS;
 }
 

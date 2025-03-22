@@ -38,9 +38,9 @@ void SparkButtonHandler::readButtons() {
     btn_bank_down_.read();
 }
 
-int SparkButtonHandler::checkBootOperationMode() {
+OperationMode SparkButtonHandler::checkBootOperationMode() {
 
-    int operationMode;
+    OperationMode operationMode;
     // AMP mode when Preset 1 is pressed during startup
     if (digitalRead(BUTTON_PRESET1_GPIO) == HIGH) {
         operationMode = SPARK_MODE_AMP;
@@ -56,8 +56,8 @@ int SparkButtonHandler::checkBootOperationMode() {
 
 void SparkButtonHandler::configureButtons() {
 
-    int operationMode = spark_dc_->operationMode();
-    int subMode = spark_dc_->subMode();
+    OperationMode operationMode = spark_dc_->operationMode();
+    SubMode subMode = spark_dc_->subMode();
 
     // Mode specific button config
     switch (operationMode) {
@@ -264,7 +264,7 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
     }
 
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
@@ -272,7 +272,7 @@ void SparkButtonHandler::btnKeyboardHandler(BfButton *btn,
     currentKeyboard_ = spark_dc_->currentKeyboard();
 
     // Button configuration is set in the SparkTypes.h file
-    int buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
+    PresetLedButtonNum buttonIndex = SparkHelper::getButtonNumber(pressed_btn_gpio);
 
     vector<keyboardKeyDefinition> keyMap;
 
@@ -306,7 +306,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
     // Switch between APP mode and LOOPER mode
     // Debug
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
@@ -325,7 +325,7 @@ void SparkButtonHandler::btnToggleBTModeHandler(BfButton *btn,
         return;
     }
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     // Debug
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
@@ -343,15 +343,15 @@ void SparkButtonHandler::btnSwitchTunerModeHandler(BfButton *btn, BfButton::pres
     // Switch between tuner mode where tuner can be separately switched
     // Debug
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
 
     // Switch mode in APP mode
-    int currentSubMode = spark_dc_->subMode();
+    SubMode currentSubMode = spark_dc_->subMode();
     DEBUG_PRINTF("Old SubMode = %d", currentSubMode);
-    int newMode;
+    SubMode newMode;
     if (currentSubMode == SUB_MODE_TUNER) {
         DEBUG_PRINTLN("Old mode: Tuner");
         newMode = SUB_MODE_PRESET;
@@ -371,7 +371,7 @@ void SparkButtonHandler::btnLooperPresetHandler(BfButton *btn, BfButton::press_p
         return;
     }
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
@@ -393,7 +393,7 @@ void SparkButtonHandler::btnSpark2LooperHandler(BfButton *btn, BfButton::press_p
         return;
     }
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
@@ -437,7 +437,7 @@ void SparkButtonHandler::btnSpark2LooperConfigHandler(BfButton *btn, BfButton::p
         return;
     }
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
@@ -478,12 +478,12 @@ void SparkButtonHandler::btnPresetHandler(BfButton *btn, BfButton::press_pattern
     }
 
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
     // Change selected preset
-    int selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
+    PresetLedButtonNum selectedPresetNum = SparkHelper::getButtonNumber(pressed_btn_gpio);
     presetControl_.processPresetSelect(selectedPresetNum);
 }
 
@@ -496,7 +496,7 @@ void SparkButtonHandler::btnBankHandler(BfButton *btn, BfButton::press_pattern_t
     }
 
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
@@ -516,7 +516,7 @@ void SparkButtonHandler::btnSwitchModeHandler(BfButton *btn, BfButton::press_pat
     // Switch between preset mode FX mode where FX can be separately switched
     // Debug
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
@@ -535,7 +535,7 @@ void SparkButtonHandler::btnDeletePresetHandler(BfButton *btn, BfButton::press_p
     }
 
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     // Debug
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
@@ -553,7 +553,7 @@ void SparkButtonHandler::btnResetHandler(BfButton *btn,
     }
     // DEBUG
 #ifdef DEBUG
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
@@ -569,11 +569,11 @@ void SparkButtonHandler::btnToggleFXHandler(BfButton *btn, BfButton::press_patte
     }
 
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 
-    int fxIndex = SparkHelper::getFXIndexFromBtnGpio(pressed_btn_gpio);
+    FxType fxIndex = SparkHelper::getFXIndexFromBtnGpio(pressed_btn_gpio);
     spark_dc_->toggleEffect(fxIndex);
 }
 
@@ -584,7 +584,7 @@ void SparkButtonHandler::btnKeyboardSwitchHandler(BfButton *btn, BfButton::press
     }
 
     // Debug
-    int pressed_btn_gpio = btn->getID();
+    ButtonGpio pressed_btn_gpio = (ButtonGpio)(ButtonGpio)btn->getID();
     DEBUG_PRINT("Button pressed: ");
     DEBUG_PRINTLN(pressed_btn_gpio);
 

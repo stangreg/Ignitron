@@ -82,14 +82,14 @@ public:
     const string ampName() const { return ampName_; }
     string &ampName() { return ampName_; }
 
-    const int ampBatteryLevel() const { return ampBatteryLevel_; }
-    int &ampBatteryLevel() { return ampBatteryLevel_; }
+    const BatteryLevel ampBatteryLevel() const { return ampBatteryLevel_; }
+    BatteryLevel &ampBatteryLevel() { return ampBatteryLevel_; }
 
     const bool isAmpBatteryPowered() const { return isAmpBatteryPowered_; }
     bool &isAmpBatteryPowered() { return isAmpBatteryPowered_; }
 
     const int ampBatteryChargingStatus() const { return ampBatteryChargingStatus_; }
-    int &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
+    BatteryChargingStatus &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
 
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
@@ -152,9 +152,9 @@ private:
     byte lastMessageNum_ = 0x00;
     byte lastRequestedPreset = 0x00;
 
-    int ampBatteryLevel_ = 0;
+    BatteryLevel ampBatteryLevel_ = BATTERY_LEVEL_0;
     bool isAmpBatteryPowered_ = false;
-    int ampBatteryChargingStatus_ = 0;
+    BatteryChargingStatus ampBatteryChargingStatus_ = BATTERY_CHARGING_STATUS_DISCHARGING;
 
     vector<byte> hwChecksums_ = {};
 };

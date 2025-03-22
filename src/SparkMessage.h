@@ -99,7 +99,7 @@ public:
     vector<CmdData> sendAmpStatus(byte msgNumber);
     vector<CmdData> sendResponse72(byte msgNumber);
 
-    vector<CmdData> sparkLooperCommand(byte msgNumber, byte command);
+    vector<CmdData> sparkLooperCommand(byte msgNumber, LooperCommand command);
     vector<CmdData> sparkConfigAfterIntro(byte msgNumber, byte command);
 
     vector<CmdData> updateLooperSettings(byte msgNumber, const LooperSetting &setting);

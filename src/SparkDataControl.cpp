@@ -35,19 +35,19 @@ vector<CmdData>
 vector<CmdData> SparkDataControl::currentMsg;
 
 bool SparkDataControl::customPresetNumberChangePending = false;
-int SparkDataControl::operationMode_ = SPARK_MODE_APP;
-int SparkDataControl::subMode_ = SUB_MODE_PRESET;
+OperationMode SparkDataControl::operationMode_ = SPARK_MODE_APP;
+SubMode SparkDataControl::subMode_ = SUB_MODE_PRESET;
 
-int SparkDataControl::currentBTMode_ = BT_MODE_BLE;
-int SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
-int SparkDataControl::sparkModeApp = SPARK_MODE_APP;
-int SparkDataControl::sparkAmpType = AMP_TYPE_40;
+BTMode SparkDataControl::currentBTMode_ = BT_MODE_BLE;
+OperationMode SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
+OperationMode SparkDataControl::sparkModeApp = SPARK_MODE_APP;
+AmpType SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = AMP_NAME_SPARK_40;
 bool SparkDataControl::withDelay = false;
 ByteVector SparkDataControl::checksums = {};
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-int SparkDataControl::batteryLevel_ = BATTERY_LEVEL_0;
+BatteryLevel SparkDataControl::batteryLevel_ = BATTERY_LEVEL_0;
 #endif
 
 bool SparkDataControl::isInitBoot_ = true;
@@ -70,7 +70,7 @@ SparkDataControl::~SparkDataControl() {
         delete keyboardControl;
 }
 
-int SparkDataControl::init(int opModeInput) {
+OperationMode SparkDataControl::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
 
     tapEntries = CircularBuffer(tapEntrySize);
@@ -125,7 +125,7 @@ int SparkDataControl::init(int opModeInput) {
     return operationMode_;
 }
 
-void SparkDataControl::switchSubMode(int subMode) {
+void SparkDataControl::switchSubMode(SubMode subMode) {
     // TODO: Check if that works fine
     if (subMode == SUB_MODE_LOOPER) {
         bleKeyboard.start();
@@ -186,7 +186,7 @@ bool SparkDataControl::toggleLooperAppMode() {
         Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
         return false;
     }
-    int newSubMode;
+    SubMode newSubMode;
     Serial.print("Switching to ");
     switch (subMode_) {
     case SUB_MODE_PRESET:
@@ -236,7 +236,7 @@ void SparkDataControl::restartESP(bool resetSparkMode) {
 }
 
 void SparkDataControl::readOpModeFromFile() {
-    int sparkModeInput = 0;
+    OperationMode sparkModeInput;
     Serial.println("Reading opmode file.");
     if (!LittleFS.exists(sparkModeFileName.c_str())) {
         Serial.println("Spark mode config file does not exist.");
@@ -256,7 +256,7 @@ void SparkDataControl::readOpModeFromFile() {
     file.close();
     Serial.printf("OPMode: %s\n", line.c_str());
 
-    sparkModeInput = (int)(line[0] - '0'); // was: stoi(line);
+    sparkModeInput = (OperationMode)(line[0] - '0'); // was: stoi(line);
 
     if (sparkModeInput != 0) {
         operationMode_ = sparkModeInput;
@@ -273,7 +273,7 @@ void SparkDataControl::readBTModeFromFile() {
     }
     Serial.printf("BTMode: %s\n", line.c_str());
     file.close();
-    currentBTMode_ = (int)(line[0] - '0'); // was: stoi(line);
+    currentBTMode_ = (BTMode)(line[0] - '0'); // was: stoi(line);
 }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
@@ -1012,7 +1012,7 @@ void SparkDataControl::resetLastKeyboardButtonPressed() {
 // 0a = DELETE (done)
 Looper commands end */
 
-bool SparkDataControl::sparkLooperCommand(byte command) {
+bool SparkDataControl::sparkLooperCommand(LooperCommand command) {
 
     currentMsg = sparkMsg.sparkLooperCommand(nextMessageNum, command);
     DEBUG_PRINTF("Spark Looper: %02x\n", command);

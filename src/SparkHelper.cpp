@@ -89,7 +89,7 @@ int SparkHelper::dataVectorNumOfBytes(const vector<ByteVector> &data) {
     return count;
 }
 
-int SparkHelper::getButtonNumber(int btnGpio) {
+PresetLedButtonNum SparkHelper::getButtonNumber(ButtonGpio btnGpio) {
 
     switch (btnGpio) {
     case BUTTON_PRESET1_GPIO:
@@ -111,11 +111,11 @@ int SparkHelper::getButtonNumber(int btnGpio) {
         return BANK_UP_NUM;
         break;
     default:
-        return -1;
+        return INVALID_NUM;
     }
 }
 
-int SparkHelper::getFXIndexFromBtnGpio(int btnGpio) {
+FxType SparkHelper::getFXIndexFromBtnGpio(ButtonGpio btnGpio) {
     switch (btnGpio) {
     case BUTTON_NOISEGATE_GPIO:
         return INDEX_FX_NOISEGATE;
@@ -136,11 +136,11 @@ int SparkHelper::getFXIndexFromBtnGpio(int btnGpio) {
         return INDEX_FX_REVERB;
         break;
     default:
-        return -1;
+        return INDEX_FX_INVALID;
     }
 }
 
-int SparkHelper::getLedGpio(int btnNumber, bool fxMode) {
+LedGpio SparkHelper::getLedGpio(int btnNumber, bool fxMode) {
     if (!fxMode) { // Preset mode LEDs
         switch (btnNumber) {
         case 1:
@@ -162,7 +162,7 @@ int SparkHelper::getLedGpio(int btnNumber, bool fxMode) {
             return LED_BANK_UP_GPIO;
             break;
         default:
-            return -1;
+            return LED_GPIO_INVALID;
         }
     } else { // FX Mode LEDs
         switch (btnNumber) {
@@ -185,12 +185,12 @@ int SparkHelper::getLedGpio(int btnNumber, bool fxMode) {
             return LED_COMP_GPIO;
             break;
         default:
-            return -1;
+            return LED_GPIO_INVALID;
         }
     }
 }
 
-int SparkHelper::getFXIndexFromButtonNumber(int btnNumber) {
+FxType SparkHelper::getFXIndexFromButtonNumber(FxLedButtonNumber btnNumber) {
     switch (btnNumber) {
     case NOISEGATE_NUM:
         return INDEX_FX_NOISEGATE;
@@ -211,7 +211,7 @@ int SparkHelper::getFXIndexFromButtonNumber(int btnNumber) {
         return INDEX_FX_REVERB;
         break;
     default:
-        return -1;
+        return INDEX_FX_INVALID;
     }
 }
 

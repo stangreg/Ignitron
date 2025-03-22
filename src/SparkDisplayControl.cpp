@@ -195,7 +195,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
     // or the new received preset from the app (in AMP mode)
     int secondaryLinePosY = 50;
 
-    int opMode = sparkDC_->operationMode();
+    OperationMode opMode = sparkDC_->operationMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
     Preset presetFromApp = presetControl.appReceivedPreset();
 
@@ -225,7 +225,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
         // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
-        int subMode = sparkDC_->subMode();
+        SubMode subMode = sparkDC_->subMode();
 
         // When we switched to FX mode, we always show the current selected preset
         if (subMode == SUB_MODE_FX) {
@@ -348,8 +348,8 @@ void SparkDisplayControl::showModeModifier() {
     display_.setTextSize(4);
     string presetText = " ";
 
-    int opMode = sparkDC_->operationMode();
-    int subMode = sparkDC_->subMode();
+    OperationMode opMode = sparkDC_->operationMode();
+    SubMode subMode = sparkDC_->subMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
     // Change to subMode
@@ -425,7 +425,7 @@ void SparkDisplayControl::showBatterySymbol() {
     int symbolWidth = 9;
     int symbolHeight = 15;
 
-    int batteryLevel = sparkDC_->batteryLevel();
+    BatteryLevel batteryLevel = sparkDC_->batteryLevel();
 
     uint16_t color = OLED_WHITE;
     const unsigned char *battery_icon;
@@ -664,8 +664,8 @@ void SparkDisplayControl::checkInvertDisplay(int subMode) {
 
 void SparkDisplayControl::update(bool isInitBoot) {
 
-    int opMode = sparkDC_->operationMode();
-    int subMode = sparkDC_->subMode();
+    OperationMode opMode = sparkDC_->operationMode();
+    SubMode subMode = sparkDC_->subMode();
     display_.clearDisplay();
     checkInvertDisplay(subMode);
 

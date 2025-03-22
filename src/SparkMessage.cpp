@@ -647,7 +647,7 @@ vector<CmdData> SparkMessage::sendResponse72(byte msgNumber) {
     return endMessage(DIR_FROM_SPARK, msgNumber);
 }
 
-vector<CmdData> SparkMessage::sparkLooperCommand(byte msgNumber, byte command) {
+vector<CmdData> SparkMessage::sparkLooperCommand(byte msgNumber, LooperCommand command) {
 
     cmd = 0x01;
     subCmd = 0x75;
@@ -676,7 +676,6 @@ vector<CmdData> SparkMessage::updateLooperSettings(byte msgNumber, const LooperS
     cmd = 0x01;
     subCmd = 0x76;
     vector<CmdData> message;
-
 
     DEBUG_PRINTF("LPSetting: BPM: %d, Count: %02x, Bars: %d, Free?: %d, Click: %d, Max duration: %d\n ", setting.bpm, setting.count, setting.bars, setting.freeIndicator, setting.click, setting.maxDuration);
     startMessage(cmd, subCmd);

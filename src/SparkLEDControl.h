@@ -33,7 +33,7 @@ private:
     SparkDataControl *sparkDC;
     KeyboardMapping mapping;
 
-    int operationMode = SPARK_MODE_APP;
+    OperationMode operationMode = SPARK_MODE_APP;
     Preset activePreset;
     int activePresetNum = 1;
 

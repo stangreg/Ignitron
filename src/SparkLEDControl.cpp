@@ -63,7 +63,7 @@ void SparkLEDControl::updateLEDs() {
             allLedOff();
             break;
         }
-        int subMode = sparkDC->subMode();
+        SubMode subMode = sparkDC->subMode();
         // Show only active LEDs
         switch (subMode) {
         case SUB_MODE_LOOPER:
@@ -107,12 +107,9 @@ void SparkLEDControl::updateLedAppPresetMode() {
 void SparkLEDControl::updateLedAppFXMode() {
     if (!activePreset.isEmpty) {
         for (int btnNumber = 1; btnNumber <= 6; btnNumber++) {
-            int fxIndex = SparkHelper::getFXIndexFromButtonNumber(btnNumber);
-            /*if( fxIndex == -1){
-                Serial.println("Invalid FX index found!");
-                return;
-            }*/
-            Pedal currentFX = activePreset.pedals[fxIndex];
+            FxLedButtonNumber fxButton = static_cast<FxLedButtonNumber>(btnNumber);
+            FxType fxIndex = SparkHelper::getFXIndexFromButtonNumber(fxButton);
+            Pedal currentFX = activePreset.pedals[(int)fxIndex];
             switchLed(btnNumber, currentFX.isOn, true);
         }
     }
@@ -258,8 +255,8 @@ void SparkLEDControl::allLedOff() {
 
 void SparkLEDControl::switchLed(int num, bool on, bool fxMode) {
     int STATE = on ? HIGH : LOW;
-    int ledGpio = SparkHelper::getLedGpio(num, fxMode);
-    if (ledGpio != -1) {
+    LedGpio ledGpio = SparkHelper::getLedGpio(num, fxMode);
+    if (ledGpio != LED_GPIO_INVALID) {
         // Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
         digitalWrite(ledGpio, STATE);
     }

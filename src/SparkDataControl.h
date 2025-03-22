@@ -39,7 +39,7 @@ public:
     SparkDataControl();
     virtual ~SparkDataControl();
 
-    int init(int opMode);
+    OperationMode init(OperationMode opMode);
     void resetStatus();
     void setDisplayControl(SparkDisplayControl *display);
     bool checkBLEConnection();
@@ -97,22 +97,22 @@ public:
 
     const bool ampNameReceived() const { return ampNameReceived_; }
 
-    const int &operationMode() const { return operationMode_; }
-    int &operationMode() { return operationMode_; }
+    const OperationMode &operationMode() const { return operationMode_; }
+    OperationMode &operationMode() { return operationMode_; }
 
     SparkLooperControl &looperControl() { return looperControl_; }
 
     bool &isInitBoot() { return isInitBoot_; }
 
-    const int currentBTMode() const { return currentBTMode_; }
+    const BTMode currentBTMode() const { return currentBTMode_; }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-    const int batteryLevel() const { return batteryLevel_; }
+    const BatteryLevel batteryLevel() const { return batteryLevel_; }
 #endif
 
     // Set/get button mode
-    const int &subMode() const { return subMode_; }
-    int &subMode() { return subMode_; }
+    const SubMode &subMode() const { return subMode_; }
+    SubMode &subMode() { return subMode_; }
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
@@ -121,10 +121,10 @@ public:
 
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
-    static void switchSubMode(int subMode);
+    static void switchSubMode(SubMode subMode);
     void toggleBTMode();
 
-    bool sparkLooperCommand(byte command);
+    bool sparkLooperCommand(LooperCommand command);
     bool sparkLooperStopAll();
     bool sparkLooperStopPlaying();
     bool sparkLooperPlay();
@@ -164,7 +164,7 @@ public:
 #endif
 
 private:
-    static int operationMode_;
+    static OperationMode operationMode_;
 
     static SparkBTControl *bleControl;
     static SparkStreamReader sparkSsr;
@@ -181,7 +181,7 @@ private:
     string sparkModeFileName = "/config/SparkMode.config";
 
     // Button data
-    static int subMode_;
+    static SubMode subMode_;
     uint8_t lastKeyboardButtonPressed_ = 0;
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;
@@ -205,18 +205,18 @@ private:
 
     // Spark AMP mode
 
-    static int currentBTMode_;
-    static int sparkModeAmp;
-    static int sparkModeApp;
+    static BTMode currentBTMode_;
+    static OperationMode sparkModeAmp;
+    static OperationMode sparkModeApp;
     ByteVector currentBTMsg;
-    static int sparkAmpType;
+    static AmpType sparkAmpType;
     static string sparkAmpName;
     static bool withDelay;
     static ByteVector checksums;
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Battery level
-    static int batteryLevel_;
+    static BatteryLevel batteryLevel_;
 #endif
 
     // keep track which HW presets have been read so far
