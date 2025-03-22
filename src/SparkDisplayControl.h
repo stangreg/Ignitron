@@ -102,6 +102,8 @@ private:
     string previousText1_ = "";
     string previousText2_ = "";
 
+    bool invertedDisplay = false;
+
     string currentNote = "  ";
     int noteOffsetCents = 0;
 
@@ -115,7 +117,6 @@ private:
     unsigned int currentBatterySymbolIndex = 0;
     const unsigned char *rotateBatteryIcons();
 #endif
-
     void showBankAndPresetNum();
     void showPresetName();
     void showFX_SecondaryName();
@@ -130,6 +131,8 @@ private:
     void showTunerNote();
     void showTunerOffset();
     void showTunerGraphic();
+
+    void checkInvertDisplay(int subMode);
 
     void drawCentreString(const char *buf, int y, int offset = 0);
     void drawRightAlignedString(const char *buf, int y, int offset = 0);
