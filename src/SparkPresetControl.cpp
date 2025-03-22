@@ -16,6 +16,7 @@ void SparkPresetControl::init() {
     OperationMode operationMode = sparkDC->operationMode();
     presetBuilder.init();
     if (operationMode == SPARK_MODE_APP) {
+        Serial.print("Initializing APP mode");
         xTaskCreatePinnedToCore(
             checkForMissingPresets, // Function to implement the task
             "HWpresets",            // Name of the task
@@ -27,6 +28,7 @@ void SparkPresetControl::init() {
         );
     }
     if (operationMode == SPARK_MODE_AMP) {
+        Serial.print("Initializing AMP mode");
         pendingBank_ = 1;
         activeBank_ = 1;
         activePresetNum_ = 1;

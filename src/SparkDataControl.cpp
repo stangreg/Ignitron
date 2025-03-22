@@ -74,9 +74,9 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
 
     tapEntries = CircularBuffer(tapEntrySize);
-
-    SparkPresetControl::getInstance().init();
+    
     readOpModeFromFile();
+    SparkPresetControl::getInstance().init();
 
     // Define MAC address required for keyboard
     uint8_t macKeyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
@@ -921,7 +921,7 @@ void SparkDataControl::toggleBTMode() {
         File file = LittleFS.open(btModeFileName.c_str(), FILE_WRITE);
         file.print(currentBTMode_);
         file = LittleFS.open(sparkModeFileName.c_str(), FILE_WRITE);
-        file.print(sparkModeAmp);
+        file.print(SPARK_MODE_AMP);
         file.close();
         Serial.println("Restarting in new BT mode");
         restartESP(false);
