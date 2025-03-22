@@ -108,14 +108,19 @@ enum BatteryChargingStatus {
 enum ButtonGpio {
     BUTTON_PRESET1_GPIO = 25,
     BUTTON_DRIVE_GPIO = 25,
+
     BUTTON_PRESET2_GPIO = 26,
     BUTTON_MOD_GPIO = 26,
+
     BUTTON_PRESET3_GPIO = 32,
     BUTTON_DELAY_GPIO = 32,
+
     BUTTON_PRESET4_GPIO = 33,
     BUTTON_REVERB_GPIO = 33,
+
     BUTTON_BANK_DOWN_GPIO = 19,
     BUTTON_NOISEGATE_GPIO = 19,
+
     BUTTON_BANK_UP_GPIO = 18,
     BUTTON_COMP_GPIO = 18
 };
@@ -145,12 +150,14 @@ enum LedGpio {
     LED_REVERB_GPIO = 14,
     LED_NOISEGATE_GPIO = 23,
     LED_COMP_GPIO = 17,
+
     LED_PRESET1_GPIO = 0,
     LED_PRESET2_GPIO = 4,
     LED_PRESET3_GPIO = 12,
     LED_PRESET4_GPIO = 15,
     LED_BANK_DOWN_GPIO = 23,
     LED_BANK_UP_GPIO = 17,
+
     LED_GPIO_INVALID = -1
 };
 
@@ -162,12 +169,14 @@ enum LedGpio {
     LED_REVERB_GPIO = 14,
     LED_NOISEGATE_GPIO = 23,
     LED_COMP_GPIO = 17,
+
     LED_PRESET1_GPIO = LED_DRIVE_GPIO,
     LED_PRESET2_GPIO = LED_MOD_GPIO,
     LED_PRESET3_GPIO = LED_DELAY_GPIO,
     LED_PRESET4_GPIO = LED_REVERB_GPIO,
     LED_BANK_DOWN_GPIO = LED_NOISEGATE_GPIO,
     LED_BANK_UP_GPIO = LED_COMP_GPIO,
+
     LED_GPIO_INVALID = -1
 };
 
@@ -190,7 +199,8 @@ enum FxLedButtonNumber {
     DELAY_NUM = 3,
     REVERB_NUM = 4,
     NOISEGATE_NUM = 5,
-    COMP_NUM = 6
+    COMP_NUM = 6,
+    INVALID_NUM = -1
 };
 
 enum PresetLedButtonNum {
@@ -235,7 +245,7 @@ enum OperationMode {
 
 enum BTMode {
     BT_MODE_BLE = 1,
-    BT_MODE_SERIAL = 2
+    BT_MODE_SERIAL
 };
 
 enum AmpType {
