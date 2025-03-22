@@ -111,7 +111,7 @@ PresetLedButtonNum SparkHelper::getButtonNumber(ButtonGpio btnGpio) {
         return BANK_UP_NUM;
         break;
     default:
-        return INVALID_NUM;
+        return INVALID_PRESET_BUTTON_NUM;
     }
 }
 

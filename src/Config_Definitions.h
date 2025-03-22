@@ -200,7 +200,7 @@ enum FxLedButtonNumber {
     REVERB_NUM = 4,
     NOISEGATE_NUM = 5,
     COMP_NUM = 6,
-    INVALID_NUM = -1
+    INVALID_FX_BUTTON_NUM = -1
 };
 
 enum PresetLedButtonNum {
@@ -210,7 +210,7 @@ enum PresetLedButtonNum {
     PRESET4_NUM = 4,
     BANK_DOWN_NUM = 5,
     BANK_UP_NUM = 6,
-    INVALID_NUM = -1
+    INVALID_PRESET_BUTTON_NUM = -1
 };
 
 // Positions of FX types in Preset struct
