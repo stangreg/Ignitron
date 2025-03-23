@@ -63,8 +63,8 @@ enum BatteryLevel {
 };
 
 // only required for Amp battery
-const float BATTERY_MAX_LEVEL = 4095.0;
-const float BATTERY_MIN_LEVEL = 3400.0;
+const float BATTERY_MAX_LEVEL = 4096.0;
+const float BATTERY_MIN_LEVEL = 3480.0;
 
 #define BATTERY_TYPE_LI_ION 0
 #define BATTERY_TYPE_LI_FE_PO4 1
