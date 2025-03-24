@@ -221,13 +221,10 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     } else if (opMode == SPARK_MODE_APP) {
 
-
-        // Build string to show active FX 
+        // Build string to show active FX
         SubMode subMode = sparkDC_->subMode();
 #ifndef DEDICATED_PRESET_LEDS
         secondaryLinePreset = primaryLinePreset;
-
-        SubMode subMode = sparkDC_->subMode();
 
         // When we switched to FX mode, we always show the current selected preset
         if (subMode == SUB_MODE_FX) {
@@ -260,19 +257,19 @@ void SparkDisplayControl::showFX_SecondaryName() {
 #else
         secondaryLinePosY -= 1; // move up one pixel, looks better with inverted
         switch (subMode) {
-            case SUB_MODE_FX:
-                secondaryLineText = " Manual/FX ";
-                break;
-            case SUB_MODE_PRESET:
-                secondaryLineText = "  Preset   ";
-                break;
-            case SUB_MODE_LOOP_CONFIG:
-                secondaryLineText = " Loop Cnfg ";
-                break;
-            case SUB_MODE_LOOP_CONTROL:
-            case SUB_MODE_LOOPER:
-                secondaryLineText = "  Looper   ";
-                break;
+        case SUB_MODE_FX:
+            secondaryLineText = " Manual/FX ";
+            break;
+        case SUB_MODE_PRESET:
+            secondaryLineText = "  Preset   ";
+            break;
+        case SUB_MODE_LOOP_CONFIG:
+            secondaryLineText = " Loop Cnfg ";
+            break;
+        case SUB_MODE_LOOP_CONTROL:
+        case SUB_MODE_LOOPER:
+            secondaryLineText = "  Looper   ";
+            break;
         }
     }
 
