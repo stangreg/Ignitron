@@ -13,21 +13,21 @@ bool SparkBTControl::isAppConnectedSerial_ = false;
 
 SparkBTControl::SparkBTControl() {
     // advDevCB = new AdvertisedDeviceCallbacks();
-    advDevice = nullptr;
-    spark_dc = nullptr;
+    advDevice_ = nullptr;
+    spark_dc_ = nullptr;
 }
 
 SparkBTControl::SparkBTControl(SparkDataControl *dc) {
     // advDevCB = new AdvertisedDeviceCallbacks();
-    advDevice = nullptr;
-    spark_dc = dc;
+    advDevice_ = nullptr;
+    spark_dc_ = dc;
 }
 
 SparkBTControl::~SparkBTControl() {
     Serial.println("Deleting BLE objects");
-    if (advDevice) {
-        delete advDevice;
-        advDevice = nullptr;
+    if (advDevice_) {
+        delete advDevice_;
+        advDevice_ = nullptr;
     }
     if (btSerial) {
         delete btSerial;
@@ -38,35 +38,35 @@ SparkBTControl::~SparkBTControl() {
 // Initializing BLE connection with NimBLE
 void SparkBTControl::initBLE(notify_callback notifyCallback) {
     // NimBLEDevice::init("");
-    advDevice = new NimBLEAdvertisedDevice();
-    notifyCB = notifyCallback;
+    advDevice_ = new NimBLEAdvertisedDevice();
+    notifyCB_ = notifyCallback;
 
     /** Optional: set the transmit power, default is 3db */
     NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
 
     /** create new scan */
-    NimBLEScan *pScan = NimBLEDevice::getScan();
+    NimBLEScan *scan = NimBLEDevice::getScan();
 
     /** create a callback that gets called when advertisers are found */
-    pScan->setAdvertisedDeviceCallbacks(this, false);
+    scan->setAdvertisedDeviceCallbacks(this, false);
 
     /** Set scan interval (how often) and window (how long) in milliseconds */
-    pScan->setInterval(45);
-    pScan->setWindow(15);
+    scan->setInterval(45);
+    scan->setWindow(15);
 
     /** Active scan will gather scan response data from advertisers
      but will use more energy from both devices
      */
-    pScan->setActiveScan(true);
+    scan->setActiveScan(true);
     /** Start scanning for advertisers for the scan time specified (in seconds) 0 = forever
      Optional callback for when scanning stops.
      */
     Serial.println("Starting scan");
-    pScan->start(scanTime, scanEndedCB);
+    scan->start(kScanTime, scanEndedCB);
 }
 
 void SparkBTControl::setAdvertisedDevice(NimBLEAdvertisedDevice *device) {
-    advDevice = device;
+    advDevice_ = device;
 }
 
 void SparkBTControl::scanEndedCB(NimBLEScanResults results) {
@@ -74,8 +74,8 @@ void SparkBTControl::scanEndedCB(NimBLEScanResults results) {
 }
 
 void SparkBTControl::startScan() {
-    spark_dc->resetStatus();
-    NimBLEDevice::getScan()->start(scanTime, scanEndedCB);
+    spark_dc_->resetStatus();
+    NimBLEDevice::getScan()->start(kScanTime, scanEndedCB);
     Serial.println("Scan initiated");
 }
 
@@ -86,9 +86,9 @@ bool SparkBTControl::connectToServer() {
          second argument in connect() to prevent refreshing the service database.
          This saves considerable time and power.
          */
-        pClient = NimBLEDevice::getClientByPeerAddress(advDevice->getAddress());
-        if (pClient) {
-            if (!pClient->connect(advDevice, false)) {
+        client_ = NimBLEDevice::getClientByPeerAddress(advDevice_->getAddress());
+        if (client_) {
+            if (!client_->connect(advDevice_, false)) {
                 Serial.println("Reconnect failed");
                 isAmpConnected_ = false;
                 return false;
@@ -99,12 +99,12 @@ bool SparkBTControl::connectToServer() {
          we will check for a client that is disconnected that we can use.
          */
         else {
-            pClient = NimBLEDevice::getDisconnectedClient();
+            client_ = NimBLEDevice::getDisconnectedClient();
         }
     }
 
     /** No client to reuse? Create a new one. */
-    if (!pClient) {
+    if (!client_) {
         if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
             Serial.println(
                 "Max clients reached - no more connections available");
@@ -112,30 +112,30 @@ bool SparkBTControl::connectToServer() {
             return false;
         }
 
-        pClient = NimBLEDevice::createClient();
+        client_ = NimBLEDevice::createClient();
 
-        pClient->setClientCallbacks(this, false);
+        client_->setClientCallbacks(this, false);
         /** Set initial connection parameters: These settings are 15ms interval, 0 latency, 120ms timout.
          These settings are safe for 3 clients to connect reliably, can go faster if you have less
          connections. Timeout should be a multiple of the interval, minimum is 100ms.
          Min interval: 12 * 1.25ms = 15, Max interval: 12 * 1.25ms = 15, 0 latency, 51 * 10ms = 510ms timeout
          */
-        // pClient->setConnectionParams(12, 12, 0, 51);
-        pClient->setConnectionParams(18, 30, 0, 600);
+        // client_->setConnectionParams(12, 12, 0, 51);
+        client_->setConnectionParams(18, 30, 0, 600);
         /** Set how long we are willing to wait for the connection to complete (seconds), default is 30. */
-        pClient->setConnectTimeout(30);
-        pClient->getMTU();
-        if (!pClient->connect(advDevice)) {
+        client_->setConnectTimeout(30);
+        client_->getMTU();
+        if (!client_->connect(advDevice_)) {
             /** Created a client but failed to connect, don't need to keep it as it has no data */
-            NimBLEDevice::deleteClient(pClient);
+            NimBLEDevice::deleteClient(client_);
             Serial.println("Failed to connect, deleted client");
             isAmpConnected_ = false;
             return false;
         }
     }
 
-    if (!pClient->isConnected()) {
-        if (!pClient->connect(advDevice)) {
+    if (!client_->isConnected()) {
+        if (!client_->connect(advDevice_)) {
             Serial.println("Failed to connect");
             isAmpConnected_ = false;
             return false;
@@ -143,7 +143,7 @@ bool SparkBTControl::connectToServer() {
     }
 
     Serial.print("Connected to: ");
-    Serial.println(pClient->getPeerAddress().toString().c_str());
+    Serial.println(client_->getPeerAddress().toString().c_str());
     isAmpConnected_ = true;
     return true;
 }
@@ -151,27 +151,27 @@ bool SparkBTControl::connectToServer() {
 bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
 
     // Subscribe to notifications from Spark
-    NimBLERemoteService *pSvc = nullptr;
-    NimBLERemoteCharacteristic *pChr = nullptr;
+    NimBLERemoteService *service = nullptr;
+    NimBLERemoteCharacteristic *characteristic = nullptr;
 
-    if (pClient) {
-        pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
-        if (pSvc) { // make sure it's not null
-            pChr = pSvc->getCharacteristic(SPARK_BLE_NOTIF_CHAR_UUID);
+    if (client_) {
+        service = client_->getService(SPARK_BLE_SERVICE_UUID);
+        if (service) { // make sure it's not null
+            characteristic = service->getCharacteristic(SPARK_BLE_NOTIF_CHAR_UUID);
 
-            if (pChr) { // make sure it's not null
-                if (pChr->canNotify()) {
+            if (characteristic) { // make sure it's not null
+                if (characteristic->canNotify()) {
                     Serial.printf(
                         "Subscribing to service notifications of %s\n",
                         SPARK_BLE_NOTIF_CHAR_UUID);
                     Serial.println("Notifications turned on");
                     // Descriptor 2902 needs to be activated in order to receive notifications
-                    pChr->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue(notificationOn, 2, true);
+                    characteristic->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue(kNotificationOn, 2, true);
                     // Subscribing to Spark characteristic
-                    if (!pChr->subscribe(true, notifyCB)) {
+                    if (!characteristic->subscribe(true, notifyCB_)) {
                         Serial.println("Subscribe failed, disconnecting");
                         // Disconnect if subscribe failed
-                        pClient->disconnect();
+                        client_->disconnect();
                         return false;
                     }
                 }
@@ -189,7 +189,7 @@ bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
             Serial.printf("Service %s not found.\n", SPARK_BLE_SERVICE_UUID);
             return false;
         }
-    } // pClient
+    } // client_
     else {
         Serial.print("Client not found! Need reconnection");
         isAmpConnected_ = false;
@@ -198,21 +198,21 @@ bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
 }
 
 // To send messages to Spark via Bluetooth LE
-bool SparkBTControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
+bool SparkBTControl::writeBLE(ByteVector &cmd, bool withDelay, bool response) {
     // DEBUG_PRINTLN("Sending message:");
     // DEBUG_PRINTVECTOR(cmd);
     // DEBUG_PRINTLN();
-    if (pClient && pClient->isConnected()) {
+    if (client_ && client_->isConnected()) {
         DEBUG_PRINTLN("Connection ok");
-        NimBLERemoteService *pSvc = nullptr;
-        NimBLERemoteCharacteristic *pChr = nullptr;
+        NimBLERemoteService *service = nullptr;
+        NimBLERemoteCharacteristic *characteristic = nullptr;
 
-        pSvc = pClient->getService(SPARK_BLE_SERVICE_UUID);
-        if (pSvc) {
-            pChr = pSvc->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
+        service = client_->getService(SPARK_BLE_SERVICE_UUID);
+        if (service) {
+            characteristic = service->getCharacteristic(SPARK_BLE_WRITE_CHAR_UUID);
 
-            if (pChr) {
-                // if (pChr->canWrite()) {
+            if (characteristic) {
+                // if (characteristic->canWrite()) {
                 // for (auto block : cmd) {
 
                 // This it to split messages into sizes of max. max_send_size.
@@ -225,11 +225,11 @@ bool SparkBTControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
                 ByteVector send_cmd;
                 while (cmd.size() > 0) {
                     int cmd_size = cmd.size();
-                    int cut_point = min(cmd_size, BLE_MAX_MSG_SIZE);
+                    int cut_point = min(cmd_size, bleMaxMsgSize_);
                     if (cut_point > 0) {
                         send_cmd.assign(cmd.begin(), cmd.begin() + cut_point);
                         cmd.assign(cmd.begin() + cut_point, cmd.end());
-                        return_value = pChr->writeValue(send_cmd.data(), send_cmd.size(), response);
+                        return_value = characteristic->writeValue(send_cmd.data(), send_cmd.size(), response);
                     }
                 }
                 if (return_value) {
@@ -237,32 +237,32 @@ bool SparkBTControl::writeBLE(ByteVector &cmd, bool with_delay, bool response) {
                     // Seems to be more stable with a short delay
                     // also seems to be not working for Spark Mini without a delay.s
                     // TEST SPark GO
-                    if (with_delay) {
+                    if (withDelay) {
                         delay(80);
                     }
                 } else {
                     Serial.println("There was an error with writing!");
                     // Disconnect if write failed
-                    pClient->disconnect();
+                    client_->disconnect();
                     isAmpConnected_ = false;
                     return false;
                 }
                 //} // For each block
                 //}  // if can write
-            } // if pChr
+            } // if characteristic
             else {
                 Serial.printf("Characteristic %s not found. Disconnecting client.\n",
                               SPARK_BLE_WRITE_CHAR_UUID);
                 // Disconnect if write failed
-                pClient->disconnect();
+                client_->disconnect();
                 isAmpConnected_ = false;
                 return false;
             }
-        } // if pSvc
+        } // if service
         else {
             Serial.printf("%s service not found. Disconnecting client.\n", SPARK_BLE_SERVICE_UUID);
             // Disconnect if write failed
-            pClient->disconnect();
+            client_->disconnect();
             isAmpConnected_ = false;
             return false;
         }
@@ -294,20 +294,20 @@ void SparkBTControl::startServer() {
     Serial.println("Starting NimBLE Server");
 
     /** sets device name */
-    NimBLEDevice::init("Spark 40 BLE");
+    NimBLEDevice::init(btNameBle);
 
     /** Optional: set the transmit power, default is 3db */
     NimBLEDevice::setPower(ESP_PWR_LVL_P9); /** +9db */
     NimBLEDevice::setSecurityAuth(
         /*BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM |*/ BLE_SM_PAIR_AUTHREQ_SC);
 
-    pServer = NimBLEDevice::createServer();
-    pServer->setCallbacks(this);
+    server_ = NimBLEDevice::createServer();
+    server_->setCallbacks(this);
 
-    pSparkService = pServer->createService(
+    sparkService_ = server_->createService(
         SPARK_BLE_SERVICE_UUID);
-    pSparkWriteCharacteristic =
-        pSparkService->createCharacteristic(
+    sparkWriteCharacteristic_ =
+        sparkService_->createCharacteristic(
             SPARK_BLE_WRITE_CHAR_UUID,
             NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_NR);
 
@@ -327,11 +327,11 @@ void SparkBTControl::startServer() {
                                    0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
                                    0x77, 0x77, 0x77};
 
-    pSparkWriteCharacteristic->setValue(initialWriteValue);
-    pSparkWriteCharacteristic->setCallbacks(this);
+    sparkWriteCharacteristic_->setValue(initialWriteValue);
+    sparkWriteCharacteristic_->setCallbacks(this);
 
-    pSparkNotificationCharacteristic =
-        pSparkService->createCharacteristic(
+    sparkNotificationCharacteristic_ =
+        sparkService_->createCharacteristic(
             SPARK_BLE_NOTIF_CHAR_UUID,
             NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
     uint8_t initialNotificationValue[] = {0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
@@ -349,21 +349,21 @@ void SparkBTControl::startServer() {
                                           0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                           0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                           0x88, 0x88, 0x88, 0x88};
-    pSparkNotificationCharacteristic->setValue(initialNotificationValue);
-    pSparkNotificationCharacteristic->setCallbacks(this);
+    sparkNotificationCharacteristic_->setValue(initialNotificationValue);
+    sparkNotificationCharacteristic_->setCallbacks(this);
 
     /** Start the services when finished creating all Characteristics and Descriptors */
-    pSparkService->start();
-    pAdvertising = NimBLEDevice::getAdvertising();
+    sparkService_->start();
+    advertising_ = NimBLEDevice::getAdvertising();
 
-    pAdvertising->addServiceUUID(pSparkService->getUUID());
+    advertising_->addServiceUUID(sparkService_->getUUID());
 
     /** Add the services to the advertisment data **/
     /** If your device is battery powered you may consider setting scan response
      *  to false as it will extend battery life at the expense of less data sent.
      */
-    pAdvertising->setScanResponse(true);
-    pAdvertising->start();
+    advertising_->setScanResponse(true);
+    advertising_->start();
 
     Serial.println("Advertising Started");
 }
@@ -383,7 +383,7 @@ void SparkBTControl::onWrite(NimBLECharacteristic *pCharacteristic) {
         }
     }
     // Add message to Queue for processing
-    spark_dc->queueMessage(byteVector);
+    spark_dc_->queueMessage(byteVector);
 }
 
 void SparkBTControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
@@ -405,18 +405,18 @@ void SparkBTControl::onSubscribe(NimBLECharacteristic *pCharacteristic,
 };
 
 void SparkBTControl::notifyClients(const vector<CmdData> &msg) {
-    if (pServer) {
-        NimBLEService *pSvc = pServer->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
-        if (pSvc) {
-            NimBLECharacteristic *pChr = pSvc->getCharacteristic(
+    if (server_) {
+        NimBLEService *service = server_->getServiceByUUID(SPARK_BLE_SERVICE_UUID);
+        if (service) {
+            NimBLECharacteristic *characteristic = service->getCharacteristic(
                 SPARK_BLE_NOTIF_CHAR_UUID);
-            if (pChr) {
+            if (characteristic) {
                 for (auto block : msg) {
                     /*DEBUG_PRINTLN("Sending data:");
                     DEBUG_PRINTVECTOR(block);
                     DEBUG_PRINTLN();*/
-                    pChr->setValue(&block.data.data()[0], block.data.size());
-                    pChr->notify();
+                    characteristic->setValue(&block.data.data()[0], block.data.size());
+                    characteristic->notify();
                 }
                 DEBUG_PRINTLN("Clients notified.");
             }
@@ -452,7 +452,7 @@ void SparkBTControl::onConnect(NimBLEServer *pServer_,
 // APP mode
 void SparkBTControl::onConnect(NimBLEClient *pClient_) {
     NimBLEClientCallbacks::onConnect(pClient_);
-    spark_dc->getAmpName();
+    spark_dc_->getAmpName();
 }
 
 // AMP mode when App is disconnected
@@ -498,9 +498,9 @@ void SparkBTControl::startBTSerial() {
     btSerial = new BluetoothSerial();
     btSerial->register_callback(serialCallback);
     // btStart();
-    if (btSerial->begin(bt_name_serial.c_str(), false)) {
+    if (btSerial->begin(btNameSerial.c_str(), false)) {
         Serial.printf("Started BT Serial with name %s \n",
-                      bt_name_serial.c_str());
+                      btNameSerial.c_str());
         btSerial->flush();
     } else {
         Serial.println("BT Serial start failed!");
@@ -517,8 +517,8 @@ void SparkBTControl::stopBTSerial() {
 
 void SparkBTControl::stopBLEServer() {
 
-    if (pServer) {
+    if (server_) {
         Serial.println("Switching off BLE server");
-        pServer->stopAdvertising();
+        server_->stopAdvertising();
     }
 }

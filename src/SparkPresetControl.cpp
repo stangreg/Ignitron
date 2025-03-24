@@ -13,9 +13,10 @@ SparkPresetControl &SparkPresetControl::getInstance() {
 
 void SparkPresetControl::init() {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
     presetBuilder.init();
     if (operationMode == SPARK_MODE_APP) {
+        Serial.print("Initializing APP mode");
         xTaskCreatePinnedToCore(
             checkForMissingPresets, // Function to implement the task
             "HWpresets",            // Name of the task
@@ -27,6 +28,7 @@ void SparkPresetControl::init() {
         );
     }
     if (operationMode == SPARK_MODE_AMP) {
+        Serial.print("Initializing AMP mode");
         pendingBank_ = 1;
         activeBank_ = 1;
         activePresetNum_ = 1;
@@ -137,7 +139,7 @@ void SparkPresetControl::setBank(int i) {
 
 void SparkPresetControl::increaseBank() {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
     if (!sparkDC->processAction()) {
         return;
     }
@@ -162,7 +164,7 @@ void SparkPresetControl::increaseBank() {
 
 void SparkPresetControl::decreaseBank() {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
 
     if (!sparkDC->processAction()) {
         return;
@@ -190,7 +192,7 @@ void SparkPresetControl::updatePendingBankStatus() {
     // switch presets when a bank is changed, it does so only when
     // the preset button is pushed afterwards
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
 
     // if (pendingBank_ != 0) {
     updatePendingPreset(pendingBank_);
@@ -244,7 +246,7 @@ void SparkPresetControl::setActiveHWPreset() {
 
 bool SparkPresetControl::switchPreset(int pre, bool isInitial) {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
     DEBUG_PRINTLN("Entering switchPreset()");
     bool retValue = false;
 
@@ -344,12 +346,12 @@ void SparkPresetControl::toggleFX(Pedal receivedEffect) {
     updatePendingWithActive();
 }
 
-void SparkPresetControl::switchFXOnOff(const string fx_name, bool onOff) {
+void SparkPresetControl::switchFXOnOff(const string fxName, bool onOff) {
     Serial.printf("Switching %s effect %s...", onOff ? "On" : "Off",
-                  fx_name.c_str());
+                  fxName.c_str());
     for (Pedal &pdl : pendingPreset_.pedals) {
         //    for (int i = 0; i < pendingPreset.pedals.size(); i++) {
-        if (pdl.name == fx_name) {
+        if (pdl.name == fxName) {
             pdl.isOn = onOff;
             break;
         }
@@ -408,7 +410,7 @@ void SparkPresetControl::updateFromSparkResponseACK() {
 
 bool SparkPresetControl::increasePresetLooper() {
 
-    int subMode = sparkDC->subMode();
+    SubMode subMode = sparkDC->subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
@@ -436,7 +438,7 @@ bool SparkPresetControl::increasePresetLooper() {
 
 bool SparkPresetControl::decreasePresetLooper() {
 
-    int subMode = sparkDC->subMode();
+    SubMode subMode = sparkDC->subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
@@ -483,7 +485,7 @@ void SparkPresetControl::processStorePresetRequest(int presetNum) {
     responseMsg_ = "";
     if (presetEditMode_ == PRESET_EDIT_STORE) {
         if (presetNumToEdit_ == presetNum && presetBankToEdit_ == pendingBank_) {
-            int responseCode;
+            PresetStoreResult responseCode;
             responseCode = presetBuilder.storePreset(appReceivedPreset_,
                                                      pendingBank_, presetNum);
             if (responseCode == STORE_PRESET_OK) {
@@ -532,7 +534,7 @@ void SparkPresetControl::resetPresetEditResponse() {
 void SparkPresetControl::processDeletePresetRequest() {
     responseMsg_ = "";
     if (presetEditMode_ == PRESET_EDIT_DELETE && activeBank_ > 0) {
-        int responseCode;
+        PresetDeleteResult responseCode;
         responseCode = presetBuilder.deletePreset(activeBank_,
                                                   activePresetNum_);
         if (responseCode == DELETE_PRESET_OK || responseCode == DELETE_PRESET_FILE_NOT_EXIST) {
@@ -549,7 +551,7 @@ void SparkPresetControl::processDeletePresetRequest() {
                 responseMsg_ = "FILE NOT EXITS";
             }
         }
-        if (responseCode == DELETE_PRESET_ERROR_OPEN || responseCode == STORE_PRESET_UNKNOWN_ERROR) {
+        if (responseCode == DELETE_PRESET_ERROR_OPEN || responseCode == DELETE_PRESET_UNKNOWN_ERROR) {
             responseMsg_ = "DELETE ERROR";
         }
         resetPresetEdit(true, true);
@@ -566,14 +568,14 @@ void SparkPresetControl::setPresetDeletionFlag() {
 
 bool SparkPresetControl::handleDeletePreset() {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
 
     if (operationMode != SPARK_MODE_AMP) {
         Serial.println("Delete Preset: Not in AMP mode, doing nothing.");
         return false;
     }
 
-    if (presetEditMode() == PRESET_EDIT_STORE) {
+    if (presetEditMode_ == PRESET_EDIT_STORE) {
         resetPresetEdit(true, true);
     } else {
         processPresetEdit();
@@ -583,7 +585,7 @@ bool SparkPresetControl::handleDeletePreset() {
 
 bool SparkPresetControl::processPresetSelect(int presetNum) {
 
-    int operationMode = sparkDC->operationMode();
+    OperationMode operationMode = sparkDC->operationMode();
     if (!sparkDC->processAction()) {
         Serial.println("Action not meeting requirements, ignoring.");
         return false;

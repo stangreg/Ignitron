@@ -39,7 +39,7 @@ public:
     SparkDataControl();
     virtual ~SparkDataControl();
 
-    int init(int op_mode);
+    OperationMode init(OperationMode opMode);
     void resetStatus();
     void setDisplayControl(SparkDisplayControl *display);
     bool checkBLEConnection();
@@ -74,15 +74,15 @@ public:
     bool changePreset(Preset preset);
 
     // Switch effect on/off
-    static bool switchEffectOnOff(const string &fx_name, bool enable);
-    static bool toggleEffect(int fx_identifier);
+    static bool switchEffectOnOff(const string &fxName, bool enable);
+    static bool toggleEffect(int fxIdentifier);
 
     bool toggleSubMode();
     bool toggleLooperAppMode();
 
     uint8_t lastKeyboardButtonPressed() const { return lastKeyboardButtonPressed_; }
     string lastKeyboardButtonPressedString() const { return lastKeyboardButtonPressedString_; }
-    KeyboardMapping currentKeyboard() const { return keyboardControl->getCurrentKeyboard(); }
+    KeyboardMapping &currentKeyboard() const { return keyboardControl->getCurrentKeyboard(); }
     KeyboardMapping nextKeyboard() {
         keyboardChanged_ = true;
         return keyboardControl->getNextKeyboard();
@@ -97,31 +97,34 @@ public:
 
     const bool ampNameReceived() const { return ampNameReceived_; }
 
-    const int &operationMode() const { return operationMode_; }
-    int &operationMode() { return operationMode_; }
+    const OperationMode &operationMode() const { return operationMode_; }
+    OperationMode &operationMode() { return operationMode_; }
 
-    SparkLooperControl *looperControl() { return looperControl_; }
+    SparkLooperControl &looperControl() { return looperControl_; }
 
     bool &isInitBoot() { return isInitBoot_; }
 
-    const int currentBTMode() const { return currentBTMode_; }
+    const BTMode currentBTMode() const { return currentBTMode_; }
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-    const int batteryLevel() const { return batteryLevel_; }
+    const BatteryLevel batteryLevel() const { return batteryLevel_; }
 #endif
 
     // Set/get button mode
-    const int &subMode() const { return subMode_; }
-    int &subMode() { return subMode_; }
+    const SubMode &subMode() const { return subMode_; }
+    SubMode &subMode() { return subMode_; }
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
+    int getMaxChunkSize(int direction);
+    int getMaxBlockSize(int direction);
+
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
-    static void switchSubMode(int subMode);
+    static void switchSubMode(SubMode subMode);
     void toggleBTMode();
 
-    bool sparkLooperCommand(byte command);
+    bool sparkLooperCommand(LooperCommand command);
     bool sparkLooperStopAll();
     bool sparkLooperStopPlaying();
     bool sparkLooperPlay();
@@ -148,7 +151,7 @@ public:
     static bool switchTuner(bool on);
 
     static bool processAction();
-    const SparkStreamReader &getSSR() const { return spark_ssr; }
+    const SparkStreamReader &getSSR() const { return sparkSsr; }
     // Functions for Looper/Keyboard mode
     void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
     void resetLastKeyboardButtonPressed();
@@ -161,15 +164,15 @@ public:
 #endif
 
 private:
-    static int operationMode_;
+    static OperationMode operationMode_;
 
     static SparkBTControl *bleControl;
-    static SparkStreamReader spark_ssr;
+    static SparkStreamReader sparkSsr;
     static SparkStatus &statusObject;
-    static SparkMessage spark_msg;
-    static SparkDisplayControl *spark_display;
+    static SparkMessage sparkMsg;
+    static SparkDisplayControl *sparkDisplay;
     static SparkKeyboardControl *keyboardControl;
-    static SparkLooperControl *looperControl_;
+    static SparkLooperControl looperControl_;
 
     static SparkBLEKeyboard bleKeyboard;
 
@@ -178,7 +181,7 @@ private:
     string sparkModeFileName = "/config/SparkMode.config";
 
     // Button data
-    static int subMode_;
+    static SubMode subMode_;
     uint8_t lastKeyboardButtonPressed_ = 0;
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;
@@ -196,29 +199,29 @@ private:
     // static LooperSetting *looperSetting_;
 
     // Messages to send to Spark
-    static vector<CmdData> current_msg;
-    static vector<CmdData> ack_msg;
+    static vector<CmdData> currentMsg;
+    static vector<CmdData> ackMsg;
     static bool customPresetNumberChangePending;
 
     // Spark AMP mode
 
-    static int currentBTMode_;
-    static int sparkModeAmp;
-    static int sparkModeApp;
+    static BTMode currentBTMode_;
+    static OperationMode sparkModeAmp;
+    static OperationMode sparkModeApp;
     ByteVector currentBTMsg;
-    static int sparkAmpType;
+    static AmpType sparkAmpType;
     static string sparkAmpName;
-    static bool with_delay;
+    static bool withDelay;
     static ByteVector checksums;
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Battery level
-    static int batteryLevel_;
+    static BatteryLevel batteryLevel_;
 #endif
 
     // keep track which HW presets have been read so far
     static bool isInitBoot_;
-    static byte special_msg_num;
+    static byte specialMsgNum;
 
     static byte nextMessageNum;
     static queue<ByteVector> msgQueue;

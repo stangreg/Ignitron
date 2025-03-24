@@ -1,40 +1,40 @@
 #ifndef SPARKCURRENTSTATUS_H
 #define SPARKCURRENTSTATUS_H
 
-#pragma once
-
 #include "SparkTypes.h"
 
-#define MSG_TYPE_PRESET 1
-#define MSG_TYPE_HWPRESET 2
-#define MSG_TYPE_FX_ONOFF 3
-#define MSG_TYPE_FX_CHANGE 4
-#define MSG_TYPE_FX_PARAM 5
-#define MSG_TYPE_AMP_NAME 6
-#define MSG_TYPE_LOOPER_SETTING 7
-#define MSG_TYPE_TAP_TEMPO 8
-#define MSG_TYPE_MEASURE 9
-#define MSG_TYPE_LOOPER_COMMAND 10
-#define MSG_TYPE_LOOPER_STATUS 11
-#define MSG_TYPE_TUNER_OUTPUT 12
-#define MSG_TYPE_TUNER_ON 13
-#define MSG_TYPE_TUNER_OFF 14
-#define MSG_TYPE_HWCHECKSUM 15
-#define MSG_TYPE_HWCHECKSUM_EXT 16
-#define MSG_TYPE_AMPSTATUS 17
-
-#define MSG_REQ_SERIAL 21
-#define MSG_REQ_FW_VER 22
-#define MSG_REQ_PRESET_CHK 23
-#define MSG_REQ_CURR_PRESET_NUM 24
-#define MSG_REQ_CURR_PRESET 25
-#define MSG_REQ_71 26
-#define MSG_REQ_72 27
-#define MSG_REQ_PRESET1 28
-#define MSG_REQ_PRESET2 29
-#define MSG_REQ_PRESET3 30
-#define MSG_REQ_PRESET4 31
-#define MSG_REQ_INVALID 99
+enum MessageType {
+    MSG_TYPE_NONE,
+    MSG_TYPE_PRESET,
+    MSG_TYPE_HWPRESET,
+    MSG_TYPE_FX_ONOFF,
+    MSG_TYPE_FX_CHANGE,
+    MSG_TYPE_FX_PARAM,
+    MSG_TYPE_AMP_NAME,
+    MSG_TYPE_LOOPER_SETTING,
+    MSG_TYPE_TAP_TEMPO,
+    MSG_TYPE_MEASURE,
+    MSG_TYPE_LOOPER_COMMAND,
+    MSG_TYPE_LOOPER_STATUS,
+    MSG_TYPE_TUNER_OUTPUT,
+    MSG_TYPE_TUNER_ON,
+    MSG_TYPE_TUNER_OFF,
+    MSG_TYPE_HWCHECKSUM,
+    MSG_TYPE_HWCHECKSUM_EXT,
+    MSG_TYPE_AMPSTATUS,
+    MSG_REQ_SERIAL,
+    MSG_REQ_FW_VER,
+    MSG_REQ_PRESET_CHK,
+    MSG_REQ_CURR_PRESET_NUM,
+    MSG_REQ_CURR_PRESET,
+    MSG_REQ_AMP_STATUS,
+    MSG_REQ_72,
+    MSG_REQ_PRESET1,
+    MSG_REQ_PRESET2,
+    MSG_REQ_PRESET3,
+    MSG_REQ_PRESET4,
+    MSG_REQ_INVALID,
+};
 
 class SparkStatus {
 public:
@@ -75,23 +75,23 @@ public:
     const int numberOfLoops() const { return numberOfLoops_; }
     int &numberOfLoops() { return numberOfLoops_; }
 
-    const int lastMessageType() const { return last_message_type_; }
-    int &lastMessageType() { return last_message_type_; }
+    const MessageType lastMessageType() const { return lastMessageType_; }
+    MessageType &lastMessageType() { return lastMessageType_; }
 
-    const byte lastMessageNum() const { return last_message_num_; }
-    byte &lastMessageNum() { return last_message_num_; }
+    const byte lastMessageNum() const { return lastMessageNum_; }
+    byte &lastMessageNum() { return lastMessageNum_; }
 
     const string ampName() const { return ampName_; }
     string &ampName() { return ampName_; }
 
-    const int ampBatteryLevel() const { return ampBatteryLevel_; }
-    int &ampBatteryLevel() { return ampBatteryLevel_; }
+    const BatteryLevel ampBatteryLevel() const { return ampBatteryLevel_; }
+    BatteryLevel &ampBatteryLevel() { return ampBatteryLevel_; }
 
     const bool isAmpBatteryPowered() const { return isAmpBatteryPowered_; }
     bool &isAmpBatteryPowered() { return isAmpBatteryPowered_; }
 
     const int ampBatteryChargingStatus() const { return ampBatteryChargingStatus_; }
-    int &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
+    BatteryChargingStatus &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
 
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
@@ -104,13 +104,13 @@ public:
 
     byte &note() { return note_; }
 
-    const float note_offset() const { return note_offset_; }
-    float &note_offset() { return note_offset_; }
+    const float noteOffset() const { return noteOffset_; }
+    float &noteOffset() { return noteOffset_; }
 
     const vector<byte> hwChecksums() const { return hwChecksums_; }
     vector<byte> &hwChecksums() { return hwChecksums_; }
 
-    const int note_offset_cents() const { return (note_offset_ * 100) - 50; }
+    const int noteOffsetCents() const { return (noteOffset_ * 100) - 50; }
 
     const vector<AckData> acknowledgments() const { return acknowledgments_; }
     vector<AckData> &acknowledgments() { return acknowledgments_; }
@@ -136,7 +136,7 @@ private:
     float measure_;
 
     byte note_;
-    float note_offset_;
+    float noteOffset_;
     string notes[12] = {"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "};
 
     // In case a preset was received from Spark, it is saved here. Can then be read by main program
@@ -150,13 +150,13 @@ private:
     boolean isEffectUpdated_ = false;
 
     vector<AckData> acknowledgments_;
-    int last_message_type_ = 0;
-    byte last_message_num_ = 0x00;
-    byte last_requested_preset = 0x00;
+    MessageType lastMessageType_ = MSG_TYPE_NONE;
+    byte lastMessageNum_ = 0x00;
+    byte lastRequestedPreset = 0x00;
 
-    int ampBatteryLevel_ = 0;
+    BatteryLevel ampBatteryLevel_ = BATTERY_LEVEL_0;
     bool isAmpBatteryPowered_ = false;
-    int ampBatteryChargingStatus_ = 0;
+    BatteryChargingStatus ampBatteryChargingStatus_ = BATTERY_CHARGING_STATUS_DISCHARGING;
 
     vector<byte> hwChecksums_ = {};
 };

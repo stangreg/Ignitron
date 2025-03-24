@@ -14,28 +14,16 @@
 // Definition of OLED driver in Config_Definitions.h
 #if defined(OLED_DRIVER_SSD1306)
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
-#define OLED_WHITE SSD1306_WHITE
-#define OLED_BLACK SSD1306_BLACK
 #elif defined(OLED_DRIVER_SH1106)
 #include <Adafruit_SH110X.h> //https://github.com/adafruit/Adafruit_SH110x
-#define OLED_WHITE SH110X_WHITE
-#define OLED_BLACK SH110X_BLACK
+#define WHITE SH110X_WHITE
+#define BLACK SH110X_BLACK
 #endif
 
 #include "SparkDataControl.h"
 #include "SparkLooperControl.h"
 #include "SparkPresetControl.h"
 #include "SparkTypes.h"
-
-// OLED Screen config
-#define SCREEN_WIDTH 128         // Display width
-#define SCREEN_HEIGHT 64         // Display height
-#define OLED_RESET -1            // Reset pin # (or -1 if sharing Arduino reset pin)
-#define DISPLAY_MIN_X_FACTOR -12 // for text size 2, scales linearly with text size
-
-// Splash logo measurements
-#define imageWidth 128
-#define imageHeight 47
 
 using namespace std;
 
@@ -50,36 +38,26 @@ public:
     void init(int mode);
     void update(bool isInitBoot = false);
     void setDataControl(SparkDataControl *dc) {
-        spark_dc = dc;
+        sparkDC_ = dc;
     }
 
 private:
+    // OLED Screen config
+
+    static const int SCREEN_WIDTH;         // Display width
+    static const int SCREEN_HEIGHT;        // Display height
+    static const int OLED_RESET;           // Reset pin # (or -1 if sharing Arduino reset pin)
+    static const int DISPLAY_MIN_X_FACTOR; // for text size 2, scales linearly with text size
+
+    const int kSplashImageWidth = 128;
+    const int kSplashImageHeight = 47;
+
 #if defined(OLED_DRIVER_SSD1306)
-    static Adafruit_SSD1306 display;
+    static Adafruit_SSD1306 display_;
 #elif defined(OLED_DRIVER_SH1106)
-    static Adafruit_SH1106G display;
+    static Adafruit_SH1106G display_;
 #endif
-    SparkDataControl *spark_dc;
-    int activeBank = 1;
-    int pendingBank = 1;
-    int activeHWBank = 0;
-    int pendingHWBank = 0;
-    int numberOfHWBanks = 1;
-    Preset activePreset;
-    Preset pendingPreset;
-    Preset presetFromApp;
-    int presetEditMode;
-    int subMode = 1;
-    int activePresetNum = 1;
-    int selectedPresetNum = 1;
-    int opMode = 1;
-    int currentBTMode = 0;
-    bool isBTConnected = false;
-#ifdef ENABLE_BATTERY_STATUS_INDICATOR
-    int batteryLevel = 0;
-#endif
-    KeyboardMapping currentKeyboard;
-    const SparkLooperControl *sparkLooperControl;
+    SparkDataControl *sparkDC_;
 
     string primaryLineText;
     Preset primaryLinePreset;
@@ -105,39 +83,39 @@ private:
     bool showMsgFlag = false;
 
     // DISPLAY variables x1 for the first line, x2 for the second line
-    int display_x1 = 0;
-    int display_minX1 = DISPLAY_MIN_X_FACTOR * 10;
-    int display_scroll_num1 = 1; // scroll speed, make bigger to speed up the scroll
+    int displayX1_ = 0;
+    int displayMinX1_ = DISPLAY_MIN_X_FACTOR * 10;
+    int displayScrollNum1_ = 1; // scroll speed, make bigger to speed up the scroll
 
-    int display_x2 = 0;
-    int display_minX2 = DISPLAY_MIN_X_FACTOR * 10;
-    int display_scroll_num2 = 1; // scroll speed, make bigger to speed up the scroll
+    int displayX2_ = 0;
+    int displayMinX2_ = DISPLAY_MIN_X_FACTOR * 10;
+    int displayScrollNum2_ = 1; // scroll speed, make bigger to speed up the scroll
 
-    int text_scroll_limit = 11;
+    const int textScrollLimit_ = 11;
 
-    int text_row_1_timestamp = 0;
-    int text_row_2_timestamp = 0;
-    int text_scroll_delay = 2500;
-    string text_filler = "   ";
-    string previous_text1 = "";
-    string previous_text2 = "";
+    int textRow1Timestamp_ = 0;
+    int textRow2Timestamp_ = 0;
+    const int textScrollDelay_ = 2500;
+    const string textFiller_ = "   ";
+    string previousText1_ = "";
+    string previousText2_ = "";
+
+    bool invertedDisplay = false;
 
     string currentNote = "  ";
     int noteOffsetCents = 0;
 
-    SparkDataControl *dataControl() { return spark_dc; }
     void showInitialMessage();
     void showConnection();
+
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     void showBatterySymbol();
-    int ampBatteryLevel = 0;
     int changeBatterySymbolInteral = 500;
     unsigned long lastBatteryRotationTimestamp = 0;
     unsigned int currentBatterySymbolIndex = 0;
     const unsigned char *rotateBatteryIcons();
 #endif
-    void
-    showBankAndPresetNum();
+    void showBankAndPresetNum();
     void showPresetName();
     void showFX_SecondaryName();
     void showLooperTimer();
@@ -152,14 +130,18 @@ private:
     void showTunerOffset();
     void showTunerGraphic();
 
+    void checkInvertDisplay(int subMode);
+
     void drawCentreString(const char *buf, int y, int offset = 0);
     void drawRightAlignedString(const char *buf, int y, int offset = 0);
-    void drawTunerTriangleCentre(int x, int size, bool direction, int color = OLED_WHITE);
+    void drawTunerTriangleCentre(int x, int size, bool direction, int color = WHITE);
     void drawInvertBitmapColor(int16_t x, int16_t y, const uint8_t *bitmap,
                                int16_t w, int16_t h, uint16_t color);
 
     void logDisplay();
-    const unsigned char epd_bitmap_Ignitron_Logo[768] PROGMEM = {
+
+    // Icons
+    const unsigned char epdBitmapIgnitronLogo[768] PROGMEM = {
         // 'Ignitron_logo_small, 128x47px
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -232,32 +214,32 @@ private:
         0xff, 0xff, 0xff, 0xff};
 
     // 'bluetooth_logo', 15x17px
-    const unsigned char epd_bitmap_bt_logo[36] PROGMEM = {0x00, 0x00, 0x00,
-                                                          0x00, 0x01, 0x00, 0x01, 0x80, 0x01, 0xc0, 0x09, 0x20, 0x07, 0x40,
-                                                          0x03, 0xc0, 0x03, 0x80, 0x03, 0x80, 0x07, 0xc0, 0x0d, 0x20, 0x09,
-                                                          0x60, 0x01, 0xc0, 0x01, 0x80, 0x01, 0x00, 0x00, 0x00};
+    const unsigned char epdBitmapBTLogo[36] PROGMEM = {0x00, 0x00, 0x00,
+                                                       0x00, 0x01, 0x00, 0x01, 0x80, 0x01, 0xc0, 0x09, 0x20, 0x07, 0x40,
+                                                       0x03, 0xc0, 0x03, 0x80, 0x03, 0x80, 0x07, 0xc0, 0x0d, 0x20, 0x09,
+                                                       0x60, 0x01, 0xc0, 0x01, 0x80, 0x01, 0x00, 0x00, 0x00};
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Battery Symbols, 9x15px
     // 90-100%
-    const unsigned char epd_bitmap_battery_level_3[30] PROGMEM = {
+    const unsigned char epdBitmapBatteryLevel3[30] PROGMEM = {
         0x3e, 0x00, 0x3e, 0x00, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80,
         0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80};
     // 50-90%
-    const unsigned char epd_bitmap_battery_level_2[30] PROGMEM = {
+    const unsigned char epdBitmapBatteryLevel2[30] PROGMEM = {
         0x3e, 0x00, 0x22, 0x00, 0xe3, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0xff, 0x80, 0xff, 0x80,
         0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80};
     // 10-50%
-    const unsigned char epd_bitmap_battery_level_1[30] PROGMEM = {
+    const unsigned char epdBitmapBatteryLevel1[30] PROGMEM = {
         0x3e, 0x00, 0x22, 0x00, 0xe3, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
         0x80, 0x80, 0x80, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80, 0xff, 0x80};
     // 0-10%
-    const unsigned char epd_bitmap_battery_level_0[30] PROGMEM = {
+    const unsigned char epdBitmapBatteryLevel0[30] PROGMEM = {
         0x3e, 0x00, 0x22, 0x00, 0xe3, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x88, 0x80, 0x88, 0x80,
         0x88, 0x80, 0x80, 0x80, 0x88, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0xff, 0x80};
 
     // 'PowerPlugIcon, 9x15px
-    const unsigned char epd_bitmap_battery_plug[30] PROGMEM = {
+    const unsigned char epdBitmapBatteryPlug[30] PROGMEM = {
         0x66, 0x00, 0x66, 0x00, 0x66, 0x00, 0x66, 0x00, 0xff, 0x00, 0xff, 0x00, 0x7e, 0x00, 0x7e, 0x00,
         0x7e, 0x00, 0x3c, 0x00, 0x18, 0x00, 0x18, 0x00, 0x18, 0x00, 0x18, 0x00, 0x18, 0x00};
 #endif

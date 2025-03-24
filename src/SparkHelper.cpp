@@ -56,19 +56,19 @@ ByteVector SparkHelper::stripHeader(ByteVector input) {
 }
 
 string SparkHelper::intToHex(byte by) {
-    char hex_string[20];
-    int size = sizeof hex_string;
-    snprintf(hex_string, size, "%02X", by);
-    return hex_string;
+    char hexString[20];
+    int size = sizeof hexString;
+    snprintf(hexString, size, "%02X", by);
+    return hexString;
 }
 
 void SparkHelper::printDataAsHexString(const vector<ByteVector> &data) {
     for (auto elements : data) {
         for (auto by : elements) {
-            char hex_string[20];
-            int size = sizeof hex_string;
-            snprintf(hex_string, size, "%02X", by);
-            Serial.print(hex_string);
+            char hexString[20];
+            int size = sizeof hexString;
+            snprintf(hexString, size, "%02X", by);
+            Serial.print(hexString);
             Serial.print(" ");
         }
         Serial.println();
@@ -89,9 +89,9 @@ int SparkHelper::dataVectorNumOfBytes(const vector<ByteVector> &data) {
     return count;
 }
 
-int SparkHelper::getButtonNumber(int btn_gpio) {
+PresetLedButtonNum SparkHelper::getButtonNumber(ButtonGpio btnGpio) {
 
-    switch (btn_gpio) {
+    switch (btnGpio) {
     case BUTTON_PRESET1_GPIO:
         return PRESET1_NUM;
         break;
@@ -111,12 +111,12 @@ int SparkHelper::getButtonNumber(int btn_gpio) {
         return BANK_UP_NUM;
         break;
     default:
-        return -1;
+        return INVALID_PRESET_BUTTON_NUM;
     }
 }
 
-int SparkHelper::getFXIndexFromBtnGpio(int btn_gpio) {
-    switch (btn_gpio) {
+FxType SparkHelper::getFXIndexFromBtnGpio(ButtonGpio btnGpio) {
+    switch (btnGpio) {
     case BUTTON_NOISEGATE_GPIO:
         return INDEX_FX_NOISEGATE;
         break;
@@ -136,13 +136,13 @@ int SparkHelper::getFXIndexFromBtnGpio(int btn_gpio) {
         return INDEX_FX_REVERB;
         break;
     default:
-        return -1;
+        return INDEX_FX_INVALID;
     }
 }
 
-int SparkHelper::getLedGpio(int btn_number, bool fxMode) {
+LedGpio SparkHelper::getLedGpio(int btnNumber, bool fxMode) {
     if (!fxMode) { // Preset mode LEDs
-        switch (btn_number) {
+        switch (btnNumber) {
         case 1:
             return LED_PRESET1_GPIO;
             break;
@@ -162,10 +162,10 @@ int SparkHelper::getLedGpio(int btn_number, bool fxMode) {
             return LED_BANK_UP_GPIO;
             break;
         default:
-            return -1;
+            return LED_GPIO_INVALID;
         }
     } else { // FX Mode LEDs
-        switch (btn_number) {
+        switch (btnNumber) {
         case 1:
             return LED_DRIVE_GPIO;
             break;
@@ -185,13 +185,13 @@ int SparkHelper::getLedGpio(int btn_number, bool fxMode) {
             return LED_COMP_GPIO;
             break;
         default:
-            return -1;
+            return LED_GPIO_INVALID;
         }
     }
 }
 
-int SparkHelper::getFXIndexFromButtonNumber(int btn_number) {
-    switch (btn_number) {
+FxType SparkHelper::getFXIndexFromButtonNumber(FxLedButtonNumber btnNumber) {
+    switch (btnNumber) {
     case NOISEGATE_NUM:
         return INDEX_FX_NOISEGATE;
         break;
@@ -211,7 +211,7 @@ int SparkHelper::getFXIndexFromButtonNumber(int btn_number) {
         return INDEX_FX_REVERB;
         break;
     default:
-        return -1;
+        return INDEX_FX_INVALID;
     }
 }
 

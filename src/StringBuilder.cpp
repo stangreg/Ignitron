@@ -1,6 +1,6 @@
 #include "StringBuilder.h"
 
-void StringBuilder::start_str() {
+void StringBuilder::startStr() {
     text = "";
     json = "{";
     raw = "";
@@ -8,92 +8,92 @@ void StringBuilder::start_str() {
     indent = "";
 }
 
-void StringBuilder::end_str() {
+void StringBuilder::endStr() {
     json += "}";
 }
 
-void StringBuilder::add_indent() {
+void StringBuilder::addIndent() {
     indent += "\t";
 }
 
-void StringBuilder::del_indent() {
+void StringBuilder::deleteIndent() {
     indent.resize(indent.size() - 1);
 }
 
-void StringBuilder::add_separator() {
+void StringBuilder::addSeparator() {
     json += ", ";
 }
 
-void StringBuilder::add_newline() {
+void StringBuilder::addNewline() {
     json += "\n";
 }
 
-void StringBuilder::add_python(string python_str) {
+void StringBuilder::addPython(string python_str) {
     json += indent + python_str; // + "\n";
 }
 
-void StringBuilder::add_str(const string &a_title, const string &a_str, string nature) {
-    raw += a_str;
+void StringBuilder::addStr(const string &aTitle, const string &aStr, string nature) {
+    raw += aStr;
     raw += " ";
-    char string_add[200] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%s%-20s: %s \n", indent.c_str(), a_title.c_str(), a_str.c_str());
-    text += string_add;
+    char stringAdd[200] = "";
+    int size = sizeof stringAdd;
+    snprintf(stringAdd, size, "%s%-20s: %s \n", indent.c_str(), aTitle.c_str(), aStr.c_str());
+    text += stringAdd;
     if (nature != "python") {
-        json += indent + "\"" + a_title + "\": \"" + a_str + "\"";
+        json += indent + "\"" + aTitle + "\": \"" + aStr + "\"";
     }
 }
 
-void StringBuilder::add_int(const string &a_title, int an_int, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%d ", an_int);
-    raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %d\n", indent.c_str(), a_title.c_str(), an_int);
-    text += string_add;
+void StringBuilder::addInt(const string &aTitle, int anInt, string nature) {
+    char stringAdd[100] = "";
+    int size = sizeof stringAdd;
+    snprintf(stringAdd, size, "%d ", anInt);
+    raw += stringAdd;
+    snprintf(stringAdd, size, "%s%-20s: %d\n", indent.c_str(), aTitle.c_str(), anInt);
+    text += stringAdd;
     if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %d", indent.c_str(), a_title.c_str(), an_int);
-        json += string_add;
+        snprintf(stringAdd, size, "%s\"%s\": %d", indent.c_str(), aTitle.c_str(), anInt);
+        json += stringAdd;
     }
 }
 
-void StringBuilder::add_float(const string &a_title, float a_float, string nature) {
+void StringBuilder::addFloat(const string &aTitle, float aFloat, string nature) {
 
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    raw += string_add;
-    snprintf(string_add, size, "%s%-20s: %2.4f\n", indent.c_str(), a_title.c_str(), a_float);
-    text += string_add;
+    char stringAdd[100] = "";
+    int size = sizeof stringAdd;
+    snprintf(stringAdd, size, "%2.4f ", aFloat);
+    raw += stringAdd;
+    snprintf(stringAdd, size, "%s%-20s: %2.4f\n", indent.c_str(), aTitle.c_str(), aFloat);
+    text += stringAdd;
     if (nature != "python") {
-        snprintf(string_add, size, "%s%2.4f", indent.c_str(), a_float);
-        json += string_add;
+        snprintf(stringAdd, size, "%s%2.4f", indent.c_str(), aFloat);
+        json += stringAdd;
     } else {
-        snprintf(string_add, size, "%s\"%s\": %2.4f", indent.c_str(), a_title.c_str(), a_float);
-        json += string_add;
+        snprintf(stringAdd, size, "%s\"%s\": %2.4f", indent.c_str(), aTitle.c_str(), aFloat);
+        json += stringAdd;
     }
 }
 
-void StringBuilder::add_float_pure(float a_float, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    raw += string_add;
-    snprintf(string_add, size, "%2.4f ", a_float);
-    text += string_add;
-    snprintf(string_add, size, "%2.4f", a_float);
-    json += string_add;
+void StringBuilder::addFloatPure(float aFloat, string nature) {
+    char stringAdd[100] = "";
+    int size = sizeof stringAdd;
+    snprintf(stringAdd, size, "%2.4f ", aFloat);
+    raw += stringAdd;
+    snprintf(stringAdd, size, "%2.4f ", aFloat);
+    text += stringAdd;
+    snprintf(stringAdd, size, "%2.4f", aFloat);
+    json += stringAdd;
 }
 
-void StringBuilder::add_bool(const string &a_title, bool a_bool, string nature) {
-    char string_add[100] = "";
-    int size = sizeof string_add;
-    snprintf(string_add, size, "%s ", a_bool ? "true" : "false");
-    raw += string_add;
-    snprintf(string_add, size, "%s%s: %-20s\n", indent.c_str(), a_title.c_str(), a_bool ? "true" : "false");
-    text += string_add;
+void StringBuilder::addBool(const string &aTitle, bool aBool, string nature) {
+    char stringAdd[100] = "";
+    int size = sizeof stringAdd;
+    snprintf(stringAdd, size, "%s ", aBool ? "true" : "false");
+    raw += stringAdd;
+    snprintf(stringAdd, size, "%s%s: %-20s\n", indent.c_str(), aTitle.c_str(), aBool ? "true" : "false");
+    text += stringAdd;
     if (nature != "python") {
-        snprintf(string_add, size, "%s\"%s\": %s", indent.c_str(), a_title.c_str(), a_bool ? "true" : "false");
-        json += string_add;
+        snprintf(stringAdd, size, "%s\"%s\": %s", indent.c_str(), aTitle.c_str(), aBool ? "true" : "false");
+        json += stringAdd;
     }
 }

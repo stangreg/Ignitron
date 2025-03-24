@@ -20,9 +20,9 @@ public:
 
 	void init();
 
-	KeyboardMapping getNextKeyboard();
-	KeyboardMapping getPreviousKeyboard();
-	KeyboardMapping getCurrentKeyboard();
+	KeyboardMapping &getNextKeyboard();
+	KeyboardMapping &getPreviousKeyboard();
+	KeyboardMapping &getCurrentKeyboard();
 
 
 private:

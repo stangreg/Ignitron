@@ -8,12 +8,12 @@
 #include "SparkLEDControl.h"
 
 SparkLEDControl::SparkLEDControl() {
-    spark_dc = nullptr;
+    sparkDC = nullptr;
     init();
 }
 
 SparkLEDControl::SparkLEDControl(SparkDataControl *dc) {
-    spark_dc = dc;
+    sparkDC = dc;
     init();
 }
 
@@ -52,83 +52,80 @@ void SparkLEDControl::init() {
 
 void SparkLEDControl::updateLEDs() {
 
-    operationMode = spark_dc->operationMode();
+    operationMode = sparkDC->operationMode();
     activePreset = SparkPresetControl::getInstance().activePreset();
     activePresetNum = SparkPresetControl::getInstance().activePresetNum();
 
     switch (operationMode) {
 
     case SPARK_MODE_APP: {
-        if (spark_dc->isInitBoot()) {
+        if (sparkDC->isInitBoot()) {
             allLedOff();
             break;
         }
-        int subMode = spark_dc->subMode();
+        SubMode subMode = sparkDC->subMode();
         // Show only active LEDs
         switch (subMode) {
         case SUB_MODE_LOOPER:
         case SUB_MODE_SPK_LOOPER:
         case SUB_MODE_PRESET:
-            updateLED_APP_PresetMode();
+            updateLedAppPresetMode();
 #ifndef DEDICATED_PRESET_LEDS
             // Do not break if DEDICATED_PRESET_LEDS is defined
             // Will thus fall through to next case and also update FX LEDs
             break;
 #endif
         case SUB_MODE_FX:
-            updateLED_APP_FXMode();
+            updateLedAppFXMode();
             break;
 
         case SUB_MODE_LOOP_CONFIG:
         case SUB_MODE_LOOP_CONTROL:
-            updateLED_LooperMode();
+            updateLedLooperMode();
             break;
         }
 
     } break;
 
     case SPARK_MODE_AMP:
-        updateLED_AMP();
+        updateLedAmp();
         break;
     case SPARK_MODE_KEYBOARD:
-        updateLED_KEYBOARD();
+        updateLedKeyboard();
         break;
     case SUB_MODE_TUNER:
-        updateLED_TUNER();
+        updateLedTuner();
         break;
     }
 }
 
-void SparkLEDControl::updateLED_APP_PresetMode() {
+void SparkLEDControl::updateLedAppPresetMode() {
     allLedOff();
-    switchLED(activePresetNum, true, false);
+    switchLed(activePresetNum, true, false);
 }
 
-void SparkLEDControl::updateLED_APP_FXMode() {
+void SparkLEDControl::updateLedAppFXMode() {
     if (!activePreset.isEmpty) {
-        for (int btn_number = 1; btn_number <= 6; btn_number++) {
-            int fxIndex = SparkHelper::getFXIndexFromButtonNumber(btn_number);
-            /*if( fxIndex == -1){
-                Serial.println("Invalid FX index found!");
-                return;
-            }*/
-            Pedal current_fx = activePreset.pedals[fxIndex];
-            switchLED(btn_number, current_fx.isOn, true);
+        for (int btnNumber = 1; btnNumber <= 6; btnNumber++) {
+            FxLedButtonNumber fxButton = static_cast<FxLedButtonNumber>(btnNumber);
+            FxType fxIndex = SparkHelper::getFXIndexFromButtonNumber(fxButton);
+            Pedal currentFX = activePreset.pedals[(int)fxIndex];
+            switchLed(btnNumber, currentFX.isOn, true);
         }
     }
 }
 
-void SparkLEDControl::updateLED_AMP() {
+void SparkLEDControl::updateLedAmp() {
     unsigned long currentMillis = millis();
 
     int presetNumToEdit = SparkPresetControl::getInstance().presetNumToEdit();
-    const int presetEditMode = SparkPresetControl::getInstance().presetEditMode();
+    const PresetEditMode presetEditMode = SparkPresetControl::getInstance().presetEditMode();
 
     if (presetEditMode != PRESET_EDIT_NONE) {
 
         if (presetNumToEdit == 0) {
             for (int i = 1; i <= 4; i++) {
-                switchLED(i, true);
+                switchLed(i, true);
             }
         } else if (currentMillis - previousMillis >= blinkInterval_ms) {
             // save the last time you blinked the LED
@@ -138,7 +135,7 @@ void SparkLEDControl::updateLED_AMP() {
             // if the LED is off turn it on and vice-versa:
             if (ledState == LOW) {
                 ledState = HIGH;
-                switchLED(presetNumToEdit, true);
+                switchLed(presetNumToEdit, true);
             } else {
                 ledState = LOW;
             }
@@ -146,13 +143,13 @@ void SparkLEDControl::updateLED_AMP() {
 
     } else {
         allLedOff();
-        switchLED(activePresetNum, true);
+        switchLed(activePresetNum, true);
     }
 }
 
-void SparkLEDControl::updateLED_KEYBOARD() {
+void SparkLEDControl::updateLedKeyboard() {
 
-    uint8_t pressedKey = spark_dc->lastKeyboardButtonPressed();
+    uint8_t pressedKey = sparkDC->lastKeyboardButtonPressed();
     if (pressedKey == 0) {
         allLedOff();
         return;
@@ -160,71 +157,71 @@ void SparkLEDControl::updateLED_KEYBOARD() {
 
     // Map index of pressed key from 1 to 6
     int index = mapping.indexOfKey(pressedKey);
-    switchLED(index, HIGH);
+    switchLed(index, HIGH);
 }
 
-void SparkLEDControl::updateLED_LooperMode() {
+void SparkLEDControl::updateLedLooperMode() {
 
-    const bool onOff = spark_dc->looperControl()->beatOnOff();
+    const bool onOff = sparkDC->looperControl().beatOnOff();
     allLedOff();
     // if the LED is off turn it on and vice-versa:
     if (onOff) {
         ledState = HIGH;
-        switchLED(SPK_LOOPER_BPM_LED_ID, true);
+        switchLed(SPK_LOOPER_BPM_LED_ID, true);
     } else {
         ledState = LOW;
     }
 
-    const bool isRecRunning = spark_dc->looperControl()->isRecRunning();
+    const bool isRecRunning = sparkDC->looperControl().isRecRunning();
     if (isRecRunning) {
-        switchLED(SPK_LOOPER_REC_DUB_LED_ID, true);
+        switchLed(SPK_LOOPER_REC_DUB_LED_ID, true);
     } else {
-        switchLED(SPK_LOOPER_REC_DUB_LED_ID, false);
+        switchLed(SPK_LOOPER_REC_DUB_LED_ID, false);
     }
 
-    const bool isPlaying = spark_dc->looperControl()->isPlaying();
-    const bool isRecAvailable = spark_dc->looperControl()->isRecAvailable();
+    const bool isPlaying = sparkDC->looperControl().isPlaying();
+    const bool isRecAvailable = sparkDC->looperControl().isRecAvailable();
 
     if (isPlaying) {
-        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, true);
+        switchLed(SPK_LOOPER_PLAY_STOP_LED_ID, true);
     } else if (isRecAvailable) {
-        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, onOff);
+        switchLed(SPK_LOOPER_PLAY_STOP_LED_ID, onOff);
     } else {
-        switchLED(SPK_LOOPER_PLAY_STOP_LED_ID, false);
+        switchLed(SPK_LOOPER_PLAY_STOP_LED_ID, false);
     }
 
     // TODO: Check why LED is not on when Undo is available during Dub/Play. Seems that 0278 is ignored during play.
-    const bool canUndo = spark_dc->looperControl()->canUndo();
-    const bool canRedo = spark_dc->looperControl()->canRedo();
+    const bool canUndo = sparkDC->looperControl().canUndo();
+    const bool canRedo = sparkDC->looperControl().canRedo();
     if (canRedo) {
-        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, false);
+        switchLed(SPK_LOOPER_UNDO_REDO_LED_ID, false);
     } else if (canUndo) {
-        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, true);
+        switchLed(SPK_LOOPER_UNDO_REDO_LED_ID, true);
     } else {
-        switchLED(SPK_LOOPER_UNDO_REDO_LED_ID, false);
+        switchLed(SPK_LOOPER_UNDO_REDO_LED_ID, false);
     }
 }
 
-void SparkLEDControl::updateLED_TUNER() {
+void SparkLEDControl::updateLedTuner() {
     allLedOff();
 
     SparkStatus &status = SparkStatus::getInstance();
 
-    int noteOffsetCents = status.note_offset_cents();
+    int noteOffsetCents = status.noteOffsetCents();
     int centsTolerance = 5;
 
     if (noteOffsetCents > -50 && noteOffsetCents < -20) {
-        switchLED(PRESET1_NUM, true);
+        switchLed(PRESET1_NUM, true);
     }
     if (noteOffsetCents > -50 && noteOffsetCents < centsTolerance) {
-        switchLED(PRESET2_NUM, true);
+        switchLed(PRESET2_NUM, true);
     }
 
     if (noteOffsetCents > -centsTolerance) {
-        switchLED(PRESET3_NUM, true);
+        switchLed(PRESET3_NUM, true);
     }
     if (noteOffsetCents > 20) {
-        switchLED(PRESET4_NUM, true);
+        switchLed(PRESET4_NUM, true);
     }
 }
 
@@ -256,10 +253,10 @@ void SparkLEDControl::allLedOff() {
 #endif
 }
 
-void SparkLEDControl::switchLED(int num, bool on, bool fxMode) {
+void SparkLEDControl::switchLed(int num, bool on, bool fxMode) {
     int STATE = on ? HIGH : LOW;
-    int ledGpio = SparkHelper::getLedGpio(num, fxMode);
-    if (ledGpio != -1) {
+    LedGpio ledGpio = SparkHelper::getLedGpio(num, fxMode);
+    if (ledGpio != LED_GPIO_INVALID) {
         // Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
         digitalWrite(ledGpio, STATE);
     }

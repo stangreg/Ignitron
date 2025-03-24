@@ -18,8 +18,10 @@
 using namespace std;
 using ByteVector = vector<byte>;
 
-#define DIR_TO_SPARK 0
-#define DIR_FROM_SPARK 1
+enum MessageDirection {
+    DIR_TO_SPARK,
+    DIR_FROM_SPARK
+};
 
 struct keyboardKeyDefinition {
     // Quick reference from https://github.com/T-vK/ESP32-BLE-Keyboard/blob/master/BleKeyboard.h
@@ -30,7 +32,7 @@ struct keyboardKeyDefinition {
     // KEY_LEFT_SHIFT = 0x81;
     // KEY_LEFT_ALT = 0x82;
 
-    uint8_t key_uid;  // UID for key 1 to 6 and 11 to 16 for long press
+    uint8_t keyUid;   // UID for key 1 to 6 and 11 to 16 for long press
     uint8_t key;      // see key code in BleKeyboard.h
     uint8_t modifier; // 0: no mod / 0x80 to 0x87 in BleKeyboard.h
     uint8_t repeat;   // 0: no repeat, just once / >0 repeat n times
@@ -110,7 +112,7 @@ struct Preset {
 };
 
 struct CmdData {
-    byte msg_num = 0x00;
+    byte msgNum = 0x00;
     byte cmd = 0x00;
     byte subcmd = 0x00;
     ByteVector data = {};
@@ -128,7 +130,7 @@ struct CmdData {
 };
 
 struct AckData {
-    byte msg_num = 0x00;
+    byte msgNum = 0x00;
     byte cmd = 0x00;
     byte subcmd = 0x00;
     byte detail = 0x00;
@@ -142,15 +144,15 @@ struct LooperSetting {
     bool changePending = false;
 
     int bpm = 120;
-    string count_str = "Straight";
+    string countStr = "Straight";
     byte count = 0x04;
     int bars = 4;
     int barsIndex = 2;
-    bool free_indicator = false;
+    bool freeIndicator = false;
     bool click = true;
 
-    bool unknown_onoff = false;
-    unsigned int max_duration = 60000;
+    bool unknownOnOff = false;
+    unsigned int maxDuration = 60000;
 
     string json = "";
     string text = "";
@@ -159,13 +161,13 @@ struct LooperSetting {
     void reset() {
         bpm = 120;
         count = 0x04;
-        count_str = "Straight";
+        countStr = "Straight";
         barsIndex = 2;
         bars = barsConfig[barsIndex];
-        free_indicator = false;
+        freeIndicator = false;
         click = true;
-        unknown_onoff = false;
-        max_duration = 60000;
+        unknownOnOff = false;
+        maxDuration = 60000;
 
         changePending = true;
     }
@@ -173,8 +175,8 @@ struct LooperSetting {
     void cycleBars() {
         barsIndex = (barsIndex + 1) % sizeOfBarsConfig;
         bars = barsConfig[barsIndex];
-        free_indicator = (bars == -1) ? true : false;
-        if (free_indicator) {
+        freeIndicator = (bars == -1) ? true : false;
+        if (freeIndicator) {
             bars = bpm / 4;
         }
         changePending = true;
@@ -183,10 +185,10 @@ struct LooperSetting {
     void toggleCount() {
         if (count == 0x04) {
             count = 0x03;
-            count_str = "Shuffle";
+            countStr = "Shuffle";
         } else {
             count = 0x04;
-            count_str = "Straight";
+            countStr = "Straight";
         }
         changePending = true;
     }
@@ -198,7 +200,7 @@ struct LooperSetting {
 
     void setBpm(int _bpm) {
         bpm = _bpm;
-        if (free_indicator) {
+        if (freeIndicator) {
             bars = bpm / 4;
         }
         changePending = true;
@@ -206,21 +208,21 @@ struct LooperSetting {
 
     string getJson() const {
         StringBuilder sb;
-        sb.start_str();
-        sb.add_int("BPM", bpm);
-        sb.add_separator();
-        sb.add_str("Count", count_str);
-        sb.add_separator();
-        sb.add_int("Bars", bars);
-        sb.add_separator();
-        sb.add_bool("Free", free_indicator);
-        sb.add_separator();
-        sb.add_bool("Click", click);
-        sb.add_separator();
-        sb.add_bool("Unknown switch", unknown_onoff);
-        sb.add_separator();
-        sb.add_int("Max duration", max_duration);
-        sb.end_str();
+        sb.startStr();
+        sb.addInt("BPM", bpm);
+        sb.addSeparator();
+        sb.addStr("Count", countStr);
+        sb.addSeparator();
+        sb.addInt("Bars", bars);
+        sb.addSeparator();
+        sb.addBool("Free", freeIndicator);
+        sb.addSeparator();
+        sb.addBool("Click", click);
+        sb.addSeparator();
+        sb.addBool("Unknown switch", unknownOnOff);
+        sb.addSeparator();
+        sb.addInt("Max duration", maxDuration);
+        sb.endStr();
 
         return sb.getJson();
     }

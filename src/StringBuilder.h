@@ -15,18 +15,18 @@ class StringBuilder {
 
 public:
     // Functions to create string representations of processed data
-    void start_str();
-    void end_str();
-    void add_indent();
-    void del_indent();
-    void add_separator();
-    void add_newline();
-    void add_python(string python_str);
-    void add_str(const string &a_title, const string &a_str, string nature = "all");
-    void add_int(const string &a_title, int an_int, string nature = "all");
-    void add_float(const string &a_title, float a_float, string nature = "all");
-    void add_float_pure(float a_float, string nature = "all");
-    void add_bool(const string &a_title, bool a_bool, string nature = "all");
+    void startStr();
+    void endStr();
+    void addIndent();
+    void deleteIndent();
+    void addSeparator();
+    void addNewline();
+    void addPython(string pythonStr);
+    void addStr(const string &aTitle, const string &aStr, string nature = "all");
+    void addInt(const string &aTitle, int anInt, string nature = "all");
+    void addFloat(const string &aTitle, float aFloat, string nature = "all");
+    void addFloatPure(float aFloat, string nature = "all");
+    void addBool(const string &aTitle, bool aBool, string nature = "all");
 
     const string getJson() const { return json; }
     const string getRaw() const { return raw; }

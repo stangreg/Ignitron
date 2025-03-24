@@ -21,7 +21,7 @@ const string DEVICE_NAME = "Ignitron";
 SparkDataControl spark_dc;
 SparkButtonHandler spark_bh;
 SparkLEDControl spark_led;
-SparkDisplayControl spark_display;
+SparkDisplayControl sparkDisplay;
 SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
 unsigned long lastInitialPresetTimestamp = 0;
@@ -30,7 +30,7 @@ int initialRequestInterval = 3000;
 
 // Check for initial boot
 bool isInitBoot;
-int operationMode = SPARK_MODE_APP;
+OperationMode operationMode = SPARK_MODE_APP;
 
 /////////////////////////////////////////////////////////
 //
@@ -70,9 +70,9 @@ void setup() {
         break;
     }
 
-    spark_display.setDataControl(&spark_dc);
-    spark_dc.setDisplayControl(&spark_display);
-    spark_display.init(operationMode);
+    sparkDisplay.setDataControl(&spark_dc);
+    spark_dc.setDisplayControl(&sparkDisplay);
+    sparkDisplay.init(operationMode);
     // Assigning data control to buttons;
     spark_bh.setDataControl(&spark_dc);
     // Initializing control classes
@@ -86,7 +86,7 @@ void loop() {
     // Methods to call only in APP mode
     if (operationMode == SPARK_MODE_APP) {
         while (!(spark_dc.checkBLEConnection())) {
-            spark_display.update(spark_dc.isInitBoot());
+            sparkDisplay.update(spark_dc.isInitBoot());
             spark_led.updateLEDs();
             spark_bh.readButtons();
         }
@@ -120,5 +120,5 @@ void loop() {
     // Update LED status
     spark_led.updateLEDs();
     // Update display
-    spark_display.update();
+    sparkDisplay.update();
 }
