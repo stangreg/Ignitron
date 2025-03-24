@@ -83,6 +83,10 @@ void SparkLEDControl::updateLEDs() {
         case SUB_MODE_LOOP_CONTROL:
             updateLedLooperMode();
             break;
+
+        case SUB_MODE_TUNER:
+            updateLedTuner();
+        break;
         }
 
     } break;
@@ -92,9 +96,6 @@ void SparkLEDControl::updateLEDs() {
         break;
     case SPARK_MODE_KEYBOARD:
         updateLedKeyboard();
-        break;
-    case SUB_MODE_TUNER:
-        updateLedTuner();
         break;
     }
 }
@@ -254,10 +255,23 @@ void SparkLEDControl::allLedOff() {
 }
 
 void SparkLEDControl::switchLed(int num, bool on, bool fxMode) {
-    int STATE = on ? HIGH : LOW;
-    LedGpio ledGpio = SparkHelper::getLedGpio(num, fxMode);
-    if (ledGpio != LED_GPIO_INVALID) {
-        // Serial.printf("Pin %d [%d]\n", ledGpio, STATE);
+    unsigned long currentMillis = millis();
+    int STATE;
+
+    // Blink if enabled and in FX modification mode
+    if (ENABLE_FX_BLINK && fxMode && sparkDC->operationMode() == SPARK_MODE_APP && sparkDC->subMode() == SUB_MODE_FX) {
+        if (currentMillis - previousMillis >= blinkInterval_ms) {
+            blinkInvert = !blinkInvert;
+            previousMillis = currentMillis;
+        }
+        STATE = (on && !blinkInvert) ? HIGH : LOW; 
+    } else {
+        STATE = (on) ? HIGH : LOW; // Normal non blink action
+    }
+
+    int ledGpio = SparkHelper::getLedGpio(num, fxMode);
+    if (ledGpio != -1) {
+        //Serial.printf("Pin %d [State=%d], invert=%d, fxMode=%d\n", ledGpio, STATE, blinkInvert, fxMode);
         digitalWrite(ledGpio, STATE);
     }
 }

@@ -44,8 +44,8 @@ private:
     unsigned long previousMillis = 0; // will store last time LED was updated
     // constants won't change:
     const long blinkInterval_ms = 200; // blinkInterval_ms at which to blink (milliseconds)
-
     long tapBlinkInterval_ms = 250;
+    bool blinkInvert = false; // Remember state of blink inversion
 
     void updateLedAppPresetMode();
     void updateLedAppFXMode();

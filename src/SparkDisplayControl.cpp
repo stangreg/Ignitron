@@ -221,8 +221,10 @@ void SparkDisplayControl::showFX_SecondaryName() {
         }
     } else if (opMode == SPARK_MODE_APP) {
 
+
+        // Build string to show active FX 
+        SubMode subMode = sparkDC_->subMode();
 #ifndef DEDICATED_PRESET_LEDS
-        // Build string to show active FX
         secondaryLinePreset = primaryLinePreset;
 
         SubMode subMode = sparkDC_->subMode();
@@ -256,23 +258,21 @@ void SparkDisplayControl::showFX_SecondaryName() {
     display_.fillRect(0, 48, 128, 16, BLACK);
     display_.setTextColor(WHITE);
 #else
-        if (opMode == SUB_MODE_LOOPER) {
-            secondaryLineText = "LOOPER MODE";
-        } else {
-            switch (subMode) {
+        secondaryLinePosY -= 1; // move up one pixel, looks better with inverted
+        switch (subMode) {
             case SUB_MODE_FX:
-                secondaryLineText = " MANUAL/FX ";
+                secondaryLineText = " Manual/FX ";
                 break;
             case SUB_MODE_PRESET:
-                secondaryLineText = "PRESET MODE";
+                secondaryLineText = "  Preset   ";
                 break;
             case SUB_MODE_LOOP_CONFIG:
-                secondaryLineText = "LOOP CONFIG";
+                secondaryLineText = " Loop Cnfg ";
                 break;
             case SUB_MODE_LOOP_CONTROL:
-                secondaryLineText = " LOOP CTRL ";
+            case SUB_MODE_LOOPER:
+                secondaryLineText = "  Looper   ";
                 break;
-            }
         }
     }
 

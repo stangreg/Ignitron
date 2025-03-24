@@ -103,8 +103,14 @@ enum BatteryChargingStatus {
 // 1.3" OLED 128x64 displays commonly uses an SH1106 driver.
 // Choose driver below, only one can be defined!
 
-// #define OLED_DRIVER_SSD1306
-#define OLED_DRIVER_SH1106
+#define OLED_DRIVER_SSD1306
+// #define OLED_DRIVER_SH1106
+
+// Optional setting for enabling Blink mode when in Manual/FX mode.
+// Depending on the user preferences enabling blink can be a help
+// to see that we have left the normal Preset mode. However on stage
+// this can be irritating with a pedal flashing.
+const bool ENABLE_FX_BLINK = false;
 
 // Button GPIOs
 enum ButtonGpio {
@@ -142,7 +148,7 @@ const int LONG_BUTTON_PRESS_TIME = 1000;
 // The dedicated Preset LED GPIO pins LED_PRESET<n>_GPIO is defined
 // separately below under the #ifdef DEDICATED_PRESET_LEDS clause.
 
-#define DEDICATED_PRESET_LEDS
+// #define DEDICATED_PRESET_LEDS
 
 #ifdef DEDICATED_PRESET_LEDS
 enum LedGpio {
