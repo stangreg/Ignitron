@@ -63,8 +63,7 @@ public:
     void updateFromSparkResponseAmpPreset(char *presetJson);
     void updateFromSparkResponseACK();
 
-    void
-    processPresetEdit(int presetNum = 0);
+    void processPresetEdit(int presetNum = 0);
     void resetPresetEdit(bool resetEditMode, bool resetPreset = false);
     void resetPresetEditResponse();
     bool handleDeletePreset();

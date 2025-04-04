@@ -749,7 +749,9 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
             SparkPresetControl &presetControl = SparkPresetControl::getInstance();
             presetControl.validateChecksums(statusObject.hwChecksums());
-            getCurrentPresetFromSpark();
+            // TODO: try to load last selected preset from filesystem, if not available, read current preset from amp
+
+            // getCurrentPresetFromSpark();
         }
 
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
