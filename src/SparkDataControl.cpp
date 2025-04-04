@@ -749,7 +749,11 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
             SparkPresetControl &presetControl = SparkPresetControl::getInstance();
             presetControl.validateChecksums(statusObject.hwChecksums());
-            getCurrentPresetFromSpark();
+            // try to load last selected preset from filesystem,
+            // if not available, read current preset from amp
+            if (!presetControl.readLastPresetFromFile()) {
+                getCurrentPresetFromSpark();
+            };
         }
 
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
@@ -825,6 +829,8 @@ void SparkDataControl::handleIncomingAck() {
 
     // if last Ack was for preset change (0x01 / 0x38) or effect switch (0x15),
     // confirm pending preset into active
+    SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+
     AckData lastAck = sparkSsr.getLastAckAndEmpty();
     if (lastAck.cmd == 0x05) { // 05 is intermediate ack, not last message
         DEBUG_PRINTLN("Received intermediate ACK");
@@ -841,14 +847,15 @@ void SparkDataControl::handleIncomingAck() {
                 currentMsg = sparkMsg.changeHardwarePreset(nextMessageNum, 128);
                 triggerCommand(currentMsg);
                 customPresetNumberChangePending = false;
-                SparkPresetControl::getInstance().updateActiveWithPendingPreset();
+                presetControl.updateActiveWithPendingPreset();
             }
         }
         if (lastAck.subcmd == 0x38) {
             DEBUG_PRINTLN("Received ACK for 0x38 command");
             // getCurrentPresetFromSpark();
 
-            SparkPresetControl::getInstance().updateFromSparkResponseACK();
+            presetControl.updateFromSparkResponseACK();
+            presetControl.writeCurrentPresetToFile();
             Serial.println("OK");
         }
         if (lastAck.subcmd == 0x15) {
