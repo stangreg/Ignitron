@@ -515,6 +515,29 @@ void SparkPresetControl::processStorePresetRequest(int presetNum) {
     }
 }
 
+bool SparkPresetControl::readLastPresetFromFile() {
+
+    Preset lastPreset = presetBuilder.readPresetFromFile(lastPresetFileName + ".json");
+    if (lastPreset.isEmpty) {
+        Serial.println("Last preset file not found, using default preset.");
+        return false;
+    }
+    Serial.printf("Preset read during init: %s\n", lastPreset.json.c_str());
+
+    pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(lastPreset.uuid);
+    Serial.printf("Found UUID: %d, %d\n", bankPreset.first, bankPreset.second);
+    pendingBank_ = bankPreset.first;
+    pendingPresetNum_ = bankPreset.second;
+    return switchPreset(pendingPresetNum_, true);
+}
+
+bool SparkPresetControl::writeCurrentPresetToFile() {
+    // Save currentPreset to file
+    Serial.println("Saving preset to last preset file.");
+    presetBuilder.savePresetToFile(lastPresetFileName.c_str(), activePreset_, true);
+    return true;
+}
+
 void SparkPresetControl::resetPresetEdit(bool resetEditMode, bool resetPreset) {
     presetNumToEdit_ = 0;
     presetBankToEdit_ = 0;

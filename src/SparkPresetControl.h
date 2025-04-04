@@ -40,6 +40,9 @@ public:
     void updatePendingWithActive();
     void updateActiveWithPendingPreset();
 
+    bool readLastPresetFromFile();
+    bool writeCurrentPresetToFile();
+
     const bool allHWPresetsAvailable() const { return allHWPresetsAvailable_; }
 
     const int presetNumToEdit() const { return presetNumToEdit_; }
@@ -89,6 +92,7 @@ private:
     int activePresetNum_ = 0;
     int pendingPresetNum_ = 0;
     bool allHWPresetsAvailable_ = false;
+    const string lastPresetFileName = "LastPreset";
 
     // HW variables
     int activeHWBank_ = 0;
