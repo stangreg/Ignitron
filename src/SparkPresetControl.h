@@ -92,7 +92,7 @@ private:
     int activePresetNum_ = 0;
     int pendingPresetNum_ = 0;
     bool allHWPresetsAvailable_ = false;
-    const string lastPresetFileName = "LastPreset";
+    const string lastPresetFileNamePrefix = "/LastPreset";
 
     // HW variables
     int activeHWBank_ = 0;

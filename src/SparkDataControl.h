@@ -59,10 +59,10 @@ public:
     // Check if a preset has been updated (via ack or from Spark)
     void checkForUpdates();
 
-    bool getAmpName();
+    static bool getAmpName();
     static bool getCurrentPresetNum();
-    bool getSerialNumber();
-    bool getFirmwareVersion();
+    static bool getSerialNumber();
+    static bool getFirmwareVersion();
     static bool getHWChecksums();
     bool getCurrentPreset(int num);
     static bool getCurrentPresetFromSpark();

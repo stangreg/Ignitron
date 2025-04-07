@@ -11,6 +11,7 @@ enum MessageType {
     MSG_TYPE_FX_CHANGE,
     MSG_TYPE_FX_PARAM,
     MSG_TYPE_AMP_NAME,
+    MSG_TYPE_AMP_SERIAL,
     MSG_TYPE_LOOPER_SETTING,
     MSG_TYPE_TAP_TEMPO,
     MSG_TYPE_MEASURE,
@@ -83,6 +84,9 @@ public:
 
     const string ampName() const { return ampName_; }
     string &ampName() { return ampName_; }
+
+    const string ampSerialNumber() const { return ampSerialNumber_; }
+    string &ampSerialNumber() { return ampSerialNumber_; }
 
     const BatteryLevel ampBatteryLevel() const { return ampBatteryLevel_; }
     BatteryLevel &ampBatteryLevel() { return ampBatteryLevel_; }
@@ -159,6 +163,7 @@ private:
     BatteryChargingStatus ampBatteryChargingStatus_ = BATTERY_CHARGING_STATUS_DISCHARGING;
 
     vector<byte> hwChecksums_ = {};
+    string ampSerialNumber_ = "";
 };
 
 #endif

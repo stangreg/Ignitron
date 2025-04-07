@@ -67,6 +67,7 @@ private:
     void readTunerOnOff();
     void readPresetRequest();
     void readAmpStatus();
+    void readSerialNumber();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);

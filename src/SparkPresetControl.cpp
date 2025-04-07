@@ -229,6 +229,7 @@ void SparkPresetControl::updatePendingPreset(int bnk) {
 
 void SparkPresetControl::updatePendingWithActive() {
     pendingBank_ = activeBank_;
+    pendingPresetNum_ = activePresetNum_;
     pendingPreset_ = activePreset_;
     pendingHWBank_ = activeHWBank_;
 }
@@ -369,26 +370,26 @@ void SparkPresetControl::updateFromSparkResponsePreset(bool isSpecial) {
     if (!isSpecial) {
         DEBUG_PRINTLN("Updating activePreset...");
         activePreset_ = statusObject.currentPreset();
+        updatePendingWithActive();
     }
     if (isSpecial) {
         DEBUG_PRINTF("Storing preset %d into cache.\n", presetNumber + 1);
         presetBuilder.insertHWPreset(presetNumber, receivedPreset);
         statusObject.resetPresetUpdateFlag();
-    }
-    string uuid = activePreset_.uuid;
-    pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
-    int checkPresetNum = std::get<1>(bankPreset);
-    if (checkPresetNum != 0) {
-        activeBank_ = std::get<0>(bankPreset);
-        activePresetNum_ = ((checkPresetNum - 1) % PRESETS_PER_BANK) + 1;
-        if (activeBank_ == 0) {
-            activeHWBank_ = (checkPresetNum - 1) / PRESETS_PER_BANK;
+        // TODO: Check if everything works without backward searching presets in non-special mode
+        string uuid = activePreset_.uuid;
+        pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(uuid);
+        int checkPresetNum = std::get<1>(bankPreset);
+        if (checkPresetNum != 0) {
+            activeBank_ = std::get<0>(bankPreset);
+            activePresetNum_ = ((checkPresetNum - 1) % PRESETS_PER_BANK) + 1;
+            if (activeBank_ == 0) {
+                activeHWBank_ = (checkPresetNum - 1) / PRESETS_PER_BANK;
+            }
+        } else {
+            Serial.println("Preset not found, not changing.");
         }
-    } else {
-        Serial.println("Preset not found, not changing.");
     }
-    DEBUG_PRINTF("New active bank: %d, active preset: %d\n", activeBank_, activePresetNum_);
-    updatePendingWithActive();
 }
 
 void SparkPresetControl::updateFromSparkResponseAmpPreset(char *presetJson) {
@@ -517,24 +518,47 @@ void SparkPresetControl::processStorePresetRequest(int presetNum) {
 
 bool SparkPresetControl::readLastPresetFromFile() {
 
-    Preset lastPreset = presetBuilder.readPresetFromFile(lastPresetFileName + ".json");
-    if (lastPreset.isEmpty) {
-        Serial.println("Last preset file not found, using default preset.");
+    string fileName = lastPresetFileNamePrefix + "_" + SparkStatus::getInstance().ampSerialNumber() + ".txt";
+    DEBUG_PRINTF("Reading last preset from file %s\n", fileName.c_str());
+    File file = LittleFS.open(fileName.c_str());
+    if (!file) {
+        Serial.println("Last preset file not found.");
         return false;
     }
-    Serial.printf("Preset read during init: %s\n", lastPreset.json.c_str());
 
-    pair<int, int> bankPreset = presetBuilder.getBankPresetNumFromUUID(lastPreset.uuid);
-    Serial.printf("Found UUID: %d, %d\n", bankPreset.first, bankPreset.second);
-    pendingBank_ = bankPreset.first;
-    pendingPresetNum_ = bankPreset.second;
+    // Read file content into stream
+    string fileContent;
+    while (file.available()) {
+        fileContent += file.read();
+    }
+    DEBUG_PRINTF("Cached preset read: %s\n", fileContent.c_str());
+    stringstream fileStream(fileContent);
+    file.close();
+
+    int presetNum;
+    fileStream >> pendingBank_ >> presetNum;
+    // In case there are more than (PRESETS_PER_BANK) HW Presets, we have to calculate modulo (for internal display);
+    pendingPresetNum_ = ((presetNum - 1) % PRESETS_PER_BANK) + 1;
+    // calculate current HW bank
+    activeHWBank_ = (presetNum - 1) / PRESETS_PER_BANK;
     return switchPreset(pendingPresetNum_, true);
 }
 
 bool SparkPresetControl::writeCurrentPresetToFile() {
     // Save currentPreset to file
-    Serial.println("Saving preset to last preset file.");
-    presetBuilder.savePresetToFile(lastPresetFileName.c_str(), activePreset_, true);
+    // Serial.println("Saving preset to last preset file.");
+
+    // in case of multiple HW banks, calculate "real" preset number
+    int currentPresetNum = activeHWBank_ * PRESETS_PER_BANK + activePresetNum_;
+    string currentPresetString = to_string(activeBank_) + " " + to_string(currentPresetNum);
+    DEBUG_PRINTF("Preset cached: %s\n", currentPresetString.c_str());
+
+    // Seperate cache file per amp type
+    sparkPresetFileName = lastPresetFileNamePrefix + "_" + SparkStatus::getInstance().ampSerialNumber() + ".txt";
+    DEBUG_PRINTF("Storing current preset in file %s\n", sparkPresetFileName.c_str());
+    File file = LittleFS.open(sparkPresetFileName.c_str(), FILE_WRITE);
+    file.print(currentPresetString.c_str());
+    file.close();
     return true;
 }
 

@@ -696,6 +696,33 @@ void SparkDataControl::handleAppModeResponse() {
     if (operationMode_ == SPARK_MODE_APP) {
         bool printMessage = false;
 
+         if (lastMessageType == MSG_TYPE_AMP_NAME) {
+            DEBUG_PRINTLN("Last message was amp name.");
+            sparkAmpName = statusObject.ampName();
+            setAmpParameters();
+            getHWChecksums();
+            printMessage = true;
+            // ampNameReceived_ = true;
+        }
+
+        if (lastMessageType == MSG_TYPE_AMP_SERIAL) {
+            DEBUG_PRINTLN("Last message was serial number.");
+            // reading HW checksums for cache
+            getAmpName();
+            printMessage = true;
+        }
+        
+        if (lastMessageType == MSG_TYPE_HWCHECKSUM) {
+            printMessage = true;
+            SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+            presetControl.validateChecksums(statusObject.hwChecksums());
+            // try to load last selected preset from filesystem,
+            // if not available, read current preset from amp
+            if (!presetControl.readLastPresetFromFile()) {
+                getCurrentPresetFromSpark();
+            };
+        }
+
         if (lastMessageType == MSG_TYPE_HWPRESET) {
             DEBUG_PRINTLN("Received HW Preset response");
 
@@ -729,15 +756,7 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
         }
 
-        if (lastMessageType == MSG_TYPE_AMP_NAME) {
-            DEBUG_PRINTLN("Last message was amp name.");
-            sparkAmpName = statusObject.ampName();
-            setAmpParameters();
-            // reading HW checksums for cache
-            getHWChecksums();
-            printMessage = true;
-            // ampNameReceived_ = true;
-        }
+       
 
         if (lastMessageType == MSG_TYPE_AMPSTATUS) {
             DEBUG_PRINTLN("Last message was amp status");
@@ -745,17 +764,7 @@ void SparkDataControl::handleAppModeResponse() {
             Serial.printf("Battery level = %d\n", batteryLevel);
         }
 
-        if (lastMessageType == MSG_TYPE_HWCHECKSUM) {
-            printMessage = true;
-            SparkPresetControl &presetControl = SparkPresetControl::getInstance();
-            presetControl.validateChecksums(statusObject.hwChecksums());
-            // try to load last selected preset from filesystem,
-            // if not available, read current preset from amp
-            if (!presetControl.readLastPresetFromFile()) {
-                getCurrentPresetFromSpark();
-            };
-        }
-
+       
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
             DEBUG_PRINTLN("New Looper setting received.");
             printMessage = true;

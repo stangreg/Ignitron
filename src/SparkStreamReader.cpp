@@ -536,6 +536,21 @@ void SparkStreamReader::readAmpStatus() {
     statusObject.lastMessageType() = MSG_TYPE_AMPSTATUS;
 }
 
+void SparkStreamReader::readSerialNumber() {
+    string serialNumber = readString();
+    // Serial number seems to come with additional F7 character at the end
+    serialNumber = serialNumber.substr(0, serialNumber.length() - 1);
+
+    // Build string representations
+    sb.startStr();
+    sb.addStr("Serial Number", serialNumber);
+    sb.endStr();
+
+    // Set values
+    statusObject.lastMessageType() = MSG_TYPE_AMP_SERIAL;
+    statusObject.ampSerialNumber() = serialNumber;
+}
+
 boolean SparkStreamReader::structureData(bool processHeader) {
 
     ByteVector blockContent;
@@ -755,6 +770,10 @@ int SparkStreamReader::runInterpreter(byte _cmd, byte _subCmd) {
         case 0x15:
             DEBUG_PRINTLN("03 15 - Reading effect on/off");
             readEffectOnOff();
+            break;
+        case 0x23:
+            DEBUG_PRINTLN("03 23 - Reading serial number");
+            readSerialNumber();
             break;
         case 0x27:
             DEBUG_PRINTLN("03 27 - Storing HW preset");

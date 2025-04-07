@@ -17,6 +17,7 @@
 #include "Config_Definitions.h"
 
 #include "SparkHelper.h"
+#include "SparkStatus.h"
 #include "SparkTypes.h"
 
 const int PRESETS_PER_BANK = 4;
@@ -79,7 +80,7 @@ public:
     PresetDeleteResult deletePreset(int bnk, int pre);
 
     void insertHWPreset(int number, const Preset &preset);
-    string savePresetToFile(string filename, const Preset &preset, bool overwrite = false);
+    string processFilename(string filename, const Preset &preset, bool overwrite = false);
     Preset readPresetFromFile(string filename);
     bool isHWPresetMissing(int num);
 };

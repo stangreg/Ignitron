@@ -163,7 +163,7 @@ bool SparkBTControl::subscribeToNotifications(notify_callback notifyCallback) {
                 if (characteristic->canNotify()) {
                     Serial.printf(
                         "Subscribing to service notifications of %s\n",
-                        SPARK_BLE_NOTIF_CHAR_UUID);
+                        SPARK_BLE_NOTIF_CHAR_UUID.c_str());
                     Serial.println("Notifications turned on");
                     // Descriptor 2902 needs to be activated in order to receive notifications
                     characteristic->getDescriptor(BLEUUID((uint16_t)0x2902))->writeValue(kNotificationOn, 2, true);

@@ -188,8 +188,6 @@ void SparkPresetBuilder::initializePresetListFromFS() {
         presetBanksNames.push_back(tmpVector);
     }
 
-    // initHWPresets();
-
     if (createUUIDFile) {
         buildPresetUUIDs();
     }
@@ -201,7 +199,7 @@ void SparkPresetBuilder::initHWPresets() {
     resetHWPresets();
     // Read HWPresets from file, if present
     for (int presetNum = 1; presetNum <= numberOfHWPresets_; presetNum++) {
-        string filename = "HWPreset" + to_string(presetNum) + ".json";
+        string filename = "HW" + to_string(presetNum) + "_" + SparkStatus::getInstance().ampSerialNumber() + ".json";
         Preset hwPreset = readPresetFromFile(filename);
         if (!(hwPreset.isEmpty)) {
             hwPresets.at(presetNum - 1) = hwPreset;
@@ -287,7 +285,7 @@ PresetStoreResult SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int
         presetNamePrefix = "Preset";
     }
 
-    string presetFileName = savePresetToFile(presetNamePrefix, newPreset);
+    string presetFileName = processFilename(presetNamePrefix, newPreset);
 
     // Then insert the preset into the right position
     string filestrPreset = "";
@@ -445,13 +443,13 @@ void SparkPresetBuilder::insertHWPreset(int number, const Preset &preset) {
         return;
     }
     hwPresets.at(number) = preset;
-    string filename = "HWPreset" + to_string(number + 1);
-    savePresetToFile(filename, preset, true);
+    string filename = "HW" + to_string(number + 1) + "_" + SparkStatus::getInstance().ampSerialNumber();
+    processFilename(filename, preset, true);
     string uuid = preset.uuid;
     updatePresetListUUID(0, number + 1, uuid);
 }
 
-string SparkPresetBuilder::savePresetToFile(string filename, const Preset &preset, bool overwrite) {
+string SparkPresetBuilder::processFilename(string filename, const Preset &preset, bool overwrite) {
 
     Serial.println("Saving preset:");
     Serial.println(preset.json.c_str());

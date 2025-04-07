@@ -97,8 +97,8 @@ void loop() {
         if (spark_dc.isInitBoot()) { // && !spark_dc.isInitHWRead()) {
             // This is only done once after the connection has been established
             // Read AMP name to determine special parameters
-            // TEST: spark_dc.getSerialNumber();
-            spark_dc.getAmpName();
+            spark_dc.getSerialNumber();
+            //spark_dc.getAmpName();
             // delay(100);
             // spark_dc.getCurrentPresetFromSpark();
             spark_dc.isInitBoot() = false;
