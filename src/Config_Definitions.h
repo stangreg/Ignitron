@@ -105,6 +105,7 @@ enum BatteryChargingStatus {
 
 #define OLED_DRIVER_SSD1306
 // #define OLED_DRIVER_SH1106
+// #define OLED_DRIVER_SH1107
 
 // Optional setting for enabling Blink mode when in Manual/FX mode.
 // Depending on the user preferences enabling blink can be a help

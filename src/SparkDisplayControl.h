@@ -14,7 +14,7 @@
 // Definition of OLED driver in Config_Definitions.h
 #if defined(OLED_DRIVER_SSD1306)
 #include <Adafruit_SSD1306.h> //https://github.com/adafruit/Adafruit_SSD1306
-#elif defined(OLED_DRIVER_SH1106)
+#elif defined(OLED_DRIVER_SH1106) || defined(OLED_DRIVER_SH1107)
 #include <Adafruit_SH110X.h> //https://github.com/adafruit/Adafruit_SH110x
 #define WHITE SH110X_WHITE
 #define BLACK SH110X_BLACK
@@ -56,6 +56,8 @@ private:
     static Adafruit_SSD1306 display_;
 #elif defined(OLED_DRIVER_SH1106)
     static Adafruit_SH1106G display_;
+#elif defined(OLED_DRIVER_SH1107)
+    static Adafruit_SH1107 display_;
 #endif
     SparkDataControl *sparkDC_;
 

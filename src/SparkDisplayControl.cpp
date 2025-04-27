@@ -22,6 +22,11 @@ Adafruit_SH1106G SparkDisplayControl::display_(SCREEN_WIDTH, SCREEN_HEIGHT,
                                                &Wire, OLED_RESET);
 SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
 }
+#elif defined(OLED_DRIVER_SH1107)
+Adafruit_SH1107 SparkDisplayControl::display_(SCREEN_HEIGHT, SCREEN_WIDTH,
+                                              &Wire, OLED_RESET);
+SparkDisplayControl::SparkDisplayControl() : SparkDisplayControl(nullptr) {
+}
 #endif
 
 SparkDisplayControl::SparkDisplayControl(SparkDataControl *dc) {
@@ -46,6 +51,13 @@ void SparkDisplayControl::init(int mode) {
         for (;;)
             ; // Loop forever
     }
+#elif defined(OLED_DRIVER_SH1107)
+    if (!display_.begin(0x3C, true)) { // 0x3C required for this display
+        Serial.println(F("SH1107 initialization failed"));
+        for (;;)
+            ; // Loop forever
+    }
+    display_.setRotation(1);
 #endif
     initKeyboardLayoutStrings();
     // Clear the buffer
