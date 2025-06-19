@@ -329,14 +329,14 @@ void SparkDataControl::setAmpParameters() {
 
     string ampName = sparkAmpName;
     DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
-    if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO) {
+    if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO || ampName == AMP_NAME_SPARK_NEO) {
         sparkMsg.maxChunkSizeToSpark() = 0x80;
         sparkMsg.maxBlockSizeToSpark() = 0xAD;
         sparkMsg.withHeader() = true;
         bleControl->setMaxBleMsgSize(0xAD);
         withDelay = false;
     }
-    if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) {
+    if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) { // || ampName == AMP_NAME_SPARK_NEO) {
         sparkMsg.maxChunkSizeToSpark() = 0x80;
         sparkMsg.maxBlockSizeToSpark() = 0xAD;
         sparkMsg.withHeader() = true;
@@ -696,7 +696,7 @@ void SparkDataControl::handleAppModeResponse() {
     if (operationMode_ == SPARK_MODE_APP) {
         bool printMessage = false;
 
-         if (lastMessageType == MSG_TYPE_AMP_NAME) {
+        if (lastMessageType == MSG_TYPE_AMP_NAME) {
             DEBUG_PRINTLN("Last message was amp name.");
             sparkAmpName = statusObject.ampName();
             setAmpParameters();
@@ -711,7 +711,7 @@ void SparkDataControl::handleAppModeResponse() {
             getAmpName();
             printMessage = true;
         }
-        
+
         if (lastMessageType == MSG_TYPE_HWCHECKSUM) {
             printMessage = true;
             SparkPresetControl &presetControl = SparkPresetControl::getInstance();
@@ -756,15 +756,12 @@ void SparkDataControl::handleAppModeResponse() {
             printMessage = true;
         }
 
-       
-
         if (lastMessageType == MSG_TYPE_AMPSTATUS) {
             DEBUG_PRINTLN("Last message was amp status");
             int batteryLevel = SparkStatus::getInstance().ampBatteryLevel();
             Serial.printf("Battery level = %d\n", batteryLevel);
         }
 
-       
         if (lastMessageType == MSG_TYPE_LOOPER_SETTING) {
             DEBUG_PRINTLN("New Looper setting received.");
             printMessage = true;
@@ -815,6 +812,11 @@ void SparkDataControl::handleAppModeResponse() {
         if (lastMessageType == MSG_TYPE_TUNER_OFF) {
             Serial.println("Tuner off received.");
             switchSubMode(SUB_MODE_PRESET);
+        }
+
+        if (lastMessageType == MSG_TYPE_INPUT_VOLUME) {
+            DEBUG_PRINTLN("Input volume received.");
+            printMessage = true;
         }
 
         if (msgStr.length() > 0 && printMessage) {

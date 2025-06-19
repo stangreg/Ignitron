@@ -31,6 +31,10 @@ void SparkStatus::resetAcknowledgments() {
     acknowledgments_.clear();
 }
 
+void SparkStatus::resetVolumeUpdateFlag() {
+    isVolumeChanged_ = false;
+}
+
 void SparkStatus::resetStatus() {
     isLooperSettingUpdated_ = false;
 

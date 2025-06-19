@@ -655,6 +655,36 @@ void SparkDisplayControl::showTunerGraphic() {
     }
 }
 
+void SparkDisplayControl::showVolumeBar() {
+    SparkStatus &statusObject = SparkStatus::getInstance();
+    float volume = statusObject.inputVolume();
+
+    display_.setTextSize(1);
+    display_.setTextColor(WHITE);
+    display_.setCursor(0, 0);
+
+    // Draw volume bar
+    int barWidth = 110;
+    int barHeight = 16;
+    int xPos = (display_.width() - barWidth) / 2;
+    int yPos = (display_.height() - barHeight) / 2;
+
+    display_.drawRect(xPos, yPos, barWidth, barHeight, WHITE);
+
+    // Draw volume level
+    int volumeBarWidth = volume * barWidth;
+    display_.fillRect(xPos + 1, yPos + 1, volumeBarWidth - 2, barHeight - 2, WHITE);
+
+    int stringYPos = (display_.height() + barHeight) / 2 + 5;
+    drawCentreString("INPUT VOLUME", stringYPos);
+
+    // Draw volume number
+    display_.setTextSize(2);
+    int volumeNumberYPos = (display_.height() - barHeight) / 2 - 20;
+    int volumeNumber = (int)(volume * 100); // Convert to percentage
+    drawCentreString(to_string(volumeNumber).c_str(), volumeNumberYPos);
+}
+
 void SparkDisplayControl::checkInvertDisplay(int subMode) {
     switch (subMode) {
     case SUB_MODE_FX:
@@ -698,22 +728,33 @@ void SparkDisplayControl::update(bool isInitBoot) {
         showTunerGraphic();
 
     } else {
-        SparkPresetControl &presetControl = SparkPresetControl::getInstance();
-        display_.setTextWrap(false);
-        showConnection();
+        // SparkPresetControl &presetControl = SparkPresetControl::getInstance();
+        SparkStatus &statusObject = SparkStatus::getInstance();
+        isVolumeChanged = statusObject.isVolumeChanged();
+        if (isVolumeChanged) {
+            volumeChangedTimestamp = millis();
+            statusObject.resetVolumeUpdateFlag();
+        }
+        unsigned int now = millis();
+        if (now - volumeChangedTimestamp <= showVolumeChangedInterval) {
+            showVolumeBar();
+        } else {
+            display_.setTextWrap(false);
+            showConnection();
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
-        showBatterySymbol();
+            showBatterySymbol();
 #endif
 
-        showModeModifier();
-        updateTextPositions();
-        showPresetName();
-        if (subMode == SUB_MODE_LOOP_CONTROL || subMode == SUB_MODE_LOOP_CONFIG) {
-            showLooperTimer();
-        } else {
-            showBankAndPresetNum();
-            showFX_SecondaryName();
+            showModeModifier();
+            updateTextPositions();
+            showPresetName();
+            if (subMode == SUB_MODE_LOOP_CONTROL || subMode == SUB_MODE_LOOP_CONFIG) {
+                showLooperTimer();
+            } else {
+                showBankAndPresetNum();
+                showFX_SecondaryName();
+            }
         }
     }
     // logDisplay();

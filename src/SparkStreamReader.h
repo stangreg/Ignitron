@@ -68,6 +68,7 @@ private:
     void readPresetRequest();
     void readAmpStatus();
     void readSerialNumber();
+    void readInputVolume();
 
     void preProcessBlock(ByteVector &blk);
     bool blockIsStarted(ByteVector &blk);

@@ -551,6 +551,20 @@ void SparkStreamReader::readSerialNumber() {
     statusObject.ampSerialNumber() = serialNumber;
 }
 
+void SparkStreamReader::readInputVolume() {
+    // Read object
+    float volume = readFloat();
+    // Build string representations
+    sb.startStr();
+    sb.addFloat("Input Volume", volume);
+    sb.endStr();
+
+    // Set values
+    statusObject.lastMessageType() = MSG_TYPE_INPUT_VOLUME;
+    statusObject.inputVolume() = volume;
+    statusObject.isVolumeChanged() = true;
+}
+
 boolean SparkStreamReader::structureData(bool processHeader) {
 
     ByteVector blockContent;
@@ -799,6 +813,10 @@ int SparkStreamReader::runInterpreter(byte _cmd, byte _subCmd) {
         case 0x65:
             DEBUG_PRINTLN("03 65 - Tuner On/Off");
             readTunerOnOff();
+            break;
+        case 0x6B:
+            DEBUG_PRINTLN("03 6B - Reading Input Volume");
+            readInputVolume();
             break;
         case 0x71:
             DEBUG_PRINTLN("03 71 - Reading Amp Status");

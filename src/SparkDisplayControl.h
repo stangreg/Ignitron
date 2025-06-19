@@ -77,6 +77,10 @@ private:
     int showKeyboardPressedInterval = 500;
     bool showKeyboardPressedFlag = false;
 
+    bool isVolumeChanged = false;
+    unsigned long volumeChangedTimestamp = 0;
+    int showVolumeChangedInterval = 500;
+
     int logInterval = 5000;
     unsigned long lastLogTimestamp = 0;
 
@@ -131,6 +135,8 @@ private:
     void showTunerNote();
     void showTunerOffset();
     void showTunerGraphic();
+
+    void showVolumeBar();
 
     void checkInvertDisplay(int subMode);
 

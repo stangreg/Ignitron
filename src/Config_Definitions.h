@@ -26,7 +26,7 @@ using namespace std;
 #endif
 
 // Software version
-const string VERSION = "1.8.8";
+const string VERSION = "1.9.0";
 
 // Battery indicator
 // Note: This battery can be for the Ignitron controller or the Spark amp.
@@ -268,6 +268,7 @@ const string AMP_NAME_SPARK_40 = "Spark 40";
 const string AMP_NAME_SPARK_MINI = "Spark MINI";
 const string AMP_NAME_SPARK_GO = "Spark GO";
 const string AMP_NAME_SPARK_2 = "Spark 2";
+const string AMP_NAME_SPARK_NEO = "Spark NEO";
 
 enum LooperCommand {
     SPK_LOOPER_CMD_COUNTIN = 0x02,

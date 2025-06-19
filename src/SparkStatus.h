@@ -23,6 +23,7 @@ enum MessageType {
     MSG_TYPE_HWCHECKSUM,
     MSG_TYPE_HWCHECKSUM_EXT,
     MSG_TYPE_AMPSTATUS,
+    MSG_TYPE_INPUT_VOLUME,
     MSG_REQ_SERIAL,
     MSG_REQ_FW_VER,
     MSG_REQ_PRESET_CHK,
@@ -97,6 +98,12 @@ public:
     const int ampBatteryChargingStatus() const { return ampBatteryChargingStatus_; }
     BatteryChargingStatus &ampBatteryChargingStatus() { return ampBatteryChargingStatus_; }
 
+    const float inputVolume() const { return inputVolume_; }
+    float &inputVolume() { return inputVolume_; }
+
+    const bool isVolumeChanged() const { return isVolumeChanged_; }
+    bool &isVolumeChanged() { return isVolumeChanged_; }
+
     const float measure() const { return measure_; }
     float &measure() { return measure_; }
 
@@ -124,6 +131,7 @@ public:
     void resetLooperSettingUpdateFlag();
     void resetLastMessageType();
     void resetAcknowledgments();
+    void resetVolumeUpdateFlag();
 
     void resetStatus();
 
@@ -164,6 +172,9 @@ private:
 
     vector<byte> hwChecksums_ = {};
     string ampSerialNumber_ = "";
+
+    float inputVolume_ = 0.0;
+    bool isVolumeChanged_ = false;
 };
 
 #endif
