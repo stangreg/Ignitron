@@ -60,7 +60,7 @@ public:
     void updateFromSparkResponseHWPreset(int presetNum);
     void toggleFX(Pedal receivedEffect);
     // TODO: Clean up with toggleFX
-    void switchFXOnOff(const string name, bool onOff);
+    void switchFXOnOff(const std::string &fxName, bool onOff);
 
     void updateFromSparkResponsePreset(bool isSpecial);
     void updateFromSparkResponseAmpPreset(char *presetJson);

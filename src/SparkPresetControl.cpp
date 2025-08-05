@@ -332,22 +332,14 @@ void SparkPresetControl::toggleFX(Pedal receivedEffect) {
     for (Pedal &pdl : activePreset_.pedals) {
         if (pdl.name == receivedEffect.name) {
             DEBUG_PRINTF("activePreset before: %s, Status: %s\n", pdl.name, pdl.isOn ? "on" : "off");
-        }
-    }
-    for (Pedal &pdl : activePreset_.pedals) {
-        if (pdl.name == receivedEffect.name) {
             pdl.isOn = receivedEffect.isOn;
-        }
-    }
-    for (Pedal &pdl : activePreset_.pedals) {
-        if (pdl.name == receivedEffect.name) {
             DEBUG_PRINTF("activePreset after: %s, Status: %s\n", pdl.name, pdl.isOn ? "on" : "off");
         }
     }
     updatePendingWithActive();
 }
 
-void SparkPresetControl::switchFXOnOff(const string fxName, bool onOff) {
+void SparkPresetControl::switchFXOnOff(const string &fxName, bool onOff) {
     Serial.printf("Switching %s effect %s...", onOff ? "On" : "Off",
                   fxName.c_str());
     for (Pedal &pdl : pendingPreset_.pedals) {

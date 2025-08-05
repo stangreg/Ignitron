@@ -126,7 +126,6 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
 }
 
 void SparkDataControl::switchSubMode(SubMode subMode) {
-    // TODO: Check if that works fine
     if (subMode == SUB_MODE_LOOPER) {
         bleKeyboard.start();
     } else {
@@ -802,13 +801,11 @@ void SparkDataControl::handleAppModeResponse() {
             // operationMode_ = SUB_MODE_TUNER;
         }
 
-        // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_ON) {
             Serial.println("Tuner on received.");
             switchSubMode(SUB_MODE_TUNER);
         }
 
-        // TODO: Check if this works
         if (lastMessageType == MSG_TYPE_TUNER_OFF) {
             Serial.println("Tuner off received.");
             switchSubMode(SUB_MODE_PRESET);
