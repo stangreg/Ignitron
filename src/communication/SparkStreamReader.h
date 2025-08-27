@@ -12,11 +12,11 @@
 #include <tuple>
 #include <vector>
 
-#include "Config_Definitions.h"
-#include "SparkHelper.h"
-#include "SparkStatus.h"
-#include "SparkTypes.h"
-#include "StringBuilder.h"
+#include "../core/Config_Definitions.h"
+#include "../utils/SparkHelper.h"
+#include "../core/SparkStatus.h"
+#include "../core/SparkTypes.h"
+#include "../utils/StringBuilder.h"
 
 using namespace std;
 using ByteVector = vector<byte>;

@@ -8,9 +8,9 @@
 #ifndef SPARK_TYPES_H
 #define SPARK_TYPES_H
 
-#include "Config_Definitions.h"
-#include "SparkHelper.h"
-#include "StringBuilder.h"
+#include "../core/Config_Definitions.h"
+#include "../utils/SparkHelper.h"
+#include "../utils/StringBuilder.h"
 #include <Arduino.h>
 #include <array>
 #include <vector>

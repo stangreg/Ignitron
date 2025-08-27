@@ -6,11 +6,11 @@
 #include <Wire.h>
 #include <string>
 
-#include "src/SparkButtonHandler.h"
-#include "src/SparkDataControl.h"
-#include "src/SparkDisplayControl.h"
-#include "src/SparkLEDControl.h"
-#include "src/SparkPresetControl.h"
+#include "src/core/SparkDataControl.h"
+#include "src/hardware/SparkButtonHandler.h"
+#include "src/hardware/SparkDisplayControl.h"
+#include "src/hardware/SparkLEDControl.h"
+#include "src/preset/SparkPresetControl.h"
 
 using namespace std;
 
@@ -98,9 +98,9 @@ void loop() {
             // This is only done once after the connection has been established
             // Read AMP name to determine special parameters
             spark_dc.getSerialNumber();
-            //spark_dc.getAmpName();
-            // delay(100);
-            // spark_dc.getCurrentPresetFromSpark();
+            // spark_dc.getAmpName();
+            //  delay(100);
+            //  spark_dc.getCurrentPresetFromSpark();
             spark_dc.isInitBoot() = false;
             // spark_dc.configureLooper();
         }

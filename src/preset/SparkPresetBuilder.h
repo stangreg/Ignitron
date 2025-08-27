@@ -14,11 +14,11 @@
 #include <algorithm>
 #include <regex>
 
-#include "Config_Definitions.h"
+#include "../core/Config_Definitions.h"
 
-#include "SparkHelper.h"
-#include "SparkStatus.h"
-#include "SparkTypes.h"
+#include "../utils/SparkHelper.h"
+#include "../core/SparkStatus.h"
+#include "../core/SparkTypes.h"
 
 const int PRESETS_PER_BANK = 4;
 

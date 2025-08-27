@@ -1,10 +1,10 @@
 #ifndef SPARKPRESETCONTROL_H
 #define SPARKPRESETCONTROL_H
 
-#include "SparkDataControl.h"
+#include "../core/SparkDataControl.h"
 #include "SparkPresetBuilder.h"
-#include "SparkStatus.h"
-#include "SparkTypes.h"
+#include "../core/SparkStatus.h"
+#include "../core/SparkTypes.h"
 
 enum PresetEditMode {
     PRESET_EDIT_NONE,

@@ -8,7 +8,7 @@
 #ifndef SPARKLOOPERCONTROL_H_
 #define SPARKLOOPERCONTROL_H_
 
-#include "Config_Definitions.h"
+#include "../core/Config_Definitions.h"
 #include "SparkTypes.h"
 #include <Arduino.h>
 

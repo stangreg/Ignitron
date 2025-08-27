@@ -8,15 +8,15 @@
 #ifndef SPARKBLECONTROL_H_
 #define SPARKBLECONTROL_H_
 
-#include "Config_Definitions.h"
-#include "SparkTypes.h"
+#include "../core/Config_Definitions.h"
+#include "../core/SparkTypes.h"
 #include <Arduino.h>
 #include <BluetoothSerial.h>
 #include <NimBLEDevice.h>
 #include <string>
 #include <vector>
 
-#include "SparkDataControl.h"
+#include "../core/SparkDataControl.h"
 
 using namespace std;
 

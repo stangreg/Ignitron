@@ -8,11 +8,11 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
-#include "CircularBuffer.h"
-#include "Config_Definitions.h"
-#include "SparkBLEKeyboard.h"
-#include "SparkBTControl.h"
-#include "SparkKeyboardControl.h"
+#include "../communication/SparkBTControl.h"
+#include "../core/Config_Definitions.h"
+#include "../hardware/SparkBLEKeyboard.h"
+#include "../hardware/SparkKeyboardControl.h"
+#include "../utils/CircularBuffer.h"
 #include "SparkLooperControl.h"
 
 #include <Arduino.h>
@@ -20,11 +20,11 @@
 #include <stdexcept>
 #include <vector>
 
-#include "SparkDisplayControl.h"
-#include "SparkMessage.h"
-#include "SparkPresetBuilder.h"
-#include "SparkPresetControl.h"
-#include "SparkStreamReader.h"
+#include "../hardware/SparkDisplayControl.h"
+#include "../communication/SparkMessage.h"
+#include "../preset/SparkPresetBuilder.h"
+#include "../preset/SparkPresetControl.h"
+#include "../communication/SparkStreamReader.h"
 
 #include "SparkTypes.h"
 

@@ -8,10 +8,10 @@
 #ifndef SPARKLEDCONTROL_H_
 #define SPARKLEDCONTROL_H_
 
-#include "Config_Definitions.h"
-#include "SparkDataControl.h"
-#include "SparkLooperControl.h"
-#include "SparkPresetControl.h"
+#include "../core/Config_Definitions.h"
+#include "../core/SparkDataControl.h"
+#include "../core/SparkLooperControl.h"
+#include "../preset/SparkPresetControl.h"
 #include <Arduino.h>
 
 using namespace std;

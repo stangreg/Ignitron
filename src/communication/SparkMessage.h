@@ -8,9 +8,9 @@
 #ifndef SPARK_MESSAGE_H // include guard
 #define SPARK_MESSAGE_H
 
-#include "Config_Definitions.h"
-#include "SparkHelper.h"
-#include "SparkTypes.h"
+#include "../core/Config_Definitions.h"
+#include "../utils/SparkHelper.h"
+#include "../core/SparkTypes.h"
 #include <Arduino.h>
 #include <algorithm>
 #include <array>

@@ -9,7 +9,7 @@
 #define SPARKKEYBOARDCONTROL_H_
 
 #include <vector>
-#include "SparkTypes.h"
+#include "../core/SparkTypes.h"
 
 using namespace std;
 

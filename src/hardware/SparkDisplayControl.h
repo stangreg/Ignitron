@@ -8,7 +8,7 @@
 #ifndef SPARKDISPLAYCONTROL_H_
 #define SPARKDISPLAYCONTROL_H_
 
-#include "Config_Definitions.h"
+#include "../core/Config_Definitions.h"
 #include <Adafruit_GFX.h>
 
 // Definition of OLED driver in Config_Definitions.h
@@ -20,10 +20,10 @@
 #define BLACK SH110X_BLACK
 #endif
 
-#include "SparkDataControl.h"
-#include "SparkLooperControl.h"
-#include "SparkPresetControl.h"
-#include "SparkTypes.h"
+#include "../core/SparkDataControl.h"
+#include "../core/SparkLooperControl.h"
+#include "../preset/SparkPresetControl.h"
+#include "../core/SparkTypes.h"
 
 using namespace std;
 

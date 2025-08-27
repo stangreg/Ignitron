@@ -8,10 +8,10 @@
 #ifndef SPARKBUTTONHANDLER_H_
 #define SPARKBUTTONHANDLER_H_
 
-#include "Config_Definitions.h"
-#include "SparkDataControl.h"
-#include "SparkPresetControl.h"
-#include "SparkTypes.h"
+#include "../core/Config_Definitions.h"
+#include "../core/SparkDataControl.h"
+#include "../preset/SparkPresetControl.h"
+#include "../core/SparkTypes.h"
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
 
 using namespace std;
