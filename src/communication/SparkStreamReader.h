@@ -13,9 +13,9 @@
 #include <vector>
 
 #include "../core/Config_Definitions.h"
-#include "../utils/SparkHelper.h"
 #include "../core/SparkStatus.h"
 #include "../core/SparkTypes.h"
+#include "../utils/SparkHelper.h"
 #include "../utils/StringBuilder.h"
 
 using namespace std;

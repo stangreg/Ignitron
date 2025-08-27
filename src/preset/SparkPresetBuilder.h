@@ -16,9 +16,9 @@
 
 #include "../core/Config_Definitions.h"
 
-#include "../utils/SparkHelper.h"
 #include "../core/SparkStatus.h"
 #include "../core/SparkTypes.h"
+#include "../utils/SparkHelper.h"
 
 const int PRESETS_PER_BANK = 4;
 

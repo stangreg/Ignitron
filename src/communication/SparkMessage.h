@@ -9,8 +9,8 @@
 #define SPARK_MESSAGE_H
 
 #include "../core/Config_Definitions.h"
-#include "../utils/SparkHelper.h"
 #include "../core/SparkTypes.h"
+#include "../utils/SparkHelper.h"
 #include <Arduino.h>
 #include <algorithm>
 #include <array>

@@ -20,11 +20,11 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../hardware/SparkDisplayControl.h"
 #include "../communication/SparkMessage.h"
+#include "../communication/SparkStreamReader.h"
+#include "../hardware/SparkDisplayControl.h"
 #include "../preset/SparkPresetBuilder.h"
 #include "../preset/SparkPresetControl.h"
-#include "../communication/SparkStreamReader.h"
 
 #include "SparkTypes.h"
 
