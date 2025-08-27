@@ -125,16 +125,16 @@ void SparkDataControl::switchSubMode(SubMode subMode) {
     } else {
         bleKeyboard.end();
     }
-    
+
     // Switch off tuner mode at amp if was enabled before but is not matching current subMode
     if (modeManager.subMode() == SUB_MODE_TUNER && modeManager.subMode() != subMode) {
         switchTuner(false);
     }
-    
+
     if (subMode == SUB_MODE_TUNER) {
         switchTuner(true);
     }
-    
+
     modeManager.switchSubMode(subMode);
     SparkPresetControl::getInstance().updatePendingWithActive();
 }

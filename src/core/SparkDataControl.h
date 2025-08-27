@@ -95,7 +95,16 @@ public:
 
     const bool ampNameReceived() const { return ampNameReceived_; }
 
+    /**
+     * Get direct access to the SparkModeManager instance
+     * @return Reference to the SparkModeManager
+     */
+    static SparkModeManager& getModeManager() {
+        return modeManager;
+    }
+
     // Mode-related methods delegated to SparkModeManager
+    // These methods are kept for backward compatibility
     const OperationMode &operationMode() const { return modeManager.operationMode(); }
     OperationMode &operationMode() { return modeManager.operationMode(); }
     const SubMode &subMode() const { return modeManager.subMode(); }

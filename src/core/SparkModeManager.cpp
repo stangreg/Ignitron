@@ -32,11 +32,11 @@ void SparkModeManager::switchSubMode(SubMode subMode) {
     if (subMode_ == SUB_MODE_TUNER && subMode_ != subMode) {
         // Need to notify external components to switch tuner off
     }
-    
+
     if (subMode == SUB_MODE_TUNER) {
         // Need to notify external components to switch tuner on
     }
-    
+
     subMode_ = subMode;
 }
 
@@ -79,10 +79,10 @@ bool SparkModeManager::toggleLooperAppMode() {
         Serial.println("In AMP mode, doing nothing.");
         return false;
     }
-    
+
     SubMode newSubMode;
     Serial.print("Switching to ");
-    
+
     switch (subMode_) {
     case SUB_MODE_PRESET:
     case SUB_MODE_FX:
@@ -103,7 +103,7 @@ bool SparkModeManager::toggleLooperAppMode() {
         newSubMode = SUB_MODE_PRESET;
         break;
     }
-    
+
     subMode_ = newSubMode;
     return true;
 }
@@ -126,7 +126,7 @@ void SparkModeManager::readOpModeFromFile() {
             if (file) {
                 String fileContent = file.readString();
                 file.close();
-                
+
                 if (fileContent == "APP") {
                     operationMode_ = SPARK_MODE_APP;
                     DEBUG_PRINTLN("Setting operation mode to APP from file");
@@ -150,7 +150,7 @@ void SparkModeManager::readBTModeFromFile() {
             if (file) {
                 String fileContent = file.readString();
                 file.close();
-                
+
                 if (fileContent == "BLE") {
                     currentBTMode_ = BT_MODE_BLE;
                     DEBUG_PRINTLN("Setting BT mode to BLE from file");

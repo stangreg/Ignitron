@@ -8,8 +8,8 @@
 #ifndef SPARKMODEMANAGER_H_
 #define SPARKMODEMANAGER_H_
 
-#include "SparkTypes.h"
 #include "Config_Definitions.h"
+#include "SparkTypes.h"
 #include <Arduino.h>
 #include <string>
 
@@ -56,7 +56,7 @@ public:
     const SubMode &subMode() const { return subMode_; }
     SubMode &subMode() { return subMode_; }
     const BTMode currentBTMode() const { return currentBTMode_; }
-    
+
     // Read modes from file system
     void readOpModeFromFile();
     void readBTModeFromFile();
@@ -67,7 +67,7 @@ private:
     OperationMode operationMode_ = SPARK_MODE_APP;
     SubMode subMode_ = SUB_MODE_PRESET;
     BTMode currentBTMode_ = BT_MODE_BLE;
-    
+
     // File paths for configuration files
     string btModeFileName = "/config/BTMode.config";
     string sparkModeFileName = "/config/SparkMode.config";
