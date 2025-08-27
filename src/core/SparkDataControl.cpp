@@ -16,6 +16,7 @@ SparkDisplayControl *SparkDataControl::sparkDisplay = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl SparkDataControl::looperControl_;
 SparkBLEKeyboard SparkDataControl::bleKeyboard = SparkBLEKeyboard();
+SparkModeManager SparkDataControl::modeManager;
 
 queue<ByteVector> SparkDataControl::msgQueue;
 deque<CmdData> SparkDataControl::currentCommand;
@@ -35,12 +36,6 @@ vector<CmdData>
 vector<CmdData> SparkDataControl::currentMsg;
 
 bool SparkDataControl::customPresetNumberChangePending = false;
-OperationMode SparkDataControl::operationMode_ = SPARK_MODE_APP;
-SubMode SparkDataControl::subMode_ = SUB_MODE_PRESET;
-
-BTMode SparkDataControl::currentBTMode_ = BT_MODE_BLE;
-OperationMode SparkDataControl::sparkModeAmp = SPARK_MODE_AMP;
-OperationMode SparkDataControl::sparkModeApp = SPARK_MODE_APP;
 AmpType SparkDataControl::sparkAmpType = AMP_TYPE_40;
 string SparkDataControl::sparkAmpName = AMP_NAME_SPARK_40;
 bool SparkDataControl::withDelay = false;
@@ -54,7 +49,7 @@ bool SparkDataControl::isInitBoot_ = true;
 byte SparkDataControl::specialMsgNum = 0xEE;
 
 SparkDataControl::SparkDataControl() {
-    // init();
+    // Initialize the core components
     bleControl = new SparkBTControl(this);
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
@@ -71,17 +66,17 @@ SparkDataControl::~SparkDataControl() {
 }
 
 OperationMode SparkDataControl::init(OperationMode opModeInput) {
-    operationMode_ = opModeInput;
+    // Initialize the mode manager
+    modeManager.init(opModeInput);
 
     tapEntries = CircularBuffer(tapEntrySize);
 
-    readOpModeFromFile();
     SparkPresetControl::getInstance().init();
 
     // Define MAC address required for keyboard
     uint8_t macKeyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
 
-    switch (operationMode_) {
+    switch (modeManager.operationMode()) {
     case SPARK_MODE_APP:
         // Set MAC address for BLE keyboard
         esp_base_mac_addr_set(&macKeyboard[0]);
@@ -104,10 +99,9 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
             1);
         break;
     case SPARK_MODE_AMP:
-        readBTModeFromFile();
-        if (currentBTMode_ == BT_MODE_BLE) {
+        if (modeManager.currentBTMode() == BT_MODE_BLE) {
             bleControl->startServer();
-        } else if (currentBTMode_ == BT_MODE_SERIAL) {
+        } else if (modeManager.currentBTMode() == BT_MODE_SERIAL) {
             bleControl->startBTSerial();
         }
         readPresetChecksums();
@@ -122,7 +116,7 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
         break;
     }
 
-    return operationMode_;
+    return modeManager.operationMode();
 }
 
 void SparkDataControl::switchSubMode(SubMode subMode) {
@@ -131,90 +125,21 @@ void SparkDataControl::switchSubMode(SubMode subMode) {
     } else {
         bleKeyboard.end();
     }
+    
     // Switch off tuner mode at amp if was enabled before but is not matching current subMode
-    if (subMode_ == SUB_MODE_TUNER && subMode_ != subMode) {
+    if (modeManager.subMode() == SUB_MODE_TUNER && modeManager.subMode() != subMode) {
         switchTuner(false);
     }
+    
     if (subMode == SUB_MODE_TUNER) {
         switchTuner(true);
     }
-    subMode_ = subMode;
+    
+    modeManager.switchSubMode(subMode);
     SparkPresetControl::getInstance().updatePendingWithActive();
 }
 
-bool SparkDataControl::toggleSubMode() {
-
-    if (!processAction() || operationMode_ == SPARK_MODE_AMP) {
-        Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
-        return false;
-    }
-
-    Serial.print("Switching to ");
-    if (operationMode_ == SPARK_MODE_APP) {
-        switch (subMode_) {
-        case SUB_MODE_FX:
-            Serial.println("PRESET mode");
-            subMode_ = SUB_MODE_PRESET;
-            break;
-        case SUB_MODE_PRESET:
-            Serial.println("FX mode");
-            subMode_ = SUB_MODE_FX;
-            SparkPresetControl::getInstance().updatePendingWithActive();
-            break;
-        case SUB_MODE_LOOP_CONTROL:
-            Serial.println("Looper CONFIG mode");
-            subMode_ = SUB_MODE_LOOP_CONFIG;
-            break;
-        case SUB_MODE_LOOP_CONFIG:
-            Serial.println("Looper CONTROL mode");
-            subMode_ = SUB_MODE_LOOP_CONTROL;
-            SparkPresetControl::getInstance().updatePendingWithActive();
-            break;
-        default:
-            Serial.println("Unexpected mode. Defaulting to PRESET mode");
-            subMode_ = SUB_MODE_PRESET;
-            break;
-        } // SWITCH
-    }
-    return true;
-}
-
-bool SparkDataControl::toggleLooperAppMode() {
-
-    if (operationMode_ == SPARK_MODE_AMP || !processAction()) {
-        Serial.println("Spark Amp not connected or in AMP mode, doing nothing.");
-        return false;
-    }
-    SubMode newSubMode;
-    Serial.print("Switching to ");
-    switch (subMode_) {
-    case SUB_MODE_PRESET:
-    case SUB_MODE_FX:
-        Serial.println("LOOPER mode");
-        if (sparkAmpName == AMP_NAME_SPARK_2) {
-            newSubMode = SUB_MODE_LOOP_CONTROL;
-            looperControl_.stop();
-            looperControl_.reset();
-            sparkLooperGetConfig();
-            sparkLooperGetStatus();
-        } else {
-            newSubMode = SUB_MODE_LOOPER;
-        }
-        break;
-    case SUB_MODE_LOOPER:
-    case SUB_MODE_SPK_LOOPER:
-        Serial.println("APP mode");
-        newSubMode = SUB_MODE_PRESET;
-        looperControl_.triggerReset();
-        break;
-    default:
-        Serial.println("Unexpected mode. Defaulting to APP mode");
-        newSubMode = SUB_MODE_PRESET;
-        break;
-    } // SWITCH
-    switchSubMode(newSubMode);
-    return true;
-}
+// This method has been moved to SparkModeManager
 
 void SparkDataControl::setDisplayControl(SparkDisplayControl *display) {
     sparkDisplay = display;
@@ -225,55 +150,18 @@ void SparkDataControl::restartESP(bool resetSparkMode) {
     Serial.print("!!! Restarting !!! ");
     if (resetSparkMode) {
         Serial.print("Resetting Spark mode");
-        bool sparkModeFileExists = LittleFS.exists(sparkModeFileName.c_str());
-        if (sparkModeFileExists) {
-            LittleFS.remove(sparkModeFileName.c_str());
-        }
+        // Let the mode manager handle this by simply setting the mode to APP
+        // and forcing a save to file
+        modeManager.operationMode() = SPARK_MODE_APP;
+        modeManager.saveOpModeToFile();
     }
     Serial.println();
     ESP.restart();
 }
 
-void SparkDataControl::readOpModeFromFile() {
-    OperationMode sparkModeInput;
-    Serial.println("Reading opmode file.");
-    if (!LittleFS.exists(sparkModeFileName.c_str())) {
-        Serial.println("Spark mode config file does not exist.");
-        return;
-    }
-    File file = LittleFS.open(sparkModeFileName.c_str());
-    string line;
+// These methods have been moved to SparkModeManager
 
-    if (!(file)) {
-        Serial.println("Error reading Spark mode file.");
-        return;
-    }
-
-    while (file.available()) {
-        line += file.read();
-    }
-    file.close();
-    Serial.printf("OPMode: %s\n", line.c_str());
-
-    sparkModeInput = (OperationMode)(line[0] - '0'); // was: stoi(line);
-
-    if (sparkModeInput != 0) {
-        operationMode_ = sparkModeInput;
-        Serial.printf("Reading operation mode from file: %d\n", sparkModeInput);
-    }
-}
-
-void SparkDataControl::readBTModeFromFile() {
-    string line;
-    File file = LittleFS.open(btModeFileName.c_str());
-
-    while (file.available()) {
-        line += file.read();
-    }
-    Serial.printf("BTMode: %s\n", line.c_str());
-    file.close();
-    currentBTMode_ = (BTMode)(line[0] - '0'); // was: stoi(line);
-}
+// This method has been moved to SparkModeManager
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
 void SparkDataControl::updateBatteryLevel() {
@@ -308,8 +196,8 @@ void SparkDataControl::resetStatus() {
     Serial.println("Resetting Status");
     ampNameReceived_ = false;
     isInitBoot_ = true;
-    operationMode_ = SPARK_MODE_APP;
-    subMode_ = SUB_MODE_PRESET;
+    modeManager.operationMode() = SPARK_MODE_APP;
+    modeManager.subMode() = SUB_MODE_PRESET;
     nextMessageNum = 0x01;
     customPresetNumberChangePending = false;
     sparkAmpType = AMP_TYPE_40;
@@ -365,7 +253,7 @@ void SparkDataControl::checkForUpdates() {
         msgQueue.pop();
     }
 
-    SparkPresetControl::getInstance().checkForUpdates(operationMode_);
+    SparkPresetControl::getInstance().checkForUpdates(modeManager.operationMode());
 
     if (recordStartFlag) {
         if (looperControl_.currentBar() != 0) {
@@ -397,7 +285,7 @@ void SparkDataControl::checkForUpdates() {
 #endif
 #endif
 
-    if (operationMode_ == SPARK_MODE_AMP) {
+    if (modeManager.operationMode() == SPARK_MODE_AMP) {
 
         // Read incoming (serial) Bluetooth data, if available
         while (bleControl && bleControl->byteAvailable()) {
@@ -432,7 +320,7 @@ void SparkDataControl::processSparkData(ByteVector &blk) {
     handleSendingAck(blk);
 
     MessageProcessStatus retCode = sparkSsr.processBlock(blk);
-    if (retCode == MSG_PROCESS_RES_REQUEST && operationMode_ == SPARK_MODE_AMP) {
+    if (retCode == MSG_PROCESS_RES_REQUEST && modeManager.operationMode() == SPARK_MODE_AMP) {
         handleAmpModeRequest();
     }
     if (retCode == MSG_PROCESS_RES_COMPLETE) {
@@ -444,7 +332,7 @@ void SparkDataControl::processSparkData(ByteVector &blk) {
 
 bool SparkDataControl::processAction() {
 
-    if (operationMode_ == SPARK_MODE_AMP) {
+    if (modeManager.operationMode() == SPARK_MODE_AMP) {
         return true;
     }
     return isAmpConnected();
@@ -489,7 +377,7 @@ bool SparkDataControl::switchEffectOnOff(const string &fxName, bool enable) {
 bool SparkDataControl::toggleEffect(int fxIdentifier) {
 
     Preset activePreset = SparkPresetControl::getInstance().activePreset();
-    if (!processAction() || operationMode_ == SPARK_MODE_AMP) {
+    if (!processAction() || modeManager.operationMode() == SPARK_MODE_AMP) {
         Serial.println("Not connected to Spark Amp or in AMP mode, doing nothing.");
         return false;
     }
@@ -588,16 +476,16 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
     tie(ackNeeded, seq, subCmd) = sparkSsr.needsAck(blk);
     if (ackNeeded) {
         DEBUG_PRINTLN("ACK required");
-        if (operationMode_ == SPARK_MODE_AMP) {
+        if (modeManager.operationMode() == SPARK_MODE_AMP) {
             ackMsg = sparkMsg.sendAck(seq, subCmd, DIR_FROM_SPARK);
         } else {
             ackMsg = sparkMsg.sendAck(seq, subCmd, DIR_TO_SPARK);
         }
 
         DEBUG_PRINTLN("Sending acknowledgment");
-        if (operationMode_ == SPARK_MODE_APP) {
+        if (modeManager.operationMode() == SPARK_MODE_APP) {
             triggerCommand(ackMsg);
-        } else if (operationMode_ == SPARK_MODE_AMP) {
+        } else if (modeManager.operationMode() == SPARK_MODE_AMP) {
             bleControl->notifyClients(ackMsg);
         }
     }
@@ -692,7 +580,7 @@ void SparkDataControl::handleAppModeResponse() {
     byte lastMessageNumber = statusObject.lastMessageNum();
     // DEBUG_PRINTF("Last message number: %s\n", SparkHelper::intToHex(lastMessageNumber).c_str());
 
-    if (operationMode_ == SPARK_MODE_APP) {
+    if (modeManager.operationMode() == SPARK_MODE_APP) {
         bool printMessage = false;
 
         if (lastMessageType == MSG_TYPE_AMP_NAME) {
@@ -794,11 +682,11 @@ void SparkDataControl::handleAppModeResponse() {
 
         if (lastMessageType == MSG_TYPE_TUNER_OUTPUT) {
             // Amp seems to be in tuner mode
-            if (subMode_ != SUB_MODE_TUNER) {
+            if (modeManager.subMode() != SUB_MODE_TUNER) {
                 // Switch off tuner
                 switchTuner(false);
             }
-            // operationMode_ = SUB_MODE_TUNER;
+            // modeManager.subMode() = SUB_MODE_TUNER;
         }
 
         if (lastMessageType == MSG_TYPE_TUNER_ON) {
@@ -822,7 +710,7 @@ void SparkDataControl::handleAppModeResponse() {
         }
     }
 
-    if (operationMode_ == SPARK_MODE_AMP) {
+    if (modeManager.operationMode() == SPARK_MODE_AMP) {
         if (lastMessageType == MSG_TYPE_PRESET) {
 
             SparkPresetControl::getInstance().updateFromSparkResponseAmpPreset(&msgStr[0]);
@@ -923,27 +811,7 @@ bool SparkDataControl::checkBLEConnection() {
     return false;
 }
 
-void SparkDataControl::toggleBTMode() {
-
-    if (operationMode_ == SPARK_MODE_AMP) {
-        Serial.print("Switching Bluetooth mode to ");
-        if (currentBTMode_ == BT_MODE_BLE) {
-            Serial.println("Serial");
-            currentBTMode_ = BT_MODE_SERIAL;
-        } else if (currentBTMode_ == BT_MODE_SERIAL) {
-            Serial.println("BLE");
-            currentBTMode_ = BT_MODE_BLE;
-        }
-        // Save new mode to file
-        File file = LittleFS.open(btModeFileName.c_str(), FILE_WRITE);
-        file.print(currentBTMode_);
-        file = LittleFS.open(sparkModeFileName.c_str(), FILE_WRITE);
-        file.print(SPARK_MODE_AMP);
-        file.close();
-        Serial.println("Restarting in new BT mode");
-        restartESP(false);
-    }
-}
+// This method has been moved to SparkModeManager
 
 bool SparkDataControl::isAmpConnected() {
     return bleControl->isAmpConnected();

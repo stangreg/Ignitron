@@ -14,6 +14,7 @@
 #include "../hardware/SparkKeyboardControl.h"
 #include "../utils/CircularBuffer.h"
 #include "SparkLooperControl.h"
+#include "SparkModeManager.h"
 
 #include <Arduino.h>
 #include <queue>
@@ -77,9 +78,6 @@ public:
     static bool switchEffectOnOff(const string &fxName, bool enable);
     static bool toggleEffect(int fxIdentifier);
 
-    bool toggleSubMode();
-    bool toggleLooperAppMode();
-
     uint8_t lastKeyboardButtonPressed() const { return lastKeyboardButtonPressed_; }
     string lastKeyboardButtonPressedString() const { return lastKeyboardButtonPressedString_; }
     KeyboardMapping &currentKeyboard() const { return keyboardControl->getCurrentKeyboard(); }
@@ -97,22 +95,23 @@ public:
 
     const bool ampNameReceived() const { return ampNameReceived_; }
 
-    const OperationMode &operationMode() const { return operationMode_; }
-    OperationMode &operationMode() { return operationMode_; }
+    // Mode-related methods delegated to SparkModeManager
+    const OperationMode &operationMode() const { return modeManager.operationMode(); }
+    OperationMode &operationMode() { return modeManager.operationMode(); }
+    const SubMode &subMode() const { return modeManager.subMode(); }
+    SubMode &subMode() { return modeManager.subMode(); }
+    const BTMode currentBTMode() const { return modeManager.currentBTMode(); }
+    bool toggleSubMode() { return modeManager.toggleSubMode(); }
+    bool toggleLooperAppMode() { return modeManager.toggleLooperAppMode(); }
+    void toggleBTMode() { modeManager.toggleBTMode(); }
 
     SparkLooperControl &looperControl() { return looperControl_; }
 
     bool &isInitBoot() { return isInitBoot_; }
 
-    const BTMode currentBTMode() const { return currentBTMode_; }
-
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     const BatteryLevel batteryLevel() const { return batteryLevel_; }
 #endif
-
-    // Set/get button mode
-    const SubMode &subMode() const { return subMode_; }
-    SubMode &subMode() { return subMode_; }
 
     bool &keyboardChanged() { return keyboardChanged_; }
 
@@ -122,7 +121,6 @@ public:
     // Functions for Spark AMP (Server mode)
     // void receiveSparkWrite(const ByteVector& blk);
     static void switchSubMode(SubMode subMode);
-    void toggleBTMode();
 
     bool sparkLooperCommand(LooperCommand command);
     bool sparkLooperStopAll();
@@ -164,8 +162,6 @@ public:
 #endif
 
 private:
-    static OperationMode operationMode_;
-
     static SparkBTControl *bleControl;
     static SparkStreamReader sparkSsr;
     static SparkStatus &statusObject;
@@ -173,15 +169,11 @@ private:
     static SparkDisplayControl *sparkDisplay;
     static SparkKeyboardControl *keyboardControl;
     static SparkLooperControl looperControl_;
+    static SparkModeManager modeManager;
 
     static SparkBLEKeyboard bleKeyboard;
 
-    // TODO: Put settings into proper config file
-    string btModeFileName = "/config/BTMode.config";
-    string sparkModeFileName = "/config/SparkMode.config";
-
     // Button data
-    static SubMode subMode_;
     uint8_t lastKeyboardButtonPressed_ = 0;
     string lastKeyboardButtonPressedString_ = "";
     bool keyboardChanged_ = false;
@@ -204,10 +196,6 @@ private:
     static bool customPresetNumberChangePending;
 
     // Spark AMP mode
-
-    static BTMode currentBTMode_;
-    static OperationMode sparkModeAmp;
-    static OperationMode sparkModeApp;
     ByteVector currentBTMsg;
     static AmpType sparkAmpType;
     static string sparkAmpName;
@@ -243,9 +231,6 @@ private:
     static void handleIncomingAck();
 
     // Read in all HW presets
-    void readOpModeFromFile();
-    void readBTModeFromFile();
-
     static bool updateLooperSettings();
     static void startLooperTimer(void *args);
     static void updateLooperCommand(byte lastCommand);
