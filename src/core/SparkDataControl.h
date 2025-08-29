@@ -99,7 +99,7 @@ public:
      * Get direct access to the SparkModeManager instance
      * @return Reference to the SparkModeManager
      */
-    static SparkModeManager& getModeManager() {
+    static SparkModeManager &getModeManager() {
         return modeManager;
     }
 
