@@ -207,7 +207,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
     // or the new received preset from the app (in AMP mode)
     int secondaryLinePosY = 50;
 
-    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    SparkModeManager &modeManager = sparkDC_->getModeManager();
     OperationMode opMode = modeManager.operationMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
     Preset presetFromApp = presetControl.appReceivedPreset();
@@ -358,7 +358,7 @@ void SparkDisplayControl::showModeModifier() {
     display_.setTextSize(4);
     string presetText = " ";
 
-    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    SparkModeManager &modeManager = sparkDC_->getModeManager();
     OperationMode opMode = modeManager.operationMode();
     SubMode subMode = modeManager.subMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
@@ -705,7 +705,7 @@ void SparkDisplayControl::checkInvertDisplay(int subMode) {
 
 void SparkDisplayControl::update(bool isInitBoot) {
 
-    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    SparkModeManager &modeManager = sparkDC_->getModeManager();
     OperationMode opMode = modeManager.operationMode();
     SubMode subMode = modeManager.subMode();
     display_.clearDisplay();

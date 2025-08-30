@@ -84,7 +84,7 @@ void setup() {
 void loop() {
 
     // Get a reference to the SparkModeManager
-    SparkModeManager& modeManager = spark_dc.getModeManager();
+    SparkModeManager &modeManager = spark_dc.getModeManager();
 
     // Methods to call only in APP mode
     if (modeManager.operationMode() == SPARK_MODE_APP) {

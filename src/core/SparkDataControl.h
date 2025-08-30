@@ -10,18 +10,18 @@
 
 /* *******************************************************************************
  * IMPORTANT: Mode Management Using SparkModeManager
- * 
+ *
  * To access SparkModeManager methods, use the following pattern:
- * 
+ *
  *   SparkModeManager& modeManager = sparkDataControl.getModeManager();
- *   
+ *
  *   // Then use direct calls to the modeManager
  *   if (modeManager.operationMode() == SPARK_MODE_APP) {
  *     // ...
  *   }
- *   
+ *
  *   modeManager.toggleSubMode();
- *   
+ *
  * The delegated methods in SparkDataControl are marked as deprecated
  * and should be replaced with direct calls to SparkModeManager.
  * *******************************************************************************/
@@ -31,6 +31,7 @@
 #include "../hardware/SparkBLEKeyboard.h"
 #include "../hardware/SparkKeyboardControl.h"
 #include "../utils/CircularBuffer.h"
+#include "SparkHardwareManager.h"
 #include "SparkLooperControl.h"
 #include "SparkModeManager.h"
 
@@ -205,8 +206,6 @@ private:
     static SparkKeyboardControl *keyboardControl;
     static SparkLooperControl looperControl_;
     static SparkModeManager modeManager;
-
-    static SparkBLEKeyboard bleKeyboard;
 
     // Button data
     uint8_t lastKeyboardButtonPressed_ = 0;

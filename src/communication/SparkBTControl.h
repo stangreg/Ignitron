@@ -16,7 +16,8 @@
 #include <string>
 #include <vector>
 
-#include "../core/SparkDataControl.h"
+// Forward declaration instead of include
+class SparkDataControl;
 
 using namespace std;
 

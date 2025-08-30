@@ -404,7 +404,7 @@ void SparkPresetControl::updateFromSparkResponseACK() {
 bool SparkPresetControl::increasePresetLooper() {
 
     // Get direct access to the SparkModeManager
-    SparkModeManager& modeManager = sparkDC->getModeManager();
+    SparkModeManager &modeManager = sparkDC->getModeManager();
     SubMode subMode = modeManager.subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
@@ -434,7 +434,7 @@ bool SparkPresetControl::increasePresetLooper() {
 bool SparkPresetControl::decreasePresetLooper() {
 
     // Get direct access to the SparkModeManager
-    SparkModeManager& modeManager = sparkDC->getModeManager();
+    SparkModeManager &modeManager = sparkDC->getModeManager();
     SubMode subMode = modeManager.subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {

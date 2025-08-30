@@ -6,6 +6,7 @@
  */
 
 #include "SparkDataControl.h"
+#include "SparkHardwareManager.h"
 
 SparkBTControl *SparkDataControl::bleControl = nullptr;
 SparkStreamReader SparkDataControl::sparkSsr;
@@ -15,7 +16,6 @@ SparkMessage SparkDataControl::sparkMsg;
 SparkDisplayControl *SparkDataControl::sparkDisplay = nullptr;
 SparkKeyboardControl *SparkDataControl::keyboardControl = nullptr;
 SparkLooperControl SparkDataControl::looperControl_;
-SparkBLEKeyboard SparkDataControl::bleKeyboard = SparkBLEKeyboard();
 SparkModeManager SparkDataControl::modeManager;
 
 queue<ByteVector> SparkDataControl::msgQueue;
@@ -49,16 +49,17 @@ bool SparkDataControl::isInitBoot_ = true;
 byte SparkDataControl::specialMsgNum = 0xEE;
 
 SparkDataControl::SparkDataControl() {
-    // Initialize the core components
-    bleControl = new SparkBTControl(this);
+    // Initialize the hardware manager first to get access to hardware components
+    bleControl = SparkHardwareManager::getInstance().getBleControl();
+
+    // Initialize keyboard control
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
     tapEntries = CircularBuffer(tapEntrySize);
 }
 
 SparkDataControl::~SparkDataControl() {
-    if (bleControl)
-        delete bleControl;
+    // Note: bleControl is now managed by SparkHardwareManager
     if (sparkDisplay)
         delete sparkDisplay;
     if (keyboardControl)
@@ -73,22 +74,12 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
 
     SparkPresetControl::getInstance().init();
 
-    // Define MAC address required for keyboard
-    uint8_t macKeyboard[] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36}; //{0x36, 0x33, 0x33, 0x33, 0x33, 0x33};
+    // Use SparkHardwareManager to initialize hardware based on operation mode
+    SparkHardwareManager::getInstance().initializeHardware(modeManager.operationMode(), this);
 
-    switch (modeManager.operationMode()) {
-    case SPARK_MODE_APP:
-        // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&macKeyboard[0]);
-
-        // initialize BLE
-        bleKeyboard.setName("Ignitron BLE");
-        bleKeyboard.begin();
-        // delay(2000);
-        bleKeyboard.end();
-        bleControl->initBLE(&bleNotificationCallback);
+    // Only create the looper timer task in APP mode
+    if (modeManager.operationMode() == SPARK_MODE_APP) {
         DEBUG_PRINTLN("Starting regular check for empty HW presets.");
-
         xTaskCreatePinnedToCore(
             startLooperTimer,
             "LooperTimer",
@@ -97,33 +88,22 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
             0,
             NULL,
             1);
-        break;
-    case SPARK_MODE_AMP:
-        if (modeManager.currentBTMode() == BT_MODE_BLE) {
-            bleControl->startServer();
-        } else if (modeManager.currentBTMode() == BT_MODE_SERIAL) {
-            bleControl->startBTSerial();
-        }
-        readPresetChecksums();
-        break;
-    case SPARK_MODE_KEYBOARD:
-        // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&macKeyboard[0]);
+    }
 
-        // initialize BLE
-        bleKeyboard.setName("Ignitron BLE");
-        bleKeyboard.begin();
-        break;
+    // Read preset checksums if in AMP mode
+    if (modeManager.operationMode() == SPARK_MODE_AMP) {
+        readPresetChecksums();
     }
 
     return modeManager.operationMode();
 }
 
 void SparkDataControl::switchSubMode(SubMode subMode) {
+    SparkBLEKeyboard *keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
     if (subMode == SUB_MODE_LOOPER) {
-        bleKeyboard.start();
+        keyboard->start();
     } else {
-        bleKeyboard.end();
+        keyboard->end();
     }
 
     // Switch off tuner mode at amp if was enabled before but is not matching current subMode
@@ -789,36 +769,21 @@ void SparkDataControl::readHWPreset(int num) {
 /////////////////////////////////////////////////////////
 
 void SparkDataControl::startBLEServer() {
-    bleControl->startServer();
+    SparkHardwareManager::getInstance().startBLEServer();
 }
 
 bool SparkDataControl::checkBLEConnection() {
-    if (bleControl->isAmpConnected()) {
-        return true;
-    }
-    if (bleControl->isConnectionFound()) {
-        if (bleControl->connectToServer()) {
-            bleControl->subscribeToNotifications(&bleNotificationCallback);
-            Serial.println("BLE connection to Spark established.");
-            // delay(2000);
-            return true;
-        } else {
-            Serial.println("Failed to connect, starting scan");
-            bleControl->startScan();
-            return false;
-        }
-    }
-    return false;
+    return SparkHardwareManager::getInstance().checkBLEConnection();
 }
 
 // This method has been moved to SparkModeManager
 
 bool SparkDataControl::isAmpConnected() {
-    return bleControl->isAmpConnected();
+    return SparkHardwareManager::isAmpConnected();
 }
 
 bool SparkDataControl::isAppConnected() {
-    return bleControl->isAppConnected();
+    return SparkHardwareManager::isAppConnected();
 }
 
 void SparkDataControl::bleNotificationCallback(
@@ -847,7 +812,7 @@ void SparkDataControl::queueMessage(ByteVector &blk) {
 
 bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
     DEBUG_PRINTLN("Sending message via BT.");
-    return bleControl->writeBLE(msg, withDelay);
+    return SparkHardwareManager::getInstance().getBleControl()->writeBLE(msg, withDelay);
 }
 
 /////////////////////////////////////////////////////////
@@ -855,16 +820,16 @@ bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
 /////////////////////////////////////////////////////////
 
 void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
-    if (bleKeyboard.isConnected()) {
-
+    SparkBLEKeyboard *keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
+    if (keyboard->isConnected()) {
         Serial.printf("Sending button: %d - mod: %d - repeat: %d\n", k.key, k.modifier, k.repeat);
         if (k.modifier != 0)
-            bleKeyboard.press(k.modifier);
+            keyboard->press(k.modifier);
         for (uint8_t i = 0; i <= k.repeat; i++) {
-            bleKeyboard.write(k.key);
+            keyboard->write(k.key);
         }
         if (k.modifier != 0)
-            bleKeyboard.release(k.modifier);
+            keyboard->release(k.modifier);
         lastKeyboardButtonPressed_ = k.keyUid;
         lastKeyboardButtonPressedString_ = k.display;
     } else {

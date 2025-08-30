@@ -10,17 +10,17 @@
 
 /* *******************************************************************************
  * IMPORTANT: SparkModeManager Usage
- * 
+ *
  * This class is the central place for managing all mode-related functionality.
  * To access SparkModeManager methods, get the instance from SparkDataControl:
- * 
+ *
  *   SparkModeManager& modeManager = sparkDataControl.getModeManager();
- *   
+ *
  * Then use direct calls to the modeManager:
  *   if (modeManager.operationMode() == SPARK_MODE_APP) {
  *     // ...
  *   }
- *   
+ *
  *   modeManager.toggleSubMode();
  * *******************************************************************************/
 

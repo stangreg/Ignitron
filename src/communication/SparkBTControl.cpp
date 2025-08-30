@@ -6,6 +6,7 @@
  */
 
 #include "SparkBTControl.h"
+#include "../core/SparkDataControl.h"
 
 bool SparkBTControl::isAppConnectedSerial_ = false;
 

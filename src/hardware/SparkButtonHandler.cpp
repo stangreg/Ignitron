@@ -57,7 +57,7 @@ OperationMode SparkButtonHandler::checkBootOperationMode() {
 void SparkButtonHandler::configureButtons() {
 
     // Get direct access to the SparkModeManager
-    SparkModeManager& modeManager = spark_dc_->getModeManager();
+    SparkModeManager &modeManager = spark_dc_->getModeManager();
     OperationMode operationMode = modeManager.operationMode();
     SubMode subMode = modeManager.subMode();
 
@@ -314,7 +314,7 @@ void SparkButtonHandler::btnToggleLoopHandler(BfButton *btn,
 #endif
 
     // Switch between APP and LOOPER mode
-    SparkModeManager& modeManager = spark_dc_->getModeManager();
+    SparkModeManager &modeManager = spark_dc_->getModeManager();
     modeManager.toggleLooperAppMode();
     Serial.println("Re-initializing button config");
     configureButtons();
@@ -334,7 +334,7 @@ void SparkButtonHandler::btnToggleBTModeHandler(BfButton *btn,
     DEBUG_PRINTLN(pressed_btn_gpio);
 #endif
 
-    SparkModeManager& modeManager = spark_dc_->getModeManager();
+    SparkModeManager &modeManager = spark_dc_->getModeManager();
     modeManager.toggleBTMode();
 }
 
