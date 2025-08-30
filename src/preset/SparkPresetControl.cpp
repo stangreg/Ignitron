@@ -403,7 +403,9 @@ void SparkPresetControl::updateFromSparkResponseACK() {
 
 bool SparkPresetControl::increasePresetLooper() {
 
-    SubMode subMode = sparkDC->subMode();
+    // Get direct access to the SparkModeManager
+    SparkModeManager& modeManager = sparkDC->getModeManager();
+    SubMode subMode = modeManager.subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");
@@ -431,7 +433,9 @@ bool SparkPresetControl::increasePresetLooper() {
 
 bool SparkPresetControl::decreasePresetLooper() {
 
-    SubMode subMode = sparkDC->subMode();
+    // Get direct access to the SparkModeManager
+    SparkModeManager& modeManager = sparkDC->getModeManager();
+    SubMode subMode = modeManager.subMode();
     if (!sparkDC->processAction() ||
         (subMode != SUB_MODE_LOOPER && subMode != SUB_MODE_LOOP_CONTROL)) {
         Serial.println("Looper preset change: Spark Amp not connected or not in Looper mode, doing nothing");

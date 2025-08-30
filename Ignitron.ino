@@ -83,8 +83,11 @@ void setup() {
 
 void loop() {
 
+    // Get a reference to the SparkModeManager
+    SparkModeManager& modeManager = spark_dc.getModeManager();
+
     // Methods to call only in APP mode
-    if (operationMode == SPARK_MODE_APP) {
+    if (modeManager.operationMode() == SPARK_MODE_APP) {
         while (!(spark_dc.checkBLEConnection())) {
             sparkDisplay.update(spark_dc.isInitBoot());
             spark_led.updateLEDs();
@@ -107,7 +110,7 @@ void loop() {
     }
 
     // Check if presets have been updated (not needed in Keyboard mode)
-    if (operationMode != SPARK_MODE_KEYBOARD) {
+    if (modeManager.operationMode() != SPARK_MODE_KEYBOARD) {
         spark_dc.checkForUpdates();
     }
     // Reading button input

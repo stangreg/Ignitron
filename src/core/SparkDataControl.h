@@ -8,6 +8,24 @@
 #ifndef SPARKDATACONTROL_H_
 #define SPARKDATACONTROL_H_
 
+/* *******************************************************************************
+ * IMPORTANT: Mode Management Using SparkModeManager
+ * 
+ * To access SparkModeManager methods, use the following pattern:
+ * 
+ *   SparkModeManager& modeManager = sparkDataControl.getModeManager();
+ *   
+ *   // Then use direct calls to the modeManager
+ *   if (modeManager.operationMode() == SPARK_MODE_APP) {
+ *     // ...
+ *   }
+ *   
+ *   modeManager.toggleSubMode();
+ *   
+ * The delegated methods in SparkDataControl are marked as deprecated
+ * and should be replaced with direct calls to SparkModeManager.
+ * *******************************************************************************/
+
 #include "../communication/SparkBTControl.h"
 #include "../core/Config_Definitions.h"
 #include "../hardware/SparkBLEKeyboard.h"
@@ -103,15 +121,23 @@ public:
         return modeManager;
     }
 
-    // Mode-related methods delegated to SparkModeManager
-    // These methods are kept for backward compatibility
+    // DEPRECATED: Mode-related methods delegated to SparkModeManager
+    // Use getModeManager().<method>() instead
+    [[deprecated("Use getModeManager().operationMode() instead")]]
     const OperationMode &operationMode() const { return modeManager.operationMode(); }
+    [[deprecated("Use getModeManager().operationMode() instead")]]
     OperationMode &operationMode() { return modeManager.operationMode(); }
+    [[deprecated("Use getModeManager().subMode() instead")]]
     const SubMode &subMode() const { return modeManager.subMode(); }
+    [[deprecated("Use getModeManager().subMode() instead")]]
     SubMode &subMode() { return modeManager.subMode(); }
+    [[deprecated("Use getModeManager().currentBTMode() instead")]]
     const BTMode currentBTMode() const { return modeManager.currentBTMode(); }
+    [[deprecated("Use getModeManager().toggleSubMode() instead")]]
     bool toggleSubMode() { return modeManager.toggleSubMode(); }
+    [[deprecated("Use getModeManager().toggleLooperAppMode() instead")]]
     bool toggleLooperAppMode() { return modeManager.toggleLooperAppMode(); }
+    [[deprecated("Use getModeManager().toggleBTMode() instead")]]
     void toggleBTMode() { modeManager.toggleBTMode(); }
 
     SparkLooperControl &looperControl() { return looperControl_; }

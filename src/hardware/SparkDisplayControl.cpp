@@ -68,7 +68,7 @@ void SparkDisplayControl::init(int mode) {
 
     showInitialMessage();
     display_.display();
-    if (sparkDC_->operationMode() == SPARK_MODE_KEYBOARD) {
+    if (sparkDC_->getModeManager().operationMode() == SPARK_MODE_KEYBOARD) {
         // Allow the initial screen to show for some time
         delay(2000);
     }
@@ -80,7 +80,7 @@ void SparkDisplayControl::showInitialMessage() {
     display_.setTextSize(2);
 
     string modeText;
-    switch (sparkDC_->operationMode()) {
+    switch (sparkDC_->getModeManager().operationMode()) {
     case SPARK_MODE_APP:
         modeText = "APP";
         break;
@@ -207,7 +207,8 @@ void SparkDisplayControl::showFX_SecondaryName() {
     // or the new received preset from the app (in AMP mode)
     int secondaryLinePosY = 50;
 
-    OperationMode opMode = sparkDC_->operationMode();
+    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    OperationMode opMode = modeManager.operationMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
     Preset presetFromApp = presetControl.appReceivedPreset();
 
@@ -234,7 +235,7 @@ void SparkDisplayControl::showFX_SecondaryName() {
     } else if (opMode == SPARK_MODE_APP) {
 
         // Build string to show active FX
-        SubMode subMode = sparkDC_->subMode();
+        SubMode subMode = modeManager.subMode();
 #ifndef DEDICATED_PRESET_LEDS
         secondaryLinePreset = primaryLinePreset;
 
@@ -357,8 +358,9 @@ void SparkDisplayControl::showModeModifier() {
     display_.setTextSize(4);
     string presetText = " ";
 
-    OperationMode opMode = sparkDC_->operationMode();
-    SubMode subMode = sparkDC_->subMode();
+    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    OperationMode opMode = modeManager.operationMode();
+    SubMode subMode = modeManager.subMode();
     SparkPresetControl &presetControl = SparkPresetControl::getInstance();
 
     // Change to subMode
@@ -703,8 +705,9 @@ void SparkDisplayControl::checkInvertDisplay(int subMode) {
 
 void SparkDisplayControl::update(bool isInitBoot) {
 
-    OperationMode opMode = sparkDC_->operationMode();
-    SubMode subMode = sparkDC_->subMode();
+    SparkModeManager& modeManager = sparkDC_->getModeManager();
+    OperationMode opMode = modeManager.operationMode();
+    SubMode subMode = modeManager.subMode();
     display_.clearDisplay();
     checkInvertDisplay(subMode);
 

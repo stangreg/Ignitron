@@ -52,7 +52,8 @@ void SparkLEDControl::init() {
 
 void SparkLEDControl::updateLEDs() {
 
-    operationMode = sparkDC->operationMode();
+    SparkModeManager& modeManager = sparkDC->getModeManager();
+    operationMode = modeManager.operationMode();
     activePreset = SparkPresetControl::getInstance().activePreset();
     activePresetNum = SparkPresetControl::getInstance().activePresetNum();
 
@@ -259,7 +260,8 @@ void SparkLEDControl::switchLed(int num, bool on, bool fxMode) {
     int STATE;
 
     // Blink if enabled and in FX modification mode
-    if (ENABLE_FX_BLINK && fxMode && sparkDC->operationMode() == SPARK_MODE_APP && sparkDC->subMode() == SUB_MODE_FX) {
+    SparkModeManager& modeManager = sparkDC->getModeManager();
+    if (ENABLE_FX_BLINK && fxMode && modeManager.operationMode() == SPARK_MODE_APP && modeManager.subMode() == SUB_MODE_FX) {
         if (currentMillis - previousMillis >= blinkInterval_ms) {
             blinkInvert = !blinkInvert;
             previousMillis = currentMillis;
