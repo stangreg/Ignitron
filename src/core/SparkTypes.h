@@ -11,12 +11,15 @@
 #include "../core/Config_Definitions.h"
 #include "../utils/SparkHelper.h"
 #include "../utils/StringBuilder.h"
+#include "../core/Spark_Namespace.h"
 #include <Arduino.h>
 #include <array>
 #include <vector>
 
-using namespace std;
-using ByteVector = vector<byte>;
+
+using Spark::byte;
+using Spark::ByteVector;
+using std::vector;
 
 enum MessageDirection {
     DIR_TO_SPARK,

@@ -20,8 +20,12 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-using ByteVector = vector<byte>;
+using Spark::byte;
+using Spark::ByteVector;
+using std::vector;
+using std::string;
+using std::deque;
+
 
 class SparkMessage {
 

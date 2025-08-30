@@ -18,8 +18,12 @@
 #include "../utils/SparkHelper.h"
 #include "../utils/StringBuilder.h"
 
-using namespace std;
-using ByteVector = vector<byte>;
+using Spark::byte;
+using Spark::ByteVector;
+using std::string;
+using std::to_string;
+using std::tuple;
+using std::vector;
 
 enum MessageProcessStatus {
     MSG_PROCESS_RES_COMPLETE,

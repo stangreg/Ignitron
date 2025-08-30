@@ -401,10 +401,10 @@ void SparkDisplayControl::showConnection() {
 
     // Bluetooth
     switch (sparkDC_->currentBTMode()) {
-    case BT_MODE_BLE:
+    case BT_MODE_SPARK_BLE:
         currentBTModeText = "BLE";
         break;
-    case BT_MODE_SERIAL:
+    case BT_MODE_SPARK_SERIAL:
         currentBTModeText = "SRL";
         break;
     }

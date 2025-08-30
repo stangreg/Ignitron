@@ -69,14 +69,14 @@ SparkDataControl::~SparkDataControl() {
 OperationMode SparkDataControl::init(OperationMode opModeInput) {
     // Initialize the mode manager
     modeManager.init(opModeInput);
-
+     // Use SparkHardwareManager to initialize hardware based on operation mode
+    SparkHardwareManager::getInstance().initializeHardware(modeManager.operationMode(), this);
+    
     tapEntries = CircularBuffer(tapEntrySize);
 
     SparkPresetControl::getInstance().init();
 
-    // Use SparkHardwareManager to initialize hardware based on operation mode
-    SparkHardwareManager::getInstance().initializeHardware(modeManager.operationMode(), this);
-
+   
     // Only create the looper timer task in APP mode
     if (modeManager.operationMode() == SPARK_MODE_APP) {
         DEBUG_PRINTLN("Starting regular check for empty HW presets.");

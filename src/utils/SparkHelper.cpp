@@ -7,7 +7,6 @@
 
 #include "SparkHelper.h"
 
-using ByteVector = vector<byte>;
 
 byte SparkHelper::HexToByte(const string &hex) {
     byte ret_byte;

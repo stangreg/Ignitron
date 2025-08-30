@@ -48,11 +48,12 @@
 
 #include "SparkTypes.h"
 
-using namespace std;
-using ByteVector = vector<byte>;
-
-class SparkBTControl;
-class SparkDisplayControl;
+using Spark::byte;
+using Spark::ByteVector;
+using std::deque;
+using std::pair;
+using std::queue;
+using std::tie;
 
 class SparkDataControl {
 public:

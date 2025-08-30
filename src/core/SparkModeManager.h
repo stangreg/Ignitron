@@ -29,7 +29,7 @@
 #include <Arduino.h>
 #include <string>
 
-using namespace std;
+using std::string;
 
 class SparkModeManager {
 public:
@@ -83,7 +83,7 @@ public:
 private:
     OperationMode operationMode_ = SPARK_MODE_APP;
     SubMode subMode_ = SUB_MODE_PRESET;
-    BTMode currentBTMode_ = BT_MODE_BLE;
+    BTMode currentBTMode_ = BT_MODE_SPARK_BLE;
 
     // File paths for configuration files
     string btModeFileName = "/config/BTMode.config";

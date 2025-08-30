@@ -5,8 +5,8 @@
  * It is not meant to be compiled or used in production.
  */
 
-#include "core/SparkDataControl.h"
-#include "core/SparkModeManager.h"
+#include "../core/SparkDataControl.h"
+#include "../core/SparkModeManager.h"
 
 // Example class that needs to interact with mode management
 class ExampleClass {

@@ -11,7 +11,7 @@
 #include <deque>
 #include <numeric>
 
-using namespace std;
+using std::deque;
 
 class CircularBuffer {
 

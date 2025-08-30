@@ -22,13 +22,11 @@
 
 #include "../core/SparkDataControl.h"
 #include "../core/SparkLooperControl.h"
-#include "../preset/SparkPresetControl.h"
 #include "../core/SparkTypes.h"
+#include "../preset/SparkPresetControl.h"
 
-using namespace std;
-
-class SparkDataControl;
-class SparkLooperControl;
+using std::ostringstream;
+using std::string;
 
 class SparkDisplayControl {
 public:

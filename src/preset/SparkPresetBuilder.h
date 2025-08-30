@@ -36,8 +36,14 @@ enum PresetDeleteResult {
     DELETE_PRESET_UNKNOWN_ERROR
 };
 
-using namespace std;
-using ByteVector = vector<byte>;
+using Spark::byte;
+using Spark::ByteVector;
+using std::make_pair;
+using std::pair;
+using std::regex;
+using std::stringstream;
+using std::to_string;
+using std::vector;
 
 class SparkPresetBuilder {
 

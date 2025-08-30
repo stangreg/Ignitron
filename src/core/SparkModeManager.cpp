@@ -13,7 +13,7 @@ SparkModeManager::SparkModeManager() {
     // Initialize with default values
     operationMode_ = SPARK_MODE_APP;
     subMode_ = SUB_MODE_PRESET;
-    currentBTMode_ = BT_MODE_BLE;
+    currentBTMode_ = BT_MODE_SPARK_BLE;
 }
 
 SparkModeManager::~SparkModeManager() {
@@ -23,7 +23,7 @@ SparkModeManager::~SparkModeManager() {
 OperationMode SparkModeManager::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
     // TODO: Add back Reading in OpMode from file after sorting out FS issues
-    //readOpModeFromFile();
+    // readOpModeFromFile();
     readBTModeFromFile();
     return operationMode_;
 }
@@ -110,11 +110,11 @@ bool SparkModeManager::toggleLooperAppMode() {
 }
 
 void SparkModeManager::toggleBTMode() {
-    if (currentBTMode_ == BT_MODE_BLE) {
-        currentBTMode_ = BT_MODE_SERIAL;
+    if (currentBTMode_ == BT_MODE_SPARK_BLE) {
+        currentBTMode_ = BT_MODE_SPARK_SERIAL;
         DEBUG_PRINTLN("Setting BT mode to SERIAL");
     } else {
-        currentBTMode_ = BT_MODE_BLE;
+        currentBTMode_ = BT_MODE_SPARK_BLE;
         DEBUG_PRINTLN("Setting BT mode to BLE");
     }
     saveBTModeToFile();
@@ -168,10 +168,10 @@ void SparkModeManager::readBTModeFromFile() {
                 file.close();
 
                 if (fileContent == "BLE") {
-                    currentBTMode_ = BT_MODE_BLE;
+                    currentBTMode_ = BT_MODE_SPARK_BLE;
                     DEBUG_PRINTLN("Setting BT mode to BLE from file");
                 } else if (fileContent == "SERIAL") {
-                    currentBTMode_ = BT_MODE_SERIAL;
+                    currentBTMode_ = BT_MODE_SPARK_SERIAL;
                     DEBUG_PRINTLN("Setting BT mode to SERIAL from file");
                 }
             }
@@ -206,7 +206,7 @@ void SparkModeManager::saveBTModeToFile() {
     if (LittleFS.begin()) {
         File file = LittleFS.open(btModeFileName.c_str(), "w");
         if (file) {
-            if (currentBTMode_ == BT_MODE_BLE) {
+            if (currentBTMode_ == BT_MODE_SPARK_BLE) {
                 file.print("BLE");
             } else {
                 file.print("SERIAL");

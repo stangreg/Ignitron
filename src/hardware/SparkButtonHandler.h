@@ -14,8 +14,6 @@
 #include "../core/SparkTypes.h"
 #include <BfButton.h> //https://github.com/mickey9801/ButtonFever
 
-using namespace std;
-
 class SparkButtonHandler {
 public:
     SparkButtonHandler();

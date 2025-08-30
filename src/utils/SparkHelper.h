@@ -15,10 +15,13 @@
 #include <cstdio>
 
 #include "../core/Config_Definitions.h"
+#include "../core/Spark_Namespace.h"
 #include <Arduino.h>
 
-using namespace std;
-using ByteVector = vector<byte>;
+using Spark::byte;
+using Spark::ByteVector;
+using std::string;
+using std::vector;
 
 class SparkHelper {
 

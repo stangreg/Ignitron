@@ -11,7 +11,7 @@
 #include <vector>
 #include "../core/SparkTypes.h"
 
-using namespace std;
+using std::vector;
 
 class SparkKeyboardControl {
 public:

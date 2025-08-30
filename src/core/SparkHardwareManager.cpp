@@ -41,7 +41,7 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
     switch (opMode) {
     case SPARK_MODE_APP:
         // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&macKeyboard[0]);
+        // esp_base_mac_addr_set(&macKeyboard[0]);
 
         // Initialize BLE keyboard
         bleKeyboard->setName("Ignitron BLE");
@@ -56,9 +56,9 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
         break;
 
     case SPARK_MODE_AMP:
-        if (dataControl->getModeManager().currentBTMode() == BT_MODE_BLE) {
+        if (dataControl->getModeManager().currentBTMode() == BT_MODE_SPARK_BLE) {
             bleControl->startServer();
-        } else if (dataControl->getModeManager().currentBTMode() == BT_MODE_SERIAL) {
+        } else if (dataControl->getModeManager().currentBTMode() == BT_MODE_SPARK_SERIAL) {
             bleControl->startBTSerial();
         }
         DEBUG_PRINTLN("SparkHardwareManager: Hardware initialized for AMP mode");
@@ -66,7 +66,7 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
 
     case SPARK_MODE_KEYBOARD:
         // Set MAC address for BLE keyboard
-        esp_base_mac_addr_set(&macKeyboard[0]);
+        // esp_base_mac_addr_set(&macKeyboard[0]);
 
         // Initialize BLE keyboard for dedicated keyboard mode
         bleKeyboard->setName("Ignitron BLE");
@@ -75,6 +75,11 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
         break;
     }
 
+    if (!LittleFS.begin(true, "/littlefs", 10U, "spiffs")) {
+        DEBUG_PRINTLN("SparkHardwareManager: Failed to mount LittleFS");
+    } else {
+        DEBUG_PRINTLN("SparkHardwareManager: LittleFS mounted successfully");
+    }
     return opMode;
 }
 
@@ -87,7 +92,7 @@ void SparkHardwareManager::initializeBluetooth(void (*notificationCallback)(NimB
 
 void SparkHardwareManager::initializeKeyboard(const std::string &keyboardName) {
     // Set MAC address for BLE keyboard
-    esp_base_mac_addr_set(&macKeyboard[0]);
+    // esp_base_mac_addr_set(&macKeyboard[0]);
 
     // Initialize BLE
     bleKeyboard->setName(keyboardName.c_str());

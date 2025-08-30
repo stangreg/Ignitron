@@ -3,6 +3,10 @@
 
 #include "SparkTypes.h"
 
+using Spark::byte;
+using std::string;
+using std::vector;
+
 enum MessageType {
     MSG_TYPE_NONE,
     MSG_TYPE_PRESET,

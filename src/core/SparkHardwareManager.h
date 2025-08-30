@@ -15,6 +15,7 @@ class SparkBLEKeyboard;
 class SparkDisplayControl;
 class SparkLEDControl;
 class NimBLERemoteCharacteristic;
+
 #include "SparkTypes.h"
 
 // We'll use the library's definition of notify_callback

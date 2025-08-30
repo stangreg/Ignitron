@@ -12,7 +12,7 @@
 #include "SparkTypes.h"
 #include <Arduino.h>
 
-using namespace std;
+using std::string;
 
 class SparkLooperControl {
 

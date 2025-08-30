@@ -14,8 +14,6 @@
 #include "../preset/SparkPresetControl.h"
 #include <Arduino.h>
 
-using namespace std;
-
 class SparkLEDControl {
 public:
     SparkLEDControl();

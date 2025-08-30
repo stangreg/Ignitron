@@ -10,7 +10,8 @@
 
 #include <Arduino.h>
 #include <string>
-using namespace std;
+
+using std::string;
 
 #define DEBUG
 #ifdef DEBUG
@@ -254,8 +255,8 @@ enum OperationMode {
 };
 
 enum BTMode {
-    BT_MODE_BLE = 1,
-    BT_MODE_SERIAL
+    BT_MODE_SPARK_BLE = 1,
+    BT_MODE_SPARK_SERIAL
 };
 
 enum AmpType {

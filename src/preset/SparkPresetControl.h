@@ -12,8 +12,6 @@ enum PresetEditMode {
     PRESET_EDIT_DELETE
 };
 
-class SparkDataControl;
-
 class SparkPresetControl {
 public:
     static SparkPresetControl &getInstance();

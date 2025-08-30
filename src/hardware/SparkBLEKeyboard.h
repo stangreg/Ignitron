@@ -13,8 +13,6 @@
 #include <BleKeyboard.h>
 #include <NimBLEDevice.h>
 
-using namespace std;
-
 class SparkBLEKeyboard: public BleKeyboard {
 public:
 	SparkBLEKeyboard();

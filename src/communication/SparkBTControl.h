@@ -19,12 +19,12 @@
 // Forward declaration instead of include
 class SparkDataControl;
 
-using namespace std;
+using Spark::byte;
+using Spark::ByteVector;
+using std::vector;
+using std::string;
 
 // Service and characteristics UUIDs of Spark Amp
-
-using ByteVector = vector<byte>;
-class SparkDataControl;
 
 // Forward declaration of Callbacks classes, does nothing special, only default actions
 // class ClientCallbacks: public NimBLEClientCallbacks {};
