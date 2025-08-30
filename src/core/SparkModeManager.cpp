@@ -22,7 +22,8 @@ SparkModeManager::~SparkModeManager() {
 
 OperationMode SparkModeManager::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
-    readOpModeFromFile();
+    // TODO: Add back Reading in OpMode from file after sorting out FS issues
+    //readOpModeFromFile();
     readBTModeFromFile();
     return operationMode_;
 }
@@ -117,6 +118,21 @@ void SparkModeManager::toggleBTMode() {
         DEBUG_PRINTLN("Setting BT mode to BLE");
     }
     saveBTModeToFile();
+}
+
+void SparkModeManager::resetOpModeFile() {
+
+    Serial.print("Resetting Spark mode");
+    bool sparkModeFileExists = LittleFS.exists(sparkModeFileName.c_str());
+    if (sparkModeFileExists) {
+        if (LittleFS.remove(sparkModeFileName.c_str())) {
+            DEBUG_PRINTLN("Removing Operation mode file name successfully.");
+        } else {
+            DEBUG_PRINTLN("Removing Operation mode file name failed.");
+        }
+    } else {
+        DEBUG_PRINTLN("Operation mode file not found, skipping.");
+    }
 }
 
 void SparkModeManager::readOpModeFromFile() {

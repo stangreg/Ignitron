@@ -74,6 +74,7 @@ public:
     const BTMode currentBTMode() const { return currentBTMode_; }
 
     // Read modes from file system
+    void resetOpModeFile();
     void readOpModeFromFile();
     void readBTModeFromFile();
     void saveOpModeToFile();

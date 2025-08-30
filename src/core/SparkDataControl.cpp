@@ -130,10 +130,8 @@ void SparkDataControl::restartESP(bool resetSparkMode) {
     Serial.print("!!! Restarting !!! ");
     if (resetSparkMode) {
         Serial.print("Resetting Spark mode");
-        // Let the mode manager handle this by simply setting the mode to APP
-        // and forcing a save to file
-        modeManager.operationMode() = SPARK_MODE_APP;
-        modeManager.saveOpModeToFile();
+        // Let the mode manager remove the OpMode file, so that Ignitron does not go into a fixed mode
+        modeManager.resetOpModeFile();
     }
     Serial.println();
     ESP.restart();
