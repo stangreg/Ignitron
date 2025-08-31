@@ -70,6 +70,7 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
 
         // Initialize BLE keyboard for dedicated keyboard mode
         bleKeyboard->setName("Ignitron BLE");
+        
         bleKeyboard->begin();
         DEBUG_PRINTLN("SparkHardwareManager: Hardware initialized for KEYBOARD mode");
         break;
