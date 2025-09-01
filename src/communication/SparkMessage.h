@@ -25,6 +25,7 @@ using Spark::ByteVector;
 using std::vector;
 using std::string;
 using std::deque;
+using std::back_inserter;
 
 
 class SparkMessage {

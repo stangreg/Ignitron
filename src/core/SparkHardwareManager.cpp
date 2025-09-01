@@ -41,7 +41,7 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
     switch (opMode) {
     case SPARK_MODE_APP:
         // Set MAC address for BLE keyboard
-        // esp_base_mac_addr_set(&macKeyboard[0]);
+        esp_base_mac_addr_set(&macKeyboard[0]);
 
         // Initialize BLE keyboard
         bleKeyboard->setName("Ignitron BLE");
@@ -66,11 +66,11 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
 
     case SPARK_MODE_KEYBOARD:
         // Set MAC address for BLE keyboard
-        // esp_base_mac_addr_set(&macKeyboard[0]);
+        esp_base_mac_addr_set(&macKeyboard[0]);
 
         // Initialize BLE keyboard for dedicated keyboard mode
         bleKeyboard->setName("Ignitron BLE");
-        
+
         bleKeyboard->begin();
         DEBUG_PRINTLN("SparkHardwareManager: Hardware initialized for KEYBOARD mode");
         break;
@@ -93,7 +93,7 @@ void SparkHardwareManager::initializeBluetooth(void (*notificationCallback)(NimB
 
 void SparkHardwareManager::initializeKeyboard(const std::string &keyboardName) {
     // Set MAC address for BLE keyboard
-    // esp_base_mac_addr_set(&macKeyboard[0]);
+    esp_base_mac_addr_set(&macKeyboard[0]);
 
     // Initialize BLE
     bleKeyboard->setName(keyboardName.c_str());

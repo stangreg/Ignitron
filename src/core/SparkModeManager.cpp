@@ -22,8 +22,7 @@ SparkModeManager::~SparkModeManager() {
 
 OperationMode SparkModeManager::init(OperationMode opModeInput) {
     operationMode_ = opModeInput;
-    // TODO: Add back Reading in OpMode from file after sorting out FS issues
-    // readOpModeFromFile();
+    readOpModeFromFile();
     readBTModeFromFile();
     return operationMode_;
 }
