@@ -191,7 +191,7 @@ public:
     void sendButtonPressAsKeyboard(keyboardKeyDefinition key);
     void resetLastKeyboardButtonPressed();
 
-    void restartESP(bool resetSparkMode = false);
+    static void restartESP(bool resetSparkMode = false);
 
 #ifdef ENABLE_BATTERY_STATUS_INDICATOR
     // Battery level
@@ -199,7 +199,6 @@ public:
 #endif
 
 private:
-    static SparkBTControl *bleControl;
     static SparkStreamReader sparkSsr;
     static SparkStatus &statusObject;
     static SparkMessage sparkMsg;

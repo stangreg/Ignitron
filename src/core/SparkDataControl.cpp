@@ -8,7 +8,6 @@
 #include "SparkDataControl.h"
 #include "SparkHardwareManager.h"
 
-SparkBTControl *SparkDataControl::bleControl = nullptr;
 SparkStreamReader SparkDataControl::sparkSsr;
 SparkStatus &SparkDataControl::statusObject = SparkStatus::getInstance();
 SparkMessage SparkDataControl::sparkMsg;
@@ -49,9 +48,6 @@ bool SparkDataControl::isInitBoot_ = true;
 byte SparkDataControl::specialMsgNum = 0xEE;
 
 SparkDataControl::SparkDataControl() {
-    // Initialize the hardware manager first to get access to hardware components
-    bleControl = SparkHardwareManager::getInstance().getBleControl();
-
     // Initialize keyboard control
     keyboardControl = new SparkKeyboardControl();
     keyboardControl->init();
@@ -194,19 +190,20 @@ void SparkDataControl::resetStatus() {
 void SparkDataControl::setAmpParameters() {
 
     string ampName = sparkAmpName;
+    SparkBTControl &bleControl = SparkHardwareManager::getBleControl();
     DEBUG_PRINTF("Amp name: %s\n", ampName.c_str());
     if (ampName == AMP_NAME_SPARK_40 || ampName == AMP_NAME_SPARK_GO || ampName == AMP_NAME_SPARK_NEO) {
         sparkMsg.maxChunkSizeToSpark() = 0x80;
         sparkMsg.maxBlockSizeToSpark() = 0xAD;
         sparkMsg.withHeader() = true;
-        bleControl->setMaxBleMsgSize(0xAD);
+        bleControl.setMaxBleMsgSize(0xAD);
         withDelay = false;
     }
     if (ampName == AMP_NAME_SPARK_MINI || ampName == AMP_NAME_SPARK_2) { // || ampName == AMP_NAME_SPARK_NEO) {
         sparkMsg.maxChunkSizeToSpark() = 0x80;
         sparkMsg.maxBlockSizeToSpark() = 0xAD;
         sparkMsg.withHeader() = true;
-        bleControl->setMaxBleMsgSize(0x64);
+        bleControl.setMaxBleMsgSize(0x64);
         withDelay = true;
     }
     sparkMsg.maxChunkSizeFromSpark() = 0x19;
@@ -265,10 +262,10 @@ void SparkDataControl::checkForUpdates() {
 #endif
 
     if (modeManager.operationMode() == SPARK_MODE_AMP) {
-
+        SparkBTControl &bleControl = SparkHardwareManager::getBleControl();
         // Read incoming (serial) Bluetooth data, if available
-        while (bleControl && bleControl->byteAvailable()) {
-            byte inputByte = bleControl->readByte();
+        while (bleControl.byteAvailable()) {
+            byte inputByte = bleControl.readByte();
             currentBTMsg.push_back(inputByte);
             int msgSize = currentBTMsg.size();
             if (msgSize > 0) {
@@ -465,7 +462,7 @@ void SparkDataControl::handleSendingAck(const ByteVector &blk) {
         if (modeManager.operationMode() == SPARK_MODE_APP) {
             triggerCommand(ackMsg);
         } else if (modeManager.operationMode() == SPARK_MODE_AMP) {
-            bleControl->notifyClients(ackMsg);
+            SparkHardwareManager::notifyClients(ackMsg);
         }
     }
 }
@@ -548,7 +545,7 @@ void SparkDataControl::handleAmpModeRequest() {
         break;
     }
     if (sendMessage) {
-        bleControl->notifyClients(msg);
+        SparkHardwareManager::notifyClients(msg);
     }
 }
 
@@ -798,9 +795,7 @@ void SparkDataControl::bleNotificationCallback(
     //  DEBUG_PRINTF("Is notify: %s\n", isNotify ? "true" : "false");
     //   Add incoming data to message queue for processing
     msgQueue.push(chunk);
-    // DEBUG_PRINTF("Seding back data via notify.");
-    // vector<ByteVector> notifyVector = { chunk };
-    // bleControl->writeBLE(notifyVector, false, false);
+    // DEBUG_PRINTF("Sending back data via notify.");
 }
 
 void SparkDataControl::queueMessage(ByteVector &blk) {
@@ -811,7 +806,7 @@ void SparkDataControl::queueMessage(ByteVector &blk) {
 
 bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
     DEBUG_PRINTLN("Sending message via BT.");
-    return SparkHardwareManager::getInstance().getBleControl()->writeBLE(msg, withDelay);
+    return SparkHardwareManager::getInstance().getBleControl().writeBLE(msg, withDelay);
 }
 
 /////////////////////////////////////////////////////////

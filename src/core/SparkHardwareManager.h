@@ -76,15 +76,21 @@ public:
 
     /**
      * Get the BLE Control instance
-     * @return Pointer to the SparkBTControl instance
+     * @return Reference to the SparkBTControl instance
      */
-    static SparkBTControl *getBleControl();
+    static SparkBTControl &getBleControl();
 
     /**
      * Get the BLE Keyboard instance
-     * @return Pointer to the SparkBLEKeyboard instance
+     * @return Reference to the SparkBLEKeyboard instance
      */
     static SparkBLEKeyboard &getBleKeyboard();
+
+    /**
+     * Notify connected clients with a message
+     * @param msg The message to send
+     */
+    static void notifyClients(const vector<CmdData> &msg);
 
 private:
     SparkHardwareManager(); // Private constructor for singleton
@@ -98,7 +104,7 @@ private:
     uint8_t macKeyboard[6] = {0xB4, 0xE6, 0x2D, 0xB2, 0x1B, 0x36};
 
     // Reference to other components
-    static SparkBTControl *bleControl;
+    static SparkBTControl bleControl;
     static SparkBLEKeyboard bleKeyboard;
 };
 

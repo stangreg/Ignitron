@@ -18,8 +18,8 @@
 #include "SparkDataControl.h"
 
 // Initialize static members
-SparkBTControl *SparkHardwareManager::bleControl = nullptr;
-SparkBLEKeyboard SparkHardwareManager::bleKeyboard = SparkBLEKeyboard();
+SparkBTControl SparkHardwareManager::bleControl = SparkBTControl();
+SparkBLEKeyboard SparkHardwareManager::bleKeyboard;
 
 SparkHardwareManager &SparkHardwareManager::getInstance() {
     static SparkHardwareManager instance;
@@ -27,12 +27,10 @@ SparkHardwareManager &SparkHardwareManager::getInstance() {
 }
 
 SparkHardwareManager::SparkHardwareManager() {
-    bleControl = new SparkBTControl();
 }
 
 SparkHardwareManager::~SparkHardwareManager() {
     // Cleanup, if necessary
-    delete bleControl;
 }
 
 OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, SparkDataControl *dataControl) {
@@ -45,15 +43,16 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
         bleKeyboard.end();
 
         // Initialize BLE client for connecting to Spark Amp
-        bleControl->initBLE(SparkDataControl::bleNotificationCallback);
+        initializeBluetooth(SparkDataControl::bleNotificationCallback);
         DEBUG_PRINTLN("SparkHardwareManager: Hardware initialized for APP mode");
         break;
 
     case SPARK_MODE_AMP:
         if (dataControl->getModeManager().currentBTMode() == BT_MODE_SPARK_BLE) {
-            bleControl->startServer();
+            Serial.println("Starting BLE server");
+            startBLEServer();
         } else if (dataControl->getModeManager().currentBTMode() == BT_MODE_SPARK_SERIAL) {
-            bleControl->startBTSerial();
+            bleControl.startBTSerial();
         }
         DEBUG_PRINTLN("SparkHardwareManager: Hardware initialized for AMP mode");
         break;
@@ -73,10 +72,7 @@ OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, Spa
 }
 
 void SparkHardwareManager::initializeBluetooth(void (*notificationCallback)(NimBLERemoteCharacteristic *, uint8_t *, size_t, bool)) {
-    bleControl->initBLE();
-    if (notificationCallback) {
-        bleControl->subscribeToNotifications(notificationCallback);
-    }
+    bleControl.initBLE(notificationCallback);
 }
 
 void SparkHardwareManager::initializeKeyboard(const std::string &keyboardName) {
@@ -91,29 +87,29 @@ void SparkHardwareManager::initializeKeyboard(const std::string &keyboardName) {
 }
 
 void SparkHardwareManager::startBLEServer() {
-    bleControl->startServer();
+    bleControl.startServer();
 }
 
 bool SparkHardwareManager::checkBLEConnection() {
-    if (bleControl->isAmpConnected()) {
+    if (bleControl.isAmpConnected()) {
         return true;
     }
-    if (bleControl->isConnectionFound()) {
-        if (bleControl->connectToServer()) {
+    if (bleControl.isConnectionFound()) {
+        if (bleControl.connectToServer()) {
             // Use the callback from SparkDataControl directly
-            bleControl->subscribeToNotifications(SparkDataControl::bleNotificationCallback);
+            bleControl.subscribeToNotifications(SparkDataControl::bleNotificationCallback);
             Serial.println("BLE connection to Spark established.");
             return true;
         } else {
             Serial.println("Failed to connect, starting scan");
-            bleControl->startScan();
+            bleControl.startScan();
             return false;
         }
     }
     return false;
 }
 
-SparkBTControl *SparkHardwareManager::getBleControl() {
+SparkBTControl &SparkHardwareManager::getBleControl() {
     return bleControl;
 }
 
@@ -122,9 +118,13 @@ SparkBLEKeyboard &SparkHardwareManager::getBleKeyboard() {
 }
 
 bool SparkHardwareManager::isAmpConnected() {
-    return bleControl != nullptr && bleControl->isAmpConnected();
+    return bleControl.isAmpConnected();
 }
 
 bool SparkHardwareManager::isAppConnected() {
-    return bleControl != nullptr && bleControl->isAppConnected();
+    return bleControl.isAppConnected();
+}
+
+void SparkHardwareManager::notifyClients(const vector<CmdData> &msg) {
+    bleControl.notifyClients(msg);
 }

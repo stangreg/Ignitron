@@ -417,9 +417,9 @@ void SparkBTControl::notifyClients(const vector<CmdData> &msg) {
                 SPARK_BLE_NOTIF_CHAR_UUID);
             if (characteristic) {
                 for (auto block : msg) {
-                    /*DEBUG_PRINTLN("Sending data:");
-                    DEBUG_PRINTVECTOR(block);
-                    DEBUG_PRINTLN();*/
+                    DEBUG_PRINTLN("Sending data:");
+                    DEBUG_PRINTVECTOR(block.data);
+                    DEBUG_PRINTLN();
                     characteristic->setValue(&block.data.data()[0], block.data.size());
                     characteristic->notify();
                 }

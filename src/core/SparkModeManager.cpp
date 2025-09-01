@@ -6,6 +6,7 @@
  */
 
 #include "SparkModeManager.h"
+#include "../core/SparkDataControl.h"
 #include <FS.h>
 #include <LittleFS.h>
 
@@ -117,6 +118,9 @@ void SparkModeManager::toggleBTMode() {
         DEBUG_PRINTLN("Setting BT mode to BLE");
     }
     saveBTModeToFile();
+    saveOpModeToFile();
+    Serial.println("Restarting in new BT mode");
+    SparkDataControl::restartESP(false);
 }
 
 void SparkModeManager::resetOpModeFile() {
