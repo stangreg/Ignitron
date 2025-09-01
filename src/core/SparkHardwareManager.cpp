@@ -38,7 +38,7 @@ SparkHardwareManager::~SparkHardwareManager() {
 }
 
 OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, SparkDataControl *dataControl) {
-    bleControl->setDataControl(dataControl);
+   
     switch (opMode) {
     case SPARK_MODE_APP:
         initializeKeyboard("Ignitron BLE");
