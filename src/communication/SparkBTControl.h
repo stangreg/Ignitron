@@ -38,6 +38,8 @@ public:
     SparkBTControl(SparkDataControl *dc);
     virtual ~SparkBTControl();
 
+    void setDataControl(SparkDataControl *dc);
+
     /**
      * @brief  Checks if a Spark amp has been found to connect
      *

@@ -36,6 +36,10 @@ SparkBTControl::~SparkBTControl() {
     }
 }
 
+void SparkBTControl::setDataControl(SparkDataControl *dc) {
+    spark_dc_ = dc;
+}
+
 // Initializing BLE connection with NimBLE
 void SparkBTControl::initBLE(notify_callback notifyCallback) {
     // NimBLEDevice::init("");
