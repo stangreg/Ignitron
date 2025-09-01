@@ -19,7 +19,7 @@
 
 // Initialize static members
 SparkBTControl *SparkHardwareManager::bleControl = nullptr;
-SparkBLEKeyboard *SparkHardwareManager::bleKeyboard = nullptr;
+SparkBLEKeyboard SparkHardwareManager::bleKeyboard = SparkBLEKeyboard();
 
 SparkHardwareManager &SparkHardwareManager::getInstance() {
     static SparkHardwareManager instance;
@@ -28,23 +28,21 @@ SparkHardwareManager &SparkHardwareManager::getInstance() {
 
 SparkHardwareManager::SparkHardwareManager() {
     bleControl = new SparkBTControl();
-    bleKeyboard = new SparkBLEKeyboard();
 }
 
 SparkHardwareManager::~SparkHardwareManager() {
     // Cleanup, if necessary
     delete bleControl;
-    delete bleKeyboard;
 }
 
 OperationMode SparkHardwareManager::initializeHardware(OperationMode opMode, SparkDataControl *dataControl) {
-   
+
     switch (opMode) {
     case SPARK_MODE_APP:
         initializeKeyboard("Ignitron BLE");
         // Short delay to initialize then stop to save power
         delay(100);
-        bleKeyboard->end();
+        bleKeyboard.end();
 
         // Initialize BLE client for connecting to Spark Amp
         bleControl->initBLE(SparkDataControl::bleNotificationCallback);
@@ -87,8 +85,8 @@ void SparkHardwareManager::initializeKeyboard(const std::string &keyboardName) {
 
     // Initialize BLE
     Serial.print("Initializing Keyboard...");
-    bleKeyboard->setName(keyboardName.c_str());
-    bleKeyboard->begin();
+    bleKeyboard.setName(keyboardName.c_str());
+    bleKeyboard.begin();
     Serial.println("done");
 }
 
@@ -119,7 +117,7 @@ SparkBTControl *SparkHardwareManager::getBleControl() {
     return bleControl;
 }
 
-SparkBLEKeyboard *SparkHardwareManager::getBleKeyboard() {
+SparkBLEKeyboard &SparkHardwareManager::getBleKeyboard() {
     return bleKeyboard;
 }
 

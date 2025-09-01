@@ -100,11 +100,11 @@ OperationMode SparkDataControl::init(OperationMode opModeInput) {
 }
 
 void SparkDataControl::switchSubMode(SubMode subMode) {
-    SparkBLEKeyboard *keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
+    SparkBLEKeyboard &keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
     if (subMode == SUB_MODE_LOOPER) {
-        keyboard->start();
+        keyboard.start();
     } else {
-        keyboard->end();
+        keyboard.end();
     }
 
     // Switch off tuner mode at amp if was enabled before but is not matching current subMode
@@ -819,16 +819,16 @@ bool SparkDataControl::sendMessageToBT(ByteVector &msg) {
 /////////////////////////////////////////////////////////
 
 void SparkDataControl::sendButtonPressAsKeyboard(keyboardKeyDefinition k) {
-    SparkBLEKeyboard *keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
-    if (keyboard->isConnected()) {
+    SparkBLEKeyboard &keyboard = SparkHardwareManager::getInstance().getBleKeyboard();
+    if (keyboard.isConnected()) {
         Serial.printf("Sending button: %d - mod: %d - repeat: %d\n", k.key, k.modifier, k.repeat);
         if (k.modifier != 0)
-            keyboard->press(k.modifier);
+            keyboard.press(k.modifier);
         for (uint8_t i = 0; i <= k.repeat; i++) {
-            keyboard->write(k.key);
+            keyboard.write(k.key);
         }
         if (k.modifier != 0)
-            keyboard->release(k.modifier);
+            keyboard.release(k.modifier);
         lastKeyboardButtonPressed_ = k.keyUid;
         lastKeyboardButtonPressedString_ = k.display;
     } else {

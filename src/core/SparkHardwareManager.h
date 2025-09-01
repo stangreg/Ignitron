@@ -84,7 +84,7 @@ public:
      * Get the BLE Keyboard instance
      * @return Pointer to the SparkBLEKeyboard instance
      */
-    static SparkBLEKeyboard *getBleKeyboard();
+    static SparkBLEKeyboard &getBleKeyboard();
 
 private:
     SparkHardwareManager(); // Private constructor for singleton
@@ -99,7 +99,7 @@ private:
 
     // Reference to other components
     static SparkBTControl *bleControl;
-    static SparkBLEKeyboard *bleKeyboard;
+    static SparkBLEKeyboard bleKeyboard;
 };
 
 #endif /* SPARKHARDWAREMANAGER_H_ */
