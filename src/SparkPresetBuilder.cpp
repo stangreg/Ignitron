@@ -142,12 +142,18 @@ void SparkPresetBuilder::initializePresetListFromFS() {
     if (createUUIDFile) {
         file = LittleFS.open(presetListFileName);
     }
-
     string fileContent;
-    while (file.available()) {
-        fileContent += file.read();
+    if (file) {
+        size_t size = file.size();
+        if (size > 0) {
+            fileContent.reserve(size); // avoid repeated reallocations
+            std::unique_ptr<char[]> buf(new char[size + 1]);
+            file.readBytes(buf.get(), size);
+            buf[size] = '\0';
+            fileContent.assign(buf.get(), size);
+            DEBUG_PRINTF("File read: %s\n", fileContent.c_str());
+        }
     }
-    DEBUG_PRINTF("File read: %s\n", fileContent.c_str());
     stringstream fileStream(fileContent);
     file.close();
 
@@ -303,9 +309,17 @@ PresetStoreResult SparkPresetBuilder::storePreset(Preset newPreset, int bnk, int
     }
 
     string fileContent;
-    while (presetUUIDListFile.available()) {
-        fileContent += presetUUIDListFile.read();
+    if (presetUUIDListFile) {
+        size_t size = presetUUIDListFile.size();
+        if (size > 0) {
+            fileContent.reserve(size);
+            std::unique_ptr<char[]> buf(new char[size + 1]);
+            presetUUIDListFile.readBytes(buf.get(), size);
+            buf[size] = '\0';
+            fileContent.assign(buf.get(), size);
+        }
     }
+
     stringstream stream(fileContent);
     string line;
 
@@ -376,8 +390,15 @@ PresetDeleteResult SparkPresetBuilder::deletePreset(int bnk, int pre) {
 
     // Read file content into stream
     string fileContent;
-    while (presetListUUIDFile.available()) {
-        fileContent += presetListUUIDFile.read();
+    if (presetListUUIDFile) {
+        size_t size = presetListUUIDFile.size();
+        if (size > 0) {
+            fileContent.reserve(size);
+            std::unique_ptr<char[]> buf(new char[size + 1]);
+            presetListUUIDFile.readBytes(buf.get(), size);
+            buf[size] = '\0';
+            fileContent.assign(buf.get(), size);
+        }
     }
     presetListUUIDFile.close();
     stringstream stream(fileContent);
