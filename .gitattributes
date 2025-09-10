@@ -1,1 +1,4 @@
+* linguist-vendored
+*.cpp linguist-vendored=false
 doxygen/* linguist-documentation
+documentatiom/* linguist-documentation
