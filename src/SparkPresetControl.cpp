@@ -397,7 +397,12 @@ void SparkPresetControl::updateFromSparkResponseAmpPreset(char *presetJson) {
     appReceivedPreset_ = presetBuilder.getPresetFromJson(presetJson);
     DEBUG_PRINTLN("received from app:");
     DEBUG_PRINTLN(appReceivedPreset_.json.c_str());
+
     presetNumToEdit_ = 0;
+
+    // 🔧 Added for App Scraper
+    Serial.println("received from app:");
+    Serial.println(appReceivedPreset_.json.c_str());
 }
 
 void SparkPresetControl::updateFromSparkResponseACK() {
