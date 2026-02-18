@@ -48,7 +48,7 @@ The following sections show how to [build](https://github.com/stangreg/SparkBLE#
   <img src="https://github.com/stangreg/Ignitron/blob/main/resources/Ignitron_full_wiring.JPG" width=200>
 </p>
 
-Do you like my project? Then ypu can [buy me a coffee](!https://ko-fi.com/stangreg)
+Do you like my project? Then you can [buy me a coffee](https://ko-fi.com/stangreg)
 
 # Building Ignitron
 Software: [click here](https://github.com/stangreg/Ignitron/blob/main/src/)
