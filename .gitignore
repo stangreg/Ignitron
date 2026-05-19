@@ -3,7 +3,7 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-# logs/*
+logs/*
 unpacked_fs/*
 TestChecksumsPresets.txt
 .vscode/settings.json

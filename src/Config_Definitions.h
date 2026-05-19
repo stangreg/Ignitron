@@ -104,11 +104,10 @@ const float BATTERY_CAPACITY_VOLTAGE_THRESHOLD_10 = (BATTERY_MIN_LEVEL + (BATTER
 // 1.3" OLED 128x64 displays commonly uses an SH1106 driver.
 // Choose driver below, only one can be defined!
 
-
-// #define OLED_DRIVER_SSD1306
+#define OLED_DRIVER_SSD1306
 // #define OLED_DRIVER_SH1106
 // #define OLED_DRIVER_SH1107
-#define TFT_DRIVER_ILI9341
+// #define TFT_DRIVER_ILI9341
 
 // Optional setting for enabling Blink mode when in Manual/FX mode.
 // Depending on the user preferences enabling blink can be a help
