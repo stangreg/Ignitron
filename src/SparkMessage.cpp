@@ -328,6 +328,7 @@ vector<CmdData> SparkMessage::changeEffectParameter(byte msgNum, const string &p
     addPrefixedString(pedal);
     addByte((byte)param);
     addFloat(val);
+    addByte(0x00); // input: 0 = Input 1, 1 = Input 2
     return endMessage(DIR_TO_SPARK, msgNum);
 }
 
